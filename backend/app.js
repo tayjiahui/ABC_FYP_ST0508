@@ -3,10 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// database
-// copy paste db connection into all model files
-// const connection = require('../db');
-
 // init
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,7 +25,7 @@ app.get('/', (req, res) => {
 });
 
 // setting main routes
-const mainRoutes = require('../route/mainRoutes');
+const mainRoutes = require('./routes/mainRoutes');
 app.use('/api', mainRoutes);
 
 // route for react
