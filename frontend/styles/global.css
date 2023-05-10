@@ -1,0 +1,49 @@
+/* this is for the shared css */
+
+body{
+    padding: 10px;
+}
+
+/* navbar */
+.header-nav{
+    /* float: left; */
+    /* display: inline; */
+    width: 100%;
+}
+
+ul{
+    padding: 0;
+    margin:0;
+}
+
+.navbar-left > li{
+    display: inline;
+    padding: 0 20px 0 20px;
+}
+
+.navbar-right > li{
+    display: inline;
+    float: right;
+}
+
+.navbar-left, .navbar-right{
+    display: inline;
+}
+
+.header-nav a{
+    color: #8495AD;
+    text-decoration: none;
+}
+
+.header-nav a:hover{
+    color: #011f60;
+}
+
+.header-nav a.active{
+    color: #011f60;
+}
+
+#logoImage{
+    padding-left: 0;
+}
+
