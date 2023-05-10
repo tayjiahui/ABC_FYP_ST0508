@@ -5,11 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 
-import logo from "../image/client_logo.png";
-import profPic from "../image/prof_pic.png";
+import logo from "../public/image/client_logo.png";
+import profPic from "../public/image/prof_pic.png";
 
 export default function App({Component, pageProps}){
-const router = useRouter()
+    const router = useRouter()
 
     return(
        <div>
