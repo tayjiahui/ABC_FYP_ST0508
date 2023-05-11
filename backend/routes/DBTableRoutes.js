@@ -1,6 +1,5 @@
 // DB Tables creations
 const express = require('express');
-
 const router = express.Router();
 
 const DBTablesController = require('../controller/DBTablesController');
@@ -11,9 +10,32 @@ const DBTablesController = require('../controller/DBTablesController');
 //  ---> example: http://localhost:3000/api/user/
 //  ---> example2: http://localhost:3000/api/user/:id
 
+// MAIN
+router.post('/role', DBTablesController.roleTable);
+router.post('/user', DBTablesController.userTable);
+
+// PURCHASE REQUESTS
+router.post('/paymentMode', DBTablesController.paymentModeTable);
+router.post('/branch', DBTablesController.branchTable);
+router.post('/prStatus', DBTablesController.prStatusTable);
+router.post('/purchaseReq', DBTablesController.purchaseRequestTable);
+router.post('/item', DBTablesController.itemTable);
+router.post('/inventory', DBTablesController.inventoryTable);
+router.post('/lineItem',DBTablesController.lineItemTable);
+
+// SUPPLIER DETAILS
 // category, suppliers, supplierCategory
-router.use('/category', DBTablesController.categoryTable);
-router.use('/supplier', DBTablesController.suppliersTable);
-router.use('/supplierscategory', DBTablesController.suppliersCategoryTable);
+router.post('/category', DBTablesController.categoryTable);
+router.post('/supplier', DBTablesController.suppliersTable);
+router.post('/supplierscategory', DBTablesController.suppliersCategoryTable);
+
+// PURCHASE ORDERING
+
+
+
+// PURCHASE PLANNER
+// Planner Table
+
+// Plan view Access Table
 
 module.exports = router;
