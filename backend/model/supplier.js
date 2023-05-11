@@ -15,7 +15,7 @@ const supplierDB = {
 
     // create supplier
     createSupplier: async (supplierName, contactPersonName, email, phoneNum, officeNum, address, webAddress, bankAccountNum) => {
-        const sql = `INSERT INTO suppliers (supplierName, contactPersonName, email, phoneNum, officeNum, address, webAddress, bankAccountNum) VALUES (?,?,?,?,?,?,?,?)`;
+        const sql = `INSERT INTO supplier (supplierName, contactPersonName, email, phoneNum, officeNum, address, webAddress, bankAccountNum) VALUES (?,?,?,?,?,?,?,?)`;
 
         return connection.promise()
             .query(sql, [supplierName, contactPersonName, email, phoneNum, officeNum, address, webAddress, bankAccountNum])
@@ -37,10 +37,10 @@ const supplierDB = {
 
     // retrieve full supplier details by fkSupplier_id - done
     getFullSupplierDetailsByID: async (fkSupplier_id) => {
-        const sql = `SELECT suppliers.supplierName, suppliers.contactPersonName, suppliers.email, suppliers.phoneNum, suppliers.officeNum, suppliers.address, suppliers.webAddress, suppliers.bankAccountNum,
+        const sql = `SELECT supplier.supplierName, supplier.contactPersonName, supplier.email, supplier.phoneNum, supplier.officeNum, supplier.address, supplier.webAddress, supplier.bankAccountNum,
                     GROUP_CONCAT(category.categoryName SEPARATOR ', ') AS "Category"
                     FROM ((suppliersCategory
-                        INNER JOIN suppliers ON suppliersCategory.fkSupplier_id = suppliers.supplierID)
+                        INNER JOIN supplier ON suppliersCategory.fkSupplier_id = supplier.supplierID)
                         INNER JOIN category ON suppliersCategory.fkCategory_id = category.categoryID)
                     WHERE fkSupplier_id = ?
                     GROUP BY fkSupplier_id`;
@@ -63,9 +63,9 @@ const supplierDB = {
 
     // retrieve all suppliers - id, name, categories (logo not included)
     getAllSuppliers: async() => {
-        const sql = `SELECT suppliers.supplierID, suppliers.supplierName, GROUP_CONCAT(category.categoryName SEPARATOR ', ') AS "Category"
+        const sql = `SELECT supplier.supplierID, supplier.supplierName, GROUP_CONCAT(category.categoryName SEPARATOR ', ') AS "Category"
                     FROM ((suppliersCategory
-                        INNER JOIN suppliers ON suppliersCategory.fkSupplier_id = suppliers.supplierID)
+                        INNER JOIN supplier ON suppliersCategory.fkSupplier_id = supplier.supplierID)
                         INNER JOIN category ON suppliersCategory.fkCategory_id = category.categoryID)
                     GROUP BY supplierID
                     ORDER BY supplierID ASC`;
@@ -89,9 +89,9 @@ const supplierDB = {
 
     // retrieve supplier details by supplierID (categories not included)
     /*getSupplierBySupplierId: async (supplierID) => {
-        const sql = `SELECT suppliers.supplierName, suppliers.contactPersonName, suppliers.email, suppliers.phoneNum, suppliers.officeNum, suppliers.address, 
-                    suppliers.webAddress, suppliers.bankAccountNum
-                    FROM suppliers
+        const sql = `SELECT supplier.supplierName, supplier.contactPersonName, supplier.email, supplier.phoneNum, supplier.officeNum, supplier.address, 
+                    supplier.webAddress, supplier.bankAccountNum
+                    FROM supplier
                     WHERE supplierID = ?`;
 
         return connection.promise()

@@ -166,10 +166,10 @@ const DBTables = {
     },
 
     // SUPPLIER DETAILS
-    // Suppliers
-    initSuppliersTable: async() => {
+    // Supplier
+    initSupplierTable: async() => {
         const sql = 
-        `CREATE TABLE suppliers (
+        `CREATE TABLE supplier (
             supplierID INT auto_increment,
             supplierName VARCHAR(255) NOT NULL,
             contactPersonName VARCHAR(255) NOT NULL,

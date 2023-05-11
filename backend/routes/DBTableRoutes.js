@@ -26,7 +26,7 @@ router.post('/lineItem',DBTablesController.lineItemTable);
 // SUPPLIER DETAILS
 // category, suppliers, supplierCategory
 router.post('/category', DBTablesController.categoryTable);
-router.post('/supplier', DBTablesController.suppliersTable);
+router.post('/supplier', DBTablesController.supplierTable);
 router.post('/supplierscategory', DBTablesController.suppliersCategoryTable);
 
 // PURCHASE ORDERING
