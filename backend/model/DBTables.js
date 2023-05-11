@@ -166,10 +166,61 @@ const DBTables = {
     },
 
     // SUPPLIER DETAILS
-    // Supplier
+    // Suppliers
+    initSuppliersTable: async() => {
+        const sql = 
+        `CREATE TABLE suppliers (
+            supplierID INT auto_increment,
+            supplierName VARCHAR(255) NOT NULL,
+            contactPersonName VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            phoneNum VARCHAR(255) NOT NULL,
+            officeNum VARCHAR(255) NOT NULL,
+            address VARCHAR(255) NOT NULL,
+            webAddress VARCHAR(255) NULL,
+            bankAccountNum VARCHAR(255) NOT NULL,
+            PRIMARY KEY (supplierID)
+        )`;
+        return connection.promise()
+            .query(sql)
+            .catch((error) => {
+                console.log(error)
+                throw error;
+            });
+    },
+  
+    // Category
+    initCategoryTable: async() => {
+        const sql = 
+        `CREATE TABLE category (
+            categoryID INT auto_increment,
+            categoryName VARCHAR(255) NOT NULL,
+            PRIMARY KEY (categoryID)
+        )`;
+        return connection.promise()
+            .query(sql)
+            .catch((error) => {
+                console.log(error)
+                throw error;
+            });
+    },
 
-    // Supplier Category
-
+    // Suppliers Category
+    initSuppliersCategoryTable: async() => {
+        const sql = 
+        `CREATE TABLE suppliersCategory (
+            id INT auto_increment,
+            fkSupplier_id INT NOT NULL,
+            fkCategory_id INT NOT NULL,
+            PRIMARY KEY (id)
+        )`;
+        return connection.promise()
+            .query(sql)
+            .catch((error) => {
+                console.log(error)
+                throw error;
+            });
+    },
 
     // PURCHASE ORDERING
     // Purchase Order Table
@@ -183,8 +234,6 @@ const DBTables = {
     // Planner Table
 
     // Plan view Access Table
-
-
 
 };
 

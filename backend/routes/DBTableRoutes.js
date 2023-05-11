@@ -24,7 +24,10 @@ router.post('/inventory', DBTablesController.inventoryTable);
 router.post('/lineItem',DBTablesController.lineItemTable);
 
 // SUPPLIER DETAILS
-
+// category, suppliers, supplierCategory
+router.post('/category', DBTablesController.categoryTable);
+router.post('/supplier', DBTablesController.suppliersTable);
+router.post('/supplierscategory', DBTablesController.suppliersCategoryTable);
 
 // PURCHASE ORDERING
 
@@ -34,6 +37,5 @@ router.post('/lineItem',DBTablesController.lineItemTable);
 // Planner Table
 
 // Plan view Access Table
-
 
 module.exports = router;
