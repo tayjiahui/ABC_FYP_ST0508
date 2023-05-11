@@ -122,15 +122,15 @@ module.exports.lineItemTable = async(req, res, next) => {
 
 // SUPPLIER DETAILS
 // Suppliers
-module.exports.suppliersTable = (req, res, next) => {
+module.exports.supplierTable = (req, res, next) => {
     return DBTablesModel
-        .initSuppliersTable()
+        .initSupplierTable()
         .then(() => {
-            return res.status(201).send(`Suppliers table created!`);
+            return res.status(201).send(`Supplier table created!`);
         })
         .catch((err) => {
             console.log(err)
-            return res.status(500).json({ error: "Failed to create Suppliers table" });
+            return res.status(500).json({ error: "Failed to create Supplier table" });
         });
 };
 
