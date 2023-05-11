@@ -11,6 +11,9 @@ const DBTablesController = require('../controller/DBTablesController');
 //  ---> example: http://localhost:3000/api/user/
 //  ---> example2: http://localhost:3000/api/user/:id
 
-
+// category, suppliers, supplierCategory
+router.use('/category', DBTablesController.categoryTable);
+router.use('/supplier', DBTablesController.suppliersTable);
+router.use('/supplierscategory', DBTablesController.suppliersCategoryTable);
 
 module.exports = router;
