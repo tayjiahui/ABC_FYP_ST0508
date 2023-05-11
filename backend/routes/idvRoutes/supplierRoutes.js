@@ -25,10 +25,10 @@ router.get('/all', supplierController.getAllSuppliers);
 // retrieve full supplier details by fkSupplier_id
 router.get('/:fkSupplier_id', supplierController.getFullSupplierDetailsByID);
 
-// update supplier
+// update supplier - category not included
+router.put('/:supplierID', supplierController.updateSupplierDetails);
 
-
-// delete supplier
-
+// delete supplier - category not included
+router.delete('/:supplierID', supplierController.deleteSupplier);
 
 module.exports = router;

@@ -118,7 +118,7 @@ module.exports.getFullSupplierDetailsByID = async (req, res, next) => {
         })
 }
 
-//getAllSuppliers
+// getAllSuppliers
 module.exports.getAllSuppliers = async(req, res, next) => {
     return supplierModel
     .getAllSuppliers()
@@ -134,4 +134,60 @@ module.exports.getAllSuppliers = async(req, res, next) => {
       console.log(err);
       return res.sendStatus(500);
     })
+}
+
+// update supplier details - category not included
+module.exports.updateSupplierDetails = async (req, res, next) => {
+    let supplierID = parseInt(req.params.supplierID);
+    let supplierName = req.body.supplierName;
+    let contactPersonName = req.body.contactPersonName;
+    let email = req.body.email;
+    let phoneNum = req.body.phoneNum;
+    let officeNum = req.body.officeNum;
+    let address = req.body.address;
+    let webAddress = req.body.webAddress;
+    let bankAccountNum = req.body.bankAccountNum;
+
+    if (isNaN(supplierID)) {
+        res.status(400).send(`Enter numbers only!`);
+        return;
+    };
+
+    return supplierModel
+        .updateSupplierDetails(supplierName, contactPersonName, email, phoneNum, officeNum, address, webAddress, bankAccountNum, supplierID)
+        .then((result) => {
+            if (result === null) {
+                return res.send(`Supplier does not exist`);
+            }
+            else {
+                return res.status(200).send(`Supplier updated!`);
+            }
+        })
+        .catch((err) => {
+            return res.sendStatus(500);
+        })
+}
+
+// delete supplier - category not included
+module.exports.deleteSupplier = async (req, res, next) => {
+    let supplierID = parseInt(req.params.supplierID);
+
+    if (isNaN(supplierID)) {
+        res.status(400).send(`Enter numbers only!`);
+        return;
+    };
+
+    return supplierModel
+        .deleteSupplier(supplierID)
+        .then((result) => {
+            if (result === null) {
+                return res.send(`Supplier does not exist`);
+            }
+            else {
+                return res.status(200).send(`Supplier deleted!`);
+            }
+        })
+        .catch((err) => {
+            return res.sendStatus(500);
+        })
 }

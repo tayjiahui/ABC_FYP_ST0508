@@ -86,6 +86,27 @@ const supplierDB = {
         })
     },
 
+    // update supplier details - category not included
+    updateSupplierDetails: async(supplierName, contactPersonName, email, phoneNum, officeNum, address, webAddress, bankAccountNum, supplierID) => {
+        const sql = `UPDATE supplier SET supplierName = ?, contactPersonName = ?, email = ?, phoneNum = ?, officeNum = ?, address = ?, webAddress = ?,  bankAccountNum = ? WHERE supplierID = ?`;
+
+        return connection.promise()
+            .query(sql, [supplierName, contactPersonName, email, phoneNum, officeNum, address, webAddress, bankAccountNum, supplierID])
+            .catch((err) => {
+                throw err;
+            })
+    },
+
+    // delete supplier - category not included
+    deleteSupplier: async (supplierID) => {
+        const sql = `DELETE FROM supplier WHERE supplierID = ?`;
+
+        return connection.promise()
+            .query(sql, [supplierID])
+            .catch((err) => {
+                throw err;
+            })
+    },
 
     // retrieve supplier details by supplierID (categories not included)
     /*getSupplierBySupplierId: async (supplierID) => {
@@ -109,7 +130,6 @@ const supplierDB = {
                 throw err;
             })
     },*/
-
 
 };
 
