@@ -226,7 +226,19 @@ const DBTables = {
     // Purchase Order Table
 
     // Payament Status Table
-
+    initpaymentStatusTable: () => {
+        const sql = `CREATE TABLE paymentStatus (
+            paymentStatusID INT auto_increment,
+            paymentStatus VARCHAR(255) NOT NULL UNIQUE,
+            PRIMARY KEY (paymentStatusID)
+        )`;
+        return connection.promise()
+        .query(sql)
+        .catch((error) => {
+            console.log(error)
+            throw error;
+        });
+    }
     // Purchase Status Table
 
 

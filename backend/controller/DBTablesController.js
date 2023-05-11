@@ -164,6 +164,17 @@ module.exports.suppliersCategoryTable = (req, res, next) => {
 // Purchase Order Table
 
 // Payament Status Table
+module.exports.paymentStatusTable = (req, res, next) => {
+    return DBTablesModel
+    .initpaymentStatusTable()
+    .then(() => {
+        return res.status(201).send(`Payment Status Table Created!`);
+    })
+    .catch((err) => {
+        console.log(err);
+        return res.status(500).send(`Failed to create Payment Status Table`);
+    })
+}
 
 // Purchase Status Table
 
