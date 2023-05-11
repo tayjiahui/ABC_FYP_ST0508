@@ -93,13 +93,14 @@ const DBTables = {
         const sql = 
         `CREATE TABLE purchaseRequest (
             prID INT auto_increment,
-            requestDate DATETIME NOT NULL,
+            requestDate VARCHAR(100) NOT NULL,
             userID INT NOT NULL,
             supplierID INT NOT NULL,
             paymentModeID INT NOT NULL,
             branchID INT NOT NULL,
             remarks VARCHAR(500),
-            prStatusID INT NOT NULL,
+            apprRemarks VARCHAR(500),
+            prStatusID INT DEFAULT(1),
             PRIMARY KEY (prID)
         )`;
         return connection.promise()
