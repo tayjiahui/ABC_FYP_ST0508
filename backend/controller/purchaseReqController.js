@@ -144,10 +144,10 @@ module.exports.deletePRById = async(req, res, next) => {
 // Line Items
 // add line item
 module.exports.addLineItem = async(req, res, next) => {
-    let prId = req.body.requestDate;
-    let itemId = req.body.userID;
-    let quantity = req.body.supplierID;
-    let totalUnitPrice = req.body.paymentModeID;
+    let prId = req.body.prID;
+    let itemId = req.body.itemID;
+    let quantity = req.body.quantity;
+    let totalUnitPrice = req.body.totalUnitPrice;
 
     return purchaseRequestModel
     .addLineItem(prId, itemId, quantity, totalUnitPrice)
@@ -164,14 +164,15 @@ module.exports.addLineItem = async(req, res, next) => {
 // get PR by PR ID
 module.exports.getLineItemByPRID = async(req, res, next) => {
     let prId = parseInt(req.params.id);
-
+    console.log(prId)
     if(isNaN(prId)){
+        // console.log(prId)
         res.status(400).send(`UserId provided is not a number!`);
         return;
     }
 
     return purchaseRequestModel
-    .getLintItemByPRID(prId)
+    .getLineItemByPRID(prId)
     .then((result) => {
         if(result == null){
             res.status(404).send(`Line Item does not exist in Purchase Request #${prId}!`);
