@@ -1,1 +1,158 @@
 /* this is indv PR css */
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+.headerRow{
+    display:flex;
+}
+
+.header{
+    width:75%;
+    /* position: fixed; */
+}
+
+/* Search Box */
+.searchContainer{
+    display:inline-flexbox;
+    float: right;
+    padding-top: 45px;
+    /* position: fixed;
+    right:20px */
+}
+
+.searchBox{
+    height: 20px;
+    width: 190px;
+    border-radius: 15px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width: 1.5px;
+}
+
+.searchButton{
+    border-style: none;
+    background-color: transparent;
+    vertical-align:middle;
+}
+
+/* Create PR Button */
+.createButton{
+    background-color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    border-style: none;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+}
+
+.createButton:hover{
+    background-color: #efecec;
+}
+
+/* Table Label */
+/* .labelRow{
+    position: fixed;
+    top:180px;
+    width: 95%;
+} */
+
+.tableLabel > li{
+    display: inline;
+    padding: 0 30px 0 30px;
+}
+
+/* .prData{
+    padding-top: 150px;
+} */
+
+.tableNo{
+    margin-left: 20px;
+}
+
+.tableName{
+    margin-left: 50px;
+}
+
+.tableLocation{
+    margin-left: 120px;
+}
+
+.tableSupplier{
+    margin-left: 250px;
+}
+
+.tableStatus{
+    margin-left: 160px;
+}
+
+/* PR */
+.prButton{
+    border: none;
+    background-color: transparent;
+    width: 100%;
+    padding-bottom: 5px;
+}
+
+/* .prButton:hover{
+    border: none;
+    background-color: transparent;
+} */
+
+.prRow{
+    background-color: #C0D8F7;
+    font-size: 14px;
+    height: 80px;
+    border-radius: 18px;
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+    text-align: center;
+    object-fit: scale-down;
+    transition: transform .5s;
+}
+
+.prRow:hover{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    /* transform: scale(1.05); */
+}
+
+.prTextRow{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    vertical-align: middle;
+    display: grid;
+    text-align: left;
+    grid-template-columns: 110px 210px 400px 220px 190px 100px;
+} 
+
+.prTextNo{
+    padding-left: 50px;
+}
+
+.prTextName{
+    padding-left: 70px;
+}
+
+.prTextLocation{
+    padding-left: 90px;
+}
+
+.prTextSupplier{
+    padding-left: 60px;
+}
+
+.prTextStatus{
+    text-align: center;
+    padding-left: 120px;
+}
+
+#statusCircle{
+    vertical-align: middle;
+    padding: 10px;
+}

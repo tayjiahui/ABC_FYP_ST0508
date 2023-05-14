@@ -70,11 +70,12 @@ const purchaseReqDB = {
 
     // get PR by PR ID
     getPRByPRID: async(prID) => {
-        let sql = `SELECT PR.prID, PR.userID, U.name, B.branchName, S.supplierName, PR.prStatusID, PRS.prStatus
-                    FROM purchaseRequest PR, user U, branch B, supplier S, prStatus PRS
+        let sql = `SELECT PR.prID, PR.requestDate, PR.userID, U.name, B.branchName, S.supplierName, PM.paymentMode, PR.remarks, PR.prStatusID, PRS.prStatus
+                    FROM purchaseRequest PR, user U, branch B, supplier S, paymentMode PM, prStatus PRS
                     WHERE PR.userID = U.userID
                     AND PR.branchID = B.branchID
                     AND PR.supplierID = S.supplierID
+                    AND PR.paymentModeID = PM.paymentModeID
                     AND PR.prStatusID = PRS.prStatusID
                     AND prID = ?
                     ORDER BY prID asc`;
@@ -157,10 +158,10 @@ const purchaseReqDB = {
     },
 
     // get line item by PR ID
-    getPRByPRID: async(prID) => {
-        let sql = `SELECT LI.lineItemID, LI.prID, I.itemName, LI.quantity, I.unitPrice, LI.totalUnitPrice
+    getLineItemByPRID: async(prID) => {
+        let sql = `SELECT LI.lineItemID, LI.prID, LI.itemID, I.itemName, LI.quantity, I.unitPrice, LI.totalUnitPrice
                     FROM lineItem LI, item I
-                    WHERE lineItemID = itemID
+                    WHERE LI.itemID = I.itemID
                     AND LI.prID = ?
                     ORDER BY lineItemID asc`;
 
