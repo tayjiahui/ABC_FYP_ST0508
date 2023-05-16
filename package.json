@@ -167,9 +167,9 @@
   "scripts": {
     "server": "cd backend && npm run dev",
     "client": "cd frontend && npm run dev",
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "cd backend && npm start",
     "postinstall": "cd backend && npm install && cd .. && cd frontend && npm install && npm run build",
-    "dev": "cd backend && npm start"
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
