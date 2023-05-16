@@ -10,17 +10,17 @@ import addLocIcon from '../../public/addLocationicon.svg';
 import addIcon from '../../public/plusIcon.svg';
 
 import axios from "axios";
-import { CLIENT_STATIC_FILES_RUNTIME_POLYFILLS_SYMBOL } from "next/dist/shared/lib/constants";
 
 function isLocalhost(url) 
 {
     return url.includes('localhost') || url.includes('127.0.0.1');
 }
 
-// const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
+const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
 // const baseUrl = API_URL;
 const baseUrl = 'http://localhost:3000';
-const baseURL = 'http://localhost:5000';
+// const baseURL = 'http://localhost:5000';
+const baseURL = API_URL;
 
 const id = 2;
 
