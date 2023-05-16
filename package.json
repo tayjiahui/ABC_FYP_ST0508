@@ -165,11 +165,9 @@
     "yocto-queue": "^0.1.0"
   },
   "scripts": {
-    "server": "cd backend && npm run dev",
-    "client": "cd frontend && npm run dev",
-    "start": "concurrently \"npm run server\" \"npm run client\"",
-    "postinstall": "cd backend && npm install && cd .. && cd frontend && npm install && npm run build",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "start": "cd backend && npm start",
+    "postinstall": "cd backend && npm install && cd .. && cd frontend-react && npm install && npm run build",
+    "dev": "cd backend && npm run dev"
   },
   "repository": {
     "type": "git",
