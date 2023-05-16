@@ -1,4 +1,15 @@
 /* this is for the shared css */
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Light.ttf');
+}
+
+html{
+    font-family: "Plus Jakarta Sans";
+}
 
 body{
     padding: 10px;
@@ -45,5 +56,11 @@ ul{
 
 #logoImage{
     padding-left: 0;
+    vertical-align: middle;
+}
+
+#profPicImage{
+    padding-left: 10px;
+    vertical-align: middle;
 }
 

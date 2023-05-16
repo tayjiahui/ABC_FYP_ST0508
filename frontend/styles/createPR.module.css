@@ -1,0 +1,185 @@
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+/* Header */
+.headerRow{
+    vertical-align: middle;
+}
+#arrow{
+    vertical-align: middle;
+    padding-right: 20px;
+    padding-bottom: 5px;
+}
+
+/* PR Details */
+.prDetails,.productDetails{
+    padding: 30px 0 30px 90px;
+}
+
+.viewRow{
+    content: "";
+    display: item;
+    clear: both;
+
+}
+
+.viewCol{
+    float:left;
+    width: 50%;
+}
+
+.viewCol > input, .viewCol > div > input{
+    width: 400px;
+    height: 30px;
+    border-radius: 10px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width:2px;
+}
+
+.addLocationButton{
+    background-color: transparent;
+    border: none;
+}
+
+.addLocIcon{
+    vertical-align: middle;
+}
+
+.addLocationText{
+    margin: 0;
+    padding-top: 5px;
+}
+
+/* Product Details */
+
+.productDetails{
+    padding-top: 100px;
+    padding-right: 90px;
+    height: fit-content;
+}
+
+.pDTop{
+    width: auto;
+}
+
+.itemLabel > li{
+    display: inline;
+    padding: 0 30px 0 30px;
+}
+
+.itemNo{
+
+}
+
+.itemName{
+
+}
+
+.itemQty{
+   margin-left: 320px;
+}
+
+.itemUP{
+    margin-left: 40px;
+}
+
+.itemTotalUP{
+    margin-left: 30px;
+}
+
+.productLines{
+    height: 40px;
+    vertical-align: middle;
+}
+
+.plItemRow{
+    padding-top: 10px;
+    vertical-align: middle;
+    display: grid;
+    text-align: center;
+    grid-template-columns: 130px 390px 160px 170px 200px 10px;
+} 
+
+.plItemRow > div > p {
+    margin: 0;
+}
+
+.plItemNo, .plQty, .plUnitPrice, .plTotalUP{
+    text-align: center;
+    width: 100px;
+}
+
+.plItemName{
+    width: 350px;
+}
+
+
+.plItemNo, .plItemName, .plQty, .plUnitPrice, .plTotalUP{
+    height: 25px;
+    border-radius: 8px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width:1.5px;
+}
+
+
+
+/* Create PR Button */
+.createButton{
+    background-color: rgb(255, 255, 255);
+    width: 35px;
+    height: 35px;
+    border-radius: 100%;
+    border-style: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.createButton:hover{
+    background-color: #efecec;
+}
+
+.addIcon{
+    vertical-align: middle;
+}
+
+/* Remarks */
+.remarksTestArea{
+    padding-left: 90px;
+    padding-top: 100px;
+    margin-top: 100px
+}
+
+.textArea{
+    width: 1040px;
+    height: 200px;
+    border-radius: 8px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width:2px;
+}
+
+/* Submit Button */
+.submit{
+    padding-left: 1020px;
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.submitButton{
+    color: white;
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans";
+    width: 120px;
+    height: 40px;
+    background-color: #486284;
+    border-color: #486284;
+    border-style: solid;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}

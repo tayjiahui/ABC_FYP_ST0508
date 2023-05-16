@@ -93,13 +93,14 @@ const DBTables = {
         const sql = 
         `CREATE TABLE purchaseRequest (
             prID INT auto_increment,
-            requestDate DATETIME NOT NULL,
+            requestDate VARCHAR(100) NOT NULL,
             userID INT NOT NULL,
             supplierID INT NOT NULL,
             paymentModeID INT NOT NULL,
             branchID INT NOT NULL,
             remarks VARCHAR(500),
-            prStatusID INT NOT NULL,
+            apprRemarks VARCHAR(500),
+            prStatusID INT DEFAULT(1),
             PRIMARY KEY (prID)
         )`;
         return connection.promise()
@@ -226,7 +227,19 @@ const DBTables = {
     // Purchase Order Table
 
     // Payament Status Table
-
+    initpaymentStatusTable: () => {
+        const sql = `CREATE TABLE paymentStatus (
+            paymentStatusID INT auto_increment,
+            paymentStatus VARCHAR(255) NOT NULL UNIQUE,
+            PRIMARY KEY (paymentStatusID)
+        )`;
+        return connection.promise()
+        .query(sql)
+        .catch((error) => {
+            console.log(error)
+            throw error;
+        });
+    }
     // Purchase Status Table
 
 
