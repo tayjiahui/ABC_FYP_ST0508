@@ -10,7 +10,6 @@ import addLocIcon from '../../public/addLocationicon.svg';
 import addIcon from '../../public/plusIcon.svg';
 
 import axios from "axios";
-import { CLIENT_STATIC_FILES_RUNTIME_POLYFILLS_SYMBOL } from "next/dist/shared/lib/constants";
 
 function isLocalhost(url) 
 {

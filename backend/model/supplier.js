@@ -61,9 +61,9 @@ const supplierDB = {
             })
     },
 
-    // retrieve all suppliers - id, name, categories (logo not included)
+    // retrieve all suppliers - id, contact person name, supplier name, categories (sub logo for contact person name for now)
     getAllSuppliers: async() => {
-        const sql = `SELECT supplier.supplierID, supplier.supplierName, GROUP_CONCAT(category.categoryName SEPARATOR ', ') AS "Category"
+        const sql = `SELECT supplier.supplierID, supplier.contactPersonName, supplier.supplierName, GROUP_CONCAT(category.categoryName SEPARATOR ', ') AS "Category"
                     FROM ((suppliersCategory
                         INNER JOIN supplier ON suppliersCategory.fkSupplier_id = supplier.supplierID)
                         INNER JOIN category ON suppliersCategory.fkCategory_id = category.categoryID)

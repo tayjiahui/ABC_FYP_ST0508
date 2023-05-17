@@ -3,8 +3,6 @@ const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-const next = require('next');
-
 // init
 const app = express();
 const PORT = process.env.PORT || 3000;
