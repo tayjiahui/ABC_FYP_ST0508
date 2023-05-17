@@ -86,6 +86,55 @@ const paymentTrackDB = {
         })
     },
 
-};
+    //get supplier information 
+    getSupplierInformationByName: async(supplierName) => {
+        const sql = `SELECT s.supplierName, s.contactPersonName, s.phoneNum, s.email, s.bankAccountNum, s.officeNum, s.address, GROUP_CONCAT(c.categoryName SEPARATOR ', ') as categoryName
+        FROM supplier s
+        JOIN suppliersCategory sc ON s.supplierID = sc.fkSupplier_id
+        JOIN category c ON sc.fkCategory_id = c.categoryID
+        WHERE s.supplierName = ?
+        GROUP BY s.supplierID`
+
+        return connection.promise()
+        .query(sql, [supplierName])
+        .then((result) => {
+            if (result.length == 0) {
+                return null;
+            }
+            else {
+                return result[0]
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            return err;
+        })
+    },
+
+    getSupplierInformationByID: async(id) =>{
+        const sql = `SELECT s.supplierName, s.contactPersonName, s.phoneNum, s.email, s.bankAccountNum, s.officeNum, s.address, GROUP_CONCAT(c.categoryName SEPARATOR ', ') as categoryName
+        FROM supplier s
+        JOIN suppliersCategory sc ON s.supplierID = sc.fkSupplier_id
+        JOIN category c ON sc.fkCategory_id = c.categoryID
+        WHERE s.supplierID = ?
+        GROUP BY s.supplierID`;
+
+        return connection.promise()
+        .query(sql, [id])
+        .then((result) => {
+            if (result.length == 0) {
+                return null;
+            }
+            else {
+                return result[0]
+            }
+        })
+        .catch((err) => {
+            console.log(err)
+            return err;
+        })
+    }
+
+}
 
 module.exports = paymentTrackDB;

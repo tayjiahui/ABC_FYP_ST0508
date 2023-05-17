@@ -102,3 +102,40 @@ module.exports.deletePaymentStatusByID = async (req, res, next) => {
     })
 
 }
+
+module.exports.getSupplierInformationByName = async(req, res, next) => {
+    let supplierName = req.params.supplierName;
+
+    return paymentTrackModel
+    .getSupplierInformationByName(supplierName)
+    .then((result) => {
+        if (result[0] == null) {
+            res.send(`Supplier Named ${supplierName} not found`);
+        }
+        else {
+            res.status(200).send(result)
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send(`Unknown error`);
+    })
+}
+
+module.exports.getSupplierInformationByID = async (req, res, next) => {
+    let id = req.params.supplierID;
+
+    return paymentTrackModel
+    .getSupplierInformationByID(id)
+    .then((result) => {
+        if (result[0] == null) {
+            res.send(`Supplier ID ${id} not found`);
+        } else {
+            res.status(200).send(result)
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send(`Unknown error`);
+    })
+}

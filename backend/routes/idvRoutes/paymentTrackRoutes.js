@@ -21,6 +21,9 @@ router.get('/', paymentTrackController.getAllPaymentStatus);
 router.put('/:paymentStatusID', paymentTrackController.updatePaymentStatusByID);
 //delete status by id
 router.delete('/:paymentStatusID', paymentTrackController.deletePaymentStatusByID);
-
+//get supplier info by name
+router.get('/supplier/:supplierName', paymentTrackController.getSupplierInformationByName)
+//get supplier info by id
+router.get('/supplier/info/:supplierID', paymentTrackController.getSupplierInformationByID)
 
 module.exports = router;
