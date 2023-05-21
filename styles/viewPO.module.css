@@ -1,0 +1,387 @@
+.poHeader {
+    display: flex;
+    align-items: center;
+}
+
+
+.poHeader h1 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.poHeader h1 p {
+    margin-left: 30px;
+}
+
+
+.dropContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.dropDown {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 15px;
+    border: 1px solid #DDE1E6;
+    margin: 0 10px;
+    width: 700px;
+}
+
+.dropdown1 {
+    margin-right: 200px;
+}
+
+.uploadButton {
+    margin-top: 50px;
+    margin-left: 130px;
+    padding: 13px 50px 13px 50px;
+    border-radius: 30px;
+    border-width: 1px;
+    background-color: #486284;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.supText {
+    margin-top: 160px;
+    font-weight: bold;
+}
+
+.firstRow {
+    display: flex;
+}
+
+.supplierInfo {
+    padding-left: 130px;
+    padding-right: 130px;
+}
+
+.supplierName,
+.supplierPerson {
+    margin-top: 2px;
+}
+
+.firstTitle {
+    margin-right: 300px;
+    margin-top: 20px;
+}
+
+
+.firstRData {
+    display: flex;
+}
+
+.firstData1 {
+    margin-right: 348px;
+    margin-top: 7px;
+}
+
+.firstData2 {
+    margin-right: 353px;
+    margin-top: 7px;
+}
+
+.firstData3 {
+    margin-right: 338px;
+    margin-top: 7px;
+}
+
+.firstData4 {
+    margin-top: 7px;
+}
+
+.secondRow {
+    display: flex;
+}
+
+.secondTitle1 {
+    margin-right: 241px;
+    margin-top: 50px;
+}
+
+.secondTitle2 {
+    margin-right: 347px;
+    margin-top: 50px;
+}
+
+.secondTitle3 {
+    margin-right: 300px;
+    margin-top: 50px;
+}
+
+.secondTitle4 {
+    margin-top: 50px;
+}
+
+
+.secondRData {
+    display: flex;
+}
+
+.secondData1 {
+    margin-right: 290px;
+}
+
+.secondData2 {
+    margin-right: 333px;
+}
+
+.secondData3 {
+    margin-right: 330px;
+}
+
+.supplierInfo>.secondRData>p {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+}
+
+
+/* remarks  */
+.remarkSection {
+    padding-left: 130px;
+    padding-right: 130px;
+    margin-top: 100px;
+}
+
+.remarksInput {
+    margin-top: 20px;
+    height: 200px;
+    width: 1600px;
+    border-radius: 8px;
+}
+
+/* .remarkSection>input[type="text"] {} */
+
+.save {
+    margin-top: 50px;
+    margin-left: 1600px;
+}
+
+.saveButton {
+    padding: 10px 50px 10px 50px;
+    background-color: #486284;
+    color: white;
+    font-size: 17px;
+    border-radius: 20px;
+    border-width: 1px;
+    cursor: pointer;
+}
+
+
+/* modal */
+
+/* Styling for the modal container */
+.modalcontainer {
+    width: 450px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.uploadText {
+    text-align: center;
+}
+
+.closeme {
+    display: inline-flex;
+    float: right;
+    margin-right: -30px;
+    margin-top: -70px;
+    background-color: transparent;
+    border: none;
+    font-size: x-large;
+    cursor: pointer;
+}
+
+.innerBox {
+    background-color: rgb(255, 255, 255);
+    height: 150px;
+    width: 350px;
+    border-radius: 15px;
+    border-style: dashed;
+    padding: 1px 10px 35px 10px;
+    text-align: center;
+}
+
+.innerBox>.firstText {
+    margin-top: 30px;
+}
+
+.browseButton {
+    padding: 10px 20px 10px 20px;
+    background-color: #486284;
+    color: white;
+    border-radius: 20px;
+    border-width: 1px;
+    cursor: pointer;
+}
+
+.twoButtons {
+    display: flex;
+    float: right;
+    margin-top: 10px;
+}
+
+.cancelBtn,
+.uploadBtn {
+    cursor: pointer;
+    color: white;
+    border-radius: 20px;
+    border-width: 1px;
+    padding: 10px 30px 10px 30px;
+    margin-right: 30px;
+}
+
+.cancelBtn {
+    background-color: #93A0B1;
+}
+
+.uploadBtn {
+    background-color: #486284;
+}
+
+
+/* confirm box */
+.modalcontainer2 {
+    width: 450px;
+    height: 200px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalBox2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.closeme2 {
+    background-color: transparent;
+    border: none;
+    margin-left: 405px;
+    margin-top: -65px;
+    font-size: x-large;
+}
+
+.uploadButtons {
+    margin-top: 70px;
+    display: flex;
+    justify-content: center;
+}
+
+.cancelBtn2, .uploadBtn2 {
+    cursor: pointer;
+    color: white;
+    border-radius: 20px;
+    border-width: 1px;
+    padding: 10px 30px 10px 30px;
+    margin-left: 15px;
+}
+
+.cancelBtn2 {
+    background-color: #93A0B1;
+}
+
+.uploadBtn2 {
+    background-color: #486284;
+}
+
+.rectangleContainer {
+    width: 230px;
+    height: 50px;
+    border: 1px solid black;
+    margin-left: 130px;
+    margin-top: 20px;
+    border-radius: 10px;
+    border-style: dotted;
+}
+
+.rectangle {
+    text-align: center;
+    margin-top: 14px;
+    
+}
+
+
+/* create status pop */
+.newStatusBox {
+    width: 450px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+}
+
+
+.newStatus {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.newStatus input[type="text"] {
+    padding: 10px 15px 10px 15px;
+    border-radius: 20px;
+    border-width: 1px;
+    margin-top: 15px;
+}
+
+.newStatus button {
+    padding: 6px 20px 6px 20px;
+    border-radius: 15px;
+    border-width: 1px;
+    background-color: #486284;
+    color: white;
+}
+
+.newStatus form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+
+
+.closemeStatus {
+    background-color: transparent;
+    border: none;
+    margin-left: 405px;
+    margin-top: -65px;
+    font-size: x-large;
+    cursor: pointer;
+}

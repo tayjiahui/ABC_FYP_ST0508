@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import axios from 'axios';
 
@@ -139,6 +140,12 @@ export default function Supplier() {
                 </a>
             </div>
             
+=======
+export default function Supplier() {
+    return (
+        <>
+            <h1>Supplier</h1>
+>>>>>>> main
         </>
     )
 }
