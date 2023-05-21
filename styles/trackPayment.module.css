@@ -1,1 +1,119 @@
 /* this is indv track payment css */
+
+
+.ptContainer {
+    display: flex;
+}
+
+.searchQuery {
+    padding-top: 30px;
+    padding-right: 100px;
+}
+
+
+.searchText {
+    border-color: solid 93A2B7;
+    border-width: 1.5px;
+    border-radius: 10px;
+    width: 250px;
+    height: 20px;
+}
+
+.searchButton{
+    border-style: none;
+    background-color: transparent;
+    vertical-align:middle;
+}
+
+.mainHeader { 
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+.rowTitles {
+    display: inline-block;
+    margin: 0 100px;
+
+}
+
+.rowTitlesNo, .rowTitlesCreate, .rowTitlesPrice, .rowTitlesMOP, .rowTitlesSup, .rowTitlesStat {
+    display: inline;
+}
+
+.rowTitlesNo {
+    margin-left: 50px;
+}
+
+.rowTitlesCreate{
+    margin-left: 150px;
+}
+
+.rowTitlesPrice {
+    margin-left: 200px;
+}
+
+.rowTitlesMOP {
+    margin-left: 200px;
+}
+
+.rowTitlesSup {
+    margin-left: 200px;
+}
+
+.rowTitlesStat {
+    margin-left: 200px;
+}
+
+
+.rowTitlesNo1 {
+    margin-left: 50px;
+
+}
+
+.rowTitlesCreate1{
+    margin-left: 150px;
+}
+
+.rowTitlesPrice1 {
+    margin-left: 185px;
+}
+
+.rowTitlesMOP1 {
+    margin-left: 200px;
+}
+
+.rowTitlesSup1 {
+    margin-left: 230px;
+}
+
+.rowTitlesStat1 {
+    margin-left: 195px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    border: none;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 18px;
+    background-color: #C0D8F7;
+    margin-top: 5px;
+}
+
+
+.row:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.poLink {
+    text-decoration: none;
+    color: black;
+}
+
+.textLink {
+    text-decoration: none;
+    color: black;
+}

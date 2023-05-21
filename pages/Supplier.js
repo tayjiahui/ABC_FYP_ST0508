@@ -137,8 +137,7 @@ export default function Supplier() {
                         <Image src={plusIcon} alt='Plus Icon' width={40} height={40}/>
                     </button>
                 </a>
-            </div>
-            
+            </   
         </>
     )
 }
