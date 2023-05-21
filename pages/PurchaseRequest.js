@@ -24,9 +24,10 @@ function isLocalhost()
         console.log('hostname   ' + hostname);
         // isLocalhost(hostname);
         if(hostname == 'localhost'){
-            return 'http://localhost:3000'
+            return 'https://abc-cooking-studio-backend.azurewebsites.net'
         }
-        else if(hostname == 'abc-cooking-studio'){
+        else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
+            console.log('backend ');
             return 'https://abc-cooking-studio-backend.azurewebsites.net'
         }
 
