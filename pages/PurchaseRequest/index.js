@@ -5,41 +5,42 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 // Style Sheet
-import styles from '../styles/purchaseReq.module.css';
+import styles from '../../styles/purchaseReq.module.css';
 
 // Images
-import searchIcon from '../public/searchIcon.svg';
-import filterIcon from '../public/filterIcon.svg';
-import plusIcon from '../public/plusIcon.svg';
-import pendingCircle from '../public/yellowPendingCircle.svg';
-import approvedCircle from '../public/greenApprovedCircle.svg';
-import rejectedCircle from '../public/redRejectedCircle.svg';
+import searchIcon from '../../public/searchIcon.svg';
+import filterIcon from '../../public/filterIcon.svg';
+import plusIcon from '../../public/plusIcon.svg';
+import pendingCircle from '../../public/yellowPendingCircle.svg';
+import approvedCircle from '../../public/greenApprovedCircle.svg';
+import rejectedCircle from '../../public/redRejectedCircle.svg';
+
+// Base urls
+const URL = [];
 
 function isLocalhost() 
 {
-    // console.log(url.includes('localhost') || url.includes('127.0.0.1'));
-    // return url.includes('localhost') || url.includes('127.0.0.1');
     if (typeof window !== 'undefined') {
         const hostname = window.location.hostname;
-        console.log('hostname   ' + hostname);
-        // isLocalhost(hostname);
+        // console.log('hostname   ' + hostname);
         if(hostname == 'localhost'){
-            return 'http://localhost:3000'
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
+            
         }
         else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
-            console.log('backend ');
-            return 'https://abc-cooking-studio-backend.azurewebsites.net'
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
         }
 
+        return URL;
     }
 }
 
-// const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
-// const baseUrl = API_URL;
-const baseUrl = isLocalhost();
-console.log('backendbaseurl ' + baseUrl);
-// const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
-const baseURL = 'http://localhost:5000';
+isLocalhost();
+
+const baseUrl = URL[0];
+const baseURL = URL[1];
 
 // const id = localStorage.getItem("user_Id");
 const id = 2;
@@ -66,7 +67,7 @@ function PRRow (props){
 
     return (
         <div>
-            <a href={baseURL + '/PurchaseRequest/ViewPR/' + props.prID}>
+            <a href={baseURL + '/PurchaseRequest/' + props.prID}>
                 <button className={styles.prButton}>
                     <div className={styles.prRow}>
                         <div className={styles.prTextRow}>
@@ -103,7 +104,8 @@ function Icon(props){
 }
 
 
-export default function PurchaseReq() {
+export default function PurchaseRequest() {
+    
     const [PRResults, setlist1] = useState([(<div>Loading...</div>)]);
 
     // show all PR
@@ -182,12 +184,11 @@ export default function PurchaseReq() {
             </div>
 
             <div>
-                <a href={baseURL + '/PurchaseRequest/CreatePR'}>
+                <a href={'/PurchaseRequest/CreatePR'}>
                     <button className={styles.createButton}>
                         <Image src={plusIcon} alt='Plus Icon' width={40} height={40}/>
                     </button>
                 </a>
-                
             </div>
 
         </>
