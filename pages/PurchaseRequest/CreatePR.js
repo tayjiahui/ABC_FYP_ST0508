@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
 
@@ -11,30 +10,31 @@ import addIcon from '../../public/plusIcon.svg';
 
 import axios from "axios";
 
+// Base urls
+const URL = [];
+
 function isLocalhost() 
 {
-    // console.log(url.includes('localhost') || url.includes('127.0.0.1'));
-    // return url.includes('localhost') || url.includes('127.0.0.1');
     if (typeof window !== 'undefined') {
         const hostname = window.location.hostname;
-        console.log('hostname   ' + hostname);
-        // isLocalhost(hostname);
+        // console.log('hostname   ' + hostname);
         if(hostname == 'localhost'){
-            return 'http://localhost:3000'
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
+            
         }
         else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
-            return 'https://abc-cooking-studio-backend.azurewebsites.net'
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
         }
 
+        return URL;
     }
 }
 
-// const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
-// const baseUrl = API_URL;
-const baseUrl = isLocalhost();
-console.log('backendbaseurl ' + baseUrl);
-// const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
-const baseURL = 'http://localhost:5000';
+isLocalhost();
+
+const baseUrl = URL[0];
 
 const id = 2;
 
@@ -132,7 +132,7 @@ export default function Supplier() {
             console.log(err);
             alert(err);
         })
-    })
+    }, [])
 
     const [LocationsList, setLocations] = useState([{location: ""}]);
     const addLocInput = () => {
@@ -194,7 +194,7 @@ export default function Supplier() {
 
             <div className="headerRow">
                 <h1>
-                    <a href={baseURL + "/PurchaseRequest"}>
+                    <a href={"/PurchaseRequest"}>
                         <Image src={arrowIcon} id={styles.arrow} /> 
                     </a>
                     Create Purchase Request
