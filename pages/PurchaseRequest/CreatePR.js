@@ -11,14 +11,29 @@ import addIcon from '../../public/plusIcon.svg';
 
 import axios from "axios";
 
-function isLocalhost(url) 
+function isLocalhost() 
 {
-    return url.includes('localhost') || url.includes('127.0.0.1');
+    // console.log(url.includes('localhost') || url.includes('127.0.0.1'));
+    // return url.includes('localhost') || url.includes('127.0.0.1');
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        console.log('hostname   ' + hostname);
+        // isLocalhost(hostname);
+        if(hostname == 'localhost'){
+            return 'http://localhost:3000'
+        }
+        else if(hostname == 'abc-cooking-studio'){
+            return 'https://abc-cooking-studio-backend.azurewebsites.net'
+        }
+
+    }
 }
 
 // const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
 // const baseUrl = API_URL;
-const baseUrl = 'http://localhost:3000';
+const baseUrl = isLocalhost();
+console.log('backendbaseurl ' + baseUrl);
+// const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
 const baseURL = 'http://localhost:5000';
 
 const id = 2;
