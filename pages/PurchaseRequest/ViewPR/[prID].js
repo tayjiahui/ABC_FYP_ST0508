@@ -2,16 +2,25 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
 
-import styles from '../../styles/viewPR.module.css';
+import styles from '../../../styles/viewPR.module.css';
 
 // Image
-import arrowIcon from '../../public/arrowIcon.svg';
-import pendingCircle from '../../public/yellowPendingCircle.svg';
-import approvedCircle from '../../public/greenApprovedCircle.svg';
-import rejectedCircle from '../../public/redRejectedCircle.svg';
+import arrowIcon from '../../../public/arrowIcon.svg';
+import pendingCircle from '../../../public/yellowPendingCircle.svg';
+import approvedCircle from '../../../public/greenApprovedCircle.svg';
+import rejectedCircle from '../../../public/redRejectedCircle.svg';
 
 import axios from "axios";
 
+function isLocalhost(url) 
+{
+    return url.includes('localhost') || url.includes('127.0.0.1');
+}
+
+// const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
+// const baseUrl = API_URL;
+const baseUrl = 'http://localhost:3000';
+const baseURL = 'http://localhost:5000';
 
 function ItemLines (props){
     return(
@@ -39,67 +48,19 @@ function ItemLines (props){
     )
 };
 
-export async function getServerSideProps(context){
-    const host = context.req.headers.host;
-    // console.log(host);
-    
-    const backBaseURL = [];
-
-    if(host == 'localhost:5000'){
-        backBaseURL.push('http://localhost:3000');
-    }
-    else{
-        backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
-    }
-    
-    const { params } = context;
-    const { prID } = params;
-
-    const response1 = await fetch(`${backBaseURL}/api/purchaseReq/PR/${prID}`);
-    const response2 = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${prID}`);
-
-    const data1 = await response1.json();
-    const data2 = await response2.json();
-    // console.log(data1);
-    // console.log(data2);
-
-    // // Test for statuts Circle
-    // const statusID = response1.data[0].prStatusID;
-
-    // function circleTest(statusID){
-    //     if(statusID == 1){
-    //         return '/yellowPendingCircle.svg';
-    //     }
-    //     else if(statusID == 2){
-    //         return '/greenApprovedCircle.svg';
-    //     }
-    //     else if(statusID == 3){
-    //         return '/redRejectedCircle.svg';
-    //     }
-    //     else{
-    //         return '/yellowPendingCircle.svg';
-    //     }
-    // }
-            
-    //         const circle = circleTest(statusID);
-    //         testCircle(circle);
-
-    return { 
-        props:{
-            host,
-            prDetails: data1,
-            pLDetails: data2,
-            prID
-        }
-    }
-}
-
-export default function Supplier({prDetails, pLDetails}) {
+export default function Supplier() {
     const router = useRouter();
 
     const prID = router.query.prID;
 
     const [Circle,testCircle] = useState();
+
+    const [DateRequest, dateReqRes] = useState();
+    const [Name, nameRes] = useState();
+    const [Supplier, supplierRes] = useState();
+    const [Location, locationRes] = useState();
+    const [PaymentMode, paymentModeRes] = useState();
+    const [Remarks, remarksRes] = useState();
 
     const [ProductDetails, setList] = useState();
 
@@ -107,89 +68,108 @@ export default function Supplier({prDetails, pLDetails}) {
     const [GST, gstCal] = useState();
     const [Total, totalCal] = useState();
 
-    // PR Details
-    const PR = prDetails[0];
-
     useEffect(() => {
+        axios.all([
+            axios.get(`${baseUrl}/api/purchaseReq/PR/${prID}`, {}),
+            axios.get(`${baseUrl}/api/purchaseReq/lineItem/${prID}`, {})
+        ])
+        .then(axios.spread((response1, response2) => {
+            // console.log(response1.data);
+            // console.log(response2.data);
+            // console.log(response1.data[0]);
 
-        // Test for status Circle
-        const statusID = PR.prStatusID;
+            // Test for statuts Circle
+            const statusID = response1.data[0].prStatusID;
 
-        function circleTest(statusID){
-            if(statusID == 1){
-                return '/yellowPendingCircle.svg';
+            function circleTest(statusID){
+                if(statusID == 1){
+                    return '/yellowPendingCircle.svg';
+                }
+                else if(statusID == 2){
+                    return '/greenApprovedCircle.svg';
+                }
+                else if(statusID == 3){
+                    return '/redRejectedCircle.svg';
+                }
+                else{
+                    return '/yellowPendingCircle.svg';
+                }
             }
-            else if(statusID == 2){
-                return '/greenApprovedCircle.svg';
+        
+            const circle = circleTest(statusID);
+            testCircle(circle);
+
+            // Get PR Details
+            const prDetails = response1.data[0];
+
+            dateReqRes(prDetails.requestDate);
+            nameRes(prDetails.name);
+            supplierRes(prDetails.supplierName);
+            locationRes(prDetails.branchName);
+            paymentModeRes(prDetails.paymentMode);
+            remarksRes(prDetails.remarks);
+
+            const PD = response2.data;
+            const itemLines = [];
+            const totalPrices = [];
+
+            PD.forEach((item, index) => {
+                itemLines.push(
+                    <div key={index}>
+                        <ItemLines
+                            ItemNo={index + 1}
+                            ItemName={item.itemName}
+                            Qty={item.quantity}
+                            UnitPrice={item.unitPrice}
+                            TotalUnitPrice={item.totalUnitPrice}/>
+                    </div>
+                );
+
+                totalPrices.push(item.totalUnitPrice);
+            });
+
+            setList(itemLines);
+
+            // Calculate Total
+            function CalculateTotal(array){
+                let total = 0;
+                for(let i = 0; i < array.length; i++){
+                    let num = +array[i]
+                    total = total + num
+                }
+
+                return total;
+            }            
+            
+            function GSTFinder(amt){
+                const gst = (8/100)*amt;
+                return gst;
             }
-            else if(statusID == 3){
-                return '/redRejectedCircle.svg';
-            }
-            else{
-                return '/yellowPendingCircle.svg';
-            }
-        }
-                
-        const circle = circleTest(statusID);
-        testCircle(circle);
+            
+            const totalArr = [];
 
-        // Product lines
-        const itemLines = [];
-        const totalPrices = [];
+            const subtotal = CalculateTotal(totalPrices);
+            subtotalCal(subtotal.toFixed(2));
 
-        pLDetails.forEach((item, index) => {
-            itemLines.push(
-                <div key={index}>
-                    <ItemLines
-                        ItemNo={index + 1}
-                        ItemName={item.itemName}
-                        Qty={item.quantity}
-                        UnitPrice={item.unitPrice}
-                        TotalUnitPrice={item.totalUnitPrice}/>
-                </div>
-            );
+            const gst = GSTFinder(subtotal);
+            gstCal(gst.toFixed(2));
 
-            totalPrices.push(item.totalUnitPrice);
-        });
+            totalArr.push(subtotal, gst);
 
-        setList(itemLines);
+            const total = CalculateTotal(totalArr).toFixed(2);
+            totalCal(total);
 
-        // Calculate Total
-        function CalculateTotal(array){
-            let total = 0;
-            for(let i = 0; i < array.length; i++){
-                let num = +array[i]
-                total = total + num
-            }
-
-            return total;
-        }            
-                
-        function GSTFinder(amt){
-            const gst = (8/100)*amt;
-            return gst;
-        }
-                
-        const totalArr = [];
-
-        const subtotal = CalculateTotal(totalPrices);
-        subtotalCal(subtotal.toFixed(2));
-
-        const gst = GSTFinder(subtotal);
-        gstCal(gst.toFixed(2));
-
-        totalArr.push(subtotal, gst);
-
-        const total = CalculateTotal(totalArr).toFixed(2);
-        totalCal(total);
-
-    }, [])
+        }))
+        .catch((err) => {
+            console.log(err);
+        })
+    })
 
     return (
         <>
             <div className="headerRow">
                 <h1>
-                    <a href={"/PurchaseRequest"}>
+                    <a href={baseURL + "/PurchaseRequest"}>
                         <Image src={arrowIcon} id={styles.arrow} /> 
                     </a>
                     Purchase Request #{prID}
@@ -200,28 +180,28 @@ export default function Supplier({prDetails, pLDetails}) {
             <div className={styles.prDetails}>
                 <div>
                     <h4>Date Request</h4>
-                    <p>{PR.requestDate}</p>
+                    <p>{DateRequest}</p>
                 </div>
                 
                 <div className={styles.viewRow}>
                     <div className={styles.viewCol}>
                         <h4>Name</h4>
-                        <p>{PR.name}</p>
+                        <p>{Name}</p>
                     </div>
                     <div className={styles.viewCol}>
                         <h4>Supplier</h4>
-                        <p>{PR.supplierName}</p>
+                        <p>{Supplier}</p>
                     </div>
                 </div>
 
                 <div className={styles.viewRow}>
                     <div className={styles.viewCol}>
                         <h4>Location</h4>
-                        <p>{PR.branchName}</p>
+                        <p>{Location}</p>
                     </div>
                     <div className={styles.viewCol}>
                         <h4>Payment Mode</h4>
-                        <p>{PR.paymentMode}</p>
+                        <p>{PaymentMode}</p>
                     </div>
                 </div>
             </div>
@@ -279,7 +259,7 @@ export default function Supplier({prDetails, pLDetails}) {
 
             <div className={styles.prDetails}>
                 <h4>Remarks</h4>
-                <p>{PR.remarks}</p>
+                <p>{Remarks}</p>
             </div>
         </>
     )

@@ -4,51 +4,33 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+
 // Style Sheet
-import styles from '../../styles/purchaseReq.module.css';
+import styles from '../styles/purchaseReq.module.css';
 
 // Images
-import searchIcon from '../../public/searchIcon.svg';
-import filterIcon from '../../public/filterIcon.svg';
-import plusIcon from '../../public/plusIcon.svg';
-import pendingCircle from '../../public/yellowPendingCircle.svg';
-import approvedCircle from '../../public/greenApprovedCircle.svg';
-import rejectedCircle from '../../public/redRejectedCircle.svg';
+import searchIcon from '../public/searchIcon.svg';
+import filterIcon from '../public/filterIcon.svg';
+import plusIcon from '../public/plusIcon.svg';
+import pendingCircle from '../public/yellowPendingCircle.svg';
+import approvedCircle from '../public/greenApprovedCircle.svg';
+import rejectedCircle from '../public/redRejectedCircle.svg';
 
-// Base urls
-const URL = [];
-
-function isLocalhost() 
+function isLocalhost(url) 
 {
-    if (typeof window !== 'undefined') {
-        const hostname = window.location.hostname;
-        console.log('hostname   ' + hostname);
-        if(hostname == 'localhost'){
-            URL.push('http://localhost:3000', 'http://localhost:5000');
-            console.log(URL);
-            
-        }
-        else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
-            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-            console.log(URL);
-        }
-
-        return URL;
-    }
+    return url.includes('localhost') || url.includes('127.0.0.1');
 }
 
-isLocalhost();
-
-const baseUrl = URL[0];
-const baseURL = URL[1];
-
-console.log(baseUrl);
-console.log(baseURL);
+// const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
+// const baseUrl = API_URL;
+const baseUrl = 'http://localhost:3000';
+const baseURL = 'http://localhost:5000';
 
 // const id = localStorage.getItem("user_Id");
 const id = 2;
 
 function PRRow (props){
+    const prID = props.ID
     const statusID = props.StatusID;
 
     function circleTest(statusID){
@@ -70,7 +52,7 @@ function PRRow (props){
 
     return (
         <div>
-            <a href={baseURL + '/PurchaseRequest/' + props.prID}>
+            <a href={baseURL + '/PurchaseRequest/ViewPR/' + props.prID}>
                 <button className={styles.prButton}>
                     <div className={styles.prRow}>
                         <div className={styles.prTextRow}>
@@ -107,8 +89,7 @@ function Icon(props){
 }
 
 
-export default function PurchaseRequest() {
-    
+export default function PurchaseReq() {
     const [PRResults, setlist1] = useState([(<div>Loading...</div>)]);
 
     // show all PR
@@ -146,7 +127,7 @@ export default function PurchaseRequest() {
         }))
         .catch((err) => {
             console.log(err);
-            if(err.response === 404){
+            if(err.response.status === 404){
                 alert(err.response.data);
             }
             else{
@@ -187,11 +168,12 @@ export default function PurchaseRequest() {
             </div>
 
             <div>
-                <a href={'/PurchaseRequest/CreatePR'}>
+                <a href={baseURL + '/PurchaseRequest/CreatePR'}>
                     <button className={styles.createButton}>
                         <Image src={plusIcon} alt='Plus Icon' width={40} height={40}/>
                     </button>
                 </a>
+                
             </div>
 
         </>

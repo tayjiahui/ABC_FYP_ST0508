@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-export default function TrackPayment() {
-    return (
-        <>
-            <h1>Track Payment</h1>
-=======
 import React from "react";
 import axios from "axios";
 import styles from "../styles/trackPayment.module.css";
@@ -82,8 +76,6 @@ export default function TrackPayment() {
         <div>
             {poList}
         </div>
-        
->>>>>>> main
         </>
     )
 }
