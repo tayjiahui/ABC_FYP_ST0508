@@ -6,7 +6,7 @@ import styles from '../../styles/createPR.module.css';
 
 // Image
 import arrowIcon from '../../public/arrowIcon.svg';
-import addLocIcon from '../../public/addLocationicon.svg';
+import addLocIcon from '../../public/addLocationIcon.svg';
 import addIcon from '../../public/plusIcon.svg';
 
 import axios from "axios";
