@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-
 // Style Sheet
 import styles from '../styles/purchaseReq.module.css';
 
@@ -16,21 +15,35 @@ import pendingCircle from '../public/yellowPendingCircle.svg';
 import approvedCircle from '../public/greenApprovedCircle.svg';
 import rejectedCircle from '../public/redRejectedCircle.svg';
 
-function isLocalhost(url) 
+function isLocalhost() 
 {
-    return url.includes('localhost') || url.includes('127.0.0.1');
+    // console.log(url.includes('localhost') || url.includes('127.0.0.1'));
+    // return url.includes('localhost') || url.includes('127.0.0.1');
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        console.log('hostname   ' + hostname);
+        // isLocalhost(hostname);
+        if(hostname == 'localhost'){
+            return 'http://localhost:3000'
+        }
+        else if(hostname == 'abc-cooking-studio'){
+            return 'https://abc-cooking-studio-backend.azurewebsites.net'
+        }
+
+    }
 }
 
 // const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
 // const baseUrl = API_URL;
-const baseUrl = 'http://localhost:3000';
+const baseUrl = isLocalhost();
+console.log('backendbaseurl ' + baseUrl);
+// const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
 const baseURL = 'http://localhost:5000';
 
 // const id = localStorage.getItem("user_Id");
 const id = 2;
 
 function PRRow (props){
-    const prID = props.ID
     const statusID = props.StatusID;
 
     function circleTest(statusID){
@@ -127,7 +140,7 @@ export default function PurchaseReq() {
         }))
         .catch((err) => {
             console.log(err);
-            if(err.response.status === 404){
+            if(err.response === 404){
                 alert(err.response.data);
             }
             else{
