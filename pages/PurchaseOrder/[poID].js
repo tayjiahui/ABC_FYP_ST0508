@@ -2,8 +2,8 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import axios from "axios";
 import Image from "next/image"
-import styles from '../../../../styles/viewPO.module.css';
-import arrowIcon from '../../../../public/arrowIcon.svg';
+import styles from '../../styles/viewPO.module.css';
+import arrowIcon from '../../public/arrowIcon.svg';
 function isLocalhost(url) {
   return url.includes('localhost') || url.includes('127.0.0.1');
 }
