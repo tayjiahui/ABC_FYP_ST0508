@@ -34,7 +34,7 @@ export default function App({Component, pageProps}){
                         <Link className={router.pathname == "/TrackOrder" ? "active": ""} href="/TrackOrder">TrackOrder</Link>
                     </li>
                     <li>
-                        <Link className={router.pathname == "/TrackPayment" ? "active": ""} href="/TrackPayment">Track Payment</Link>
+                        <Link className={router.pathname == "/TrackPayment" ? "active": ""} href="/PurchaseOrder">Track Payment</Link>
                     </li>
                     <li>
                         <Link className={router.pathname == "/Supplier" ? "active": ""} href="/Supplier">Supplier</Link>
