@@ -2,15 +2,17 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import axios from "axios";
 import Image from "next/image"
-import styles from '../../../../styles/viewPO.module.css';
-import arrowIcon from '../../../../public/arrowIcon.svg';
+import styles from '../../styles/viewPO.module.css';
+import arrowIcon from '../../public/arrowIcon.svg';
+
+
 function isLocalhost(url) {
   return url.includes('localhost') || url.includes('127.0.0.1');
 }
 
 // const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
 // const baseUrl = API_URL;
-const baseUrl = 'http://localhost:3000';
+const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
 const baseURL = 'http://localhost:5000';
 
 export default function ViewPO() {
@@ -23,14 +25,47 @@ export default function ViewPO() {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [fileUpload, setFileUpload] = useState(false);
+  const [fileDisplay, setFileDisplay] = useState(false);
+  const [prID, setprID] = useState(false);
+  const [supplierID, setsupplierID] = useState(false);
   //statuses
   const [status, setStatus] = useState([]);
   const [selectedStatus2, setSelectedStatus2] = useState('');
   //create status
   const [newStatusPop, setNewStatusPop] = useState(false); //status pop up
   const [statusInput, setStatusInput] = useState([]);
+  const [remarks, setRemarks] = useState([]);
 
 
+  //saving of page
+  const handleRemarksChange = (event) => {
+    setRemarks(event.target.value);
+  }
+
+  const handleSave = () => {
+    alert(`Status :${selectedStatus2}, Remarks : ${remarks}`)
+
+    axios.get(`${baseUrl}/api/paymentTrack/status/${selectedStatus2}`)
+      .then(res => {
+        console.log(res.data[0].PaymentStatusID)
+      })
+      .catch((err) => {
+        console.log(err)
+    })
+    
+    
+
+  }
+  //saving of page end
+
+
+  const handleOpenReceipt = () => {
+    setFileDisplay(true);
+  }
+
+  const handleCloseReceipt = () => {
+    setFileDisplay(false);
+  }
 
   const handleCloseStatusPop = () => {
     setNewStatusPop(false);
@@ -83,30 +118,37 @@ export default function ViewPO() {
   }
 
   const handleOpenModal = () => {
+    console.log(selectedStatus2.paymentStatus)
     setShowModal(true);
   }
 
-  const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
-  }
 
-  useEffect(() => {
-    axios.get(`${baseUrl}/api/purchaseOrder/`)
-      .then(res => {
-        console.log(res.data[0].supplierName);
-        console.log(res.data[0])
-        setSupplierName(res.data[0].supplierName);
-        console.log(supplierName+"!")
+  // useEffect(() => {
+  //   axios.get(`${baseUrl}/api/purchaseOrder/`)
+  //     .then(res => {
+  //       console.log(res.data[0].prID);
+  //       setprID(res.data[0].prID);
+  //       console.log(res.data[0].prID);
 
-        axios.get(`${baseUrl}/api/paymentTrack/supplier/${supplierName}`)
-          .then(res => {
-            console.log(res.data[0]);
-            setSupplierInfo(res.data[0]);
-          })
-          .catch(err => console.log(err));
-      })
-      .catch(err => console.log(err));
-  }, []);
+  //       axios.get(`${baseUrl}/api/paymentTrack/supplier/pr/${res.data[0].prID}`)
+  //         .then(res => {
+  //           console.log(res.data[0].supplierID);
+  //           setsupplierID(res.data[0].supplierID);
+
+  //           axios.get(`${baseUrl}/api/paymentTrack/supplier/info/${res.data[0].supplierID}`)
+  //             .then(res => {
+  //               console.log(res.data[0]);
+  //               setSupplierInfo(res.data[0]);
+  //             })
+  //             .catch(err => console.log(err));
+  //         })
+  //         .catch(err => console.log(err));
+  //     })
+  //     .catch(err => console.log(err));
+  // }, []);
+
+
+
 
   useEffect(() => {
     axios.get(`${baseUrl}/api/paymentTrack/`)
@@ -135,7 +177,7 @@ export default function ViewPO() {
     <>
       <div className={styles.poHeader}>
         <h1>
-          <a href={baseURL + "/TrackPayment"}>
+          <a href={baseURL + "/PurchaseOrder"}>
             <Image src={arrowIcon} className={styles.back} />
           </a>
           <p className={styles.title}>Purchase Order #{poID}</p>
@@ -143,20 +185,6 @@ export default function ViewPO() {
       </div>
 
       <div className={styles.dropContainer}>
-
-
-        {/* <div className={styles.dropdown1}>
-          <div className={styles.dropColumn}>
-            <p className={styles.dropTitle}>Payment Status: </p>
-            <select className={styles.dropDown} value={selectedStatus} onChange={handleStatusChange}>
-              <option value="option1">Pending</option>
-              <option value="option2">Payment Sent</option>
-              <option value="option3">Payment Received</option>
-              <option value="option4">+ Create New Status</option>
-            </select>
-          </div>
-        </div> */}
-
         <div className={styles.dropdown1}>
           <div className={styles.dropColumn}>
             <p className={styles.dropTitle}>Payment Status: </p>
@@ -184,13 +212,13 @@ export default function ViewPO() {
 
       {fileUpload && (
         <div className={styles.rectangleContainer}>
-          <div className={styles.rectangle}>PO #001 Receipt</div>
+          <div className={styles.rectangle} onClick={handleOpenReceipt}>PO #001 Receipt</div>
         </div>
       )}
 
       <div>
 
-        <button className={styles.uploadButton} onClick={handleOpenModal} >Upload Receipt</button>
+        <button className={`${styles.uploadButton} ${selectedStatus2.paymentStatus === 'Pending' ? styles.disabledButton : ''}`} onClick={handleOpenModal} disabled={selectedStatus2.paymentStatus === 'Pending'} >Upload Receipt</button>
         {showModal && (
           <div className={styles.modalcontainer}>
             <div className={styles.modalBox}>
@@ -224,6 +252,14 @@ export default function ViewPO() {
               <button className={styles.uploadBtn2} onClick={handleConfirmUpload}>Upload</button>
             </div>
 
+          </div>
+        )}
+
+        {fileDisplay && (
+          <div className={styles.displayReceipt}>
+            <button onClick={handleCloseReceipt} className={styles.closeReceipt}>X</button>
+
+            <h2>proof of payment / receipt</h2>
           </div>
         )}
 
@@ -285,14 +321,49 @@ export default function ViewPO() {
 
       <div className={styles.remarkSection}>
         <b className={styles.remarkText}>Remarks </b> <br />
-        <input type="text" className={styles.remarksInput} />
+        <input type="text" className={styles.remarksInput} value={remarks} onChange={handleRemarksChange} />
       </div>
 
       <div className={styles.save}>
-        <button className={styles.saveButton}> Save </button>
+        <button className={styles.saveButton} onClick={handleSave}> Save </button>
       </div>
 
 
     </>
   )
+}
+
+export async function  getServerSideProps(context) {
+  try {
+   
+    const response = await axios.get(`${baseUrl}/api/paymentTrack/`);
+    const Data = {
+      status: response.data,
+    };
+
+ 
+    const prResponse = await axios.get(`${baseUrl}/api/purchaseOrder/`);
+    const prID = prResponse.data[0].prID;
+
+    const supplierResponse = await axios.get(`${baseUrl}/api/paymentTrack/supplier/pr/${prResponse.data[0].prID}`);
+    const supplierID = supplierResponse.data[0].supplierID;
+
+    const supplierInfoResponse = await axios.get(`${baseUrl}/api/paymentTrack/supplier/info/${supplierResponse.data[0].supplierID}`);
+    const supplierInfo = supplierInfoResponse.data[0];
+
+    return {
+      props: {
+        Data,
+        supplierInfo,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      props: {
+        Data: null,
+        supplierInfo: null,
+      },
+    };
+  }
 }
