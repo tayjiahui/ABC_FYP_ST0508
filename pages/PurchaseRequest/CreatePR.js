@@ -284,7 +284,7 @@ export default function Supplier() {
                         {ItemLineList.map((item, index) => {
                             return <div key={index} className={styles.plItemRow}>
                                     <div>
-                                        <input type="number" name="ItemNo" id="ItemNo"  value={index + 1} className={styles.plItemNo}/>
+                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} className={styles.plItemNo}/>
                                     </div>
                                     <div>
                                         <input list="items" type="text" name="ItemName" id="ItemName" value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName}/>
