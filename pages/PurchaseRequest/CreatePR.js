@@ -139,6 +139,13 @@ export default function Supplier() {
         setLocations([...LocationsList, {location: ""}])
     }
 
+    const handleLocationChange = (index, e) => {
+        let data = [...LocationsList];
+        // console.log(data);
+        data[index] = e.target.value;
+        // get inputs values
+        setLocations(data);
+    }
 
     const [ItemLineList, SetItemLineList] = useState([{ItemNo: "", ItemName: "", ItemQty: "", UnitPrice: "", TotalUnitPrice: ""}]);
 
@@ -148,9 +155,17 @@ export default function Supplier() {
         }
     };
 
+    const handleItemChange = (index, e) => {
+        let data = [...ItemLineList];
+        // console.log(data);
+        data[index] = e.target.value;
+        // get inputs values
+        SetItemLineList(data);
+    }
+
     const [dateReqV, setDateReq] = useState('');
     const [supplierV, setSupplier] = useState('');
-    const [branchV, setBranch] = useState('');
+    const [branchV, setBranch] = useState([]);
     const [PMV, setPM] = useState('');
     const [Remark, setRemark] = useState('');
 
@@ -159,9 +174,9 @@ export default function Supplier() {
     const [itemUPV, setUnitPrice] = useState('');
     const [totalUPV, setTotalUP] = useState('');
 
-    console.log(dateReqV)
-    console.log(branchV);
-    console.log(itemNameV)
+    // console.log(dateReqV);
+    // console.log(branchV);
+    // console.log(itemNameV);
 
     const submitPR = async(e) => {
         e.preventDefault();
@@ -217,36 +232,35 @@ export default function Supplier() {
                     </div>
 
                     <div className={styles.viewCol}>
-                        <h4>Location</h4>
-                        {LocationsList.map((item, index) => {
-                            return <div key={index}>
-                                        <input list="Branch" value={branchV} onChange={(e) => {console.log(e); setBranch(e.target.value)}} id="location" name="branchLocation"></input>
-                                        <datalist id="Branch">
-                                            {Locations}
-                                        </datalist>
-
-                                        <div>
-                                            <h5 className={styles.addLocationText}>
-                                                <button onClick={addLocInput} className={styles.addLocationButton}>
-                                                    <Image src={addLocIcon} width={20} height={20} className={styles.addLocIcon}/>
-                                                </button>
-                                                Add Location
-                                            </h5>
-                                        </div>
-                                    </div>
-                        })}
-                        
-                        
-                    </div>
-                </div>
-
-                <div className={styles.viewRow}>
-                    <div className={styles.viewCol}>
                         <h4>Payment Mode</h4>
                         <input list="PaymentMode" value={PMV} onChange={(e) => setPM(e.target.value)} name="PaymentMode"></input>
                         <datalist id="PaymentMode">
                             {PaymentModes}
                         </datalist>
+                    </div>
+                </div>
+
+                <div className={styles.viewRow}>
+                    <div className={styles.viewCol}>
+                        <h4>Location</h4>
+
+                        {LocationsList.map((item, index) => {
+                            return <div key={index} className={styles.locationInputs}>
+                                        <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id="location" name="branchLocation"></input>
+                                        <datalist id="Branch">
+                                            {Locations}
+                                        </datalist>
+                                    </div>
+                        })}
+
+                        <div>
+                            <h5 className={styles.addLocationText}>
+                                <button onClick={addLocInput} className={styles.addLocationButton}>
+                                    <Image src={addLocIcon} width={20} height={20} className={styles.addLocIcon}/>
+                                </button>
+                                    Add Location
+                            </h5>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -267,25 +281,25 @@ export default function Supplier() {
                 <div>
                     <div className={styles.productLines}>
                         <div className={styles.plRow}>
-                        {ItemLineList.map((singleItem, index) => {
+                        {ItemLineList.map((item, index) => {
                             return <div key={index} className={styles.plItemRow}>
                                     <div>
-                                        <input type="number" name="ItemNo" id="ItemNo"  value={index + 1} className={styles.plItemNo}/>
+                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} className={styles.plItemNo}/>
                                     </div>
                                     <div>
-                                        <input list="items" type="text" name="ItemName" id="ItemName" value={itemNameV} onChange={(e) => setItem(e.target.value)} className={styles.plItemName}/>
+                                        <input list="items" type="text" name="ItemName" id="ItemName" value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName}/>
                                         <datalist id="items">
                                             {Items}
                                         </datalist>  
                                     </div>
                                     <div>
-                                        <input  type="number" name="ItemQty" id="ItemQty" value={itemQtyV} onChange={(e) => setQty(e.target.value)} className={styles.plQty}/>
+                                        <input  type="number" name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty}/>
                                     </div>
                                     <div>
-                                        <input  type="number" name="UnitPrice" id="UnitPrice" value={itemUPV} onChange={(e) => setUnitPrice(e.target.value)} className={styles.plUnitPrice}/>
+                                        <input  type="number" name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice}/>
                                     </div>
                                     <div>
-                                        <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={totalUPV} onChange={(e) => setTotalUP(e.target.value)} className={styles.plTotalUP}/>
+                                        <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP}/>
                                     </div>
                                     <div>
                                         <button onClick={addItemLine} className={styles.createButton}>
