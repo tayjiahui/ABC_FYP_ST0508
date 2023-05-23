@@ -16,7 +16,7 @@ const baseURL = 'http://localhost:5000';
 
 export default function TrackPayment({ purchaseOrder }) {
     const poList = purchaseOrder.map((po, index) => (
-        <Link href={baseURL + '/PurchaseOrder/' + po.prID} className={styles.textLink}>
+        <Link href={'/PurchaseOrder/' + po.prID} className={styles.textLink}>
             <div key={index} className={styles.row}>
                 <p className={styles.rowTitlesNo1}>{po.prID}</p>
                 <p className={styles.rowTitlesCreate1}>{po.requestDate}</p>
