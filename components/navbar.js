@@ -45,7 +45,7 @@ export default function App({Component, pageProps}){
                         <Image src={profPic} width={50} height={50}/>
                     </li>
                     <li>
-                        <h3 id="username">username</h3>
+                        <h3 id="username">John Watt</h3>
                     </li>
                 </ul>
             </nav>
