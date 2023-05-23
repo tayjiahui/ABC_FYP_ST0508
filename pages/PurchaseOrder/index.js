@@ -29,7 +29,7 @@ export default function TrackPayment({ purchaseOrder }) {
     ));
 
     return (
-        <>
+        <div>
             <div className={styles.ptContainer}>
                 <h1 className={styles.mainHeader}>Payment Tracking</h1>
                 <div className={styles.searchQuery}>
@@ -54,7 +54,7 @@ export default function TrackPayment({ purchaseOrder }) {
             <div>
                 {poList}
             </div>
-        </>
+        </div>
     )
 }
 
