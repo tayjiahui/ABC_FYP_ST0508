@@ -1,1 +1,70 @@
 /* this is indv track orders css */
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+.headerRow{
+    display:flex;
+}
+
+.header{
+    width:75%;
+    /* position: fixed; */
+}
+
+/* Search Box */
+.searchContainer{
+    display:inline-flexbox;
+    float: right;
+    padding-top: 45px;
+    /* position: fixed;
+    right:20px */
+}
+
+.searchBox{
+    height: 20px;
+    width: 190px;
+    border-radius: 15px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width: 1.5px;
+}
+
+.searchButton{
+    border-style: none;
+    background-color: transparent;
+    vertical-align:middle;
+}
+
+.tableLabel > li{
+  display: inline;
+  padding: 0 30px 0 30px;
+}
+
+.tableNo{
+  margin-left: 20px;
+}
+
+.tableName{
+  margin-left: 50px;
+}
+
+.tableSupplier{
+  margin-left: 250px;
+}
+
+.tableStatus{
+  margin-left: 500px;
+}
+
+.orderBtn {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  padding-bottom: 5px;
+  cursor: pointer;
+}
