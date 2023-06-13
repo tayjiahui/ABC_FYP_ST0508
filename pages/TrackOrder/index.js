@@ -40,8 +40,71 @@ const baseURL = URL[1];
 console.log(baseUrl);
 console.log(baseURL);
 
+function OrderRow(props) {
+
+  return (
+    <div>
+      <a href={baseURL + '/TrackOrder/' + props.prID}>
+        <button className={styles.orderBtn}>
+          <div className={styles.orderRow}>
+            <div className={styles.orderTextRow}>
+              <div>
+                <p className={styles.orderTextNo}>{props.prID}</p>
+              </div>
+              <div>
+                <p className={styles.orderTextName}>{props.Name}</p>
+              </div>
+              <div>
+                <p className={styles.orderTextSupplier}>{props.Supplier}</p>
+              </div>
+            </div>
+          </div>
+        </button>
+      </a>
+    </div>
+  )
+};
 
 export default function TrackOrder() {
+
+  const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
+
+  // show all Track Order
+  useEffect(() => {
+    axios.all([
+      axios.get(`${baseUrl}/api/trackOrder`, {})
+    ])
+      .then(axios.spread((response1) => {
+        // console.log(response1);
+
+        const orderResult = response1.data;
+
+        const trackOrderList = [];
+
+        orderResult.forEach((item, index) => {
+          trackOrderList.push(
+            <div key={index}>
+              <OrderRow
+                prID={item.prID}
+                Name={item.name}
+                Supplier={item.supplierName} />
+            </div>
+          )
+        });
+
+        orderList(trackOrderList);
+      }))
+      .catch((err) => {
+        console.log(err);
+        if (err.response === 404) {
+          alert(err.response.data);
+        }
+        else {
+          alert(err.code);
+        }
+      })
+  }, []);
+
   return (
     <>
       <div className={styles.headerRow}>
@@ -66,6 +129,10 @@ export default function TrackOrder() {
           <li className={styles.tableStatus}>Status</li>
         </ul>
         <hr />
+      </div>
+
+      <div className={styles.prData}>
+        {TrackOrderResults}
       </div>
 
     </>
