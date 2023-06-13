@@ -68,3 +68,40 @@
   padding-bottom: 5px;
   cursor: pointer;
 }
+
+.orderRow{
+  background-color: #C0D8F7;
+  font-size: 14px;
+  height: 80px;
+  border-radius: 18px;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+  text-align: center;
+  object-fit: scale-down;
+  transition: transform .5s;
+}
+
+.orderRow:hover{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  /* transform: scale(1.05); */
+}
+
+.orderTextRow{
+  padding-top: 20px;
+  padding-bottom: 20px;
+  vertical-align: middle;
+  display: grid;
+  text-align: left;
+  grid-template-columns: 110px 210px 400px 220px 190px 100px;
+} 
+
+.orderTextNo{
+  padding-left: 50px;
+}
+
+.orderTextName{
+  padding-left: 70px;
+}
+
+.orderTextSupplier{
+  padding-left: 220px;
+}
