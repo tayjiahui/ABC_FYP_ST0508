@@ -60,29 +60,16 @@ export async function getServerSideProps(context){
 
     const data1 = await response1.json();
     const data2 = await response2.json();
+    // show in terminal
     // console.log(data1);
     // console.log(data2);
 
-    // // Test for statuts Circle
-    // const statusID = response1.data[0].prStatusID;
-
-    // function circleTest(statusID){
-    //     if(statusID == 1){
-    //         return '/yellowPendingCircle.svg';
-    //     }
-    //     else if(statusID == 2){
-    //         return '/greenApprovedCircle.svg';
-    //     }
-    //     else if(statusID == 3){
-    //         return '/redRejectedCircle.svg';
-    //     }
-    //     else{
-    //         return '/yellowPendingCircle.svg';
-    //     }
-    // }
-            
-    //         const circle = circleTest(statusID);
-    //         testCircle(circle);
+    // filter out duplicated data & combine multiple locations
+    data1.forEach((item, index) => {
+        if(index > 0){
+            data1[0].branchName += `, ${item.branchName}`;
+        }
+    });
 
     return { 
         props:{
@@ -107,9 +94,10 @@ export default function Supplier({prDetails, pLDetails}) {
     const [GST, gstCal] = useState();
     const [Total, totalCal] = useState();
 
-    // PR Details
+    // PR Details  
     const PR = prDetails[0];
 
+    // get status circle
     useEffect(() => {
 
         // Test for status Circle
@@ -129,7 +117,7 @@ export default function Supplier({prDetails, pLDetails}) {
                 return '/yellowPendingCircle.svg';
             }
         }
-                
+
         const circle = circleTest(statusID);
         testCircle(circle);
 
@@ -183,7 +171,7 @@ export default function Supplier({prDetails, pLDetails}) {
         const total = CalculateTotal(totalArr).toFixed(2);
         totalCal(total);
 
-    }, [])
+    }, []);
 
     return (
         <>
@@ -199,8 +187,8 @@ export default function Supplier({prDetails, pLDetails}) {
 
             <div className={styles.prDetails}>
                 <div>
-                    <h4>Date Request</h4>
-                    <p>{PR.requestDate}</p>
+                    <h4>Target Delivery Date</h4>
+                    <p>{PR.targetDeliveryDate}</p>
                 </div>
                 
                 <div className={styles.viewRow}>

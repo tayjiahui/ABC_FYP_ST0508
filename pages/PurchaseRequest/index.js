@@ -15,6 +15,7 @@ import pendingCircle from '../../public/yellowPendingCircle.svg';
 import approvedCircle from '../../public/greenApprovedCircle.svg';
 import rejectedCircle from '../../public/redRejectedCircle.svg';
 
+
 // Base urls
 const URL = [];
 
@@ -77,9 +78,9 @@ function PRRow (props){
                             <div>
                                 <p className={styles.prTextNo}>{props.prID}</p>
                             </div>
-                            <div>
+                            {/* <div>
                                 <p className={styles.prTextName}>{props.Name}</p>
-                            </div>
+                            </div> */}
                             <div>
                                 <p className={styles.prTextLocation}>{props.Location}</p>
                             </div>
@@ -126,9 +127,37 @@ export default function PurchaseRequest() {
 
             const prResult = response1.data;
 
+            // data filter out duplicates
+            const uniqueIDs = [];
+            const duplicatePRs = [];
+
+            const filteredPRData1 = prResult.filter(e => {
+
+                // uniqueIDs only keeps one of each prID and removes duplicated prID objects
+                const isDuplicate = uniqueIDs.includes(e.prID);
+
+                if(!isDuplicate){
+                    uniqueIDs.push(e.prID);
+
+                    return true;
+                }
+                else{
+                    duplicatePRs.push(e);
+
+                    return false;
+                };
+            });
+
+            // adds duplicated PR branchname to main PR OBJECT
+            duplicatePRs.forEach((item, index) => {
+                let foundIndex = filteredPRData1.findIndex(x => x.prID == duplicatePRs[index].prID);
+                filteredPRData1[foundIndex].branchName += `, ${duplicatePRs[index].branchName}`;
+            });
+
+            // Show List of UPDATED PRs [multiple locations included]
             const prList = [];
 
-            prResult.forEach((item, index) => {
+            filteredPRData1.forEach((item, index) => {
                 prList.push(
                     <div key={index}>
                         <PRRow
@@ -174,7 +203,7 @@ export default function PurchaseRequest() {
                 <hr/>
                 <ul className={styles.tableLabel}>
                     <li className={styles.tableNo}>No.</li>
-                    <li className={styles.tableName}>Name</li>
+                    {/* <li className={styles.tableName}>Name</li> */}
                     <li className={styles.tableLocation}>Location</li>
                     <li className={styles.tableSupplier}>Supplier</li>
                     <li className={styles.tableStatus}>Status</li>

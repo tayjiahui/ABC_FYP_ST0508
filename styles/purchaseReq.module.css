@@ -128,7 +128,7 @@
     vertical-align: middle;
     display: grid;
     text-align: left;
-    grid-template-columns: 110px 210px 400px 220px 190px 100px;
+    grid-template-columns: 110px 300px 350px 200px 150px 100px;
 } 
 
 .prTextNo{
@@ -140,16 +140,16 @@
 }
 
 .prTextLocation{
-    padding-left: 90px;
+    padding-left: 150px;
 }
 
 .prTextSupplier{
-    padding-left: 60px;
+    padding-left: 210px;
 }
 
 .prTextStatus{
     text-align: center;
-    padding-left: 120px;
+    padding-left: 130px;
 }
 
 #statusCircle{
