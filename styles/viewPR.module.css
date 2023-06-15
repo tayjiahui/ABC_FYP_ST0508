@@ -14,6 +14,7 @@
 /* Header */
 .headerRow{
     vertical-align: middle;
+    padding: 5%;
 }
 #arrow{
     vertical-align: middle;
@@ -35,7 +36,6 @@
     content: "";
     display: item;
     clear: both;
-
 }
 
 .viewCol{
@@ -59,13 +59,13 @@
     padding: 0 30px 0 30px;
 }
 
-.itemNo{
+/* .itemNo{
 
 }
 
 .itemName{
 
-}
+} */
 
 .itemQty{
    margin-left: 320px;
@@ -110,32 +110,36 @@
     padding-left: 90px;
 }
 
-.plUnitPrice{
+/* .plUnitPrice{
 
 }
 
 .plTotalUP{
 
-}
+} */
 
 .totalRow{
     content: "";
     display: flexbox;
     clear: both;
-    padding-left: 60%;
+    padding-left: 59%;
+
 }
 
 .totalCol1,.totalCol2{
     float: left;
-    width: 20%;
+    width: 50%;
 }
+
 .totalCol1{
-    padding-left: 110px;
+    padding-top: 15px;
+    padding-left: 20%;
 }
 
 .totalCol2{
-    padding-left: 100px;
+    padding-left: 20%;
 }
+
 .priceLabel{
     text-align: right;
 }
@@ -157,8 +161,5 @@
     width: 30%;
     border-width: 2px;
     margin-right: 1px;
+    float: right;
 }
-
-
-
-
