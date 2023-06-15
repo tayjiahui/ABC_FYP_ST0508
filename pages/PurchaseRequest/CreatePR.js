@@ -9,6 +9,7 @@ import styles from '../../styles/createPR.module.css';
 import arrowIcon from '../../public/arrowIcon.svg';
 import addLocIcon from '../../public/addLocationIcon.svg';
 import addIcon from '../../public/plusIcon.svg';
+import xIcon from '../../public/xIcon.svg';
 
 import axios from "axios";
 
@@ -32,7 +33,7 @@ function isLocalhost()
 
         return URL;
     }
-}
+};
 
 isLocalhost();
 
@@ -46,20 +47,33 @@ function DropdownOpt (props){
             <option id={props.ID} value={props.Value}/>
         </>
     )
-}
+};
+
+function ItemDropDown (props){
+    return(
+        <>
+            <option id={props.ID} data-unitPrice={props.UnitPrice} value={props.Value}/>
+        </>
+    )
+};
 
 function getSelectedOption(e){
     const selectedValue = e.target.value;
     const selectedOption = Array.from(e.target.list.options).find((option) => option.value === selectedValue);
     const selectedID = selectedOption ? selectedOption.getAttribute('id') : '';
+    const selectedUnitPrice = selectedOption ? selectedOption.getAttribute('data-unitPrice') : '';
 
-    return [selectedValue, selectedID]
-}
+    if(selectedUnitPrice == null){
+        return [selectedValue, selectedID];
+    }
+    else{
+        return [selectedValue, selectedID, selectedUnitPrice];
+    }
+};
 
 export default function Supplier() {
     const { data: session} = useSession();
     const router = useRouter();
-
 
     // dropdown lists states
     const [Suppliers,supplierList] = useState();
@@ -133,8 +147,9 @@ export default function Supplier() {
             ItemResult.forEach((item, index) => {
                 IList.push(
                     <div key={index}>
-                        <DropdownOpt
+                        <ItemDropDown
                             ID={item.itemID}
+                            UnitPrice={item.unitPrice}
                             Value={item.itemName}/>
                     </div>
                 )
@@ -152,6 +167,12 @@ export default function Supplier() {
     const addLocInput = () => {
         setLocations([...LocationsList, {location: '', id: ''}])
     };
+
+    const removeLocInput = (index) => {
+        const list = [...LocationsList];
+        list.splice(index, 1);
+        setLocations(list);
+    }
 
     // handle each location input
     const handleLocationChange = (index, e) => {
@@ -174,18 +195,34 @@ export default function Supplier() {
         }
     };
 
+    const removeItemLine = (index) => {
+        const ItemList = [...ItemLineList];
+        ItemList.splice(index, 1);
+        SetItemLineList(ItemList);
+    };
+
     // handle each item change
     const handleItemChange = (index, e) => {
         let data = [...ItemLineList];
+        let reg = new RegExp('^[1-9]+[0-9]*$');
 
-        if (e.target.name !== "ItemName"){
-            data[index][e.target.name] = e.target.value;
+        if (e.target.name == "ItemQty"){
+            if(reg.test(e.target.value)){
+                data[index].ItemQty = e.target.value;
+            }
         }
         else{
-            const [itemName, id] = getSelectedOption(e);
-
+            const [itemName, id, unitPrice] = getSelectedOption(e);
             data[index].ItemName = itemName;
             data[index].id = id;
+            data[index].UnitPrice = unitPrice;
+        }
+
+        // Calculate total unit price
+        if(data[index].ItemQty !== "" && data[index].ItemName !== ""){
+            
+            let totalPrice = (data[index].ItemQty * data[index].UnitPrice).toFixed(2);
+            data[index].TotalUnitPrice = totalPrice;
         }
 
         SetItemLineList(data);
@@ -277,47 +314,66 @@ export default function Supplier() {
                 <div className={styles.prDetails}>
                     <div className={styles.viewCol}>
                         <h4>Target Delivery Date</h4>
-                        <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq"></input>
+                        <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq" required/>
                     </div>
                     
                     <div className={styles.viewRow}>
-                        <div className={styles.viewCol}>
-                            <h4>Supplier</h4>
-                            <input list="suppliers" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName"></input>
-                            <datalist id="suppliers">
-                                {Suppliers}
-                            </datalist>
-                        </div>
+                        <div class="pt-4">
+                            <div className={styles.viewCol}>
+                                <h4>Supplier</h4>
+                                <input list="suppliers" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
+                                <datalist id="suppliers">
+                                    {Suppliers}
+                                </datalist>
+                            </div>
 
-                        <div className={styles.viewCol}>
-                            <h4>Payment Mode</h4>
-                            <input list="PaymentMode" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode"></input>
-                            <datalist id="PaymentMode">
-                                {PaymentModes}
-                            </datalist>
+                            <div className={styles.viewCol}>
+                                <h4>Payment Mode</h4>
+                                <input list="PaymentMode" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode" required/>
+                                <datalist id="PaymentMode">
+                                    {PaymentModes}
+                                </datalist>
+                            </div>
                         </div>
                     </div>
 
                     <div className={styles.viewRow}>
-                        <div className={styles.viewCol}>
-                            <h4>Location</h4>
+                        <div class="pt-4">
+                            <div className={styles.viewCol}>
+                                <h4>Location</h4>
+                                <div>
+                                    {LocationsList.map((item, index) => {
+                                        if(LocationsList.length == 1){
+                                            return <div key={index} className={styles.locationInputs}>
+                                                        <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                        <datalist id="Branch">
+                                                            {Locations}
+                                                        </datalist>
+                                                    </div>
+                                        }
+                                        else if(LocationsList.length > 1){
+                                            return <div key={index} className={styles.locationInputs}>
+                                                        <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                        <datalist id="Branch">
+                                                            {Locations}
+                                                        </datalist>
 
-                            {LocationsList.map((item, index) => {
-                                return <div key={index} className={styles.locationInputs}>
-                                            <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation"></input>
-                                            <datalist id="Branch">
-                                                {Locations}
-                                            </datalist>
-                                        </div>
-                            })}
-
-                            <div>
-                                <h5 className={styles.addLocationText}>
-                                    <button type="button" onClick={addLocInput} className={styles.addLocationButton}>
-                                        <Image src={addLocIcon} width={20} height={20} className={styles.addLocIcon}/>
-                                    </button>
-                                        Add Location
-                                </h5>
+                                                        <button type="button" onClick={() => {removeLocInput(index)}} className={styles.removeLocationButton}>
+                                                            <Image src={xIcon} width={25} height={25} />
+                                                        </button>
+                                                    </div>
+                                        }
+                                    })}
+                                </div>
+                                
+                                <div>
+                                    <h5 className={styles.addLocationText}>
+                                        <button type="button" onClick={addLocInput} className={styles.addLocationButton}>
+                                            <Image src={addLocIcon} width={20} height={20} className={styles.addLocIcon}/>
+                                        </button>
+                                            Add Location
+                                    </h5>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -339,48 +395,84 @@ export default function Supplier() {
                     <div>
                         <div className={styles.productLines}>
                             <div className={styles.plRow}>
-                            {ItemLineList.map((item, index) => {
-                                return <div key={index} className={styles.plItemRow}>
-                                        <div>
-                                            <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo}/>
-                                        </div>
-                                        <div>
-                                            <input list="items" type="text" name="ItemName" id={item.id} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName}/>
-                                            <datalist id="items">
-                                                {Items}
-                                            </datalist>  
-                                        </div>
-                                        <div>
-                                            <input  type="number" name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty}/>
-                                        </div>
-                                        <div>
-                                            <input  type="number" name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice}/>
-                                        </div>
-                                        <div>
-                                            <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP}/>
-                                        </div>
-                                        <div>
-                                            <button type="button" onClick={addItemLine} className={styles.createButton}>
-                                                <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.addIcon}/>
-                                            </button>
-                                        </div>
-                                    </div>
-                            
-                            })}
+                                {ItemLineList.map((item, index) => {
+                                    if (index === ItemLineList.length - 1){
+                                        return <div key={index} className={styles.plItemRow}>
+                                                    <div>
+                                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
+                                                    </div>
+                                                    <div>
+                                                        <input list="items" type="text" name="ItemName" id={item.id} data-unitPrice={item.UnitPrice} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
+                                                        <datalist id="items">
+                                                            {Items}
+                                                        </datalist>  
+                                                    </div>
+                                                    <div>
+                                                        <input  type="number" min={1} name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
+                                                    </div>
+                                                    <div>
+                                                        <input  type="number" min={0} name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} disabled/>
+                                                    </div>
+                                                    <div>
+                                                        <input  type="number" min={0} name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} disabled/>
+                                                    </div>
+                                                    <div>
+                                                        <button type="button" onClick={addItemLine} className={styles.createButton}>
+                                                            <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.addIcon}/>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                    }
+                                    else if(index < ItemLineList.length - 1){
+                                        return <div key={index} className={styles.plItemRow}>
+                                                    <div>
+                                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} required/>
+                                                    </div>
+                                                    <div>
+                                                        <input list="items" type="text" name="ItemName" id={item.id} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
+                                                        <datalist id="items">
+                                                            {Items}
+                                                        </datalist>  
+                                                    </div>
+                                                    <div>
+                                                        <input  type="number" name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
+                                                    </div>
+                                                    <div>
+                                                        <input  type="number" name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} required/>
+                                                    </div>
+                                                    <div>
+                                                        <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} required/>
+                                                    </div>
+                                                    <div>
+                                                        <button type="button" onClick={() => {removeItemLine(index)}} className={styles.createButton}>
+                                                            <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.cancelIcon}/>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                    }                
+                                })}
                             </div>
-                        
                         </div>
                     </div>
                 </div>
                 
-                <div className={styles.remarksTestArea}>
-                    <h4>Remarks</h4>
-                    <textarea value={Remark} onChange={(e) => setRemark(e.target.value)} className={styles.textArea}></textarea>
+                <div className={styles.remarksRow}>
+                    <div className={styles.remarksTestArea}>
+                        <h4>Remarks</h4>
+                        <textarea value={Remark} onChange={(e) => setRemark(e.target.value)} className={styles.textArea}></textarea>
+                    </div>
                 </div>
 
-                <div className={styles.submit}>
-                    <button type="submit" className={styles.submitButton}>Submit</button>
+                <div className={styles.viewRow}>
+                    <div class="pt-4">
+                        <div className={styles.viewCol}>
+                            <div className={styles.submit}>
+                                <button type="submit" className={styles.submitButton}>Submit</button>
+                            </div>
+                        </div>
+                    </div> 
                 </div>
+                
             </form>
             
         </>
