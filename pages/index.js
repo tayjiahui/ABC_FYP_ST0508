@@ -2,7 +2,6 @@
 
 import styles from '../styles/indexpage.module.css';
 
-//----------------------function name has to be uppercase
 export default function Index() {
     return (
         <div class="d-flex align-items-center justify-content-center">

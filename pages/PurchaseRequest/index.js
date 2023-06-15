@@ -15,7 +15,6 @@ import pendingCircle from '../../public/yellowPendingCircle.svg';
 import approvedCircle from '../../public/greenApprovedCircle.svg';
 import rejectedCircle from '../../public/redRejectedCircle.svg';
 
-
 // Base urls
 const URL = [];
 
@@ -70,7 +69,7 @@ function PRRow (props){
     const circle = circleTest(statusID);
 
     return (
-        <div>
+        <div class="py-1">
             <a href={baseURL + '/PurchaseRequest/' + props.prID}>
                 <button className={styles.prButton}>
                     <div className={styles.prRow}>
@@ -193,7 +192,7 @@ export default function PurchaseRequest() {
                         <form>
                             <input type="text" placeholder="Search.." name="search" className={styles.searchBox}/>
                             <button type="submit" className={styles.searchButton}><Image src={searchIcon}/></button>
-                            <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20} /></button>
+                            <button type="button" className={styles.searchButton}><Image src={filterIcon} width={20} /></button>
                         </form>
                     </div>
                 </div>
