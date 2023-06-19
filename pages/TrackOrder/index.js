@@ -65,20 +65,31 @@ function OrderRow(props) {
   )
 };
 
+function DropdownOpt(props) {
+  return (
+    <>
+      <option id={props.ID} value={props.Value} />
+    </>
+  )
+};
+
 export default function TrackOrder() {
 
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
+  const [statusResults, statusList] = useState([(<div>Loading...</div>)]);
 
   // show all Track Order
   useEffect(() => {
     axios.all([
-      axios.get(`${baseUrl}/api/trackOrder`, {})
+      axios.get(`${baseUrl}/api/trackOrder`, {}),
+      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`, {})
     ])
-      .then(axios.spread((response1) => {
-        // console.log(response1);
+      .then(axios.spread((response1, response2) => {
+        // console.log(response1.data);
+        // console.log(response2.data);
 
+        // get track order results
         const orderResult = response1.data;
-
         const trackOrderList = [];
 
         orderResult.forEach((item, index) => {
@@ -93,6 +104,24 @@ export default function TrackOrder() {
         });
 
         orderList(trackOrderList);
+
+        // get purchase status
+        const purchaseStatusResult = response2.data;
+        const purchaseStatusList = [];
+
+        purchaseStatusResult.forEach((item, index) => {
+          purchaseStatusList.push(
+            <div key={index}>
+              <DropdownOpt
+                ID={item.purchaseStatusID}
+                Value={item.purchaseStatus} />
+            </div>
+
+          )
+        });
+
+        statusList(purchaseStatusList);
+
       }))
       .catch((err) => {
         console.log(err);
@@ -104,6 +133,10 @@ export default function TrackOrder() {
         }
       })
   }, []);
+
+  const [PSV, setPS] = useState('');
+
+
 
   return (
     <>
@@ -133,6 +166,12 @@ export default function TrackOrder() {
 
       <div className={styles.prData}>
         {TrackOrderResults}
+        {/* <div className={styles.viewCol}>
+          <input list="PurchaseStatus" value={PSV} onChange={(e) => setPS(e.target.value)} name="PurchaseStatus"></input>
+          <datalist id="PurchaseStatus">
+            {statusResults}
+          </datalist>
+        </div> */}
       </div>
 
     </>
