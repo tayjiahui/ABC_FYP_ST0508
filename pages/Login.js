@@ -85,7 +85,7 @@ export default function Login() {
     const handleLogin = async(e) => {
         e.preventDefault();
         
-        axios.post(`${baseUrl}/api/user/login`, 
+        await axios.post(`${baseUrl}/api/user/login`, 
             {
                 email: loginEmail
             }
@@ -103,17 +103,13 @@ export default function Login() {
             localStorage.setItem("Name", data.name);
             // localStorage.setItem("Email", data.email);
 
-            signIn(null, { callbackUrl:"/Home" });
-            // signIn('keycloak', { callbackUrl:"/Home" });
+            // signIn();
+            signIn('keycloak', { callbackUrl:"/Home" });
 
             // auth2(session?.accessToken);
-            // alert(`stop`)
             console.log({ session, status, update });
-
-            // logIn();
             
-            console.log("this session ========= " + session?.accessToken);
-
+            console.log("this is session ========= " + session?.accessToken);
 
             // redirect to home page
             // router.push('/Home');
@@ -127,6 +123,15 @@ export default function Login() {
         })
         .catch((err) => {
             console.log(err);
+            if(err.code === "ERR_NETWORK"){
+                alert(err);
+            }
+            else if(err.response.status == 404){
+                alert(err.response.data);
+            }
+            // else{
+            //     alert(err);
+            // }
             if(err.code === "ERR_NETWORK"){
                 alert(err);
             }
