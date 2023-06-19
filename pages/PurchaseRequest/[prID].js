@@ -12,7 +12,6 @@ import rejectedCircle from '../../public/redRejectedCircle.svg';
 
 import axios from "axios";
 
-
 function ItemLines (props){
     return(
         <div className={styles.productLines}>
@@ -60,29 +59,17 @@ export async function getServerSideProps(context){
 
     const data1 = await response1.json();
     const data2 = await response2.json();
+
+    // show in terminal
     // console.log(data1);
     // console.log(data2);
 
-    // // Test for statuts Circle
-    // const statusID = response1.data[0].prStatusID;
-
-    // function circleTest(statusID){
-    //     if(statusID == 1){
-    //         return '/yellowPendingCircle.svg';
-    //     }
-    //     else if(statusID == 2){
-    //         return '/greenApprovedCircle.svg';
-    //     }
-    //     else if(statusID == 3){
-    //         return '/redRejectedCircle.svg';
-    //     }
-    //     else{
-    //         return '/yellowPendingCircle.svg';
-    //     }
-    // }
-            
-    //         const circle = circleTest(statusID);
-    //         testCircle(circle);
+    // filter out duplicated data & combine multiple locations
+    data1.forEach((item, index) => {
+        if(index > 0){
+            data1[0].branchName += `, ${item.branchName}`;
+        }
+    });
 
     return { 
         props:{
@@ -107,9 +94,11 @@ export default function Supplier({prDetails, pLDetails}) {
     const [GST, gstCal] = useState();
     const [Total, totalCal] = useState();
 
-    // PR Details
-    const PR = prDetails[0];
+    const [checkRemark, setRemark] = useState();
 
+    // PR Details  
+    const PR = prDetails[0];
+    
     useEffect(() => {
 
         // Test for status Circle
@@ -129,7 +118,7 @@ export default function Supplier({prDetails, pLDetails}) {
                 return '/yellowPendingCircle.svg';
             }
         }
-                
+
         const circle = circleTest(statusID);
         testCircle(circle);
 
@@ -164,7 +153,8 @@ export default function Supplier({prDetails, pLDetails}) {
 
             return total;
         }            
-                
+        
+        // Calculate GST
         function GSTFinder(amt){
             const gst = (8/100)*amt;
             return gst;
@@ -172,18 +162,30 @@ export default function Supplier({prDetails, pLDetails}) {
                 
         const totalArr = [];
 
+        // Find subtotal
         const subtotal = CalculateTotal(totalPrices);
         subtotalCal(subtotal.toFixed(2));
 
+        // Find GST
         const gst = GSTFinder(subtotal);
         gstCal(gst.toFixed(2));
 
+        // push values into totalArr
         totalArr.push(subtotal, gst);
 
+        // Calculate final total
         const total = CalculateTotal(totalArr).toFixed(2);
         totalCal(total);
 
-    }, [])
+        // check if there is remarks
+        if(PR.remarks !== ""){
+            setRemark(true)
+        }
+        else{
+            setRemark(false)
+        }
+
+    }, []);
 
     return (
         <>
@@ -198,31 +200,36 @@ export default function Supplier({prDetails, pLDetails}) {
             </div>
 
             <div className={styles.prDetails}>
-                <div>
-                    <h4>Date Request</h4>
-                    <p>{PR.requestDate}</p>
+                <div class="py-3">
+                    <h4>Target Delivery Date</h4>
+                    <p>{PR.targetDeliveryDate}</p>
                 </div>
                 
                 <div className={styles.viewRow}>
-                    <div className={styles.viewCol}>
-                        <h4>Name</h4>
-                        <p>{PR.name}</p>
-                    </div>
-                    <div className={styles.viewCol}>
-                        <h4>Supplier</h4>
-                        <p>{PR.supplierName}</p>
+                    <div class="py-3">
+                        <div className={styles.viewCol}>
+                            <h4>Name</h4>
+                            <p>{PR.name}</p>
+                        </div>
+                        <div className={styles.viewCol}>
+                            <h4>Supplier</h4>
+                            <p>{PR.supplierName}</p>
+                        </div>
                     </div>
                 </div>
 
                 <div className={styles.viewRow}>
-                    <div className={styles.viewCol}>
-                        <h4>Location</h4>
-                        <p>{PR.branchName}</p>
+                    <div class="py-3">
+                        <div className={styles.viewCol}>
+                            <h4>Location</h4>
+                            <p>{PR.branchName}</p>
+                        </div>
+                        <div className={styles.viewCol}>
+                            <h4>Payment Mode</h4>
+                            <p>{PR.paymentMode}</p>
+                        </div>
                     </div>
-                    <div className={styles.viewCol}>
-                        <h4>Payment Mode</h4>
-                        <p>{PR.paymentMode}</p>
-                    </div>
+                    
                 </div>
             </div>
 
@@ -278,8 +285,13 @@ export default function Supplier({prDetails, pLDetails}) {
             </div>
 
             <div className={styles.prDetails}>
-                <h4>Remarks</h4>
-                <p>{PR.remarks}</p>
+                {
+                    checkRemark && 
+                        <div class="pt-3">
+                            <h4>Remarks</h4>
+                            <p>{PR.remarks}</p>
+                        </div>
+                }
             </div>
         </>
     )

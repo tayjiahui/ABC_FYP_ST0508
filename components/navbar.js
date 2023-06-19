@@ -1,24 +1,25 @@
 // this is for common page layouts e.g. website header, navbar, footer 
-
-
 import Link from 'next/link';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
+import { useEffect, useState } from 'react';
+import { useSession } from "next-auth/react";
+
 
 import logo from "../public/client_logo.png";
 import profPic from "../public/prof_pic.png";
-import { useEffect, useState } from 'react';
-
 
 
 export default function NavBar(){
+    const { data: session} = useSession();
     const router = useRouter();
+
+    console.log({ session });
 
     const [userName, setUserName] = useState("");
 
     useEffect(() => {
         const username = localStorage.getItem("Name");
-        console.log(username);
         setUserName(username);
     }, [])
 
@@ -59,6 +60,7 @@ export default function NavBar(){
                         </a>
                     </li>
                     <li>
+                        {/* <h3 id="username">{session.user.name}</h3> */}
                         <h3 id="username">{userName}</h3>
                     </li>
                 </ul>
