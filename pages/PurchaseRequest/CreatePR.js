@@ -258,8 +258,8 @@ export default function Supplier() {
             }
         )
         .then((response) => {
-            console.log(response);
-            console.log(ItemLineList);
+            // console.log(response);
+            // console.log(ItemLineList);
 
             axios.get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`)
             .then((response) => {
@@ -286,12 +286,12 @@ export default function Supplier() {
                         }
                     );
                 });
-
-                alert(response.data);
-
-                // redirect
-                router.push('/PurchaseRequest');
             })
+
+            alert(response.data);
+
+            // redirect
+            router.push('/PurchaseRequest');
         })
         .catch((err) => {
             console.log(err);
