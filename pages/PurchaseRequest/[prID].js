@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
+import moment from 'moment';
 
 import styles from '../../styles/viewPR.module.css';
 
@@ -88,6 +89,8 @@ export default function Supplier({prDetails, pLDetails}) {
 
     const [Circle,testCircle] = useState();
 
+    const [TargetDeliveryDate, setTargetDate] = useState();
+
     const [ProductDetails, setList] = useState();
 
     const [Subtotal, subtotalCal] = useState();
@@ -121,6 +124,10 @@ export default function Supplier({prDetails, pLDetails}) {
 
         const circle = circleTest(statusID);
         testCircle(circle);
+
+        // Target Delivery Date formatting
+        const newDateFormat = moment(PR.targetDeliveryDate).format('DD/MM/YYYY');
+        setTargetDate(newDateFormat);
 
         // Product lines
         const itemLines = [];
@@ -192,21 +199,21 @@ export default function Supplier({prDetails, pLDetails}) {
             <div className="headerRow">
                 <h1>
                     <a href={"/PurchaseRequest"}>
-                        <Image src={arrowIcon} id={styles.arrow} /> 
+                        <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
                     </a>
                     Purchase Request #{prID}
-                    <Image src={Circle} width={25} height={25} className={styles.statusCircle}/>
+                    <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
                 </h1>
             </div>
 
             <div className={styles.prDetails}>
-                <div class="py-3">
+                <div className="py-3">
                     <h4>Target Delivery Date</h4>
-                    <p>{PR.targetDeliveryDate}</p>
+                    <p>{TargetDeliveryDate}</p>
                 </div>
                 
                 <div className={styles.viewRow}>
-                    <div class="py-3">
+                    <div className="py-3">
                         <div className={styles.viewCol}>
                             <h4>Name</h4>
                             <p>{PR.name}</p>
@@ -219,7 +226,7 @@ export default function Supplier({prDetails, pLDetails}) {
                 </div>
 
                 <div className={styles.viewRow}>
-                    <div class="py-3">
+                    <div className="py-3">
                         <div className={styles.viewCol}>
                             <h4>Location</h4>
                             <p>{PR.branchName}</p>
@@ -287,7 +294,7 @@ export default function Supplier({prDetails, pLDetails}) {
             <div className={styles.prDetails}>
                 {
                     checkRemark && 
-                        <div class="pt-3">
+                        <div className="pt-3">
                             <h4>Remarks</h4>
                             <p>{PR.remarks}</p>
                         </div>

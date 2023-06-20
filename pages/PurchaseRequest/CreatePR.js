@@ -304,7 +304,7 @@ export default function Supplier() {
             <div className="headerRow">
                 <h1>
                     <a href={"/PurchaseRequest"}>
-                        <Image src={arrowIcon} id={styles.arrow} /> 
+                        <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
                     </a>
                     Create Purchase Request
                 </h1>
@@ -318,7 +318,7 @@ export default function Supplier() {
                     </div>
                     
                     <div className={styles.viewRow}>
-                        <div class="pt-4">
+                        <div className="pt-4">
                             <div className={styles.viewCol}>
                                 <h4>Supplier</h4>
                                 <input list="suppliers" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
@@ -338,7 +338,7 @@ export default function Supplier() {
                     </div>
 
                     <div className={styles.viewRow}>
-                        <div class="pt-4">
+                        <div className="pt-4">
                             <div className={styles.viewCol}>
                                 <h4>Location</h4>
                                 <div>
@@ -359,7 +359,7 @@ export default function Supplier() {
                                                         </datalist>
 
                                                         <button type="button" onClick={() => {removeLocInput(index)}} className={styles.removeLocationButton}>
-                                                            <Image src={xIcon} width={25} height={25} />
+                                                            <Image src={xIcon} width={25} height={25} alt="Cancel"/>
                                                         </button>
                                                     </div>
                                         }
@@ -369,7 +369,7 @@ export default function Supplier() {
                                 <div>
                                     <h5 className={styles.addLocationText}>
                                         <button type="button" onClick={addLocInput} className={styles.addLocationButton}>
-                                            <Image src={addLocIcon} width={20} height={20} className={styles.addLocIcon}/>
+                                            <Image src={addLocIcon} alt="Add Location" width={20} height={20} className={styles.addLocIcon}/>
                                         </button>
                                             Add Location
                                     </h5>
@@ -464,7 +464,7 @@ export default function Supplier() {
                 </div>
 
                 <div className={styles.viewRow}>
-                    <div class="pt-4">
+                    <div className="pt-4">
                         <div className={styles.viewCol}>
                             <div className={styles.submit}>
                                 <button type="submit" className={styles.submitButton}>Submit</button>

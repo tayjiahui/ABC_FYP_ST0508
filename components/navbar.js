@@ -56,7 +56,7 @@ export default function NavBar(){
                 <ul className="navbar-right">
                     <li id="profPicImage">
                         <a href='/Profile'>
-                            <Image src={profPic} width={50} height={50}/>
+                            <Image src={profPic} alt='Profile Picture' width={50} height={50}/>
                         </a>
                     </li>
                     <li>

@@ -170,18 +170,18 @@ export default function Login() {
 
     return (
         <div className={styles.page}>
-            <div class="container p-5 my-5 border rounded w-50" id={styles.card}>
-                <div class="p-3">
+            <div className="container p-5 my-5 border rounded w-50" id={styles.card}>
+                <div className="p-3">
                     <h1 className='PageHeader'>Login</h1>
                 </div>
             
                 <form onSubmit={handleLogin}>
-                    <div class="form-group p-4">
-                        <label for="loginEmail" class="form-label">Email</label> <br/>
+                    <div className="form-group p-4">
+                        <label for="loginEmail" className="form-label">Email</label> <br/>
                         <input type="email" id="loginEmail" className={styles.emailInput} onChange={handleEmailInput} required/>
                     </div>
 
-                    <div class="p-4">
+                    <div className="p-4">
                         {/* <a href="/api/auth/signin"> */}
                             <button type='submit' className={styles.loginButton}>Login</button>
                         {/* </a> */}
