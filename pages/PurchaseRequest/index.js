@@ -106,10 +106,11 @@ function Icon(props){
     )
 }
 
-
 export default function PurchaseRequest() {
     
     const [PRResults, setlist1] = useState([(<div>Loading...</div>)]);
+
+    const [searchValue, setSearchValue] = useState("");
 
     // show all PR
     useEffect(() => {
@@ -183,14 +184,58 @@ export default function PurchaseRequest() {
         })
     }, []);
 
+    const handlePRSearch = async(e) => {
+        e.preventDefault();
+
+        await axios.post(`${baseUrl}/api/purchaseReq/search/${id}`,
+            {
+                "searchValue": searchValue
+            }
+        )
+        .then((response) => {
+            // console.log(searchValue);
+            // console.log(response.data);
+
+            const searchResult = response.data;
+
+            // Show List of Searched PR results
+            const resultsList = [];
+
+            searchResult.forEach((item, index) => {
+                resultsList.push(
+                    <div key={index}>
+                        <PRRow
+                            prID={item.prID}
+                            Name={item.name}
+                            Location={item.branchName}
+                            Supplier={item.supplierName}
+                            Status={item.prStatus}
+                            StatusID={item.prStatusID} />
+                    </div>
+                )
+            });
+
+            setlist1(resultsList);
+        })
+        .catch((err) => {
+            if(err.response.status === 404){
+                setlist1(<div className="p-5">No Results Found!</div>)
+            }
+            else{
+                alert(err.response.data);
+            }
+        });
+
+    };
+
     return (
         <>
             <div className={styles.headerRow}>
                 <h1 className={styles.header}>Purchase Request</h1>
                 <div>
                     <div className={styles.searchContainer}>
-                        <form>
-                            <input type="text" placeholder="Search.." name="search" className={styles.searchBox}/>
+                        <form onSubmit={handlePRSearch}>
+                            <input type="text" placeholder="Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox}/>
                             <button type="submit" className={styles.searchButton}><Image src={searchIcon} alt='Search'/></button>
                             <button type="button" className={styles.searchButton}><Image src={filterIcon} alt='Filter' width={20} /></button>
                         </form>
