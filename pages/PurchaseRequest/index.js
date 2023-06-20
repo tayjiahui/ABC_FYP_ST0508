@@ -191,8 +191,8 @@ export default function PurchaseRequest() {
                     <div className={styles.searchContainer}>
                         <form>
                             <input type="text" placeholder="Search.." name="search" className={styles.searchBox}/>
-                            <button type="submit" className={styles.searchButton}><Image src={searchIcon}/></button>
-                            <button type="button" className={styles.searchButton}><Image src={filterIcon} width={20} /></button>
+                            <button type="submit" className={styles.searchButton}><Image src={searchIcon} alt='Search'/></button>
+                            <button type="button" className={styles.searchButton}><Image src={filterIcon} alt='Filter' width={20} /></button>
                         </form>
                     </div>
                 </div>

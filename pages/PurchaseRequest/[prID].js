@@ -199,10 +199,10 @@ export default function Supplier({prDetails, pLDetails}) {
             <div className="headerRow">
                 <h1>
                     <a href={"/PurchaseRequest"}>
-                        <Image src={arrowIcon} id={styles.arrow} /> 
+                        <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
                     </a>
                     Purchase Request #{prID}
-                    <Image src={Circle} width={25} height={25} className={styles.statusCircle}/>
+                    <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
                 </h1>
             </div>
 
