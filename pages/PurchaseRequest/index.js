@@ -69,7 +69,7 @@ function PRRow (props){
     const circle = circleTest(statusID);
 
     return (
-        <div class="py-1">
+        <div className="py-1">
             <a href={baseURL + '/PurchaseRequest/' + props.prID}>
                 <button className={styles.prButton}>
                     <div className={styles.prRow}>

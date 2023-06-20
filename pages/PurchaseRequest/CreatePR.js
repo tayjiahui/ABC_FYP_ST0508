@@ -318,7 +318,7 @@ export default function Supplier() {
                     </div>
                     
                     <div className={styles.viewRow}>
-                        <div class="pt-4">
+                        <div className="pt-4">
                             <div className={styles.viewCol}>
                                 <h4>Supplier</h4>
                                 <input list="suppliers" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
@@ -338,7 +338,7 @@ export default function Supplier() {
                     </div>
 
                     <div className={styles.viewRow}>
-                        <div class="pt-4">
+                        <div className="pt-4">
                             <div className={styles.viewCol}>
                                 <h4>Location</h4>
                                 <div>
@@ -464,7 +464,7 @@ export default function Supplier() {
                 </div>
 
                 <div className={styles.viewRow}>
-                    <div class="pt-4">
+                    <div className="pt-4">
                         <div className={styles.viewCol}>
                             <div className={styles.submit}>
                                 <button type="submit" className={styles.submitButton}>Submit</button>

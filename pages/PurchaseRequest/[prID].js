@@ -207,13 +207,13 @@ export default function Supplier({prDetails, pLDetails}) {
             </div>
 
             <div className={styles.prDetails}>
-                <div class="py-3">
+                <div className="py-3">
                     <h4>Target Delivery Date</h4>
                     <p>{TargetDeliveryDate}</p>
                 </div>
                 
                 <div className={styles.viewRow}>
-                    <div class="py-3">
+                    <div className="py-3">
                         <div className={styles.viewCol}>
                             <h4>Name</h4>
                             <p>{PR.name}</p>
@@ -226,7 +226,7 @@ export default function Supplier({prDetails, pLDetails}) {
                 </div>
 
                 <div className={styles.viewRow}>
-                    <div class="py-3">
+                    <div className="py-3">
                         <div className={styles.viewCol}>
                             <h4>Location</h4>
                             <p>{PR.branchName}</p>
@@ -294,7 +294,7 @@ export default function Supplier({prDetails, pLDetails}) {
             <div className={styles.prDetails}>
                 {
                     checkRemark && 
-                        <div class="pt-3">
+                        <div className="pt-3">
                             <h4>Remarks</h4>
                             <p>{PR.remarks}</p>
                         </div>
