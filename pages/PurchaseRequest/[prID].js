@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
+import moment from 'moment';
 
 import styles from '../../styles/viewPR.module.css';
 
@@ -88,6 +89,8 @@ export default function Supplier({prDetails, pLDetails}) {
 
     const [Circle,testCircle] = useState();
 
+    const [TargetDeliveryDate, setTargetDate] = useState();
+
     const [ProductDetails, setList] = useState();
 
     const [Subtotal, subtotalCal] = useState();
@@ -121,6 +124,10 @@ export default function Supplier({prDetails, pLDetails}) {
 
         const circle = circleTest(statusID);
         testCircle(circle);
+
+        // Target Delivery Date formatting
+        const newDateFormat = moment(PR.targetDeliveryDate).format('DD/MM/YYYY');
+        setTargetDate(newDateFormat);
 
         // Product lines
         const itemLines = [];
@@ -202,7 +209,7 @@ export default function Supplier({prDetails, pLDetails}) {
             <div className={styles.prDetails}>
                 <div class="py-3">
                     <h4>Target Delivery Date</h4>
-                    <p>{PR.targetDeliveryDate}</p>
+                    <p>{TargetDeliveryDate}</p>
                 </div>
                 
                 <div className={styles.viewRow}>
