@@ -16,8 +16,7 @@ import axios from "axios";
 // Base urls
 const URL = [];
 
-function isLocalhost() 
-{
+function isLocalhost (){
     if (typeof window !== 'undefined') {
         const hostname = window.location.hostname;
         // console.log('hostname   ' + hostname);
@@ -38,8 +37,6 @@ function isLocalhost()
 isLocalhost();
 
 const baseUrl = URL[0];
-
-const id = 2;
 
 function DropdownOpt (props){
     return(
@@ -75,11 +72,18 @@ export default function Supplier() {
     const { data: session} = useSession();
     const router = useRouter();
 
+    const [id, setUserID] = useState();
+
     // dropdown lists states
     const [Suppliers,supplierList] = useState();
     const [Locations, locationList] = useState();
     const [PaymentModes, pmList] = useState();
     const [Items, itemList] = useState();
+
+    useEffect(() => {
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
+    }, [])
 
     // get drop down list
     useEffect(() => {
@@ -314,7 +318,7 @@ export default function Supplier() {
                 <div className={styles.prDetails}>
                     <div className={styles.viewCol}>
                         <h4>Target Delivery Date</h4>
-                        <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq" required/>
+                        <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq" className={styles.formInputs} required/>
                     </div>
                     
                     <div className={styles.viewRow}>
