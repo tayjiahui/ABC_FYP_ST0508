@@ -77,3 +77,9 @@ ul{
     vertical-align: middle;
 }
 
+/* Input Boxes */
+
+input[type="text"], input[type="email"]{
+    box-sizing: border-box;
+    padding-left: 10px;
+}
