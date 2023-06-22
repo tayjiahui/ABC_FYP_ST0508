@@ -17,6 +17,11 @@
 }
 
 /* PR Details */
+/* .formInputs{
+    height: 50px;
+    border-color: aqua;
+} */
+
 .prDetails,.productDetails{
     padding: 30px 0 30px 90px;
 }
@@ -34,7 +39,7 @@
 
 .viewCol > input, .viewCol > div > div > input{
     width: 400px;
-    height: 30px;
+    height: 40px;
     border-radius: 10px;
     border-color: #93A2B7;
     border-style: solid;
@@ -125,7 +130,7 @@
 }
 
 .plItemNo, .plItemName, .plQty, .plUnitPrice, .plTotalUP{
-    height: 25px;
+    height: 30px;
     border-radius: 8px;
     border-color: #93A2B7;
     border-style: solid;
@@ -169,6 +174,7 @@
     border-color: #93A2B7;
     border-style: solid;
     border-width:2px;
+    resize: none;
 }
 
 /* Submit Button */
@@ -186,8 +192,7 @@
     width: 120px;
     height: 40px;
     background-color: #486284;
-    border-color: #486284;
-    border-style: solid;
+    border: none;
     border-radius: 15px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }

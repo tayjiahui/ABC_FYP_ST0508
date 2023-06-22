@@ -16,8 +16,7 @@ import axios from "axios";
 // Base urls
 const URL = [];
 
-function isLocalhost() 
-{
+function isLocalhost (){
     if (typeof window !== 'undefined') {
         const hostname = window.location.hostname;
         // console.log('hostname   ' + hostname);
@@ -38,8 +37,6 @@ function isLocalhost()
 isLocalhost();
 
 const baseUrl = URL[0];
-
-const id = 2;
 
 function DropdownOpt (props){
     return(
@@ -75,11 +72,18 @@ export default function Supplier() {
     const { data: session} = useSession();
     const router = useRouter();
 
+    const [id, setUserID] = useState();
+
     // dropdown lists states
     const [Suppliers,supplierList] = useState();
     const [Locations, locationList] = useState();
     const [PaymentModes, pmList] = useState();
     const [Items, itemList] = useState();
+
+    useEffect(() => {
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
+    }, [])
 
     // get drop down list
     useEffect(() => {
@@ -321,7 +325,7 @@ export default function Supplier() {
                         <div className="pt-4">
                             <div className={styles.viewCol}>
                                 <h4>Supplier</h4>
-                                <input list="suppliers" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
+                                <input list="suppliers" type="text" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
                                 <datalist id="suppliers">
                                     {Suppliers}
                                 </datalist>
@@ -329,7 +333,7 @@ export default function Supplier() {
 
                             <div className={styles.viewCol}>
                                 <h4>Payment Mode</h4>
-                                <input list="PaymentMode" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode" required/>
+                                <input list="PaymentMode" type="text" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode" required/>
                                 <datalist id="PaymentMode">
                                     {PaymentModes}
                                 </datalist>
@@ -345,7 +349,7 @@ export default function Supplier() {
                                     {LocationsList.map((item, index) => {
                                         if(LocationsList.length == 1){
                                             return <div key={index} className={styles.locationInputs}>
-                                                        <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                        <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
                                                         <datalist id="Branch">
                                                             {Locations}
                                                         </datalist>
@@ -353,7 +357,7 @@ export default function Supplier() {
                                         }
                                         else if(LocationsList.length > 1){
                                             return <div key={index} className={styles.locationInputs}>
-                                                        <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                        <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
                                                         <datalist id="Branch">
                                                             {Locations}
                                                         </datalist>

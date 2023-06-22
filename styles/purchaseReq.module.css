@@ -26,9 +26,9 @@
 }
 
 .searchBox{
-    height: 5%;
+    height: 30px;
     width: 70%;
-    border-radius: 15px;
+    border-radius: 14px;
     border-color: #93A2B7;
     border-style: solid;
     border-width: 1.5px;

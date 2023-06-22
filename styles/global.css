@@ -22,6 +22,7 @@ div{
 
 h1,h2,h3,h4,h5{
     font-family: "Plus Jakarta Sans Medium";
+    color: #1A202C;
 }
 
 body{
@@ -77,3 +78,9 @@ ul{
     vertical-align: middle;
 }
 
+/* Input Boxes */
+
+input[type="text"], input[type="email"]{
+    box-sizing: border-box;
+    padding-left: 10px;
+}

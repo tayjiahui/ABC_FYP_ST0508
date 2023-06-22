@@ -13,6 +13,31 @@ import rejectedCircle from '../../public/redRejectedCircle.svg';
 
 import axios from "axios";
 
+// Base urls
+const URL = [];
+
+function isLocalhost (){
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        // console.log('hostname   ' + hostname);
+        if(hostname == 'localhost'){
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
+            
+        }
+        else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
+        }
+
+        return URL;
+    }
+};
+
+isLocalhost();
+
+const baseUrl = URL[0];
+
 function ItemLines (props){
     return(
         <div className={styles.productLines}>
@@ -87,6 +112,9 @@ export default function Supplier({prDetails, pLDetails}) {
 
     const prID = router.query.prID;
 
+    const [id, setUserID] = useState();
+    const [role, setRoleID] = useState();
+
     const [Circle,testCircle] = useState();
 
     const [TargetDeliveryDate, setTargetDate] = useState();
@@ -97,18 +125,37 @@ export default function Supplier({prDetails, pLDetails}) {
     const [GST, gstCal] = useState();
     const [Total, totalCal] = useState();
 
-    const [checkRemark, setRemark] = useState();
+    const [checkRemark, setRemark] = useState(false);
+
+    const [ApprComment, setApprComment] = useState();
+
+    const [isAdmin, setAdmin] = useState(false);
+    const [isPending, setIsPending] = useState(false);
 
     // PR Details  
     const PR = prDetails[0];
     
     useEffect(() => {
+        // set user id taken from localstorage
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
+
+        // set user role
+        const roleID = parseInt(localStorage.getItem("roleID"), 10);
+        setRoleID(roleID);
+
+        
+        // check if admin/ approver
+        if(roleID === 1){
+            setAdmin(true);
+        }
 
         // Test for status Circle
         const statusID = PR.prStatusID;
 
         function circleTest(statusID){
             if(statusID == 1){
+                setIsPending(true);
                 return '/yellowPendingCircle.svg';
             }
             else if(statusID == 2){
@@ -188,117 +235,213 @@ export default function Supplier({prDetails, pLDetails}) {
         if(PR.remarks !== ""){
             setRemark(true)
         }
+    }, []);
+
+    const submitApproval = async(e) => {
+        e.preventDefault();
+
+        if(ApprComment !== ""){
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "comments": ApprComment,
+                    "prStatusID": 2
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Approved!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
         else{
-            setRemark(false)
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "prStatusID": 2
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Approved!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+    };
+
+    const submitDeny = async(e) => {
+        e.preventDefault();
+
+        if(ApprComment !== ""){
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "comments": ApprComment,
+                    "prStatusID": 3
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Denied!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+        else{
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "prStatusID": 3
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Denied!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         }
 
-    }, []);
+    };
 
     return (
         <>
-            <div className="headerRow">
-                <h1>
-                    <a href={"/PurchaseRequest"}>
-                        <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
-                    </a>
-                    Purchase Request #{prID}
-                    <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
-                </h1>
-            </div>
-
-            <div className={styles.prDetails}>
-                <div className="py-3">
-                    <h4>Target Delivery Date</h4>
-                    <p>{TargetDeliveryDate}</p>
+            <div className="pb-5">
+                <div className="headerRow">
+                    <h1>
+                        <a href={"/PurchaseRequest"}>
+                            <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
+                        </a>
+                        Purchase Request #{prID}
+                        <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
+                    </h1>
                 </div>
-                
-                <div className={styles.viewRow}>
+
+                <div className={styles.prDetails}>
                     <div className="py-3">
-                        <div className={styles.viewCol}>
-                            <h4>Name</h4>
-                            <p>{PR.name}</p>
+                        <h4>Target Delivery Date</h4>
+                        <p>{TargetDeliveryDate}</p>
+                    </div>
+                    
+                    <div className={styles.viewRow}>
+                        <div className="py-3">
+                            <div className={styles.viewCol}>
+                                <h4>Name</h4>
+                                <p>{PR.name}</p>
+                            </div>
+                            <div className={styles.viewCol}>
+                                <h4>Supplier</h4>
+                                <p>{PR.supplierName}</p>
+                            </div>
                         </div>
-                        <div className={styles.viewCol}>
-                            <h4>Supplier</h4>
-                            <p>{PR.supplierName}</p>
+                    </div>
+
+                    <div className={styles.viewRow}>
+                        <div className="py-3">
+                            <div className={styles.viewCol}>
+                                <h4>Location</h4>
+                                <p>{PR.branchName}</p>
+                            </div>
+                            <div className={styles.viewCol}>
+                                <h4>Payment Mode</h4>
+                                <p>{PR.paymentMode}</p>
+                            </div>
                         </div>
+                        
                     </div>
                 </div>
 
-                <div className={styles.viewRow}>
-                    <div className="py-3">
-                        <div className={styles.viewCol}>
-                            <h4>Location</h4>
-                            <p>{PR.branchName}</p>
+                <div className={styles.productDetails}>
+                    <div className={styles.pDTop}>
+                        <h4>Product Details</h4>
+                        <hr/>
+                        <ul className={styles.itemLabel}>
+                            <li className={styles.itemNo}>Item No.</li>
+                            <li className={styles.itemName}>Item</li>
+                            <li className={styles.itemQty}>Quantity</li>
+                            <li className={styles.itemUP}>Unit Price</li>
+                            <li className={styles.itemTotalUP}>Total Unit Price</li>
+                        </ul>
+                        <hr/>
+                    </div>
+                    <div>
+                        {ProductDetails}
+                    </div>
+                    <div>
+                        <hr/>
+                        <div className={styles.totalRow}>
+                            <div className={styles.totalCol1}>
+                                <h3 className={styles.priceLabel}>Subtotal</h3>
+                            </div>
+                            <div className={styles.totalCol2}>
+                                <p className={styles.price}>${Subtotal}</p>
+                            </div>
                         </div>
-                        <div className={styles.viewCol}>
-                            <h4>Payment Mode</h4>
-                            <p>{PR.paymentMode}</p>
+
+                        <div className={styles.totalRow}>
+                            <div className={styles.totalCol1}>
+                                <h3 className={styles.priceLabel}>GST 8%</h3>
+                            </div>
+                            <div className={styles.totalCol2}>
+                                <p className={styles.price}>${GST}</p>
+                            </div>
                         </div>
+
+                        <hr id={styles.totalLine}/>
+
+                        <div className={styles.totalRow}>
+                            <div className={styles.totalCol1}>
+                                <h2 className={styles.priceLabel}>Total</h2>
+                            </div>
+                            <div className={styles.totalCol2}>
+                                <p className={styles.totalprice}>${Total}</p>
+                            </div>
+                        </div>
+                        
                     </div>
                     
                 </div>
-            </div>
-
-            <div className={styles.productDetails}>
-                <div className={styles.pDTop}>
-                    <h4>Product Details</h4>
-                    <hr/>
-                    <ul className={styles.itemLabel}>
-                        <li className={styles.itemNo}>Item No.</li>
-                        <li className={styles.itemName}>Item</li>
-                        <li className={styles.itemQty}>Quantity</li>
-                        <li className={styles.itemUP}>Unit Price</li>
-                        <li className={styles.itemTotalUP}>Total Unit Price</li>
-                    </ul>
-                    <hr/>
+            
+                <div className={styles.prDetails}>
+                    {
+                        checkRemark && 
+                            <div className="pt-3">
+                                <h4>Remarks</h4>
+                                <p>{PR.remarks}</p>
+                            </div>
+                    }
                 </div>
+
                 <div>
-                    {ProductDetails}
+                    {
+                        isPending && isAdmin &&
+                            <div>
+                                <div className="px-5">
+                                    <hr className={styles.apprLine}/>
+                                </div>
+                                
+                                <div className="px-5 mx-5 pb-5 pt-2">
+                                    <h2>Approve Purchase Request?</h2>
+                                    <form>
+                                        <div className="py-3 mb-3">
+                                            <p>Comments</p>
+                                            <textarea value={ApprComment} onChange={(e) => setApprComment(e.target.value)} className={styles.textArea}></textarea>
+                                        </div>
+                                        
+                                        <div className="py-3">
+                                            <div className={styles.apprButtons}>
+                                                <button onClick={submitDeny} className={styles.denyButton}>Deny</button>
+                                                <div className={styles.divider}></div>
+                                                <button onClick={submitApproval} className={styles.approveButton}>Approve</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                    }
                 </div>
-                <div>
-                    <hr/>
-                    <div className={styles.totalRow}>
-                        <div className={styles.totalCol1}>
-                            <h3 className={styles.priceLabel}>Subtotal</h3>
-                        </div>
-                        <div className={styles.totalCol2}>
-                            <p className={styles.price}>${Subtotal}</p>
-                        </div>
-                    </div>
-
-                    <div className={styles.totalRow}>
-                        <div className={styles.totalCol1}>
-                            <h3 className={styles.priceLabel}>GST 8%</h3>
-                        </div>
-                        <div className={styles.totalCol2}>
-                            <p className={styles.price}>${GST}</p>
-                        </div>
-                    </div>
-
-                    <hr id={styles.totalLine}/>
-
-                    <div className={styles.totalRow}>
-                        <div className={styles.totalCol1}>
-                            <h2 className={styles.priceLabel}>Total</h2>
-                        </div>
-                        <div className={styles.totalCol2}>
-                            <p className={styles.totalprice}>${Total}</p>
-                        </div>
-                    </div>
-                    
-                </div>
-                
-            </div>
-
-            <div className={styles.prDetails}>
-                {
-                    checkRemark && 
-                        <div className="pt-3">
-                            <h4>Remarks</h4>
-                            <p>{PR.remarks}</p>
-                        </div>
-                }
             </div>
         </>
     )

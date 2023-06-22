@@ -26,7 +26,7 @@ export default function App({
         
         return (
             <>
-                <NavBar></NavBar>
+                <NavBar/>
                 <Component {...pageProps} />
             </>
         );
