@@ -13,6 +13,31 @@ import rejectedCircle from '../../public/redRejectedCircle.svg';
 
 import axios from "axios";
 
+// Base urls
+const URL = [];
+
+function isLocalhost (){
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        // console.log('hostname   ' + hostname);
+        if(hostname == 'localhost'){
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
+            
+        }
+        else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
+        }
+
+        return URL;
+    }
+};
+
+isLocalhost();
+
+const baseUrl = URL[0];
+
 function ItemLines (props){
     return(
         <div className={styles.productLines}>
@@ -100,9 +125,9 @@ export default function Supplier({prDetails, pLDetails}) {
     const [GST, gstCal] = useState();
     const [Total, totalCal] = useState();
 
-    const [checkRemark, setRemark] = useState();
+    const [checkRemark, setRemark] = useState(false);
 
-    const [ApprComment, setApprComment] = useState(false);
+    const [ApprComment, setApprComment] = useState();
 
     const [isAdmin, setAdmin] = useState(false);
     const [isPending, setIsPending] = useState(false);
@@ -211,6 +236,75 @@ export default function Supplier({prDetails, pLDetails}) {
             setRemark(true)
         }
     }, []);
+
+    const submitApproval = async(e) => {
+        e.preventDefault();
+
+        if(ApprComment !== ""){
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "comments": ApprComment,
+                    "prStatusID": 2
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Approved!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+        else{
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "prStatusID": 2
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Approved!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+    };
+
+    const submitDeny = async(e) => {
+        e.preventDefault();
+
+        if(ApprComment !== ""){
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "comments": ApprComment,
+                    "prStatusID": 3
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Denied!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+        else{
+            await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+                {
+                    "prStatusID": 3
+                }
+            )
+            .then((response) => {
+                alert(`Purchase Request #${prID} has been Denied!`);
+                router.push('/PurchaseRequest');
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+        }
+
+    };
 
     return (
         <>
@@ -338,9 +432,9 @@ export default function Supplier({prDetails, pLDetails}) {
                                         
                                         <div className="py-3">
                                             <div className={styles.apprButtons}>
-                                                <button className={styles.denyButton}>Deny</button>
+                                                <button onClick={submitDeny} className={styles.denyButton}>Deny</button>
                                                 <div className={styles.divider}></div>
-                                                <button className={styles.approveButton}>Approve</button>
+                                                <button onClick={submitApproval} className={styles.approveButton}>Approve</button>
                                             </div>
                                         </div>
                                     </form>
