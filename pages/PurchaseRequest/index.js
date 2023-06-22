@@ -45,9 +45,7 @@ const baseURL = URL[1];
 console.log(baseUrl);
 console.log(baseURL);
 
-// const id = localStorage.getItem("user_Id");
-const id = 2;
-
+// Each pr row
 function PRRow (props){
     const statusID = props.StatusID;
 
@@ -75,7 +73,7 @@ function PRRow (props){
                     <div className={styles.prRow}>
                         <div className={styles.prTextRow}>
                             <div>
-                                <p className={styles.prTextNo}>{props.prID}</p>
+                                <p className={styles.prTextNo}>#{props.prID}</p>
                             </div>
                             {/* <div>
                                 <p className={styles.prTextName}>{props.Name}</p>
@@ -100,13 +98,17 @@ function PRRow (props){
     )
 };
 
+// Status icon for each PR row
 function Icon(props){
     return(
         <Image src={baseURL + props.item} width={25} height={25} id={styles.statusCircle} alt='status indicator'/>
     )
-}
+};
 
 export default function PurchaseRequest() {
+
+    const [id, setUserID] = useState();
+    const [role, setRoleID] = useState();
     
     const [PRResults, setlist1] = useState([(<div>Loading...</div>)]);
 
@@ -114,118 +116,201 @@ export default function PurchaseRequest() {
 
     // show all PR
     useEffect(() => {
-        axios.all([
-            axios.get(`${baseUrl}/api/purchaseReq/${id}`,{
+        // set user id taken from localstorage
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
+
+        // set user role
+        const roleID = parseInt(localStorage.getItem("roleID"), 10);
+        setRoleID(roleID);
+
+        if(roleID === 2){
+            axios.all([
+                axios.get(`${baseUrl}/api/purchaseReq/${userID}`,{
+                    headers: {
+                        'user': userID
+                        // 'authorization': 'Bearer ' + token 
+                    }
+                })
+            ])
+            .then(axios.spread((response1) => {
+                // console.log(response1);
+
+                const prResult = response1.data;
+
+                // data filter out duplicates
+                // const uniqueIDs = [];
+                // const duplicatePRs = [];
+
+                // const filteredPRData1 = prResult.filter(e => {
+
+                //     // uniqueIDs only keeps one of each prID and removes duplicated prID objects
+                //     const isDuplicate = uniqueIDs.includes(e.prID);
+
+                //     if(!isDuplicate){
+                //         uniqueIDs.push(e.prID);
+
+                //         return true;
+                //     }
+                //     else{
+                //         duplicatePRs.push(e);
+
+                //         return false;
+                //     };
+                // });
+
+                // // adds duplicated PR branchname to main PR OBJECT
+                // duplicatePRs.forEach((item, index) => {
+                //     let foundIndex = filteredPRData1.findIndex(x => x.prID == duplicatePRs[index].prID);
+                //     filteredPRData1[foundIndex].branchName += `, ${duplicatePRs[index].branchName}`;
+                // });
+
+                // Show List of UPDATED PRs [multiple locations included]
+                const prList = [];
+
+                prResult.forEach((item, index) => {
+                    prList.push(
+                        <div key={index}>
+                            <PRRow
+                                prID={item.prID}
+                                Name={item.name}
+                                Location={item.branchName}
+                                Supplier={item.supplierName}
+                                Status={item.prStatus}
+                                StatusID={item.prStatusID} />
+                        </div>
+                    )
+                });
+
+                setlist1(prList);
+            }))
+            .catch((err) => {
+                console.log(err);
+                if(err.response.status === 404){
+                }
+                else{
+                    alert(err.code);
+                }
+            });
+        }
+        else if(roleID === 1){ 
+            // admin/approver
+            axios.get(`${baseUrl}/api/purchaseReq/`,{
                 headers: {
-                    'user': id
+                    // 'user': userID
                     // 'authorization': 'Bearer ' + token 
                 }
             })
-        ])
-        .then(axios.spread((response1) => {
-            // console.log(response1);
+            .then((response) => {
+                const prResult = response.data;
 
-            const prResult = response1.data;
+                // Show List of UPDATED PRs [multiple locations included]
+                const prList = [];
 
-            // data filter out duplicates
-            const uniqueIDs = [];
-            const duplicatePRs = [];
+                prResult.forEach((item, index) => {
+                    prList.push(
+                        <div key={index}>
+                            <PRRow
+                                prID={item.prID}
+                                Name={item.name}
+                                Location={item.branchName}
+                                Supplier={item.supplierName}
+                                Status={item.prStatus}
+                                StatusID={item.prStatusID} />
+                        </div>
+                    )
+                });
 
-            const filteredPRData1 = prResult.filter(e => {
-
-                // uniqueIDs only keeps one of each prID and removes duplicated prID objects
-                const isDuplicate = uniqueIDs.includes(e.prID);
-
-                if(!isDuplicate){
-                    uniqueIDs.push(e.prID);
-
-                    return true;
-                }
-                else{
-                    duplicatePRs.push(e);
-
-                    return false;
-                };
+                setlist1(prList);
+            })
+            .catch((err) => {
+                console.log(err);
             });
+        }
 
-            // adds duplicated PR branchname to main PR OBJECT
-            duplicatePRs.forEach((item, index) => {
-                let foundIndex = filteredPRData1.findIndex(x => x.prID == duplicatePRs[index].prID);
-                filteredPRData1[foundIndex].branchName += `, ${duplicatePRs[index].branchName}`;
-            });
-
-            // Show List of UPDATED PRs [multiple locations included]
-            const prList = [];
-
-            filteredPRData1.forEach((item, index) => {
-                prList.push(
-                    <div key={index}>
-                        <PRRow
-                            prID={item.prID}
-                            Name={item.name}
-                            Location={item.branchName}
-                            Supplier={item.supplierName}
-                            Status={item.prStatus}
-                            StatusID={item.prStatusID} />
-                    </div>
-                )
-            });
-
-            setlist1(prList);
-        }))
-        .catch((err) => {
-            console.log(err);
-            if(err.response === 404){
-                alert(err.response.data);
-            }
-            else{
-                alert(err.code);
-            }
-        })
+        
     }, []);
 
     const handlePRSearch = async(e) => {
         e.preventDefault();
 
-        await axios.post(`${baseUrl}/api/purchaseReq/search/${id}`,
-            {
-                "searchValue": searchValue
-            }
-        )
-        .then((response) => {
-            // console.log(searchValue);
-            // console.log(response.data);
+        if(role === 2){
+            await axios.post(`${baseUrl}/api/purchaseReq/search/${id}`,
+                {
+                    "searchValue": searchValue
+                }
+            )
+            .then((response) => {
+                // console.log(searchValue);
+                // console.log(response.data);
 
-            const searchResult = response.data;
+                const searchResult = response.data;
 
-            // Show List of Searched PR results
-            const resultsList = [];
+                // Show List of Searched PR results
+                const resultsList = [];
 
-            searchResult.forEach((item, index) => {
-                resultsList.push(
-                    <div key={index}>
-                        <PRRow
-                            prID={item.prID}
-                            Name={item.name}
-                            Location={item.branchName}
-                            Supplier={item.supplierName}
-                            Status={item.prStatus}
-                            StatusID={item.prStatusID} />
-                    </div>
-                )
+                searchResult.forEach((item, index) => {
+                    resultsList.push(
+                        <div key={index}>
+                            <PRRow
+                                prID={item.prID}
+                                Name={item.name}
+                                Location={item.branchName}
+                                Supplier={item.supplierName}
+                                Status={item.prStatus}
+                                StatusID={item.prStatusID} />
+                        </div>
+                    )
+                });
+
+                setlist1(resultsList);
+            })
+            .catch((err) => {
+                if(err.response.status === 404){
+                    setlist1(<div className="p-5">No Results Found!</div>)
+                }
+                else{
+                    alert(err.response.data);
+                }
             });
+        }
+        else if(role === 1){
+            await axios.post(`${baseUrl}/api/purchaseReq/search/`,
+                {
+                    "searchValue": searchValue
+                }
+            )
+            .then((response) => {
+                const searchResult = response.data;
 
-            setlist1(resultsList);
-        })
-        .catch((err) => {
-            if(err.response.status === 404){
-                setlist1(<div className="p-5">No Results Found!</div>)
-            }
-            else{
-                alert(err.response.data);
-            }
-        });
+                // Show List of Searched PR results
+                const resultsList = [];
 
+                searchResult.forEach((item, index) => {
+                    resultsList.push(
+                        <div key={index}>
+                            <PRRow
+                                prID={item.prID}
+                                Name={item.name}
+                                Location={item.branchName}
+                                Supplier={item.supplierName}
+                                Status={item.prStatus}
+                                StatusID={item.prStatusID} />
+                        </div>
+                    )
+                });
+
+                setlist1(resultsList);
+            })
+            .catch((err) => {
+                if(err.response.status === 404){
+                    setlist1(<div className="p-5">No Results Found!</div>)
+                }
+                else{
+                    alert(err.response.data);
+                }
+            });   
+        }
     };
 
     return (
@@ -235,7 +320,7 @@ export default function PurchaseRequest() {
                 <div>
                     <div className={styles.searchContainer}>
                         <form onSubmit={handlePRSearch}>
-                            <input type="text" placeholder="Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox}/>
+                            <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox}/>
                             <button type="submit" className={styles.searchButton}><Image src={searchIcon} alt='Search'/></button>
                             <button type="button" className={styles.searchButton}><Image src={filterIcon} alt='Filter' width={20} /></button>
                         </form>
