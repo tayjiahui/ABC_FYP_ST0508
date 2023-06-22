@@ -318,14 +318,14 @@ export default function Supplier() {
                 <div className={styles.prDetails}>
                     <div className={styles.viewCol}>
                         <h4>Target Delivery Date</h4>
-                        <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq" className={styles.formInputs} required/>
+                        <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq" required/>
                     </div>
                     
                     <div className={styles.viewRow}>
                         <div className="pt-4">
                             <div className={styles.viewCol}>
                                 <h4>Supplier</h4>
-                                <input list="suppliers" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
+                                <input list="suppliers" type="text" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
                                 <datalist id="suppliers">
                                     {Suppliers}
                                 </datalist>
@@ -333,7 +333,7 @@ export default function Supplier() {
 
                             <div className={styles.viewCol}>
                                 <h4>Payment Mode</h4>
-                                <input list="PaymentMode" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode" required/>
+                                <input list="PaymentMode" type="text" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode" required/>
                                 <datalist id="PaymentMode">
                                     {PaymentModes}
                                 </datalist>
@@ -349,7 +349,7 @@ export default function Supplier() {
                                     {LocationsList.map((item, index) => {
                                         if(LocationsList.length == 1){
                                             return <div key={index} className={styles.locationInputs}>
-                                                        <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                        <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
                                                         <datalist id="Branch">
                                                             {Locations}
                                                         </datalist>
@@ -357,7 +357,7 @@ export default function Supplier() {
                                         }
                                         else if(LocationsList.length > 1){
                                             return <div key={index} className={styles.locationInputs}>
-                                                        <input list="Branch" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                        <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
                                                         <datalist id="Branch">
                                                             {Locations}
                                                         </datalist>
