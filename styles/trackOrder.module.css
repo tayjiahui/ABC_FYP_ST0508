@@ -49,41 +49,45 @@
   margin-left: 20px;
 }
 
+.tableCreated{
+  margin-left: 40px;
+}
+
 .tableName{
-  margin-left: 50px;
+  margin-left: 100px;
 }
 
 .tableSupplier{
-  margin-left: 250px;
+  margin-left: 230px;
 }
 
 .tableStatus{
-  margin-left: 500px;
+  margin-left: 400px;
 }
 
 .orderBtn {
   border: none;
   background-color: transparent;
   width: 100%;
-  padding-bottom: 5px;
   cursor: pointer;
 }
 
 .orderRow{
   background-color: #C0D8F7;
   font-size: 14px;
-  height: 80px;
+  height: 50px;
   border-radius: 18px;
   /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
   text-align: center;
   object-fit: scale-down;
-  transition: transform .5s;
+  /* transition: transform .5s; */
+ 
 }
 
-.orderRow:hover{
+/* .orderRow:hover{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  /* transform: scale(1.05); */
-}
+  transform: scale(1.05);
+} */
 
 .orderTextRow{
   padding-top: 20px;
@@ -94,14 +98,35 @@
   grid-template-columns: 110px 210px 400px 220px 190px 100px;
 } 
 
+.box {
+  display: flex;
+  width: 100%;
+  background-color: #C0D8F7;
+  height: 80px;
+  border-radius: 18px;
+  margin-bottom: 10px;
+}
+
 .orderTextNo{
   padding-left: 50px;
+  flex: 1;
 }
 
 .orderTextName{
   padding-left: 70px;
+  flex: 1;
 }
 
 .orderTextSupplier{
-  padding-left: 220px;
+  padding-left: 10px;
+  flex: 1;
+}
+
+.orderTextDate{
+  padding-left: 50px;
+  flex: 1;
+}
+
+.container2 {
+  flex: 1;
 }

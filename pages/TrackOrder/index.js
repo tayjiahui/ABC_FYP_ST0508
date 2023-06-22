@@ -43,24 +43,38 @@ console.log(baseURL);
 function OrderRow(props) {
 
   return (
-    <div>
+    <div className={styles.box}>
       <a href={baseURL + '/TrackOrder/' + props.prID}>
         <button className={styles.orderBtn}>
           <div className={styles.orderRow}>
             <div className={styles.orderTextRow}>
               <div>
-                <p className={styles.orderTextNo}>{props.prID}</p>
+                <p className={styles.orderTextNo} >{props.prID}</p>
               </div>
               <div>
-                <p className={styles.orderTextName}>{props.Name}</p>
+                <p className={styles.orderTextDate} >{props.date}</p>
               </div>
               <div>
-                <p className={styles.orderTextSupplier}>{props.Supplier}</p>
+                <p className={styles.orderTextName} >{props.Name}</p>
+              </div>
+              <div>
+                <p className={styles.orderTextSupplier} >{props.Supplier}</p>
               </div>
             </div>
           </div>
         </button>
       </a>
+      <div className={styles.container2}>
+        <label for="payStatus" id={styles.purStatus}></label><br></br>
+
+        <select name="status" id={styles.words2}>
+          <option value="acceptO">Accept Order</option>
+          <option value="preparingO">Preparing Order</option>
+          <option value="preparingD">Preparing Delivery</option>
+          <option value="shipping">Shipping Item</option>
+          <option value="delivered">Item Delivered</option>
+        </select>
+      </div>
     </div>
   )
 };
@@ -97,6 +111,7 @@ export default function TrackOrder() {
             <div key={index}>
               <OrderRow
                 prID={item.prID}
+                date={item.requestDate}
                 Name={item.name}
                 Supplier={item.supplierName} />
             </div>
@@ -106,21 +121,21 @@ export default function TrackOrder() {
         orderList(trackOrderList);
 
         // get purchase status
-        const purchaseStatusResult = response2.data;
-        const purchaseStatusList = [];
+        // const purchaseStatusResult = response2.data;
+        // const purchaseStatusList = [];
 
-        purchaseStatusResult.forEach((item, index) => {
-          purchaseStatusList.push(
-            <div key={index}>
-              <DropdownOpt
-                ID={item.purchaseStatusID}
-                Value={item.purchaseStatus} />
-            </div>
+        // purchaseStatusResult.forEach((item, index) => {
+        //   purchaseStatusList.push(
+        //     <div key={index}>
+        //       <DropdownOpt
+        //         ID={item.purchaseStatusID}
+        //         Value={item.purchaseStatus} />
+        //     </div>
 
-          )
-        });
+        //   )
+        // });
 
-        statusList(purchaseStatusList);
+        // statusList(purchaseStatusList);
 
       }))
       .catch((err) => {
@@ -157,6 +172,7 @@ export default function TrackOrder() {
         <hr />
         <ul className={styles.tableLabel}>
           <li className={styles.tableNo}>No.</li>
+          <li className={styles.tableCreated}>Created</li>
           <li className={styles.tableName}>Name</li>
           <li className={styles.tableSupplier}>Supplier</li>
           <li className={styles.tableStatus}>Status</li>
@@ -166,12 +182,7 @@ export default function TrackOrder() {
 
       <div className={styles.prData}>
         {TrackOrderResults}
-        {/* <div className={styles.viewCol}>
-          <input list="PurchaseStatus" value={PSV} onChange={(e) => setPS(e.target.value)} name="PurchaseStatus"></input>
-          <datalist id="PurchaseStatus">
-            {statusResults}
-          </datalist>
-        </div> */}
+
       </div>
 
     </>
