@@ -65,9 +65,7 @@ function OrderRow(props) {
         </button>
       </a>
       <div className={styles.container2}>
-        <label for="payStatus" id={styles.purStatus}></label><br></br>
-
-        <select name="status" id={styles.words2}>
+        <select name="status" className={styles.dropdownStatus}>
           <option value="acceptO">Accept Order</option>
           <option value="preparingO">Preparing Order</option>
           <option value="preparingD">Preparing Delivery</option>
@@ -182,7 +180,6 @@ export default function TrackOrder() {
 
       <div className={styles.prData}>
         {TrackOrderResults}
-
       </div>
 
     </>
