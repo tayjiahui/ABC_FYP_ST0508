@@ -165,7 +165,7 @@
 }
 
 /* Approver Section */
-.apprLine{
+.endLine{
     border: 1.5px solid;
 }
 
@@ -179,7 +179,7 @@
     resize: none;
 }
 
-.apprButtons{
+.apprButtons,.createPO,.reappealPR{
     float: right;
 }
 
@@ -191,7 +191,7 @@
     background-color: #486284;
 }
 
-.denyButton,.approveButton{
+.denyButton,.approveButton,.createPOButton,.reappealPRButton{
     color: white;
     font-size: 15px;
     font-family: "Plus Jakarta Sans";
@@ -205,4 +205,24 @@
 .divider{
     width: 30px;
     display: inline-block;
+}
+
+/* Create PO Section */
+.createPOButton,.reappealPRButton{
+    background-color: #486284;
+    width: 250px;
+}
+
+/* Reappel Section */
+.apprCommentsBox{
+    background-color: #c0d8f751;
+    border-radius: 10px;
+}
+
+.rejectedB{
+    color: #FF5E56;
+}
+
+.approvedB{
+    color: #27C740;
 }

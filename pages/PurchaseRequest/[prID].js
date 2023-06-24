@@ -91,11 +91,11 @@ export async function getServerSideProps(context){
     // console.log(data2);
 
     // filter out duplicated data & combine multiple locations
-    data1.forEach((item, index) => {
-        if(index > 0){
-            data1[0].branchName += `, ${item.branchName}`;
-        }
-    });
+    // data1.forEach((item, index) => {
+    //     if(index > 0){
+    //         data1[0].branchName += `, ${item.branchName}`;
+    //     }
+    // });
 
     return { 
         props:{
@@ -126,14 +126,19 @@ export default function Supplier({prDetails, pLDetails}) {
     const [Total, totalCal] = useState();
 
     const [checkRemark, setRemark] = useState(false);
+    const [checkApprComment, setComment] = useState(false);
 
     const [ApprComment, setApprComment] = useState();
 
     const [isAdmin, setAdmin] = useState(false);
     const [isPending, setIsPending] = useState(false);
+    const [isApproved, setIsApproved] = useState(false);
+    const [isRejected, setIsRejected] = useState(false);
 
     // PR Details  
     const PR = prDetails[0];
+
+    console.log(PR)
     
     useEffect(() => {
         // set user id taken from localstorage
@@ -159,9 +164,11 @@ export default function Supplier({prDetails, pLDetails}) {
                 return '/yellowPendingCircle.svg';
             }
             else if(statusID == 2){
+                setIsApproved(true);
                 return '/greenApprovedCircle.svg';
             }
             else if(statusID == 3){
+                setIsRejected(true);
                 return '/redRejectedCircle.svg';
             }
             else{
@@ -232,9 +239,15 @@ export default function Supplier({prDetails, pLDetails}) {
         totalCal(total);
 
         // check if there is remarks
-        if(PR.remarks !== ""){
-            setRemark(true)
-        }
+        if(PR.remarks !== "" && PR.remarks !== null){
+            setRemark(true);
+        };
+
+        // check if there is approver comment
+        if(PR.apprRemarks !== "" && PR.apprRemarks !== null){
+            setComment(true);
+        };
+
     }, []);
 
     const submitApproval = async(e) => {
@@ -306,17 +319,24 @@ export default function Supplier({prDetails, pLDetails}) {
 
     };
 
+    const convertToPO = async(e) => {
+        e.preventDefault();
+        
+    };
+
     return (
         <>
             <div className="pb-5">
                 <div className="headerRow">
-                    <h1>
-                        <a href={"/PurchaseRequest"}>
-                            <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
-                        </a>
-                        Purchase Request #{prID}
-                        <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
-                    </h1>
+                    <div>
+                        <h1>
+                            <a href={"/PurchaseRequest"}>
+                                <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
+                            </a>
+                            Purchase Request #{prID}
+                            <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
+                        </h1>
+                    </div>
                 </div>
 
                 <div className={styles.prDetails}>
@@ -414,14 +434,14 @@ export default function Supplier({prDetails, pLDetails}) {
                     }
                 </div>
 
+                <div className="px-5">
+                    <hr className={styles.endLine}/>
+                </div>
+
                 <div>
                     {
                         isPending && isAdmin &&
                             <div>
-                                <div className="px-5">
-                                    <hr className={styles.apprLine}/>
-                                </div>
-                                
                                 <div className="px-5 mx-5 pb-5 pt-2">
                                     <h2>Approve Purchase Request?</h2>
                                     <form>
@@ -438,6 +458,60 @@ export default function Supplier({prDetails, pLDetails}) {
                                             </div>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+                    }
+                </div>
+
+                <div>
+                    {
+                        checkApprComment &&
+                            <div className="px-5 mx-5 pb-5 pt-2">
+                                <div>
+                                    {
+                                        isRejected &&
+                                            <h2>Purchase Request #{prID} has been <b className={styles.rejectedB}>Rejected</b>!</h2>
+                                    }
+                                    {
+                                        isApproved &&
+                                            <h2>Purchase Request #{prID} has been <b className={styles.approvedB}>Approved</b>!</h2>
+                                    }
+                                    <div className="pt-5">
+                                        <h4>Approver's Comments</h4>
+                                        <div className="py-3 w-70">
+                                            <div className={styles.apprCommentsBox}>
+                                                <div className="px-4 py-5">
+                                                    <p>{PR.apprRemarks}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                </div>
+
+                <div>
+                    {
+                        isApproved &&
+                            <div>
+                                <div className="px-5 mx-5 py-5">
+                                    <div className={styles.createPO}>
+                                        <button onClick={convertToPO} className={styles.createPOButton}>Convert To Purchase Order</button>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                </div>
+
+                <div>        
+                    {
+                        isRejected &&
+                            <div>
+                                <div className="px-5 py-3 mx-5 mb-5">
+                                    <div className={styles.reappealPR}>
+                                        <button className={styles.reappealPRButton}>Reappeal Purchase Order</button>
+                                    </div>
                                 </div>
                             </div>
                     }
