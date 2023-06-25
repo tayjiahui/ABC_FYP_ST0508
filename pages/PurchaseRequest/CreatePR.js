@@ -169,14 +169,14 @@ export default function Supplier() {
     // add location input box
     const [LocationsList, setLocations] = useState([{ location: '', id: ''}]);
     const addLocInput = () => {
-        setLocations([...LocationsList, {location: '', id: ''}])
+        setLocations([...LocationsList, {location: '', id: ''}]);
     };
 
     const removeLocInput = (index) => {
         const list = [...LocationsList];
         list.splice(index, 1);
         setLocations(list);
-    }
+    };
 
     // handle each location input
     const handleLocationChange = (index, e) => {
@@ -196,7 +196,7 @@ export default function Supplier() {
         // max 5 items
         if(ItemLineList.length < 5){
             SetItemLineList([...ItemLineList, {id:'', ItemNo: '', ItemName: '', ItemQty: '', UnitPrice: '', TotalUnitPrice: ''}]);
-        }
+        };
     };
 
     const removeItemLine = (index) => {
@@ -213,21 +213,20 @@ export default function Supplier() {
         if (e.target.name == "ItemQty"){
             if(reg.test(e.target.value)){
                 data[index].ItemQty = e.target.value;
-            }
+            };
         }
         else{
             const [itemName, id, unitPrice] = getSelectedOption(e);
             data[index].ItemName = itemName;
             data[index].id = id;
             data[index].UnitPrice = unitPrice;
-        }
+        };
 
         // Calculate total unit price
         if(data[index].ItemQty !== "" && data[index].ItemName !== ""){
-            
             let totalPrice = (data[index].ItemQty * data[index].UnitPrice).toFixed(2);
             data[index].TotalUnitPrice = totalPrice;
-        }
+        };
 
         SetItemLineList(data);
     };
@@ -481,4 +480,4 @@ export default function Supplier() {
             
         </>
     )
-}
+};
