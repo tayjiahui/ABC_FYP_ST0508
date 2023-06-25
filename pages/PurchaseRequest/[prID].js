@@ -137,8 +137,6 @@ export default function Supplier({prDetails, pLDetails}) {
 
     // PR Details  
     const PR = prDetails[0];
-
-    console.log(PR)
     
     useEffect(() => {
         // set user id taken from localstorage
@@ -153,7 +151,7 @@ export default function Supplier({prDetails, pLDetails}) {
         // check if admin/ approver
         if(roleID === 1){
             setAdmin(true);
-        }
+        };
 
         // Test for status Circle
         const statusID = PR.prStatusID;
@@ -173,8 +171,8 @@ export default function Supplier({prDetails, pLDetails}) {
             }
             else{
                 return '/yellowPendingCircle.svg';
-            }
-        }
+            };
+        };
 
         const circle = circleTest(statusID);
         testCircle(circle);
@@ -321,7 +319,21 @@ export default function Supplier({prDetails, pLDetails}) {
 
     const convertToPO = async(e) => {
         e.preventDefault();
-        
+
+        await axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`, 
+            {
+                "prID": prID
+            }
+        )
+        .then((response) => {
+            console.log(response);
+            alert(response.data)
+        })
+        .catch((err) => {
+            console.log(err);
+            alert(err.response.data)
+        })
+
     };
 
     return (
