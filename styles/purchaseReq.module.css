@@ -108,8 +108,8 @@
 
 .prRow{
     background-color: #C0D8F7;
-    font-size: 14px;
-    height: 80px;
+    font-size: 16px;
+    height: auto;
     border-radius: 18px;
     /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
     text-align: center;
@@ -123,15 +123,15 @@
 }
 
 .prTextRow{
-    padding-top: 20px;
+    padding-top: 25px;
     padding-bottom: 20px;
     vertical-align: middle;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     text-align: left;
-    grid-template-columns: 110px 300px 350px 200px 150px 100px;
 } 
 
-.prTextNo{
+/* .prTextNo{
     padding-left: 50px;
 }
 
@@ -145,14 +145,37 @@
 
 .prTextSupplier{
     padding-left: 210px;
-}
+}*/
 
 .prTextStatus{
-    text-align: center;
-    padding-left: 130px;
+    text-align: right;
+    /* padding-left: 130px; */
+} 
+
+.statusCol{
+    vertical-align: middle;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 #statusCircle{
     vertical-align: middle;
     padding: 1px;
+}
+
+.viewIconButton{
+    background-color: transparent;
+    border: none;
+}
+
+.plRow{
+    background-color: #93bcf166;
+    font-size: 16px;
+    height: auto;
+    border-bottom-left-radius:18px;
+    border-bottom-right-radius:18px;
+    /* border-radius: 18px; */
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+    text-align: center;
+    object-fit: scale-down;
 }

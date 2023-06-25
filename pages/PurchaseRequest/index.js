@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
+import moment from 'moment';
 
+import { useRouter } from "next/router";
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -14,6 +16,8 @@ import plusIcon from '../../public/plusIcon.svg';
 import pendingCircle from '../../public/yellowPendingCircle.svg';
 import approvedCircle from '../../public/greenApprovedCircle.svg';
 import rejectedCircle from '../../public/redRejectedCircle.svg';
+import eyeCon from '../../public/eyeCon.svg';
+import closeEyeCon from '../../public/closeEyeCon.svg'
 
 // Base urls
 const URL = [];
@@ -34,20 +38,21 @@ function isLocalhost()
         }
 
         return URL;
-    }
-}
+    };
+};
 
 isLocalhost();
 
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-console.log(baseUrl);
-console.log(baseURL);
-
 // Each pr row
 function PRRow (props){
     const statusID = props.StatusID;
+
+    const [showPL, setShowPL] = useState(false);
+
+    const [plRows, setPLRows] = useState([]);
 
     function circleTest(statusID){
         if(statusID == 1){
@@ -62,39 +67,230 @@ function PRRow (props){
         else{
             return '/yellowPendingCircle.svg';
         }
-    }
+    };
 
     const circle = circleTest(statusID);
+
+    const viewProductLines = async(e) => {
+        e.preventDefault();
+
+        await axios.get(`${baseUrl}/api/purchaseReq/lineItem/${props.prID}`)
+        .then((response) => {
+            const plResult = response.data;
+            setPLRows(plResult);
+            setShowPL(true);
+        })
+        .catch((err) => {
+            console.log(err);
+            if(err.code === "ERR_NETWORK"){
+                alert(err.message);
+            }
+        })
+    };
+
+    const closeViewProductLines = async(e) => {
+        e.preventDefault();
+        setShowPL(false);
+    };
 
     return (
         <div className="py-1">
             <a href={baseURL + '/PurchaseRequest/' + props.prID}>
                 <button className={styles.prButton}>
-                    <div className={styles.prRow}>
-                        <div className={styles.prTextRow}>
-                            <div>
-                                <p className={styles.prTextNo}>#{props.prID}</p>
+                    {
+                        props.RoleID === 2 &&
+                            <div className={styles.prRow}>
+                                <div className='pt-2 row'>
+                                    <div className={styles.prTextRow}>
+                                        <div className='px-5 col-sm-1'>
+                                            <p>#{props.prID}</p>
+                                        </div>
+                                        
+                                        <div className='px-3 col-sm-1'>
+                                            <p>{props.ReqDate}</p>
+                                        </div>
+
+                                        <div className='px-5 col-sm-3'> 
+                                            <p>{props.Location}</p>
+                                        </div>
+
+                                        <div className='px-4 col-sm-2'>
+                                            <p>{props.Supplier}</p>
+                                        </div>
+
+                                        <div className='px-3 col-sm-1'>
+                                            <p>{props.TargetDate}</p>
+                                        </div>
+
+                                        <div className='px-5 mx-4 col-sm-2'>
+                                            <div className='row'>
+                                                <div className='col-sm-1'>
+                                                    <p className={styles.prTextStatus}>{props.Status}</p>
+                                                </div>
+                                                <div className='ps-5 ms-4 col-sm-2'>
+                                                    <Icon item={circle}/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='col-sm-1'>
+                                            {
+                                                showPL === false &&
+                                                    <button onClick={viewProductLines} type='button' className={styles.viewIconButton}>
+                                                        <Image src={eyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                            {
+                                                showPL === true &&
+                                                    <button onClick={closeViewProductLines} type='button' className={styles.viewIconButton}>
+                                                        <Image src={closeEyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {
+                                    showPL &&
+                                        <div className={styles.plRow}>
+                                            <h5 className='ps-5 pt-3 text-start'><u>Product Lines</u></h5>
+
+                                            <div className='py-3'>
+                                                <div className='ps-4'>
+                                                    <ul className="list-group list-group-horizontal text-center">
+                                                        <li className="list-group-item col-sm-1 border-0 bg-transparent">Item No.</li>
+                                                        <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">Item Name</li>
+                                                        <li className="list-group-item col-sm-2 border-0 bg-transparent">Quantity</li>
+                                                        <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
+                                                        <li className="list-group-item col-sm-2 border-0 bg-transparent">Unit Price</li>
+                                                        <li className="list-group-item col-sm-2 border-0 bg-transparent">Total Unit Price</li>
+                                                    </ul>
+                                                </div>
+
+                                                {
+                                                    plRows.map((item, index) => {
+                                                        return <div key={index}>
+                                                                    <div className='ps-4'>
+                                                                        <ul className="list-group list-group-horizontal">
+                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">{item.lineItemID}</li>
+                                                                            <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">{item.itemName}</li>
+                                                                            <li className="list-group-item col-sm-2 border-0 bg-transparent">{item.quantity}</li>
+                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">X</li>
+                                                                            <li className="list-group-item col-sm-2 border-0 bg-transparent">${item.unitPrice}</li>
+                                                                            <li className="list-group-item col-sm-2 border-0 bg-transparent">${item.totalUnitPrice}</li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                    })
+                                                }
+                                            </div>
+                                        </div>
+                                }
                             </div>
-                            {/* <div>
-                                <p className={styles.prTextName}>{props.Name}</p>
-                            </div> */}
-                            <div>
-                                <p className={styles.prTextLocation}>{props.Location}</p>
+                    }
+
+                    {
+                        props.RoleID === 1 &&
+                            <div className={styles.prRow}>
+                                <div className='pt-2 row'>
+                                    <div className={styles.prTextRow}>
+                                        <div className='px-5 col-sm-1'>
+                                            <p>#{props.prID}</p>
+                                        </div>
+                                        
+                                        <div className='px-3 col-sm-1'>
+                                            <p>{props.ReqDate}</p>
+                                        </div>
+
+                                        <div className='px-5 col-sm-2'>
+                                            <p>{props.Name}</p>
+                                        </div>
+
+                                        <div className='col-sm-3'> 
+                                            <p>{props.Location}</p>
+                                        </div>
+
+                                        <div className='col-sm-1'>
+                                            <p>{props.Supplier}</p>
+                                        </div>
+
+                                        <div className='px-3 col-sm-1'>
+                                            <p>{props.TargetDate}</p>
+                                        </div>
+
+                                        <div className='px-5 col-sm-2'>
+                                            <div className='row'>
+                                                <div className='col-sm-1'>
+                                                    <p className={styles.prTextStatus}>{props.Status}</p>
+                                                </div>
+                                                <div className='ps-5 ms-4 col-sm-2'>
+                                                    <Icon item={circle}/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='col-sm-1'>
+                                            {
+                                                showPL === false &&
+                                                    <button onClick={viewProductLines} type='button' className={styles.viewIconButton}>
+                                                        <Image src={eyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                            {
+                                                showPL === true &&
+                                                    <button onClick={closeViewProductLines} type='button' className={styles.viewIconButton}>
+                                                        <Image src={closeEyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {
+                                    showPL &&
+                                        <div className={styles.plRow}>
+                                            <h5 className='ps-5 pt-3 text-start'><u>Product Lines</u></h5>
+
+                                            <div className='py-3'>
+                                                <div className='ps-4'>
+                                                    <ul className="list-group list-group-horizontal text-center">
+                                                        <li className="list-group-item col-sm-1 border-0 bg-transparent">Item No.</li>
+                                                        <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">Item Name</li>
+                                                        <li className="list-group-item col-sm-2 border-0 bg-transparent">Quantity</li>
+                                                        <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
+                                                        <li className="list-group-item col-sm-2 border-0 bg-transparent">Unit Price</li>
+                                                        <li className="list-group-item col-sm-2 border-0 bg-transparent">Total Unit Price</li>
+                                                    </ul>
+                                                </div>
+
+                                                
+                                                {
+                                                    plRows.map((item, index) => {
+                                                        return <div key={index}>
+                                                                    <div className='ps-4'>
+                                                                        <ul className="list-group list-group-horizontal">
+                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">{item.lineItemID}</li>
+                                                                            <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">{item.itemName}</li>
+                                                                            <li className="list-group-item col-sm-2 border-0 bg-transparent">{item.quantity}</li>
+                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">X</li>
+                                                                            <li className="list-group-item col-sm-2 border-0 bg-transparent">${item.unitPrice}</li>
+                                                                            <li className="list-group-item col-sm-2 border-0 bg-transparent">${item.totalUnitPrice}</li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                    })
+                                                }
+                                            </div>
+                                            
+                                        </div>
+                                }
                             </div>
-                            <div>
-                                <p className={styles.prTextSupplier}>{props.Supplier}</p>
-                            </div>
-                            <div>
-                                <p className={styles.prTextStatus}>{props.Status}</p>
-                            </div>
-                            <div>
-                                <Icon item={circle}/>
-                            </div>
-                        </div>
-                    </div>
+                    }
+                    
                 </button>
             </a>
         </div>
+        
     )
 };
 
@@ -169,13 +365,20 @@ export default function PurchaseRequest() {
                 const prList = [];
 
                 prResult.forEach((item, index) => {
+                    // Time stamp formatting
+                    const reqDate = moment(prResult[index].requestDate).format('DD/MM/YYYY');
+                    const targetDeliveryDate = moment(prResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+
                     prList.push(
                         <div key={index}>
                             <PRRow
+                                RoleID={roleID}
                                 prID={item.prID}
+                                ReqDate={reqDate}
                                 Name={item.name}
                                 Location={item.branchName}
                                 Supplier={item.supplierName}
+                                TargetDate={targetDeliveryDate}
                                 Status={item.prStatus}
                                 StatusID={item.prStatusID} />
                         </div>
@@ -186,7 +389,11 @@ export default function PurchaseRequest() {
             }))
             .catch((err) => {
                 console.log(err);
-                if(err.response.status === 404){
+                if(err.code === "ERR_NETWORK"){
+                    alert(err.message);
+                }
+                else if(err.response.status === 404){
+                    alert(err.response.data);
                 }
                 else{
                     alert(err.code);
@@ -208,13 +415,20 @@ export default function PurchaseRequest() {
                 const prList = [];
 
                 prResult.forEach((item, index) => {
+                    // Time stamp formatting
+                    const reqDate = moment(prResult[index].requestDate).format('DD/MM/YYYY');
+                    const targetDeliveryDate = moment(prResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+
                     prList.push(
                         <div key={index}>
                             <PRRow
+                                RoleID={roleID}
                                 prID={item.prID}
+                                ReqDate={reqDate}
                                 Name={item.name}
                                 Location={item.branchName}
                                 Supplier={item.supplierName}
+                                TargetDate={targetDeliveryDate}
                                 Status={item.prStatus}
                                 StatusID={item.prStatusID} />
                         </div>
@@ -225,6 +439,9 @@ export default function PurchaseRequest() {
             })
             .catch((err) => {
                 console.log(err);
+                if(err.code === "ERR_NETWORK"){
+                    alert(err.message);
+                }
             });
         }
 
@@ -250,13 +467,20 @@ export default function PurchaseRequest() {
                 const resultsList = [];
 
                 searchResult.forEach((item, index) => {
+                    // Time stamp formatting
+                    const reqDate = moment(searchResult[index].requestDate).format('DD/MM/YYYY');
+                    const targetDeliveryDate = moment(searchResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+
                     resultsList.push(
                         <div key={index}>
                             <PRRow
+                                RoleID={role}
                                 prID={item.prID}
+                                ReqDate={reqDate}
                                 Name={item.name}
                                 Location={item.branchName}
                                 Supplier={item.supplierName}
+                                TargetDate={targetDeliveryDate}
                                 Status={item.prStatus}
                                 StatusID={item.prStatusID} />
                         </div>
@@ -266,7 +490,10 @@ export default function PurchaseRequest() {
                 setlist1(resultsList);
             })
             .catch((err) => {
-                if(err.response.status === 404){
+                if(err.code === "ERR_NETWORK"){
+                    alert(err.message);
+                }
+                else if(err.response.status === 404){
                     setlist1(<div className="p-5">No Results Found!</div>)
                 }
                 else{
@@ -287,13 +514,20 @@ export default function PurchaseRequest() {
                 const resultsList = [];
 
                 searchResult.forEach((item, index) => {
+                    // Time stamp formatting
+                    const reqDate = moment(searchResult[index].requestDate).format('DD/MM/YYYY');
+                    const targetDeliveryDate = moment(searchResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+
                     resultsList.push(
                         <div key={index}>
                             <PRRow
+                                RoleID={role}
                                 prID={item.prID}
+                                ReqDate={reqDate}
                                 Name={item.name}
                                 Location={item.branchName}
                                 Supplier={item.supplierName}
+                                TargetDate={targetDeliveryDate}
                                 Status={item.prStatus}
                                 StatusID={item.prStatusID} />
                         </div>
@@ -303,7 +537,11 @@ export default function PurchaseRequest() {
                 setlist1(resultsList);
             })
             .catch((err) => {
-                if(err.response.status === 404){
+                console.log(err);
+                if(err.code === "ERR_NETWORK"){
+                    alert(err.message);
+                }
+                else if(err.response.status === 404){
                     setlist1(<div className="p-5">No Results Found!</div>)
                 }
                 else{
@@ -330,13 +568,33 @@ export default function PurchaseRequest() {
             
             <div className={styles.labelRow}>
                 <hr/>
-                <ul className={styles.tableLabel}>
-                    <li className={styles.tableNo}>No.</li>
-                    {/* <li className={styles.tableName}>Name</li> */}
-                    <li className={styles.tableLocation}>Location</li>
-                    <li className={styles.tableSupplier}>Supplier</li>
-                    <li className={styles.tableStatus}>Status</li>
-                </ul>
+                {
+                    role === 2 &&
+                        <ul className="list-group list-group-horizontal">
+                            <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
+                            <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
+                            <li className="list-group-item col-sm-3 px-5 border-0">Location</li>
+                            <li className="list-group-item col-sm-2 px-3 border-0">Supplier</li>
+                            <li className="list-group-item col-sm-1 px-2 ms-1 border-0">Target Date</li>
+                            <li className="list-group-item col-sm-2 px-5 mx-3 border-0">Status</li>
+                            <li className="list-group-item col-sm-1 border-0"></li>
+                        </ul>
+                }
+
+                {
+                    role === 1 &&
+                        <ul className="list-group list-group-horizontal">
+                            <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
+                            <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
+                            <li className="list-group-item col-sm-2 px-5 border-0">Name</li>
+                            <li className="list-group-item col-sm-3 px-0 border-0">Location</li>
+                            <li className="list-group-item col-sm-1 px-0 border-0">Supplier</li>
+                            <li className="list-group-item col-sm-1 px-2 border-0">Target Date</li>
+                            <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
+                            <li className="list-group-item col-sm-1 border-0"></li>
+                        </ul>
+                }
+                
                 <hr/>
             </div>
 
