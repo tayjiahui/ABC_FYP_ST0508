@@ -28,10 +28,10 @@ function isLocalhost (){
         else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
             console.log(URL);
-        }
+        };
 
         return URL;
-    }
+    };
 };
 
 isLocalhost();
@@ -75,7 +75,7 @@ export async function getServerSideProps(context){
     }
     else{
         backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
-    }
+    };
     
     const { params } = context;
     const { prID } = params;
@@ -104,8 +104,8 @@ export async function getServerSideProps(context){
             pLDetails: data2,
             prID
         }
-    }
-}
+    };
+};
 
 export default function Supplier({prDetails, pLDetails}) {
     const router = useRouter();
@@ -208,16 +208,16 @@ export default function Supplier({prDetails, pLDetails}) {
             for(let i = 0; i < array.length; i++){
                 let num = +array[i]
                 total = total + num
-            }
+            };
 
             return total;
-        }            
+        };
         
         // Calculate GST
         function GSTFinder(amt){
             const gst = (8/100)*amt;
             return gst;
-        }
+        };
                 
         const totalArr = [];
 
@@ -264,7 +264,7 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
+            });
         }
         else{
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
@@ -278,8 +278,8 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
-        }
+            });
+        };
     };
 
     const submitDeny = async(e) => {
@@ -298,7 +298,7 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
+            });
         }
         else{
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
@@ -312,8 +312,8 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
-        }
+            });
+        };
 
     };
 
@@ -332,7 +332,7 @@ export default function Supplier({prDetails, pLDetails}) {
         .catch((err) => {
             console.log(err);
             alert(err.response.data)
-        })
+        });
 
     };
 
@@ -531,4 +531,4 @@ export default function Supplier({prDetails, pLDetails}) {
             </div>
         </>
     )
-}
+};

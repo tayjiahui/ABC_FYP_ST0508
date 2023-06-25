@@ -35,7 +35,7 @@ function isLocalhost()
         else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
             console.log(URL);
-        }
+        };
 
         return URL;
     };
@@ -334,33 +334,6 @@ export default function PurchaseRequest() {
 
                 const prResult = response1.data;
 
-                // data filter out duplicates
-                // const uniqueIDs = [];
-                // const duplicatePRs = [];
-
-                // const filteredPRData1 = prResult.filter(e => {
-
-                //     // uniqueIDs only keeps one of each prID and removes duplicated prID objects
-                //     const isDuplicate = uniqueIDs.includes(e.prID);
-
-                //     if(!isDuplicate){
-                //         uniqueIDs.push(e.prID);
-
-                //         return true;
-                //     }
-                //     else{
-                //         duplicatePRs.push(e);
-
-                //         return false;
-                //     };
-                // });
-
-                // // adds duplicated PR branchname to main PR OBJECT
-                // duplicatePRs.forEach((item, index) => {
-                //     let foundIndex = filteredPRData1.findIndex(x => x.prID == duplicatePRs[index].prID);
-                //     filteredPRData1[foundIndex].branchName += `, ${duplicatePRs[index].branchName}`;
-                // });
-
                 // Show List of UPDATED PRs [multiple locations included]
                 const prList = [];
 
@@ -382,7 +355,7 @@ export default function PurchaseRequest() {
                                 Status={item.prStatus}
                                 StatusID={item.prStatusID} />
                         </div>
-                    )
+                    );
                 });
 
                 setlist1(prList);
@@ -397,7 +370,7 @@ export default function PurchaseRequest() {
                 }
                 else{
                     alert(err.code);
-                }
+                };
             });
         }
         else if(roleID === 1){ 
@@ -432,7 +405,7 @@ export default function PurchaseRequest() {
                                 Status={item.prStatus}
                                 StatusID={item.prStatusID} />
                         </div>
-                    )
+                    );
                 });
 
                 setlist1(prList);
@@ -441,11 +414,9 @@ export default function PurchaseRequest() {
                 console.log(err);
                 if(err.code === "ERR_NETWORK"){
                     alert(err.message);
-                }
+                };
             });
-        }
-
-        
+        };
     }, []);
 
     const handlePRSearch = async(e) => {
@@ -484,7 +455,7 @@ export default function PurchaseRequest() {
                                 Status={item.prStatus}
                                 StatusID={item.prStatusID} />
                         </div>
-                    )
+                    );
                 });
 
                 setlist1(resultsList);
@@ -498,7 +469,7 @@ export default function PurchaseRequest() {
                 }
                 else{
                     alert(err.response.data);
-                }
+                };
             });
         }
         else if(role === 1){
@@ -546,9 +517,9 @@ export default function PurchaseRequest() {
                 }
                 else{
                     alert(err.response.data);
-                }
+                };
             });   
-        }
+        };
     };
 
     return (
@@ -612,4 +583,4 @@ export default function PurchaseRequest() {
 
         </>
     )
-}
+};

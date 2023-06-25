@@ -28,10 +28,10 @@ function isLocalhost (){
         else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
             console.log(URL);
-        }
+        };
 
         return URL;
-    }
+    };
 };
 
 isLocalhost();
@@ -43,7 +43,7 @@ function DropdownOpt (props){
         <>
             <option id={props.ID} value={props.Value}/>
         </>
-    )
+    );
 };
 
 function ItemDropDown (props){
@@ -51,7 +51,7 @@ function ItemDropDown (props){
         <>
             <option id={props.ID} data-unitPrice={props.UnitPrice} value={props.Value}/>
         </>
-    )
+    );
 };
 
 function getSelectedOption(e){
@@ -65,7 +65,7 @@ function getSelectedOption(e){
     }
     else{
         return [selectedValue, selectedID, selectedUnitPrice];
-    }
+    };
 };
 
 export default function Supplier() {
@@ -83,7 +83,7 @@ export default function Supplier() {
     useEffect(() => {
         const userID = parseInt(localStorage.getItem("ID"), 10);
         setUserID(userID);
-    }, [])
+    }, []);
 
     // get drop down list
     useEffect(() => {
@@ -163,7 +163,7 @@ export default function Supplier() {
         .catch((err) => {
             console.log(err);
             alert(err);
-        })
+        });
     }, []);
 
     // add location input box
