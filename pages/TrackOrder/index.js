@@ -106,12 +106,15 @@ function OrderRow(props) {
   return (
     <div>
       <div className={styles.box}>
-        <a href={baseURL + '/TrackOrder/' + props.prID}>
+        <a href={baseURL + '/TrackOrder/' + props.poID}>
           <button className={styles.orderBtn}>
             <div className={styles.orderRow}>
               <div className={styles.orderTextRow}>
                 <div>
-                  <p className={styles.orderTextNo} >{props.prID}</p>
+                  <p className={styles.orderTextNo} >{props.poID}</p>
+                </div>
+                <div>
+                  <p className={styles.orderTextNo2} >{props.prID}</p>
                 </div>
                 <div>
                   <p className={styles.orderTextDate} >{props.date}</p>
@@ -195,6 +198,7 @@ export default function TrackOrder() {
           trackOrderList.push(
             <div key={index}>
               <OrderRow
+                poID={item.poID}
                 prID={item.prID}
                 date={item.requestDate}
                 Name={item.name}
@@ -235,7 +239,8 @@ export default function TrackOrder() {
       <div>
         <hr />
         <ul className={styles.tableLabel}>
-          <li className={styles.tableNo}>No.</li>
+          <li className={styles.tableNo}>PO No.</li>
+          <li className={styles.tableNo2}>PR No.</li>
           <li className={styles.tableCreated}>Created</li>
           <li className={styles.tableName}>Name</li>
           <li className={styles.tableSupplier}>Supplier</li>
