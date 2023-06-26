@@ -42,29 +42,91 @@ console.log(baseURL);
 
 function OrderRow(props) {
 
+  const [status, setStatus] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState('');
+
+  const [newStatusPop, setNewStatusPop] = useState(false);
+  const [statusInput, setStatusInput] = useState([]);
+
+  const [changedStatusPop, setChangedStatusPop] = useState(false);
+
+  const handleCloseStatusPop = () => {
+    setNewStatusPop(false);
+    setChangedStatusPop(false);
+  }
+
+  const handleInputChange = (event) => {
+    setStatusInput(event.target.value);
+  }
+
+  const handleSubmit = (event) => {
+    // event.preventDefault();
+    alert(`Sucessfully created new status: ${statusInput}`);
+
+
+    axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
+      purchaseStatus: statusInput
+    })
+      .then(res => {
+        alert(`sucessfully created new status ${statusInput}`)
+        setNewStat(false)
+        console.log(res.data);
+        setStatus((prevStatus) => [...prevStatus, res.data]);
+        onSubmit(statusInput)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  useEffect(() => {
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
+      .then(res => {
+        console.log(res.data)
+        setStatus(res.data);
+        setSelectedStatus(res.data[0]); //initial selected status
+      })
+      .catch(err => console.log(err));
+  }, []);
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+    const selectedValue = event.target.value;
+    if (selectedValue === "+ Create New Status") {
+      setNewStatusPop(true);
+    }
+    if (selectedValue === "Preparing Order") {
+      setChangedStatusPop(true);
+    }
+    else {
+      console.log('other options')
+    }
+  };
+
   return (
-    <div className={styles.box}>
-      <a href={baseURL + '/TrackOrder/' + props.prID}>
-        <button className={styles.orderBtn}>
-          <div className={styles.orderRow}>
-            <div className={styles.orderTextRow}>
-              <div>
-                <p className={styles.orderTextNo} >{props.prID}</p>
-              </div>
-              <div>
-                <p className={styles.orderTextDate} >{props.date}</p>
-              </div>
-              <div>
-                <p className={styles.orderTextName} >{props.Name}</p>
-              </div>
-              <div>
-                <p className={styles.orderTextSupplier} >{props.Supplier}</p>
+    <div>
+      <div className={styles.box}>
+        <a href={baseURL + '/TrackOrder/' + props.prID}>
+          <button className={styles.orderBtn}>
+            <div className={styles.orderRow}>
+              <div className={styles.orderTextRow}>
+                <div>
+                  <p className={styles.orderTextNo} >{props.prID}</p>
+                </div>
+                <div>
+                  <p className={styles.orderTextDate} >{props.date}</p>
+                </div>
+                <div>
+                  <p className={styles.orderTextName} >{props.Name}</p>
+                </div>
+                <div>
+                  <p className={styles.orderTextSupplier} >{props.Supplier}</p>
+                </div>
               </div>
             </div>
-          </div>
-        </button>
-      </a>
-      <div className={styles.container2}>
+          </button>
+        </a>
+        {/* <div className={styles.container2}>
         <select name="status" className={styles.dropdownStatus}>
           <option value="acceptO">Accept Order</option>
           <option value="preparingO">Preparing Order</option>
@@ -72,33 +134,58 @@ function OrderRow(props) {
           <option value="shipping">Shipping Item</option>
           <option value="delivered">Item Delivered</option>
         </select>
-      </div>
-    </div>
-  )
-};
+      </div> */}
+        <div className={styles.container2}>
+          <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
+            {status.map((status, index) => (
+              <option key={index} value={status.purchaseStatus}>{status.purchaseStatus}</option>
+            ))}
+            <option value="+ Create New Status"> + Create New Status</option>
+          </select>
+        </div>
 
-function DropdownOpt(props) {
-  return (
-    <>
-      <option id={props.ID} value={props.Value} />
-    </>
+      </div>
+
+      {newStatusPop && (
+        <div className={styles.newStatusBox}>
+          <div className={styles.newStatus}>
+            <h2 className={styles.newStatusText}> Create New Status </h2>
+            <p onClick={handleCloseStatusPop} className={styles.closemeStatus}>X</p>
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="statusInput">Enter status name : </label> <br />
+              <input type="text" id="statusInput" value={statusInput} onChange={handleInputChange} /> <br />
+              <button type="submit" className={styles.createStatusBtn}> Create Status</button>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {changedStatusPop && (
+        <div className={styles.newStatusBox}>
+          <div className={styles.newStatus}>
+            <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
+            <h5 className={styles.changedStatusText}> Status has been changed successfully </h5>
+
+          </div>
+        </div>
+      )}
+    </div>
+
   )
 };
 
 export default function TrackOrder() {
 
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
-  const [statusResults, statusList] = useState([(<div>Loading...</div>)]);
 
   // show all Track Order
   useEffect(() => {
     axios.all([
-      axios.get(`${baseUrl}/api/trackOrder`, {}),
-      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`, {})
+      axios.get(`${baseUrl}/api/trackOrder`, {})
     ])
-      .then(axios.spread((response1, response2) => {
+      .then(axios.spread((response1) => {
         // console.log(response1.data);
-        // console.log(response2.data);
 
         // get track order results
         const orderResult = response1.data;
@@ -118,23 +205,6 @@ export default function TrackOrder() {
 
         orderList(trackOrderList);
 
-        // get purchase status
-        // const purchaseStatusResult = response2.data;
-        // const purchaseStatusList = [];
-
-        // purchaseStatusResult.forEach((item, index) => {
-        //   purchaseStatusList.push(
-        //     <div key={index}>
-        //       <DropdownOpt
-        //         ID={item.purchaseStatusID}
-        //         Value={item.purchaseStatus} />
-        //     </div>
-
-        //   )
-        // });
-
-        // statusList(purchaseStatusList);
-
       }))
       .catch((err) => {
         console.log(err);
@@ -146,10 +216,6 @@ export default function TrackOrder() {
         }
       })
   }, []);
-
-  const [PSV, setPS] = useState('');
-
-
 
   return (
     <>
