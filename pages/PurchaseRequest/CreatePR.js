@@ -74,6 +74,8 @@ export default function Supplier() {
 
     const [id, setUserID] = useState();
 
+    const [showAdHoc, setAdHoc] = useState(false);
+
     // dropdown lists states
     const [Suppliers,supplierList] = useState();
     const [Locations, locationList] = useState();
@@ -194,9 +196,9 @@ export default function Supplier() {
     const [ItemLineList, SetItemLineList] = useState([{id:'', ItemNo: '', ItemName: '', ItemQty: '', UnitPrice: '', TotalUnitPrice: ''}]);
     const addItemLine = () => {
         // max 5 items
-        if(ItemLineList.length < 5){
+        // if(ItemLineList.length < 5){
             SetItemLineList([...ItemLineList, {id:'', ItemNo: '', ItemName: '', ItemQty: '', UnitPrice: '', TotalUnitPrice: ''}]);
-        };
+        // };
     };
 
     const removeItemLine = (index) => {
@@ -246,6 +248,18 @@ export default function Supplier() {
         const [value, id] = getSelectedOption(e);
         setPM({value: value, id: id});
     };
+
+    const adHocForm = async(e) => {
+        console.log(e.target.checked);
+        console.log("ad hoc!!")
+
+        if(e.target.checked === true){
+            setAdHoc(true);
+        }
+        else{
+            setAdHoc(false);
+        }
+    }
 
     // axios to create PR
     const createPR = async(e) => {
@@ -301,182 +315,252 @@ export default function Supplier() {
         });
     };
 
+    // axios to create Ad Hoc
+    const createAdHoc = async(e) => {
+        e.preventDefault();
+        alert(`Creating ad hoc!`)
+    }
+
     return (
         <>
 
             <div className="headerRow">
-                <h1>
-                    <a href={"/PurchaseRequest"}>
-                        <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
-                    </a>
-                    Create Purchase Request
-                </h1>
+                {
+                    showAdHoc === false &&
+                        <h1>
+                            <a href={"/PurchaseRequest"}>
+                                <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
+                            </a>
+
+                            Create Purchase Request
+                        </h1>
+                }
+
+                {
+                    showAdHoc === true &&
+                        <h1>
+                            <a href={"/PurchaseRequest"}>
+                                <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
+                            </a>
+
+                            Create Ad-Hoc Purchase
+                        </h1>
+                }
+                
             </div>
-
-            <form onSubmit={createPR}>
-                <div className={styles.prDetails}>
-                    <div className={styles.viewCol}>
-                        <h4>Target Delivery Date</h4>
-                        <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq" required/>
-                    </div>
-                    
-                    <div className={styles.viewRow}>
-                        <div className="pt-4">
-                            <div className={styles.viewCol}>
-                                <h4>Supplier</h4>
-                                <input list="suppliers" type="text" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
-                                <datalist id="suppliers">
-                                    {Suppliers}
-                                </datalist>
-                            </div>
-
-                            <div className={styles.viewCol}>
-                                <h4>Payment Mode</h4>
-                                <input list="PaymentMode" type="text" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode" required/>
-                                <datalist id="PaymentMode">
-                                    {PaymentModes}
-                                </datalist>
-                            </div>
-                        </div>
+            
+            <div className="px-5 pt-2 pb-4">
+                <div className={styles.toggle}>
+                    <div className="px-3 pt-1">
+                        <h5>Ad-Hoc</h5>
                     </div>
 
-                    <div className={styles.viewRow}>
-                        <div className="pt-4">
-                            <div className={styles.viewCol}>
-                                <h4>Location</h4>
-                                <div>
-                                    {LocationsList.map((item, index) => {
-                                        if(LocationsList.length == 1){
-                                            return <div key={index} className={styles.locationInputs}>
-                                                        <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
-                                                        <datalist id="Branch">
-                                                            {Locations}
-                                                        </datalist>
-                                                    </div>
-                                        }
-                                        else if(LocationsList.length > 1){
-                                            return <div key={index} className={styles.locationInputs}>
-                                                        <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
-                                                        <datalist id="Branch">
-                                                            {Locations}
-                                                        </datalist>
-
-                                                        <button type="button" onClick={() => {removeLocInput(index)}} className={styles.removeLocationButton}>
-                                                            <Image src={xIcon} width={25} height={25} alt="Cancel"/>
-                                                        </button>
-                                                    </div>
-                                        }
-                                    })}
-                                </div>
-                                
-                                <div>
-                                    <h5 className={styles.addLocationText}>
-                                        <button type="button" onClick={addLocInput} className={styles.addLocationButton}>
-                                            <Image src={addLocIcon} alt="Add Location" width={20} height={20} className={styles.addLocIcon}/>
-                                        </button>
-                                            Add Location
-                                    </h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={styles.productDetails}>
-                    <div className={styles.pDTop}>
-                        <h4>Product Details</h4>
-                        <hr/>
-                        <ul className="list-group list-group-horizontal text-center">
-                            <li className="list-group-item col-sm-1 border-0">Item No.</li>
-                            <li className="list-group-item col-sm-4 px-5 border-0 text-start">Item</li>
-                            <li className="list-group-item col-sm-2 border-0">Quantity</li>
-                            <li className="list-group-item col-sm-2 border-0">Unit Price</li>
-                            <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
-                        </ul>
-                        <hr/>
-                    </div>
-                    <div>
-                        <div className={styles.productLines}>
-                            <div className={styles.plRow}>
-                                {ItemLineList.map((item, index) => {
-                                    if (index === ItemLineList.length - 1){
-                                        return <div key={index} className={styles.plItemRow}>
-                                                    <div className="col-sm-1 text-center">
-                                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
-                                                    </div>
-                                                    <div className="col-sm-4 px-5 text-start">
-                                                        <input list="items" type="text" name="ItemName" id={item.id} data-unitPrice={item.UnitPrice} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
-                                                        <datalist id="items">
-                                                            {Items}
-                                                        </datalist>  
-                                                    </div>
-                                                    <div className="col-sm-2 text-center">
-                                                        <input  type="number" min={1} name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
-                                                    </div>
-                                                    <div className="col-sm-2 text-center">
-                                                        <input  type="number" min={0} name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} disabled/>
-                                                    </div>
-                                                    <div className="col-sm-2 text-center">
-                                                        <input  type="number" min={0} name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} disabled/>
-                                                    </div>
-                                                    <div className="col-sm-1">
-                                                        <button type="button" onClick={addItemLine} className={styles.createButton}>
-                                                            <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.addIcon}/>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                    }
-                                    else if(index < ItemLineList.length - 1){
-                                        return <div key={index} className={styles.plItemRow}>
-                                                    <div className="col-sm-1 text-center">
-                                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
-                                                    </div>
-                                                    <div className="col-sm-4 px-5 text-start">
-                                                        <input list="items" type="text" name="ItemName" id={item.id} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
-                                                        <datalist id="items">
-                                                            {Items}
-                                                        </datalist>  
-                                                    </div>
-                                                    <div className="col-sm-2 text-center">
-                                                        <input  type="number" name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
-                                                    </div>
-                                                    <div className="col-sm-2 text-center">
-                                                        <input  type="number" name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} disabled/>
-                                                    </div>
-                                                    <div className="col-sm-2 text-center">
-                                                        <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} disabled/>
-                                                    </div>
-                                                    <div className="col-sm-1">
-                                                        <button type="button" onClick={() => {removeItemLine(index)}} className={styles.createButton}>
-                                                            <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.cancelIcon}/>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                    }                
-                                })}
-                            </div>
-                        </div>
-                    </div>
+                    <label className={styles.switch}>
+                        <input type="checkbox" onChange={(e) => {adHocForm(e)}}/>
+                        <span className={styles.slider}></span>
+                    </label>
                 </div>
                 
-                <div className={styles.remarksRow}>
-                    <div className={styles.remarksTestArea}>
-                        <h4>Remarks</h4>
-                        <textarea value={Remark} onChange={(e) => setRemark(e.target.value)} className={styles.textArea}></textarea>
-                    </div>
-                </div>
+            </div>
 
-                <div className={styles.viewRow}>
-                    <div className="pt-4">
-                        <div className={styles.viewCol}>
+            <div className="w-100 px-5">
+                <hr/>
+            </div>
+            
+            {
+                showAdHoc === false &&
+                    <form onSubmit={createPR}>
+                        <div className={styles.prDetails}>
+                            <div className={styles.viewCol}>
+                                <h4>Target Delivery Date</h4>
+                                <input type="date" value={dateReqV} onChange={(e) => setDateReq(e.target.value)} name="dateReq" required/>
+                            </div>
+                            
+                            <div className={styles.viewRow}>
+                                <div className="pt-4">
+                                    <div className={styles.viewCol}>
+                                        <h4>Supplier</h4>
+                                        <input list="suppliers" type="text" value={supplierV.value} id={supplierV.id} onChange={handleSupplierInput} name="supplierName" required/>
+                                        <datalist id="suppliers">
+                                            {Suppliers}
+                                        </datalist>
+                                    </div>
+
+                                    <div className={styles.viewCol}>
+                                        <h4>Payment Mode</h4>
+                                        <input list="PaymentMode" type="text" value={PMV.value} id={PMV.id} onChange={handlePMInput} name="PaymentMode" required/>
+                                        <datalist id="PaymentMode">
+                                            {PaymentModes}
+                                        </datalist>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className={styles.viewRow}>
+                                <div className="pt-4">
+                                    <div className={styles.viewCol}>
+                                        <h4>Location</h4>
+                                        <div>
+                                            {LocationsList.map((item, index) => {
+                                                if(LocationsList.length == 1){
+                                                    return <div key={index} className={styles.locationInputs}>
+                                                                <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                                <datalist id="Branch">
+                                                                    {Locations}
+                                                                </datalist>
+                                                            </div>
+                                                }
+                                                else if(LocationsList.length > 1){
+                                                    return <div key={index} className={styles.locationInputs}>
+                                                                <input list="Branch" type="text" value={item.location} onChange={(e) => handleLocationChange(index, e)} id={item.id} name="branchLocation" required/>
+                                                                <datalist id="Branch">
+                                                                    {Locations}
+                                                                </datalist>
+
+                                                                <button type="button" onClick={() => {removeLocInput(index)}} className={styles.removeLocationButton}>
+                                                                    <Image src={xIcon} width={25} height={25} alt="Cancel"/>
+                                                                </button>
+                                                            </div>
+                                                }
+                                            })}
+                                        </div>
+                                        
+                                        <div>
+                                            <h5 className={styles.addLocationText}>
+                                                <button type="button" onClick={addLocInput} className={styles.addLocationButton}>
+                                                    <Image src={addLocIcon} alt="Add Location" width={20} height={20} className={styles.addLocIcon}/>
+                                                </button>
+                                                    Add Location
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.productDetails}>
+                            <div className={styles.pDTop}>
+                                <div className="py-1 mt-5">
+                                    <h4>Product Details</h4>
+                                </div>
+
+                                <div className="pe-5">
+                                    <hr/>
+                                </div>
+                                
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-1 border-0">Item No.</li>
+                                    <li className="list-group-item col-sm-4 px-5 border-0 text-start">Item</li>
+                                    <li className="list-group-item col-sm-2 border-0">Quantity</li>
+                                    <li className="list-group-item col-sm-2 border-0">Unit Price</li>
+                                    <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
+                                </ul>
+                                
+                                <div className="pe-5">
+                                    <hr/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div className={styles.productLines}>
+                                    <div className={styles.plRow}>
+                                        {ItemLineList.map((item, index) => {
+                                            if (index === ItemLineList.length - 1){
+                                                return <div key={index} className={styles.plItemRow}>
+                                                            <div className="col-sm-1 text-center">
+                                                                <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
+                                                            </div>
+                                                            <div className="col-sm-4 px-5 text-start">
+                                                                <input list="items" type="text" name="ItemName" id={item.id} data-unitPrice={item.UnitPrice} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
+                                                                <datalist id="items">
+                                                                    {Items}
+                                                                </datalist>  
+                                                            </div>
+                                                            <div className="col-sm-2 text-center">
+                                                                <input  type="number" min={1} name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
+                                                            </div>
+                                                            <div className="col-sm-2 text-center">
+                                                                <input  type="number" min={0} name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} disabled/>
+                                                            </div>
+                                                            <div className="col-sm-2 text-center">
+                                                                <input  type="number" min={0} name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} disabled/>
+                                                            </div>
+                                                            <div className="col-sm-1">
+                                                                <button type="button" onClick={addItemLine} className={styles.createButton}>
+                                                                    <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.addIcon}/>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                            }
+                                            else if(index < ItemLineList.length - 1){
+                                                return <div key={index} className={styles.plItemRow}>
+                                                            <div className="col-sm-1 text-center">
+                                                                <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
+                                                            </div>
+                                                            <div className="col-sm-4 px-5 text-start">
+                                                                <input list="items" type="text" name="ItemName" id={item.id} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
+                                                                <datalist id="items">
+                                                                    {Items}
+                                                                </datalist>  
+                                                            </div>
+                                                            <div className="col-sm-2 text-center">
+                                                                <input  type="number" name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
+                                                            </div>
+                                                            <div className="col-sm-2 text-center">
+                                                                <input  type="number" name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} disabled/>
+                                                            </div>
+                                                            <div className="col-sm-2 text-center">
+                                                                <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} disabled/>
+                                                            </div>
+                                                            <div className="col-sm-1">
+                                                                <button type="button" onClick={() => {removeItemLine(index)}} className={styles.createButton}>
+                                                                    <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.cancelIcon}/>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                            }                
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="px-5 mx-3 pt-5">
+                            <div className={styles.remarksTestArea}>
+                                <h4>Remarks</h4>
+                                <textarea value={Remark} onChange={(e) => setRemark(e.target.value)} className={styles.textArea}></textarea>
+                            </div>
+                        </div>
+
+                        <div className="px-5 mx-3 pt-5">
                             <div className={styles.submit}>
                                 <button type="submit" className={styles.submitButton}>Submit</button>
                             </div>
                         </div>
-                    </div> 
-                </div>
-                
-            </form>
+
+                    </form>
+            }
+
+            {
+                showAdHoc === true &&
+                    <form onSubmit={createAdHoc}>
+                        <div className="px-5 pt-5 pb-2">
+                            <div>
+                                <h4>Description</h4>
+                                <textarea value={Remark} onChange={(e) => setRemark(e.target.value)} className={styles.textArea}></textarea>
+                            </div>
+                        </div>
+
+                        <div className={styles.viewRow}>
+                            <div className="pt-4 px-5">
+                                <div className={styles.submit}>
+                                    <button type="submit" className={styles.submitButton}>Submit</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </form>
+            }
+            
             
         </>
     )

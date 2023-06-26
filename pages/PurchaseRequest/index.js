@@ -308,6 +308,8 @@ export default function PurchaseRequest() {
     
     const [PRResults, setlist1] = useState([(<div>Loading...</div>)]);
 
+    const [showAdHoc, setShowAdHoc] = useState(false);
+
     const [searchValue, setSearchValue] = useState("");
 
     // show all PR
@@ -419,6 +421,18 @@ export default function PurchaseRequest() {
         };
     }, []);
 
+    const adHocView = async(e) => {
+        console.log(e.target.checked);
+        console.log("adhoc conly");
+
+        if(e.target.checked === true){
+            setShowAdHoc(true);
+        }
+        else{
+            setShowAdHoc(false);
+        };
+    };
+
     const handlePRSearch = async(e) => {
         e.preventDefault();
 
@@ -524,53 +538,82 @@ export default function PurchaseRequest() {
 
     return (
         <>
-            <div className={styles.headerRow}>
-                <h1 className={styles.header}>Purchase Request</h1>
-                <div>
+
+            <h1 className={styles.header}>Purchase Request</h1>
+            
+            <div className="pb-5">
+                <div className={styles.rightFloater}>
+                    <div className="px-3 pb-4">
+                        <div className={styles.toggle}>
+                            <div className="px-3 pt-1">
+                                <h5>Ad-Hoc</h5>
+                            </div>
+
+                            <label className={styles.switch}>
+                                <input type="checkbox" onChange={(e) => {adHocView(e)}}/>
+                                <span className={styles.slider}></span>
+                            </label>
+                        </div>
+                    </div>
+
                     <div className={styles.searchContainer}>
                         <form onSubmit={handlePRSearch}>
                             <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox}/>
-                            <button type="submit" className={styles.searchButton}><Image src={searchIcon} alt='Search'/></button>
-                            <button type="button" className={styles.searchButton}><Image src={filterIcon} alt='Filter' width={20} /></button>
+                            <button type="submit" className={styles.searchButton}><Image src={searchIcon} width={25} alt='Search'/></button>
+                            <button type="button" className={styles.searchButton}><Image src={filterIcon} width={25} alt='Filter' /></button>
                         </form>
                     </div>
                 </div>
             </div>
             
-            <div className={styles.labelRow}>
-                <hr/>
-                {
-                    role === 2 &&
-                        <ul className="list-group list-group-horizontal">
-                            <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
-                            <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
-                            <li className="list-group-item col-sm-3 px-5 border-0">Location</li>
-                            <li className="list-group-item col-sm-2 px-3 border-0">Supplier</li>
-                            <li className="list-group-item col-sm-1 px-2 ms-1 border-0">Target Date</li>
-                            <li className="list-group-item col-sm-2 px-5 mx-3 border-0">Status</li>
-                            <li className="list-group-item col-sm-1 border-0"></li>
-                        </ul>
-                }
+            <div className='pt-1'>
+                <div className={styles.labelRow}>
+                    <div className='pt-1'>
+                        <hr/>
+                    </div>
+                    
+                    {
+                        role === 2 &&
+                            <ul className="list-group list-group-horizontal">
+                                <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
+                                <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
+                                <li className="list-group-item col-sm-3 px-5 border-0">Location</li>
+                                <li className="list-group-item col-sm-2 px-3 border-0">Supplier</li>
+                                <li className="list-group-item col-sm-1 px-2 ms-1 border-0">Target Date</li>
+                                <li className="list-group-item col-sm-2 px-5 mx-3 border-0">Status</li>
+                                <li className="list-group-item col-sm-1 border-0"></li>
+                            </ul>
+                    }
 
-                {
-                    role === 1 &&
-                        <ul className="list-group list-group-horizontal">
-                            <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
-                            <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
-                            <li className="list-group-item col-sm-2 px-5 border-0">Name</li>
-                            <li className="list-group-item col-sm-3 px-0 border-0">Location</li>
-                            <li className="list-group-item col-sm-1 px-0 border-0">Supplier</li>
-                            <li className="list-group-item col-sm-1 px-2 border-0">Target Date</li>
-                            <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
-                            <li className="list-group-item col-sm-1 border-0"></li>
-                        </ul>
-                }
-                
-                <hr/>
+                    {
+                        role === 1 &&
+                            <ul className="list-group list-group-horizontal">
+                                <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
+                                <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
+                                <li className="list-group-item col-sm-2 px-5 border-0">Name</li>
+                                <li className="list-group-item col-sm-3 px-0 border-0">Location</li>
+                                <li className="list-group-item col-sm-1 px-0 border-0">Supplier</li>
+                                <li className="list-group-item col-sm-1 px-2 border-0">Target Date</li>
+                                <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
+                                <li className="list-group-item col-sm-1 border-0"></li>
+                            </ul>
+                    }
+                    
+                    <hr/>
+                </div>
             </div>
+            
 
             <div className={styles.prData}>
-                {PRResults}
+                {
+                    showAdHoc === false &&
+                        <div>{PRResults}</div>
+                }
+
+                {
+                    showAdHoc === true &&
+                        <div>Ad Hoc In Progress!</div>
+                }
             </div>
 
             <div>
