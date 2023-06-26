@@ -54,76 +54,11 @@
     width: auto;
 }
 
-.itemLabel > li{
-    display: inline;
-    padding: 0 30px 0 30px;
-}
-
-/* .itemNo{
-
-}
-
-.itemName{
-
-} */
-
-.itemQty{
-   margin-left: 320px;
-}
-
-.itemUP{
-    margin-left: 40px;
-}
-
-.itemTotalUP{
-    margin-left: 30px;
-}
-
-.productLines{
-    height: 40px;
-    vertical-align: middle;
-}
-
-.plItemRow{
-    padding-top: 10px;
-    vertical-align: middle;
-    display: grid;
-    text-align: center;
-    grid-template-columns: 110px 350px 180px 260px 100px;
-} 
-
-.plItemRow > div > p {
-    margin: 0;
-}
-
-.plItemNo{
-    text-align: left;
-    padding-left: 50px;
-}
-
-.plItemName{
-    text-align: left;
-    padding-left: 40px;
-}
-
-.plQty{
-    padding-left: 90px;
-}
-
-/* .plUnitPrice{
-
-}
-
-.plTotalUP{
-
-} */
-
 .totalRow{
     content: "";
     display: flexbox;
     clear: both;
     padding-left: 59%;
-
 }
 
 .totalCol1,.totalCol2{

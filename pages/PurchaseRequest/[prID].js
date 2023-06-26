@@ -40,27 +40,16 @@ const baseUrl = URL[0];
 
 function ItemLines (props){
     return(
-        <div className={styles.productLines}>
-            <div className={styles.plRow}>
-                <div className={styles.plItemRow}>
-                    <div>
-                        <p className={styles.plItemNo}>{props.ItemNo}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plItemName}>{props.ItemName}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plQty}>{props.Qty}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plUnitPrice}>{props.UnitPrice}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plTotalUP}>{props.TotalUnitPrice}</p>
-                    </div>
-                </div>
-            </div>
+        <div>
+            <ul className="list-group list-group-horizontal text-center">
+                <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
+                <li className="list-group-item col-sm-4 px-2 border-0 text-start">{props.ItemName}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.TotalUnitPrice}</li>
+            </ul>
         </div>
+        
     )
 };
 
@@ -85,17 +74,6 @@ export async function getServerSideProps(context){
 
     const data1 = await response1.json();
     const data2 = await response2.json();
-
-    // show in terminal
-    // console.log(data1);
-    // console.log(data2);
-
-    // filter out duplicated data & combine multiple locations
-    // data1.forEach((item, index) => {
-    //     if(index > 0){
-    //         data1[0].branchName += `, ${item.branchName}`;
-    //     }
-    // });
 
     return { 
         props:{
@@ -389,12 +367,12 @@ export default function Supplier({prDetails, pLDetails}) {
                     <div className={styles.pDTop}>
                         <h4>Product Details</h4>
                         <hr/>
-                        <ul className={styles.itemLabel}>
-                            <li className={styles.itemNo}>Item No.</li>
-                            <li className={styles.itemName}>Item</li>
-                            <li className={styles.itemQty}>Quantity</li>
-                            <li className={styles.itemUP}>Unit Price</li>
-                            <li className={styles.itemTotalUP}>Total Unit Price</li>
+                        <ul className="list-group list-group-horizontal text-center">
+                            <li className="list-group-item col-sm-2 border-0">Item No.</li>
+                            <li className="list-group-item col-sm-4 px-2 border-0 text-start">Item</li>
+                            <li className="list-group-item col-sm-2 border-0">Quantity</li>
+                            <li className="list-group-item col-sm-2 border-0">Unit Price</li>
+                            <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
                         </ul>
                         <hr/>
                     </div>
@@ -403,34 +381,24 @@ export default function Supplier({prDetails, pLDetails}) {
                     </div>
                     <div>
                         <hr/>
-                        <div className={styles.totalRow}>
-                            <div className={styles.totalCol1}>
-                                <h3 className={styles.priceLabel}>Subtotal</h3>
-                            </div>
-                            <div className={styles.totalCol2}>
-                                <p className={styles.price}>${Subtotal}</p>
-                            </div>
-                        </div>
-
-                        <div className={styles.totalRow}>
-                            <div className={styles.totalCol1}>
-                                <h3 className={styles.priceLabel}>GST 8%</h3>
-                            </div>
-                            <div className={styles.totalCol2}>
-                                <p className={styles.price}>${GST}</p>
-                            </div>
-                        </div>
+                        <ul className="list-group list-group-horizontal text-center">
+                            <li className="list-group-item col-sm-8 border-0"></li>
+                            <li className="list-group-item col-sm-2 border-0"><h3>Subtotal</h3></li>
+                            <li className="list-group-item col-sm-2 pt-3 border-0">${Subtotal}</li>
+                        </ul>
+                        <ul className="list-group list-group-horizontal text-center">
+                            <li className="list-group-item col-sm-8 border-0"></li>
+                            <li className="list-group-item col-sm-2 border-0"><h3>GST 8%</h3></li>
+                            <li className="list-group-item col-sm-2 pt-3 border-0">${GST}</li>
+                        </ul>
 
                         <hr id={styles.totalLine}/>
 
-                        <div className={styles.totalRow}>
-                            <div className={styles.totalCol1}>
-                                <h2 className={styles.priceLabel}>Total</h2>
-                            </div>
-                            <div className={styles.totalCol2}>
-                                <p className={styles.totalprice}>${Total}</p>
-                            </div>
-                        </div>
+                        <ul className="list-group list-group-horizontal text-center pt-1 w-100">
+                            <li className="list-group-item col-sm-8 border-0"></li>
+                            <li className="list-group-item col-sm-2 border-0"><h2>Total</h2></li>
+                            <li className="list-group-item col-sm-2 pt-3 border-0">${Total}</li>
+                        </ul>
                         
                     </div>
                     
