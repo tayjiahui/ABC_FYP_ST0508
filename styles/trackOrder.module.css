@@ -42,27 +42,31 @@
 
 .tableLabel > li{
   display: inline;
-  padding: 0 30px 0 30px;
+  padding: 0 20px 0 20px;
 }
 
 .tableNo{
+  margin-left: 10px;
+}
+
+.tableNo2{
   margin-left: 20px;
 }
 
 .tableCreated{
-  margin-left: 40px;
-}
-
-.tableName{
   margin-left: 100px;
 }
 
+.tableName{
+  margin-left: 200px;
+}
+
 .tableSupplier{
-  margin-left: 230px;
+  margin-left: 130px;
 }
 
 .tableStatus{
-  margin-left: 400px;
+  margin-left: 320px;
 }
 
 .orderBtn {
@@ -95,7 +99,7 @@
   vertical-align: middle;
   display: grid;
   text-align: left;
-  grid-template-columns: 110px 210px 400px 220px 190px 100px;
+  grid-template-columns: 110px 210px 300px 220px 190px 100px;
 } 
 
 .box {
@@ -108,26 +112,32 @@
 }
 
 .orderTextNo{
-  padding-left: 50px;
+  margin-left: 50px;
   flex: 1;
 }
 
-.orderTextName{
-  padding-left: 70px;
-  flex: 1;
-}
-
-.orderTextSupplier{
-  padding-left: 10px;
+.orderTextNo2{
+  margin-left: 50px;
   flex: 1;
 }
 
 .orderTextDate{
-  padding-left: 50px;
+  margin-left: 2px;
+  flex: 1;
+}
+
+.orderTextName{
+  margin-left: 0px;
+  flex: 1;
+}
+
+.orderTextSupplier{
+  margin-left: 10px;
   flex: 1;
 }
 
 .container2 {
+  margin-left: 75px;
   flex: 1;
 }
 
