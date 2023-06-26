@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import axios from 'axios';
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
@@ -11,6 +12,29 @@ import moment from 'moment';
 
 //----------------------function name has to be uppercase
 
+const URL = [];
+
+function isLocalhost() {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    console.log('hostname   ' + hostname);
+    if (hostname == 'localhost') {
+      URL.push('http://localhost:3000', 'http://localhost:5000');
+      console.log(URL);
+
+    }
+    else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+      URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+      console.log(URL);
+    }
+
+    return URL;
+  }
+}
+
+isLocalhost();
+
+const baseUrl = URL[0]
 
 function ItemLines(props) {
     return (
@@ -90,13 +114,10 @@ export async function getServerSideProps(context) {
 
 // main frontend page
 export default function Main({ purOrderD, productDeets }) {
+
     const router = useRouter();
 
     const poID = router.query.poID;
-
-    // const [Circle, testCircle] = useState();
-
-    // const [DateRequest, setDateRequest] = useState();
     const [TargetDeliveryDate, setTargetDate] = useState();
 
     const [ProductDetails, setList] = useState();
@@ -105,11 +126,47 @@ export default function Main({ purOrderD, productDeets }) {
     const [GST, gstCal] = useState();
     const [Total, totalCal] = useState();
 
-    const [checkRemark, setRemark] = useState();
+    // const [checkRemark, setRemark] = useState();
+    const [selectedValue, setSelectedValue] = useState('');
+    console.log("purchase status id", selectedValue);
+    console.log("po id", poID);
+
+    const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+        localStorage.setItem('selectedValue', event.target.value);
+    };
+
+
+    const handleClick = async (e) => {
+
+        // const { value } = e.target;
+        // setSelectedValue(value);
+        e.preventDefault();
+       
+        try {
+            // Send the selected option to the server using Axios PUT request
+            const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+              purchaseStatusID: selectedValue,
+            });
+            console.log(response.data); // Handle the response as needed
+
+          } catch (error) {
+            console.error(error);
+          }
+
+    }
+
+    useEffect(() => {
+        const storedOption = localStorage.getItem('selectedValue');
+        if (storedOption) {
+            setSelectedValue(storedOption);
+        }
+      }, []);
+
 
     // PR Details  
     const PR = purOrderD[0];
-    console.log("pr detais", PR)
+    console.log("pr details", PR)
 
 
     useEffect(() => {
@@ -382,13 +439,16 @@ export default function Main({ purOrderD, productDeets }) {
                     <div className={styles.container2}>
                         <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
 
-                        <select name="status" id={styles.words2}>
-                            <option value="acceptO">Accept Order</option>
-                            <option value="preparingO">Preparing Order</option>
-                            <option value="preparingD">Preparing Delivery</option>
-                            <option value="shipping">Shipping Item</option>
-                            <option value="delivered">Item Delivered</option>
+                        <div className={styles.blabla} onClick={handleClick}>
+                        <select id={styles.words2} value={selectedValue} onChange={handleChange}>
+                            <option value="1">Accept Order</option>
+                            <option value="2">Preparing Order</option>
+                            <option value="3">Preparing Delivery</option>
+                            <option value="4">Shipping Item</option>
+                            <option value="5">Item Delivered</option>
                         </select>
+                        </div>
+                        
                     </div>
                 </div>
 
