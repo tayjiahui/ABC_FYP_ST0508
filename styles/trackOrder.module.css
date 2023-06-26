@@ -138,3 +138,74 @@
   height: 35px;
   text-align: center;
 }
+
+/* create status pop */
+.newStatusBox {
+  width: 450px;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px;
+  display: block;
+  border: 1px solid black;
+}
+
+.newStatusText{
+  margin-bottom: 25px;
+}
+
+.newStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.newStatus input[type="text"] {
+  padding: 10px 15px 10px 15px;
+  border-radius: 20px;
+  border-width: 1px;
+  margin-top: 15px;
+}
+
+.newStatus button {
+  padding: 6px 20px 6px 20px;
+  border-radius: 15px;
+  border-width: 1px;
+  background-color: #486284;
+  color: white;
+}
+
+.newStatus form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.closemeStatus {
+  background-color: transparent;
+  border: none;
+  margin-left: 370px;
+  margin-top: -65px;
+  font-size: x-large;
+  cursor: pointer;
+}
+
+.closemeStatus1 {
+  background-color: transparent;
+  border: none;
+  margin-left: 370px;
+  margin-top: 5px;
+  font-size: x-large;
+  cursor: pointer;
+}
+
+.changedStatusText{
+  margin-top: 60px;
+}
