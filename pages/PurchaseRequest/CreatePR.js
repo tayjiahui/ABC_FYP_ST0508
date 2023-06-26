@@ -386,12 +386,12 @@ export default function Supplier() {
                     <div className={styles.pDTop}>
                         <h4>Product Details</h4>
                         <hr/>
-                        <ul className={styles.itemLabel}>
-                            <li className={styles.itemNo}>Item No.</li>
-                            <li className={styles.itemName}>Item</li>
-                            <li className={styles.itemQty}>Quantity</li>
-                            <li className={styles.itemUP}>Unit Price</li>
-                            <li className={styles.itemTotalUP}>Total Unit Price</li>
+                        <ul className="list-group list-group-horizontal text-center">
+                            <li className="list-group-item col-sm-1 border-0">Item No.</li>
+                            <li className="list-group-item col-sm-4 px-5 border-0 text-start">Item</li>
+                            <li className="list-group-item col-sm-2 border-0">Quantity</li>
+                            <li className="list-group-item col-sm-2 border-0">Unit Price</li>
+                            <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
                         </ul>
                         <hr/>
                     </div>
@@ -401,25 +401,25 @@ export default function Supplier() {
                                 {ItemLineList.map((item, index) => {
                                     if (index === ItemLineList.length - 1){
                                         return <div key={index} className={styles.plItemRow}>
-                                                    <div>
+                                                    <div className="col-sm-1 text-center">
                                                         <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-4 px-5 text-start">
                                                         <input list="items" type="text" name="ItemName" id={item.id} data-unitPrice={item.UnitPrice} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
                                                         <datalist id="items">
                                                             {Items}
                                                         </datalist>  
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-2 text-center">
                                                         <input  type="number" min={1} name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-2 text-center">
                                                         <input  type="number" min={0} name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} disabled/>
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-2 text-center">
                                                         <input  type="number" min={0} name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} disabled/>
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-1">
                                                         <button type="button" onClick={addItemLine} className={styles.createButton}>
                                                             <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.addIcon}/>
                                                         </button>
@@ -428,25 +428,25 @@ export default function Supplier() {
                                     }
                                     else if(index < ItemLineList.length - 1){
                                         return <div key={index} className={styles.plItemRow}>
-                                                    <div>
-                                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} required/>
+                                                    <div className="col-sm-1 text-center">
+                                                        <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-4 px-5 text-start">
                                                         <input list="items" type="text" name="ItemName" id={item.id} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
                                                         <datalist id="items">
                                                             {Items}
                                                         </datalist>  
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-2 text-center">
                                                         <input  type="number" name="ItemQty" id="ItemQty" value={item.ItemQty} onChange={(e) => handleItemChange(index, e)} className={styles.plQty} required/>
                                                     </div>
-                                                    <div>
-                                                        <input  type="number" name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} required/>
+                                                    <div className="col-sm-2 text-center">
+                                                        <input  type="number" name="UnitPrice" id="UnitPrice" value={item.UnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plUnitPrice} disabled/>
                                                     </div>
-                                                    <div>
-                                                        <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} required/>
+                                                    <div className="col-sm-2 text-center">
+                                                        <input  type="number" name="TotalUnitPrice" id="TotalUnitPrice" value={item.TotalUnitPrice} onChange={(e) => handleItemChange(index, e)} className={styles.plTotalUP} disabled/>
                                                     </div>
-                                                    <div>
+                                                    <div className="col-sm-1">
                                                         <button type="button" onClick={() => {removeItemLine(index)}} className={styles.createButton}>
                                                             <Image src={addIcon} alt='Plus Icon' width={25} height={25} className={styles.cancelIcon}/>
                                                         </button>
