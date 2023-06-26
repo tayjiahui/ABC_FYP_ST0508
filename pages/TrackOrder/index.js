@@ -26,11 +26,11 @@ function isLocalhost() {
     else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
       URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
       console.log(URL);
-    }
+    };
 
     return URL;
-  }
-}
+  };
+};
 
 isLocalhost();
 
@@ -217,8 +217,8 @@ export default function TrackOrder() {
         }
         else {
           alert(err.code);
-        }
-      })
+        };
+      });
   }, []);
 
   return (
@@ -255,4 +255,4 @@ export default function TrackOrder() {
 
     </>
   )
-}
+};

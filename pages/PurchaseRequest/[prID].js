@@ -28,10 +28,10 @@ function isLocalhost (){
         else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
             console.log(URL);
-        }
+        };
 
         return URL;
-    }
+    };
 };
 
 isLocalhost();
@@ -40,27 +40,16 @@ const baseUrl = URL[0];
 
 function ItemLines (props){
     return(
-        <div className={styles.productLines}>
-            <div className={styles.plRow}>
-                <div className={styles.plItemRow}>
-                    <div>
-                        <p className={styles.plItemNo}>{props.ItemNo}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plItemName}>{props.ItemName}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plQty}>{props.Qty}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plUnitPrice}>{props.UnitPrice}</p>
-                    </div>
-                    <div>
-                        <p className={styles.plTotalUP}>{props.TotalUnitPrice}</p>
-                    </div>
-                </div>
-            </div>
+        <div>
+            <ul className="list-group list-group-horizontal text-center">
+                <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
+                <li className="list-group-item col-sm-4 px-2 border-0 text-start">{props.ItemName}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.TotalUnitPrice}</li>
+            </ul>
         </div>
+        
     )
 };
 
@@ -75,7 +64,7 @@ export async function getServerSideProps(context){
     }
     else{
         backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
-    }
+    };
     
     const { params } = context;
     const { prID } = params;
@@ -86,17 +75,6 @@ export async function getServerSideProps(context){
     const data1 = await response1.json();
     const data2 = await response2.json();
 
-    // show in terminal
-    // console.log(data1);
-    // console.log(data2);
-
-    // filter out duplicated data & combine multiple locations
-    data1.forEach((item, index) => {
-        if(index > 0){
-            data1[0].branchName += `, ${item.branchName}`;
-        }
-    });
-
     return { 
         props:{
             host,
@@ -104,8 +82,8 @@ export async function getServerSideProps(context){
             pLDetails: data2,
             prID
         }
-    }
-}
+    };
+};
 
 export default function Supplier({prDetails, pLDetails}) {
     const router = useRouter();
@@ -126,11 +104,14 @@ export default function Supplier({prDetails, pLDetails}) {
     const [Total, totalCal] = useState();
 
     const [checkRemark, setRemark] = useState(false);
+    const [checkApprComment, setComment] = useState(false);
 
     const [ApprComment, setApprComment] = useState();
 
     const [isAdmin, setAdmin] = useState(false);
     const [isPending, setIsPending] = useState(false);
+    const [isApproved, setIsApproved] = useState(false);
+    const [isRejected, setIsRejected] = useState(false);
 
     // PR Details  
     const PR = prDetails[0];
@@ -148,7 +129,7 @@ export default function Supplier({prDetails, pLDetails}) {
         // check if admin/ approver
         if(roleID === 1){
             setAdmin(true);
-        }
+        };
 
         // Test for status Circle
         const statusID = PR.prStatusID;
@@ -159,15 +140,17 @@ export default function Supplier({prDetails, pLDetails}) {
                 return '/yellowPendingCircle.svg';
             }
             else if(statusID == 2){
+                setIsApproved(true);
                 return '/greenApprovedCircle.svg';
             }
             else if(statusID == 3){
+                setIsRejected(true);
                 return '/redRejectedCircle.svg';
             }
             else{
                 return '/yellowPendingCircle.svg';
-            }
-        }
+            };
+        };
 
         const circle = circleTest(statusID);
         testCircle(circle);
@@ -203,16 +186,16 @@ export default function Supplier({prDetails, pLDetails}) {
             for(let i = 0; i < array.length; i++){
                 let num = +array[i]
                 total = total + num
-            }
+            };
 
             return total;
-        }            
+        };
         
         // Calculate GST
         function GSTFinder(amt){
             const gst = (8/100)*amt;
             return gst;
-        }
+        };
                 
         const totalArr = [];
 
@@ -232,9 +215,15 @@ export default function Supplier({prDetails, pLDetails}) {
         totalCal(total);
 
         // check if there is remarks
-        if(PR.remarks !== ""){
-            setRemark(true)
-        }
+        if(PR.remarks !== "" && PR.remarks !== null){
+            setRemark(true);
+        };
+
+        // check if there is approver comment
+        if(PR.apprRemarks !== "" && PR.apprRemarks !== null){
+            setComment(true);
+        };
+
     }, []);
 
     const submitApproval = async(e) => {
@@ -253,7 +242,7 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
+            });
         }
         else{
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
@@ -267,8 +256,8 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
-        }
+            });
+        };
     };
 
     const submitDeny = async(e) => {
@@ -287,7 +276,7 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
+            });
         }
         else{
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
@@ -301,8 +290,27 @@ export default function Supplier({prDetails, pLDetails}) {
             })
             .catch((err) => {
                 console.log(err);
-            })
-        }
+            });
+        };
+
+    };
+
+    const convertToPO = async(e) => {
+        e.preventDefault();
+
+        await axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`, 
+            {
+                "prID": prID
+            }
+        )
+        .then((response) => {
+            console.log(response);
+            alert(response.data)
+        })
+        .catch((err) => {
+            console.log(err);
+            alert(err.response.data)
+        });
 
     };
 
@@ -310,13 +318,15 @@ export default function Supplier({prDetails, pLDetails}) {
         <>
             <div className="pb-5">
                 <div className="headerRow">
-                    <h1>
-                        <a href={"/PurchaseRequest"}>
-                            <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
-                        </a>
-                        Purchase Request #{prID}
-                        <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
-                    </h1>
+                    <div>
+                        <h1>
+                            <a href={"/PurchaseRequest"}>
+                                <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
+                            </a>
+                            Purchase Request #{prID}
+                            <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
+                        </h1>
+                    </div>
                 </div>
 
                 <div className={styles.prDetails}>
@@ -357,12 +367,12 @@ export default function Supplier({prDetails, pLDetails}) {
                     <div className={styles.pDTop}>
                         <h4>Product Details</h4>
                         <hr/>
-                        <ul className={styles.itemLabel}>
-                            <li className={styles.itemNo}>Item No.</li>
-                            <li className={styles.itemName}>Item</li>
-                            <li className={styles.itemQty}>Quantity</li>
-                            <li className={styles.itemUP}>Unit Price</li>
-                            <li className={styles.itemTotalUP}>Total Unit Price</li>
+                        <ul className="list-group list-group-horizontal text-center">
+                            <li className="list-group-item col-sm-2 border-0">Item No.</li>
+                            <li className="list-group-item col-sm-4 px-2 border-0 text-start">Item</li>
+                            <li className="list-group-item col-sm-2 border-0">Quantity</li>
+                            <li className="list-group-item col-sm-2 border-0">Unit Price</li>
+                            <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
                         </ul>
                         <hr/>
                     </div>
@@ -371,34 +381,24 @@ export default function Supplier({prDetails, pLDetails}) {
                     </div>
                     <div>
                         <hr/>
-                        <div className={styles.totalRow}>
-                            <div className={styles.totalCol1}>
-                                <h3 className={styles.priceLabel}>Subtotal</h3>
-                            </div>
-                            <div className={styles.totalCol2}>
-                                <p className={styles.price}>${Subtotal}</p>
-                            </div>
-                        </div>
-
-                        <div className={styles.totalRow}>
-                            <div className={styles.totalCol1}>
-                                <h3 className={styles.priceLabel}>GST 8%</h3>
-                            </div>
-                            <div className={styles.totalCol2}>
-                                <p className={styles.price}>${GST}</p>
-                            </div>
-                        </div>
+                        <ul className="list-group list-group-horizontal text-center">
+                            <li className="list-group-item col-sm-8 border-0"></li>
+                            <li className="list-group-item col-sm-2 border-0"><h3>Subtotal</h3></li>
+                            <li className="list-group-item col-sm-2 pt-3 border-0">${Subtotal}</li>
+                        </ul>
+                        <ul className="list-group list-group-horizontal text-center">
+                            <li className="list-group-item col-sm-8 border-0"></li>
+                            <li className="list-group-item col-sm-2 border-0"><h3>GST 8%</h3></li>
+                            <li className="list-group-item col-sm-2 pt-3 border-0">${GST}</li>
+                        </ul>
 
                         <hr id={styles.totalLine}/>
 
-                        <div className={styles.totalRow}>
-                            <div className={styles.totalCol1}>
-                                <h2 className={styles.priceLabel}>Total</h2>
-                            </div>
-                            <div className={styles.totalCol2}>
-                                <p className={styles.totalprice}>${Total}</p>
-                            </div>
-                        </div>
+                        <ul className="list-group list-group-horizontal text-center pt-1 w-100">
+                            <li className="list-group-item col-sm-8 border-0"></li>
+                            <li className="list-group-item col-sm-2 border-0"><h2>Total</h2></li>
+                            <li className="list-group-item col-sm-2 pt-3 border-0">${Total}</li>
+                        </ul>
                         
                     </div>
                     
@@ -414,14 +414,14 @@ export default function Supplier({prDetails, pLDetails}) {
                     }
                 </div>
 
+                <div className="px-5">
+                    <hr className={styles.endLine}/>
+                </div>
+
                 <div>
                     {
                         isPending && isAdmin &&
                             <div>
-                                <div className="px-5">
-                                    <hr className={styles.apprLine}/>
-                                </div>
-                                
                                 <div className="px-5 mx-5 pb-5 pt-2">
                                     <h2>Approve Purchase Request?</h2>
                                     <form>
@@ -442,7 +442,61 @@ export default function Supplier({prDetails, pLDetails}) {
                             </div>
                     }
                 </div>
+
+                <div>
+                    {
+                        checkApprComment &&
+                            <div className="px-5 mx-5 pb-5 pt-2">
+                                <div>
+                                    {
+                                        isRejected &&
+                                            <h2>Purchase Request #{prID} has been <b className={styles.rejectedB}>Rejected</b>!</h2>
+                                    }
+                                    {
+                                        isApproved &&
+                                            <h2>Purchase Request #{prID} has been <b className={styles.approvedB}>Approved</b>!</h2>
+                                    }
+                                    <div className="pt-5">
+                                        <h4>Approver's Comments</h4>
+                                        <div className="py-3 w-70">
+                                            <div className={styles.apprCommentsBox}>
+                                                <div className="px-4 py-5">
+                                                    <p>{PR.apprRemarks}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                </div>
+
+                <div>
+                    {
+                        isApproved &&
+                            <div>
+                                <div className="px-5 mx-5 py-5">
+                                    <div className={styles.createPO}>
+                                        <button onClick={convertToPO} className={styles.createPOButton}>Convert To Purchase Order</button>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                </div>
+
+                <div>        
+                    {
+                        isRejected &&
+                            <div>
+                                <div className="px-5 py-3 mx-5 mb-5">
+                                    <div className={styles.reappealPR}>
+                                        <button className={styles.reappealPRButton}>Reappeal Purchase Order</button>
+                                    </div>
+                                </div>
+                            </div>
+                    }
+                </div>
             </div>
         </>
     )
-}
+};
