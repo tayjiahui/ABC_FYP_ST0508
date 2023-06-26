@@ -172,7 +172,7 @@ function PRRow (props){
                                                         return <div key={index}>
                                                                     <div className='ps-4'>
                                                                         <ul className="list-group list-group-horizontal">
-                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">{item.lineItemID}</li>
+                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">{index + 1}</li>
                                                                             <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">{item.itemName}</li>
                                                                             <li className="list-group-item col-sm-2 border-0 bg-transparent">{item.quantity}</li>
                                                                             <li className="list-group-item col-sm-1 border-0 bg-transparent">X</li>
@@ -269,7 +269,7 @@ function PRRow (props){
                                                         return <div key={index}>
                                                                     <div className='ps-4'>
                                                                         <ul className="list-group list-group-horizontal">
-                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">{item.lineItemID}</li>
+                                                                            <li className="list-group-item col-sm-1 border-0 bg-transparent">{index + 1}</li>
                                                                             <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">{item.itemName}</li>
                                                                             <li className="list-group-item col-sm-2 border-0 bg-transparent">{item.quantity}</li>
                                                                             <li className="list-group-item col-sm-1 border-0 bg-transparent">X</li>
