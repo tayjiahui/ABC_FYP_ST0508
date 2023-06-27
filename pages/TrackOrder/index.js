@@ -43,7 +43,7 @@ console.log(baseURL);
 function OrderRow(props) {
 
   const [status, setStatus] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const [newStatusPop, setNewStatusPop] = useState(false);
   const [statusInput, setStatusInput] = useState([]);
@@ -60,9 +60,10 @@ function OrderRow(props) {
   }
 
   const handleSubmit = (event) => {
+
+    console.log("submitting status");
     // event.preventDefault();
     alert(`Sucessfully created new status: ${statusInput}`);
-
 
     axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
       purchaseStatus: statusInput
@@ -79,6 +80,8 @@ function OrderRow(props) {
       })
   }
 
+  console.log(statusInput)
+
   useEffect(() => {
     axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
       .then(res => {
@@ -89,17 +92,33 @@ function OrderRow(props) {
       .catch(err => console.log(err));
   }, []);
 
+  const poID = props.poID;
+
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
     const selectedValue = event.target.value;
+    console.log(event.target)
+    console.log("value", selectedValue)
+
     if (selectedValue === "+ Create New Status") {
       setNewStatusPop(true);
     }
-    if (selectedValue === "Preparing Order") {
-      setChangedStatusPop(true);
-    }
+    // else if (selectedValue === "Preparing Order") {
+    //   setChangedStatusPop(true);
+    // }
     else {
       console.log('other options')
+      axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+        purchaseStatusID: selectedValue,
+      })
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      setChangedStatusPop(true);
+
     }
   };
 
@@ -138,12 +157,26 @@ function OrderRow(props) {
           <option value="delivered">Item Delivered</option>
         </select>
       </div> */}
-        <div className={styles.container2}>
+        {/* <div className={styles.container2}>
           <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
             {status.map((status, index) => (
               <option key={index} value={status.purchaseStatus}>{status.purchaseStatus}</option>
             ))}
             <option value="+ Create New Status"> + Create New Status</option>
+          </select>
+        </div> */}
+
+        <div className={styles.container2}>
+          <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
+            <option key={1} value={props.PurchaseStatusID} selected="selected">{props.PurchaseStatus}</option>
+            {
+              status.map((status, index) => {
+                if (status.purchaseStatusID !== props.PurchaseStatusID) {
+                  return <option key={index + 2} value={status.purchaseStatusID}>{status.purchaseStatus}</option>
+                }
+              })
+            }
+            <option key={status.length + 2}> + Create New Status</option>
           </select>
         </div>
 
@@ -194,6 +227,9 @@ export default function TrackOrder() {
         const orderResult = response1.data;
         const trackOrderList = [];
 
+        console.log(orderResult);
+        console.log(orderResult[0].purchaseStatus)
+
         orderResult.forEach((item, index) => {
           trackOrderList.push(
             <div key={index}>
@@ -202,7 +238,10 @@ export default function TrackOrder() {
                 prID={item.prID}
                 date={item.requestDate}
                 Name={item.name}
-                Supplier={item.supplierName} />
+                Supplier={item.supplierName}
+                PurchaseStatus={item.purchaseStatus}
+                PurchaseStatusID={item.purchaseStatusID}
+              />
             </div>
           )
         });
