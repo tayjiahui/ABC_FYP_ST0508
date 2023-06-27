@@ -15,21 +15,21 @@ import moment from 'moment';
 const URL = [];
 
 function isLocalhost() {
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    console.log('hostname   ' + hostname);
-    if (hostname == 'localhost') {
-      URL.push('http://localhost:3000', 'http://localhost:5000');
-      console.log(URL);
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        console.log('hostname   ' + hostname);
+        if (hostname == 'localhost') {
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
 
-    }
-    else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-      URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-      console.log(URL);
-    }
+        }
+        else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
+        }
 
-    return URL;
-  }
+        return URL;
+    }
 }
 
 isLocalhost();
@@ -57,8 +57,9 @@ function ItemLines(props) {
                         <h5 className={styles.plTotalUP}>{props.TotalUnitPrice}</h5>
                     </div>
                     <div className={styles.numReceived}>
-                        <input type="text" id={styles.noRecInfo}></input><br></br>
+                        {/* <input type="text" id={styles.noRecInfo}>{props.QtyReceived}</input><br></br> */}
                         {/* <input type="text" id={styles.noRecInfo2}></input> */}
+                        <h5 className={styles.plTotalUP}>{props.QtyReceived}</h5>
                     </div>
                 </div>
 
@@ -126,14 +127,33 @@ export default function Main({ purOrderD, productDeets }) {
     const [GST, gstCal] = useState();
     const [Total, totalCal] = useState();
 
+    const [selectedStatus, setSelectedStatus] = useState("");
+    const [status, setStatus] = useState([]);
+
+    const [changeStatusPop, setChangeStatusPop] = useState();
+
+
     // const [checkRemark, setRemark] = useState();
     const [selectedValue, setSelectedValue] = useState('');
     console.log("purchase status id", selectedValue);
     console.log("po id", poID);
 
+    const handleCloseStatusPop = () => {
+        setChangeStatusPop(false);
+    }
+
     const handleChange = (event) => {
+        console.log(event.target.value);
+
         setSelectedValue(event.target.value);
-        localStorage.setItem('selectedValue', event.target.value);
+        // localStorage.setItem('selectedValue', event.target.value);
+        const selectednewValue = event.target.value;
+        if (selectednewValue === "1" || "2" || "3" || "4" || "5") {
+            setChangeStatusPop(true)
+        }
+        else {
+            console.log("other options")
+        }
     };
 
 
@@ -142,17 +162,17 @@ export default function Main({ purOrderD, productDeets }) {
         // const { value } = e.target;
         // setSelectedValue(value);
         e.preventDefault();
-       
+
         try {
             // Send the selected option to the server using Axios PUT request
             const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
-              purchaseStatusID: selectedValue,
+                purchaseStatusID: selectedValue,
             });
             console.log(response.data); // Handle the response as needed
 
-          } catch (error) {
+        } catch (error) {
             console.error(error);
-          }
+        }
 
     }
 
@@ -161,12 +181,20 @@ export default function Main({ purOrderD, productDeets }) {
         if (storedOption) {
             setSelectedValue(storedOption);
         }
-      }, []);
+
+        axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
+        .then(res => {
+            console.log(res.data)
+            setStatus(res.data);
+            setSelectedStatus(res.data[0]); //initial selected status
+        })
+        .catch(err => console.log(err));
+    }, []);
 
 
     // PR Details  
     const PR = purOrderD[0];
-    console.log("pr details", PR)
+    console.log("pr details", PR);
 
 
     useEffect(() => {
@@ -210,7 +238,8 @@ export default function Main({ purOrderD, productDeets }) {
                         ItemName={item.itemName}
                         Qty={item.quantity}
                         UnitPrice={item.unitPrice}
-                        TotalUnitPrice={item.totalUnitPrice} />
+                        TotalUnitPrice={item.totalUnitPrice}
+                        QtyReceived={item.qtyReceived} />
                 </div>
             );
 
@@ -262,6 +291,30 @@ export default function Main({ purOrderD, productDeets }) {
         // }
 
     }, []);
+
+    const handleStatusChange = (event) => {
+        setSelectedStatus(event.target.value);
+        const selectedValue = event.target.value;
+        console.log(event.target)
+        console.log("value", selectedValue)
+    
+        // else if (selectedValue === "Preparing Order") {
+        //   setChangedStatusPop(true);
+        // }
+        
+          console.log('other options')
+          axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+            purchaseStatusID: selectedValue,
+          })
+          .then((res) => {
+            console.log(res)
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+          setChangeStatusPop(true);
+      };
+
     return (
         <div>
             <h1 className='firstHeaderTop'>
@@ -439,17 +492,40 @@ export default function Main({ purOrderD, productDeets }) {
                     <div className={styles.container2}>
                         <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
 
-                        <div className={styles.blabla} onClick={handleClick}>
-                        <select id={styles.words2} value={selectedValue} onChange={handleChange}>
-                            <option value="1">Accept Order</option>
-                            <option value="2">Preparing Order</option>
-                            <option value="3">Preparing Delivery</option>
-                            <option value="4">Shipping Item</option>
-                            <option value="5">Item Delivered</option>
-                        </select>
+                        {/* <div className={styles.blabla} onClick={handleClick}>
+                            <select id={styles.words2} value={selectedValue} onChange={handleChange}>
+                                <option value="1">Accept Order</option>
+                                <option value="2">Preparing Order</option>
+                                <option value="3">Preparing Delivery</option>
+                                <option value="4">Shipping Item</option>
+                                <option value="5">Item Delivered</option>
+                            </select>
+                        </div> */}
+
+                        <div className={styles.blabla}>
+                            <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
+                                <option key={1} value={PR.purchaseStatusID} selected="selected">{PR.purchaseStatus}</option>
+                                {
+                                    status.map((status, index) => {
+                                        if (status.purchaseStatusID !== PR.purchaseStatusID){
+                                            return <option key={index + 2} value={status.purchaseStatusID}>{status.purchaseStatus}</option>
+                                        }
+                                    })
+                                }
+                            </select>
                         </div>
-                        
+
                     </div>
+
+                    {changeStatusPop && (
+                        <div className={styles.newStatusBox}>
+                            <div className={styles.newStatus}>
+                                <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
+                                <h5 className={styles.changedStatusText}> Status has been changed successfully </h5>
+
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className={styles.uploadR}>Upload Receipt</div>

@@ -407,7 +407,26 @@
     margin-left: 90px;
 }
 
+.newStatusBox {
+    width: 450px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+}
 
+.newStatus {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
 
 
