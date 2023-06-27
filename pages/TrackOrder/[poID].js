@@ -315,6 +315,13 @@ export default function Main({ purOrderD, productDeets }) {
           setChangeStatusPop(true);
       };
 
+      const editPO = async(e) => {
+        e.preventDefault();
+
+        
+
+    };
+
     return (
         <div>
             <h1 className='firstHeaderTop'>
@@ -364,6 +371,8 @@ export default function Main({ purOrderD, productDeets }) {
 
                 <div className={styles.box}>
                     <h5 className={styles.prodDetails}>Product Details</h5>
+
+                    <button onClick={editPO} className={styles.editPOButton}>Edit Details</button>
 
                     <div className={styles.lineContainer}>
                         <hr className={styles.lineDivider}></hr>
