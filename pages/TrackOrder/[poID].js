@@ -59,7 +59,7 @@ function ItemLines(props) {
                     <div className={styles.numReceived}>
                         {/* <input type="text" id={styles.noRecInfo}>{props.QtyReceived}</input><br></br> */}
                         {/* <input type="text" id={styles.noRecInfo2}></input> */}
-                        <h5 className={styles.plTotalUP}>{props.QtyReceived}</h5>
+                        <h5 className={styles.qtyR}>{props.QtyReceived}</h5>
                     </div>
                 </div>
 
