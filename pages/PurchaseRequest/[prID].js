@@ -156,7 +156,7 @@ export default function Supplier({prDetails, pLDetails}) {
         testCircle(circle);
 
         // Target Delivery Date formatting
-        const newDateFormat = moment(PR.targetDeliveryDate).format('DD/MM/YYYY');
+        const newDateFormat = moment(PR.targetDeliveryDate).format('D MMM YYYY');
         setTargetDate(newDateFormat);
 
         // Product lines
