@@ -433,7 +433,7 @@ export default function Supplier({prDetails, pLDetails}) {
                                         
                                         <div className="py-3">
                                             <div className={styles.apprButtons}>
-                                                <button onClick={submitDeny} className={styles.denyButton}>Deny</button>
+                                                <button onClick={submitDeny} className={styles.denyButton}>Reject</button>
                                                 <div className={styles.divider}></div>
                                                 <button onClick={submitApproval} className={styles.approveButton}>Approve</button>
                                             </div>
