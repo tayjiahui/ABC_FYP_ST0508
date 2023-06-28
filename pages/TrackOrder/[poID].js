@@ -131,6 +131,8 @@ export default function Main({ purOrderD, productDeets }) {
     const [status, setStatus] = useState([]);
 
     const [changeStatusPop, setChangeStatusPop] = useState();
+    const [changeStatusPop2, setChangeStatusPop2] = useState();
+    const [amount, setAmount] = useState('');
 
 
     // const [checkRemark, setRemark] = useState();
@@ -140,6 +142,10 @@ export default function Main({ purOrderD, productDeets }) {
 
     const handleCloseStatusPop = () => {
         setChangeStatusPop(false);
+    }
+
+    const handleCloseStatusPop2 = () => {
+        setChangeStatusPop2(false);
     }
 
     const handleChange = (event) => {
@@ -176,6 +182,39 @@ export default function Main({ purOrderD, productDeets }) {
 
     }
 
+    // const handleAmountChange = (event) => {
+    //     setAmount(event.target.value);
+    // };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (amount == "") {
+            alert("Please put in an amount to update!")
+        }
+        else if (amount < 0) {
+            alert("Please put in a valid number!")
+        }
+        else if (isNaN(amount)) {
+            alert("Please put in a valid number!")
+        } else {
+            await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/qty/${poID}`,
+                {
+                    "qtyReceived": amount
+                }
+            )
+                .then((response) => {
+                    alert(`Quantity has been changed!`);
+                    router.push('/TrackOrder');
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+
+
+
+    };
+
     useEffect(() => {
         const storedOption = localStorage.getItem('selectedValue');
         if (storedOption) {
@@ -183,12 +222,12 @@ export default function Main({ purOrderD, productDeets }) {
         }
 
         axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
-        .then(res => {
-            console.log(res.data)
-            setStatus(res.data);
-            setSelectedStatus(res.data[0]); //initial selected status
-        })
-        .catch(err => console.log(err));
+            .then(res => {
+                console.log(res.data)
+                setStatus(res.data);
+                setSelectedStatus(res.data[0]); //initial selected status
+            })
+            .catch(err => console.log(err));
     }, []);
 
 
@@ -221,8 +260,8 @@ export default function Main({ purOrderD, productDeets }) {
         // testCircle(circle);
 
         // Target Delivery Date formatting
-        const newDateFormat = moment(PR.targetDeliveryDate).format('DD/MM/YYYY');
-        setTargetDate(newDateFormat);
+        // const newDateFormat = moment(PR.targetDeliveryDate).format('DD/MM/YYYY');
+        // setTargetDate(newDateFormat);
 
         console.log(productDeets)
 
@@ -297,30 +336,31 @@ export default function Main({ purOrderD, productDeets }) {
         const selectedValue = event.target.value;
         console.log(event.target)
         console.log("value", selectedValue)
-    
+
         // else if (selectedValue === "Preparing Order") {
         //   setChangedStatusPop(true);
         // }
-        
-          console.log('other options')
-          axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+
+        console.log('other options')
+        axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
             purchaseStatusID: selectedValue,
-          })
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-          setChangeStatusPop(true);
-      };
+        })
+            .then((res) => {
+                console.log(res)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+        setChangeStatusPop(true);
+    }
 
-      const editPO = async(e) => {
-        e.preventDefault();
 
-        
+    // const editPO = async (e) => {
+    //     e.preventDefault();
 
-    };
+
+
+    // };
 
     return (
         <div>
@@ -372,7 +412,17 @@ export default function Main({ purOrderD, productDeets }) {
                 <div className={styles.box}>
                     <h5 className={styles.prodDetails}>Product Details</h5>
 
-                    <button onClick={editPO} className={styles.editPOButton}>Edit Details</button>
+
+                    <div className={styles.updateQty}>
+                        <button onClick={setChangeStatusPop2} className={styles.editPOButton}>Edit Details</button>
+                    </div>
+
+
+
+
+
+
+
 
                     <div className={styles.lineContainer}>
                         <hr className={styles.lineDivider}></hr>
@@ -516,7 +566,7 @@ export default function Main({ purOrderD, productDeets }) {
                                 <option key={1} value={PR.purchaseStatusID} selected="selected">{PR.purchaseStatus}</option>
                                 {
                                     status.map((status, index) => {
-                                        if (status.purchaseStatusID !== PR.purchaseStatusID){
+                                        if (status.purchaseStatusID !== PR.purchaseStatusID) {
                                             return <option key={index + 2} value={status.purchaseStatusID}>{status.purchaseStatus}</option>
                                         }
                                     })
@@ -544,6 +594,21 @@ export default function Main({ purOrderD, productDeets }) {
                     <hr className={styles.lineDivider}></hr>
                 </div>
 
+
+                {changeStatusPop2 && (
+                    <div className={styles.updateQty2} >
+                        <div className={styles.updateQtyInfo} >
+                            <p onClick={handleCloseStatusPop2} className={styles.closemeStatus1}>X</p>
+                            <h5 className={styles.changedQty}>Please input the amount received!</h5>
+                            <form onSubmit={handleSubmit}>
+                                <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} id={styles.noRecInfo}></input><br></br>
+                                <button type="submit" >Update Amount</button>
+                            </form>
+
+                        </div>
+                    </div>
+                )}
+
                 <div className={styles.filesSub}>
                     <div className={styles.invoice}>
                         <h5 className={styles.invoiceText}>Upload Invoice</h5><br></br>
@@ -568,7 +633,6 @@ export default function Main({ purOrderD, productDeets }) {
                         <h7 className={styles.add2}>Add Delivery Order</h7>
                     </div>
                 </div>
-
 
 
 

@@ -16,14 +16,14 @@
 .lineContainer {
     height: 10px;
     width: 90%;
-    position: relative;
+    /* position: relative; */
     margin-left: 40px;
     border-bottom: 2px solid #000000;
 }
 
 .lineDivider {
     border-left: 2px solid #000000;
-    position: absolute;
+    /* position: absolute; */
     top: 50%;
     bottom: 0;
 
@@ -321,7 +321,7 @@
 .plusIcon,
 .plusIcon2 {
     flex: 1;
-    max-width: 100%; 
+    max-width: 100%;
     height: auto;
     width: 50px;
 }
@@ -377,33 +377,33 @@
 }
 
 .plusIcon {
-    margin-left: 50px;  
+    margin-left: 50px;
 }
 
 
-.plItemRow{
+.plItemRow {
     padding-top: 10px;
     vertical-align: middle;
     display: grid;
     text-align: center;
     grid-template-columns: 200px 220px 170px 480px 100px 400px;
-} 
+}
 
-.plItemRow > div > p {
+.plItemRow>div>p {
     margin: 0;
 }
 
-.plItemNo{
+.plItemNo {
     text-align: left;
     margin-left: 80px;
 }
 
-.plItemName{
+.plItemName {
     text-align: left;
     margin-left: 70px;
 }
 
-.plQty{
+.plQty {
     margin-left: 90px;
 }
 
@@ -428,20 +428,70 @@
     justify-content: center;
 }
 
-.editPOButton{
-  background-color: #486284;
-  width: 250px;
-  color: white;
-  font-size: 15px;
-  font-family: "Plus Jakarta Sans";
-  width: 120px;
-  height: 40px;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  margin-left: 1300px;
+.editPOButton {
+    background-color: #486284;
+    width: 250px;
+    color: white;
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans";
+    width: 120px;
+    height: 40px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-left: 1300px;
+}
+
+.closemeStatus1 {
+    background-color: transparent;
+    border: none;
+    margin-left: 370px;
+    margin-top: 5px;
+    font-size: x-large;
+    cursor: pointer;
+}
+
+.updateQty2 {
+    width: 450px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
 }
 
 
 
+.updateQtyInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
+.updateQtyInfo input[type="text"] {
+    padding: 10px 15px 10px 15px;
+    border-radius: 20px;
+    border-width: 1px;
+    margin-top: 15px;
+}
+
+.updateQtyInfo button {
+    padding: 6px 20px 6px 20px;
+    border-radius: 15px;
+    border-width: 1px;
+    background-color: #486284;
+    color: white;
+}
+
+.updateQtyInfo form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
