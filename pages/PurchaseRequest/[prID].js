@@ -114,6 +114,8 @@ export default function Supplier({prDetails, pLDetails}) {
     const [isApproved, setIsApproved] = useState(false);
     const [isRejected, setIsRejected] = useState(false);
 
+    const [viewApprComment, setViewApprComment] = useState();
+
     // PR Details  
     const PR = prDetails[0];
     
@@ -126,6 +128,8 @@ export default function Supplier({prDetails, pLDetails}) {
         const roleID = parseInt(localStorage.getItem("roleID"), 10);
         setRoleID(roleID);
 
+        // set view appr comments
+        setViewApprComment(PR.apprRemarks);
         
         // check if admin/ approver
         if(roleID === 1){
@@ -462,7 +466,8 @@ export default function Supplier({prDetails, pLDetails}) {
                                         <div className="py-3 w-70">
                                             <div className={styles.apprCommentsBox}>
                                                 <div className="px-4 py-5">
-                                                    <p>{PR.apprRemarks}</p>
+                                                    {/* <p>{PR.apprRemarks}</p> */}
+                                                    <textarea value={viewApprComment} onChange={(e) => setViewApprComment(e.target.value)}></textarea>
                                                 </div>
                                             </div>
                                         </div>
