@@ -102,27 +102,38 @@ function PRRow (props){
                             <div className={styles.prRow}>
                                 <div className='pt-2 row'>
                                     <div className={styles.prTextRow}>
-                                        <div className='px-5 col-sm-1'>
-                                            <p>#{props.prID}</p>
+                                        <div className='px-4 ms-3 col-sm-1'>
+                                            {
+                                                showPL === false &&
+                                                    <button onClick={viewProductLines} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
+                                            {
+                                                showPL === true &&
+                                                    <button onClick={closeViewProductLines} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
                                         </div>
                                         
-                                        <div className='px-3 col-sm-1'>
+                                        <div className='px-1 col-sm-1'>
                                             <p>{props.ReqDate}</p>
                                         </div>
 
-                                        <div className='px-5 col-sm-3'> 
+                                        <div className='px-4 mx-4 col-sm-3'> 
                                             <p>{props.Location}</p>
                                         </div>
 
-                                        <div className='px-4 col-sm-2'>
+                                        <div className='px-1 col-sm-2'>
                                             <p>{props.Supplier}</p>
                                         </div>
 
-                                        <div className='px-3 col-sm-1'>
+                                        <div className='px-1 col-sm-1'>
                                             <p>{props.TargetDate}</p>
                                         </div>
 
-                                        <div className='px-5 mx-4 col-sm-2'>
+                                        <div className='px-5 mx-3 col-sm-2'>
                                             <div className='row'>
                                                 <div className='col-sm-1'>
                                                     <p className={styles.prTextStatus}>{props.Status}</p>
@@ -133,7 +144,7 @@ function PRRow (props){
                                             </div>
                                         </div>
 
-                                        <div className='col-sm-1'>
+                                        <div className='col-sm-1 px-0'>
                                             {
                                                 showPL === false &&
                                                     <button onClick={viewProductLines} type='button' className={styles.viewIconButton}>
@@ -194,19 +205,30 @@ function PRRow (props){
                             <div className={styles.prRow}>
                                 <div className='pt-2 row'>
                                     <div className={styles.prTextRow}>
-                                        <div className='px-5 col-sm-1'>
-                                            <p>#{props.prID}</p>
+                                        <div className='px-4 mx-2 col-sm-1'>
+                                            {
+                                                showPL === false &&
+                                                    <button onClick={viewProductLines} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
+                                            {
+                                                showPL === true &&
+                                                    <button onClick={closeViewProductLines} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
                                         </div>
                                         
-                                        <div className='px-3 col-sm-1'>
+                                        <div className='col-sm-1'>
                                             <p>{props.ReqDate}</p>
                                         </div>
 
-                                        <div className='px-5 col-sm-2'>
+                                        <div className='px-1 ms-4 col-sm-1'>
                                             <p>{props.Name}</p>
                                         </div>
 
-                                        <div className='col-sm-3'> 
+                                        <div className='px-3 col-sm-3'> 
                                             <p>{props.Location}</p>
                                         </div>
 
@@ -214,7 +236,7 @@ function PRRow (props){
                                             <p>{props.Supplier}</p>
                                         </div>
 
-                                        <div className='px-3 col-sm-1'>
+                                        <div className='px-0 mx-4 col-sm-1 text-center'>
                                             <p>{props.TargetDate}</p>
                                         </div>
 
@@ -341,8 +363,8 @@ export default function PurchaseRequest() {
 
                 prResult.forEach((item, index) => {
                     // Time stamp formatting
-                    const reqDate = moment(prResult[index].requestDate).format('DD/MM/YYYY');
-                    const targetDeliveryDate = moment(prResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+                    const reqDate = moment(prResult[index].requestDate).format('D MMM YYYY');
+                    const targetDeliveryDate = moment(prResult[index].targetDeliveryDate).format('D MMM YYYY');
 
                     prList.push(
                         <div key={index}>
@@ -391,8 +413,8 @@ export default function PurchaseRequest() {
 
                 prResult.forEach((item, index) => {
                     // Time stamp formatting
-                    const reqDate = moment(prResult[index].requestDate).format('DD/MM/YYYY');
-                    const targetDeliveryDate = moment(prResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+                    const reqDate = moment(prResult[index].requestDate).format('D MMM YYYY');
+                    const targetDeliveryDate = moment(prResult[index].targetDeliveryDate).format('D MMM YYYY');
 
                     prList.push(
                         <div key={index}>
@@ -453,8 +475,8 @@ export default function PurchaseRequest() {
 
                 searchResult.forEach((item, index) => {
                     // Time stamp formatting
-                    const reqDate = moment(searchResult[index].requestDate).format('DD/MM/YYYY');
-                    const targetDeliveryDate = moment(searchResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+                    const reqDate = moment(searchResult[index].requestDate).format('D MMM YYYY');
+                    const targetDeliveryDate = moment(searchResult[index].targetDeliveryDate).format('D MMM YYYY');
 
                     resultsList.push(
                         <div key={index}>
@@ -500,8 +522,8 @@ export default function PurchaseRequest() {
 
                 searchResult.forEach((item, index) => {
                     // Time stamp formatting
-                    const reqDate = moment(searchResult[index].requestDate).format('DD/MM/YYYY');
-                    const targetDeliveryDate = moment(searchResult[index].targetDeliveryDate).format('DD/MM/YYYY');
+                    const reqDate = moment(searchResult[index].requestDate).format('D MMM YYYY');
+                    const targetDeliveryDate = moment(searchResult[index].targetDeliveryDate).format('D MMM YYYY');
 
                     resultsList.push(
                         <div key={index}>
@@ -575,11 +597,11 @@ export default function PurchaseRequest() {
                     {
                         role === 2 &&
                             <ul className="list-group list-group-horizontal">
-                                <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
-                                <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
-                                <li className="list-group-item col-sm-3 px-5 border-0">Location</li>
-                                <li className="list-group-item col-sm-2 px-3 border-0">Supplier</li>
-                                <li className="list-group-item col-sm-1 px-2 ms-1 border-0">Target Date</li>
+                                <li className="list-group-item col-sm-1 px-4 ms-3 border-0">PR No.</li>
+                                <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
+                                <li className="list-group-item col-sm-3 px-4 mx-4 border-0">Location</li>
+                                <li className="list-group-item col-sm-2 px-1 border-0">Supplier</li>
+                                <li className="list-group-item col-sm-1 px-1 border-0">Target Date</li>
                                 <li className="list-group-item col-sm-2 px-5 mx-3 border-0">Status</li>
                                 <li className="list-group-item col-sm-1 border-0"></li>
                             </ul>
@@ -588,12 +610,12 @@ export default function PurchaseRequest() {
                     {
                         role === 1 &&
                             <ul className="list-group list-group-horizontal">
-                                <li className="list-group-item col-sm-1 px-5 border-0">No.</li>
-                                <li className="list-group-item col-sm-1 px-3 border-0">Date</li>
-                                <li className="list-group-item col-sm-2 px-5 border-0">Name</li>
-                                <li className="list-group-item col-sm-3 px-0 border-0">Location</li>
+                                <li className="list-group-item col-sm-1 px-3 mx-2 border-0">PR No.</li>
+                                <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
+                                <li className="list-group-item col-sm-1 px-1 ms-4 border-0">Name</li>
+                                <li className="list-group-item col-sm-3 px-3 border-0">Location</li>
                                 <li className="list-group-item col-sm-1 px-0 border-0">Supplier</li>
-                                <li className="list-group-item col-sm-1 px-2 border-0">Target Date</li>
+                                <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">Target Date</li>
                                 <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
                                 <li className="list-group-item col-sm-1 border-0"></li>
                             </ul>

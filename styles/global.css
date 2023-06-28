@@ -38,6 +38,7 @@ body{
     /* float: left; */
     /* display: inline; */
     width: 100%;
+    position: sticky;
 }
 
 ul{

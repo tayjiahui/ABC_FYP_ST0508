@@ -10,6 +10,7 @@ import arrowIcon from '../../public/arrowIcon.svg';
 import pendingCircle from '../../public/yellowPendingCircle.svg';
 import approvedCircle from '../../public/greenApprovedCircle.svg';
 import rejectedCircle from '../../public/redRejectedCircle.svg';
+import nextArrow from '../../public/rightArrowWhite.svg';
 
 import axios from "axios";
 
@@ -113,6 +114,8 @@ export default function Supplier({prDetails, pLDetails}) {
     const [isApproved, setIsApproved] = useState(false);
     const [isRejected, setIsRejected] = useState(false);
 
+    const [viewApprComment, setViewApprComment] = useState();
+
     // PR Details  
     const PR = prDetails[0];
     
@@ -125,6 +128,8 @@ export default function Supplier({prDetails, pLDetails}) {
         const roleID = parseInt(localStorage.getItem("roleID"), 10);
         setRoleID(roleID);
 
+        // set view appr comments
+        setViewApprComment(PR.apprRemarks);
         
         // check if admin/ approver
         if(roleID === 1){
@@ -156,7 +161,7 @@ export default function Supplier({prDetails, pLDetails}) {
         testCircle(circle);
 
         // Target Delivery Date formatting
-        const newDateFormat = moment(PR.targetDeliveryDate).format('DD/MM/YYYY');
+        const newDateFormat = moment(PR.targetDeliveryDate).format('D MMM YYYY');
         setTargetDate(newDateFormat);
 
         // Product lines
@@ -432,7 +437,7 @@ export default function Supplier({prDetails, pLDetails}) {
                                         
                                         <div className="py-3">
                                             <div className={styles.apprButtons}>
-                                                <button onClick={submitDeny} className={styles.denyButton}>Deny</button>
+                                                <button onClick={submitDeny} className={styles.denyButton}>Reject</button>
                                                 <div className={styles.divider}></div>
                                                 <button onClick={submitApproval} className={styles.approveButton}>Approve</button>
                                             </div>
@@ -461,7 +466,8 @@ export default function Supplier({prDetails, pLDetails}) {
                                         <div className="py-3 w-70">
                                             <div className={styles.apprCommentsBox}>
                                                 <div className="px-4 py-5">
-                                                    <p>{PR.apprRemarks}</p>
+                                                    {/* <p>{PR.apprRemarks}</p> */}
+                                                    <textarea value={viewApprComment} onChange={(e) => setViewApprComment(e.target.value)}></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -477,7 +483,12 @@ export default function Supplier({prDetails, pLDetails}) {
                             <div>
                                 <div className="px-5 mx-5 py-5">
                                     <div className={styles.createPO}>
-                                        <button onClick={convertToPO} className={styles.createPOButton}>Convert To Purchase Order</button>
+                                        
+                                        <button onClick={convertToPO} className={styles.createPOButton}>
+                                            <div className="ms-5 me-2 ps-2">
+                                                Next<Image src={nextArrow} width={25} height={25} alt="Next Arrow" className="ms-5"/>
+                                            </div>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
