@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import moment from 'moment';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -231,12 +232,15 @@ export default function TrackOrder() {
         console.log(orderResult[0].purchaseStatus)
 
         orderResult.forEach((item, index) => {
+          // Time stamp formatting
+          const reqDate = moment(orderResult[index].requestDate).format('DD/MM/YYYY');
+          
           trackOrderList.push(
             <div key={index}>
               <OrderRow
                 poID={item.poID}
                 prID={item.prID}
-                date={item.requestDate}
+                date={reqDate}
                 Name={item.name}
                 Supplier={item.supplierName}
                 PurchaseStatus={item.purchaseStatus}
