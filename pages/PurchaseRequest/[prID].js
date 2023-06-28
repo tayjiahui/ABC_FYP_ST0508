@@ -10,6 +10,7 @@ import arrowIcon from '../../public/arrowIcon.svg';
 import pendingCircle from '../../public/yellowPendingCircle.svg';
 import approvedCircle from '../../public/greenApprovedCircle.svg';
 import rejectedCircle from '../../public/redRejectedCircle.svg';
+import nextArrow from '../../public/rightArrowWhite.svg';
 
 import axios from "axios";
 
@@ -477,7 +478,12 @@ export default function Supplier({prDetails, pLDetails}) {
                             <div>
                                 <div className="px-5 mx-5 py-5">
                                     <div className={styles.createPO}>
-                                        <button onClick={convertToPO} className={styles.createPOButton}>Convert To Purchase Order</button>
+                                        
+                                        <button onClick={convertToPO} className={styles.createPOButton}>
+                                            <div className="ms-5 me-2 ps-2">
+                                                Next<Image src={nextArrow} width={25} height={25} alt="Next Arrow" className="ms-5"/>
+                                            </div>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

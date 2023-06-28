@@ -145,7 +145,7 @@
 /* Create PO Section */
 .createPOButton,.reappealPRButton{
     background-color: #486284;
-    width: 250px;
+    width: 100%;
 }
 
 /* Reappel Section */
