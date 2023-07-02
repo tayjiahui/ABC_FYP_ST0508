@@ -7,15 +7,6 @@
     src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
 }
 
-.headerRow{
-    display:flex;
-}
-
-.header{
-    width:75%;
-    /* position: fixed; */
-}
-
 /* Search Box */
 .searchContainer{
     display:inline-flexbox;
@@ -38,35 +29,6 @@
     border-style: none;
     background-color: transparent;
     vertical-align:middle;
-}
-
-.tableLabel > li{
-  display: inline;
-  padding: 0 20px 0 20px;
-}
-
-.tableNo{
-  margin-left: 10px;
-}
-
-.tableNo2{
-  margin-left: 20px;
-}
-
-.tableCreated{
-  margin-left: 100px;
-}
-
-.tableName{
-  margin-left: 200px;
-}
-
-.tableSupplier{
-  margin-left: 130px;
-}
-
-.tableStatus{
-  margin-left: 320px;
 }
 
 .orderBtn {
@@ -111,44 +73,6 @@
   margin-bottom: 10px;
 }
 
-.orderTextNo{
-  margin-left: 50px;
-  flex: 1;
-}
-
-.orderTextNo2{
-  margin-left: 50px;
-  flex: 1;
-}
-
-.orderTextDate{
-  margin-left: 2px;
-  flex: 1;
-}
-
-.orderTextName{
-  margin-left: 0px;
-  flex: 1;
-}
-
-.orderTextSupplier{
-  margin-left: 10px;
-  flex: 1;
-}
-
-.container2 {
-  margin-left: 75px;
-  flex: 1;
-}
-
-.dropdownStatus{
-  margin-top: 20px;
-  border-radius: 8px;
-  width: 180px;
-  height: 35px;
-  text-align: center;
-}
-
 /* create status pop */
 .newStatusBox {
   width: 450px;
@@ -162,10 +86,6 @@
   border-radius: 20px;
   display: block;
   border: 1px solid black;
-}
-
-.newStatusText{
-  margin-bottom: 25px;
 }
 
 .newStatus {
@@ -214,8 +134,4 @@
   margin-top: 5px;
   font-size: x-large;
   cursor: pointer;
-}
-
-.changedStatusText{
-  margin-top: 60px;
 }
