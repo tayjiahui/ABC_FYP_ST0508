@@ -546,7 +546,7 @@ export default function Supplier() {
                     <form onSubmit={createAdHoc}>
                         <div className="px-5 pt-5 pb-2">
                             <div>
-                                <h4>Description</h4>
+                                <h4>Remarks</h4>
                                 <textarea value={Remark} onChange={(e) => setRemark(e.target.value)} className={styles.textArea}></textarea>
                             </div>
                         </div>
