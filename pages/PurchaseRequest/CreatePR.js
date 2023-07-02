@@ -267,6 +267,7 @@ export default function Supplier() {
 
         await axios.post(`${baseUrl}/api/purchaseReq/`,
             {
+                "purchaseTypeID": 1,
                 "targetDeliveryDate": dateReqV,
                 "userID": id,
                 "supplierID": supplierV.id,
