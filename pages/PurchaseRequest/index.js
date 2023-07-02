@@ -323,12 +323,199 @@ function Icon(props){
     )
 };
 
+function AdHocRow (props){
+    const statusID = props.StatusID;
+
+    const [showDescript, setShowDescript] = useState(false);
+
+    function circleTest(statusID){
+        if(statusID == 1){
+            return '/yellowPendingCircle.svg';
+        }
+        else if(statusID == 2){
+            return '/greenApprovedCircle.svg';
+        }
+        else if(statusID == 3){
+            return '/redRejectedCircle.svg';
+        }
+        else{
+            return '/yellowPendingCircle.svg';
+        }
+    };
+
+    const circle = circleTest(statusID);
+
+    const viewDescription = async(e) => {
+        e.preventDefault();
+        setShowDescript(true);
+    };
+
+    const closeViewDescription = async(e) => {
+        e.preventDefault();
+        setShowDescript(false);
+    };
+
+    return (
+        <div className="py-1">
+            <a href={baseURL + '/PurchaseRequest/' + props.prID}>
+                <button className={styles.prButton}>
+                    {
+                        props.RoleID === 2 &&
+                            <div className={styles.prRow}>
+                                <div className='pt-2 row'>
+                                    <div className={styles.prTextRow}>
+                                        <div className='px-4 ms-3 col-sm-1'>
+                                            {
+                                                showDescript === false &&
+                                                    <button onClick={viewDescription} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
+                                            {
+                                                showDescript === true &&
+                                                    <button onClick={closeViewDescription} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
+                                        </div>
+                                        
+                                        <div className='px-1 col-sm-1'>
+                                            <p>{props.ReqDate}</p>
+                                        </div>
+
+                                        <div className='px-1 col-sm-1'>
+                                            <p>{props.TargetDate}</p>
+                                        </div>
+
+                                        <div className='px-5 mx-3 col-sm-2'>
+                                            <div className='row'>
+                                                <div className='col-sm-1'>
+                                                    <p className={styles.prTextStatus}>{props.Status}</p>
+                                                </div>
+                                                <div className='ps-5 ms-4 col-sm-2'>
+                                                    <Icon item={circle}/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='col-sm-1 px-0'>
+                                            {
+                                                showDescript === false &&
+                                                    <button onClick={viewDescription} type='button' className={styles.viewIconButton}>
+                                                        <Image src={eyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                            {
+                                                showDescript === true &&
+                                                    <button onClick={closeViewDescription} type='button' className={styles.viewIconButton}>
+                                                        <Image src={closeEyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {
+                                    showDescript &&
+                                        <div className={styles.plRow}>
+                                            <h5 className='ps-5 pt-3 text-start'><u>Description</u></h5>
+
+                                            <div className='py-2 ps-5 text-start'>
+                                                <p>{props.Description}</p>
+                                            </div>
+                                        </div>
+                                }
+                            </div>
+                    }
+
+                    {
+                        props.RoleID === 1 &&
+                            <div className={styles.prRow}>
+                                <div className='pt-2 row'>
+                                    <div className={styles.prTextRow}>
+                                        <div className='px-4 mx-2 col-sm-1'>
+                                            {
+                                                showDescript === false &&
+                                                    <button onClick={viewDescription} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
+                                            {
+                                                showDescript === true &&
+                                                    <button onClick={closeViewDescription} type='button' className={styles.viewIconButton}>
+                                                         <p>#{props.prID}</p>
+                                                    </button>
+                                            }
+                                        </div>
+                                        
+                                        <div className='col-sm-1'>
+                                            <p>{props.ReqDate}</p>
+                                        </div>
+
+                                        <div className='px-1 ms-4 col-sm-1'>
+                                            <p>{props.Name}</p>
+                                        </div>
+
+                                        <div className='px-0 mx-4 col-sm-1 text-center'>
+                                            <p>{props.TargetDate}</p>
+                                        </div>
+
+                                        <div className='px-5 col-sm-2'>
+                                            <div className='row'>
+                                                <div className='col-sm-1'>
+                                                    <p className={styles.prTextStatus}>{props.Status}</p>
+                                                </div>
+                                                <div className='ps-5 ms-4 col-sm-2'>
+                                                    <Icon item={circle}/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='col-sm-1'>
+                                            {
+                                                showDescript === false &&
+                                                    <button onClick={viewDescription} type='button' className={styles.viewIconButton}>
+                                                        <Image src={eyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                            {
+                                                showDescript === true &&
+                                                    <button onClick={closeViewDescription} type='button' className={styles.viewIconButton}>
+                                                        <Image src={closeEyeCon} width={30} height={30} alt='Eye Icon'/>
+                                                    </button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {
+                                    showDescript &&
+                                        <div className={styles.plRow}>
+                                            <h5 className='ps-5 pt-3 text-start'><u>Description</u></h5>
+
+                                            <div className='py-2 ps-5 text-start'>
+                                               <p>{props.Description}</p>
+                                            </div>
+                                            
+                                        </div>
+                                }
+                            </div>
+                    }
+                    
+                </button>
+            </a>
+        </div>
+        
+    )
+};
+
 export default function PurchaseRequest() {
 
     const [id, setUserID] = useState();
     const [role, setRoleID] = useState();
     
     const [PRResults, setlist1] = useState([(<div>Loading...</div>)]);
+    const [AdHocResults, setAdHocResults] = useState([(<div>Loading...</div>)]);
 
     const [showAdHoc, setShowAdHoc] = useState(false);
 
@@ -351,12 +538,22 @@ export default function PurchaseRequest() {
                         'user': userID
                         // 'authorization': 'Bearer ' + token 
                     }
+                }),
+                axios.get(`${baseUrl}/api/purchaseReq/adhoc/${userID}`,{
+                    headers: {
+                        'user': userID
+                        // 'authorization': 'Bearer ' + token 
+                    }
                 })
             ])
-            .then(axios.spread((response1) => {
-                // console.log(response1);
+            .then(axios.spread((response1, response2) => {
+                console.log(response1);
+                console.log(response2.data);
 
                 const prResult = response1.data;
+                const adHocResult = response2.data;
+
+                console.log(adHocResult);
 
                 // Show List of UPDATED PRs [multiple locations included]
                 const prList = [];
@@ -383,6 +580,31 @@ export default function PurchaseRequest() {
                 });
 
                 setlist1(prList);
+
+                // Show List of Ad-hoc Purchases
+                const adHocList = [];
+
+                adHocResult.forEach((item, index) => {
+                    // Time stamp formatting
+                    const reqDate = moment(adHocResult[index].requestDate).format('D MMM YYYY');
+                    const targetDeliveryDate = moment(adHocResult[index].targetDeliveryDate).format('D MMM YYYY');
+
+                    adHocList.push(
+                        <div key={index}>
+                            <AdHocRow
+                                RoleID={roleID}
+                                prID={item.prID}
+                                ReqDate={reqDate}
+                                Name={item.name}
+                                TargetDate={targetDeliveryDate}
+                                Status={item.prStatus}
+                                StatusID={item.prStatusID}
+                                Description={item.remarks} />
+                        </div>
+                    );
+                });
+
+                setAdHocResults(adHocList);
             }))
             .catch((err) => {
                 console.log(err);
@@ -399,14 +621,23 @@ export default function PurchaseRequest() {
         }
         else if(roleID === 1){ 
             // admin/approver
-            axios.get(`${baseUrl}/api/purchaseReq/`,{
-                headers: {
-                    // 'user': userID
-                    // 'authorization': 'Bearer ' + token 
-                }
-            })
-            .then((response) => {
-                const prResult = response.data;
+            axios.all([
+                axios.get(`${baseUrl}/api/purchaseReq/`,{
+                    headers: {
+                        // 'user': userID
+                        // 'authorization': 'Bearer ' + token 
+                    }
+                }),
+                axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`,{
+                    headers: {
+                        // 'user': userID
+                        // 'authorization': 'Bearer ' + token 
+                    }
+                })
+            ])
+            .then(axios.spread((response1, response2) => {
+                const prResult = response1.data;
+                const adHocResult = response2.data;
 
                 // Show List of UPDATED PRs [multiple locations included]
                 const prList = [];
@@ -433,7 +664,32 @@ export default function PurchaseRequest() {
                 });
 
                 setlist1(prList);
-            })
+
+                // Show List of Ad-hoc Purchases
+                const adHocList = [];
+
+                adHocResult.forEach((item, index) => {
+                    // Time stamp formatting
+                    const reqDate = moment(adHocResult[index].requestDate).format('D MMM YYYY');
+                    const targetDeliveryDate = moment(adHocResult[index].targetDeliveryDate).format('D MMM YYYY');
+
+                    adHocList.push(
+                        <div key={index}>
+                            <AdHocRow
+                                RoleID={roleID}
+                                prID={item.prID}
+                                ReqDate={reqDate}
+                                Name={item.name}
+                                TargetDate={targetDeliveryDate}
+                                Status={item.prStatus}
+                                StatusID={item.prStatusID}
+                                Description={item.remarks} />
+                        </div>
+                    );
+                });
+
+                setAdHocResults(adHocList);
+            }))
             .catch((err) => {
                 console.log(err);
                 if(err.code === "ERR_NETWORK"){
@@ -595,7 +851,7 @@ export default function PurchaseRequest() {
                     </div>
                     
                     {
-                        role === 2 &&
+                        role === 2 && showAdHoc === false &&
                             <ul className="list-group list-group-horizontal">
                                 <li className="list-group-item col-sm-1 px-4 ms-3 border-0">PR No.</li>
                                 <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
@@ -608,13 +864,36 @@ export default function PurchaseRequest() {
                     }
 
                     {
-                        role === 1 &&
+                        role === 1 && showAdHoc === false &&
                             <ul className="list-group list-group-horizontal">
                                 <li className="list-group-item col-sm-1 px-3 mx-2 border-0">PR No.</li>
                                 <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
                                 <li className="list-group-item col-sm-1 px-1 ms-4 border-0">Name</li>
                                 <li className="list-group-item col-sm-3 px-3 border-0">Location</li>
                                 <li className="list-group-item col-sm-1 px-0 border-0">Supplier</li>
+                                <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">Target Date</li>
+                                <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
+                                <li className="list-group-item col-sm-1 border-0"></li>
+                            </ul>
+                    }
+
+                    {
+                        role === 2 && showAdHoc === true &&
+                            <ul className="list-group list-group-horizontal">
+                                <li className="list-group-item col-sm-1 px-3 mx-2 border-0">PR No.</li>
+                                <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
+                                <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">Target Date</li>
+                                <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
+                                <li className="list-group-item col-sm-1 border-0"></li>
+                            </ul>
+                    }
+
+                    {
+                        role === 1 && showAdHoc === true &&
+                            <ul className="list-group list-group-horizontal">
+                                <li className="list-group-item col-sm-1 px-3 mx-2 border-0">PR No.</li>
+                                <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
+                                <li className="list-group-item col-sm-1 px-1 ms-4 border-0">Name</li>
                                 <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">Target Date</li>
                                 <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
                                 <li className="list-group-item col-sm-1 border-0"></li>
@@ -634,7 +913,7 @@ export default function PurchaseRequest() {
 
                 {
                     showAdHoc === true &&
-                        <div>Ad Hoc In Progress!</div>
+                        <div>{AdHocResults}</div>
                 }
             </div>
 
