@@ -250,8 +250,7 @@ export default function Supplier() {
     };
 
     const adHocForm = async(e) => {
-        console.log(e.target.checked);
-        console.log("ad hoc!!")
+        // console.log(e.target.checked);
 
         if(e.target.checked === true){
             setAdHoc(true);
@@ -319,7 +318,25 @@ export default function Supplier() {
     // axios to create Ad Hoc
     const createAdHoc = async(e) => {
         e.preventDefault();
-        alert(`Creating ad hoc!`)
+
+        await axios.post(`${baseUrl}/api/purchaseReq/`,
+            {
+                "purchaseTypeID": 2,
+                "userID": id,
+                "remarks": Remark
+            }
+        )
+        .then((response) => {
+            console.log(response.data);
+
+            alert(response.data);
+
+            // redirect
+            router.push('/PurchaseRequest');
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     }
 
     return (
