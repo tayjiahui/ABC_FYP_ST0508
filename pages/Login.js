@@ -70,7 +70,7 @@ export default function Login() {
             }
         )
         .then((res) => {
-            alert(`Login Successful!`);
+            // alert(`Login Successful!`);
             // console.log(res.data);
             // console.log(res.data[0]);
 

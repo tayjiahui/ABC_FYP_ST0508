@@ -65,22 +65,42 @@ export default NextAuth({
                 const accessToken2 = response.data.access_token;
                 console.log("acesstoken 22222222", accessToken2);
 
-                // AUTH STEP 3 [WIP]
-                // currently returns err code 401
-                axios.get(`https://graph.microsoft.com/v1.0/users?$filter=mail eq '${email}'`,{
-                    headers:{
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + accessToken2
-                    }
-                })
-                .then((response) => {
-                    console.log("AUTH3 RESPONSE %%%%%%%%%", response.data)
-                })
-                .catch((err) => {
-                    console.log(err);
-                    console.log(err.response);
-                    console.log(err.code)
-                })
+                async function auth3(){
+                    await axios.get(`https://graph.microsoft.com/v1.0/users?$filter=mail eq '${email}'`,{
+                        headers:{
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + accessToken2
+                        }
+                    })
+                    .then((response) => {
+                        console.log("AUTH3 RESPONSE %%%%%%%%%", response.data);
+                        // console.log("AUTH3 RESPONSE %%%%%%%%%", response.data.value);
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        console.log(err.response);
+                        console.log(err.code);
+                    })
+                }
+
+                auth3();
+
+                // AUTH STEP 3
+                // axios.get(`https://graph.microsoft.com/v1.0/users?$filter=mail eq '${email}'`,{
+                //     headers:{
+                //         'Content-Type': 'application/json',
+                //         'Authorization': 'Bearer ' + accessToken2
+                //     }
+                // })
+                // .then((response) => {
+                //     console.log("AUTH3 RESPONSE %%%%%%%%%", response.data);
+                //     // console.log("AUTH3 RESPONSE %%%%%%%%%", response.data.value);
+                // })
+                // .catch((err) => {
+                //     console.log(err);
+                //     console.log(err.response);
+                //     console.log(err.code);
+                // })
             })
             .catch((err) => {
                 console.log(err);
