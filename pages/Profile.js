@@ -10,7 +10,8 @@ export default function Profile() {
 
         localStorage.clear();
         // router.push('/');
-        await signOut({ callbackUrl: '/' });
+        // await signOut({ callbackUrl: '/' });
+        signOut({ callbackUrl: '/' });
     }
 
     return (

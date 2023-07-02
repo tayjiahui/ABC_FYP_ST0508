@@ -1,7 +1,7 @@
 // this is for common page layouts e.g. website header, navbar, footer 
 import React from "react";
 import { useEffect } from "react";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider } from "next-auth/react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/global.css";
