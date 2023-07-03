@@ -14,6 +14,7 @@
 /* Header */
 .headerRow{
     vertical-align: middle;
+    padding: 5%;
 }
 #arrow{
     vertical-align: middle;
@@ -21,9 +22,9 @@
     padding-bottom: 5px;
 }
 
-.statusCircle{
+/* .statusCircle{
     padding-left: 15px;
-}
+} */
 
 /* View PR */
 /* PR Details */
@@ -35,7 +36,6 @@
     content: "";
     display: item;
     clear: both;
-
 }
 
 .viewCol{
@@ -54,88 +54,27 @@
     width: auto;
 }
 
-.itemLabel > li{
-    display: inline;
-    padding: 0 30px 0 30px;
-}
-
-.itemNo{
-
-}
-
-.itemName{
-
-}
-
-.itemQty{
-   margin-left: 320px;
-}
-
-.itemUP{
-    margin-left: 40px;
-}
-
-.itemTotalUP{
-    margin-left: 30px;
-}
-
-.productLines{
-    height: 40px;
-    vertical-align: middle;
-}
-
-.plItemRow{
-    padding-top: 10px;
-    vertical-align: middle;
-    display: grid;
-    text-align: center;
-    grid-template-columns: 110px 350px 180px 260px 100px;
-} 
-
-.plItemRow > div > p {
-    margin: 0;
-}
-
-.plItemNo{
-    text-align: left;
-    padding-left: 50px;
-}
-
-.plItemName{
-    text-align: left;
-    padding-left: 40px;
-}
-
-.plQty{
-    padding-left: 90px;
-}
-
-.plUnitPrice{
-
-}
-
-.plTotalUP{
-
-}
-
 .totalRow{
     content: "";
     display: flexbox;
     clear: both;
-    padding-left: 60%;
+    padding-left: 59%;
 }
 
 .totalCol1,.totalCol2{
     float: left;
-    width: 20%;
+    width: 50%;
 }
+
 .totalCol1{
-    padding-left: 110px;
+    padding-top: 15px;
+    padding-left: 20%;
 }
 
 .totalCol2{
-    padding-left: 100px;
+    padding-left: 20%;
 }
+
 .priceLabel{
     text-align: right;
 }
@@ -157,8 +96,68 @@
     width: 30%;
     border-width: 2px;
     margin-right: 1px;
+    float: right;
 }
 
+/* Approver Section */
+.endLine{
+    border: 1.5px solid;
+}
 
+.textArea{
+    width: 99%;
+    height: 200px;
+    border-radius: 8px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width:2px;
+    resize: none;
+}
 
+.apprButtons,.createPO,.reappealPR{
+    float: right;
+}
 
+.denyButton{
+    background-color: #e16060;
+}
+
+.approveButton{
+    background-color: #486284;
+}
+
+.denyButton,.approveButton,.createPOButton,.reappealPRButton{
+    color: white;
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans";
+    width: 120px;
+    height: 40px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.divider{
+    width: 30px;
+    display: inline-block;
+}
+
+/* Create PO Section */
+.createPOButton,.reappealPRButton{
+    background-color: #486284;
+    width: 100%;
+}
+
+/* Reappel Section */
+.apprCommentsBox{
+    background-color: #c0d8f751;
+    border-radius: 10px;
+}
+
+.rejectedB{
+    color: #FF5E56;
+}
+
+.approvedB{
+    color: #27C740;
+}

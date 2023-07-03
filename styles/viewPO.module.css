@@ -385,3 +385,30 @@
     font-size: x-large;
     cursor: pointer;
 }
+
+.displayReceipt {
+    width: 800px;
+    height: 850px;
+    position: fixed;
+    border: 1px solid black;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    text-align: center;
+}
+
+.closeReceipt {
+    background-color: transparent;
+    border: none;
+    margin-left: 650px;
+    margin-top: 50px;
+    font-size: x-large;
+    cursor: pointer;
+}
+
+.disabledButton {
+    background-color: #C1C8D0;
+    border: 1px solid #486284;
+    cursor: default;
+}

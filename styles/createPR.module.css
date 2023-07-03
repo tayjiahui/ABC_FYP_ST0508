@@ -17,15 +17,19 @@
 }
 
 /* PR Details */
+/* .formInputs{
+    height: 50px;
+    border-color: aqua;
+} */
+
 .prDetails,.productDetails{
     padding: 30px 0 30px 90px;
 }
 
-.viewRow{
+.viewRow,.productDetails{
     content: "";
     display: item;
     clear: both;
-
 }
 
 .viewCol{
@@ -33,16 +37,19 @@
     width: 50%;
 }
 
-.viewCol > input, .viewCol > div > input{
-    width: 400px;
-    height: 30px;
+.viewCol > input, .viewCol > div > div > input{
+    width: 70%;
+    height: 40px;
     border-radius: 10px;
     border-color: #93A2B7;
     border-style: solid;
     border-width:2px;
 }
+.locationInputs{
+    padding-bottom: 5px;
+}
 
-.addLocationButton{
+.addLocationButton, .removeLocationButton{
     background-color: transparent;
     border: none;
 }
@@ -58,79 +65,41 @@
 
 /* Product Details */
 
-.productDetails{
-    padding-top: 100px;
-    padding-right: 90px;
-    height: fit-content;
-}
-
-.pDTop{
-    width: auto;
-}
-
-.itemLabel > li{
-    display: inline;
-    padding: 0 30px 0 30px;
-}
-
-.itemNo{
-
-}
-
-.itemName{
-
-}
-
-.itemQty{
-   margin-left: 320px;
-}
-
-.itemUP{
-    margin-left: 40px;
-}
-
-.itemTotalUP{
-    margin-left: 30px;
-}
-
-.productLines{
-    height: 40px;
-    vertical-align: middle;
-}
-
 .plItemRow{
     padding-top: 10px;
     vertical-align: middle;
-    display: grid;
-    text-align: center;
-    grid-template-columns: 130px 390px 160px 170px 200px 10px;
-} 
+    display: flex;
+    flex-wrap: wrap;
+    text-align: left;
+}
 
 .plItemRow > div > p {
     margin: 0;
 }
 
-.plItemNo, .plQty, .plUnitPrice, .plTotalUP{
+.plItemNo{
     text-align: center;
-    width: 100px;
+    width: 90%;
 }
+
+.plQty, .plUnitPrice, .plTotalUP{
+    text-align: center;
+    width: 50%;
+} 
 
 .plItemName{
-    width: 350px;
+    width: 110%;
 }
 
-
 .plItemNo, .plItemName, .plQty, .plUnitPrice, .plTotalUP{
-    height: 25px;
+    height: 30px;
     border-radius: 8px;
     border-color: #93A2B7;
     border-style: solid;
     border-width:1.5px;
 }
 
-
-
-/* Create PR Button */
+/* Create PL line Button */
 .createButton{
     background-color: rgb(255, 255, 255);
     width: 35px;
@@ -148,26 +117,29 @@
     vertical-align: middle;
 }
 
+.cancelIcon{
+    transform: rotate(45deg);
+    transition: 0.5s;
+}
+
 /* Remarks */
 .remarksTestArea{
-    padding-left: 90px;
-    padding-top: 100px;
-    margin-top: 100px
+    
 }
 
 .textArea{
-    width: 1040px;
+    width: 100%;
     height: 200px;
     border-radius: 8px;
     border-color: #93A2B7;
     border-style: solid;
     border-width:2px;
+    resize: none;
 }
 
 /* Submit Button */
 .submit{
-    padding-left: 1020px;
-    padding-top: 100px;
+    float: right;
     padding-bottom: 100px;
 }
 
@@ -178,8 +150,73 @@
     width: 120px;
     height: 40px;
     background-color: #486284;
-    border-color: #486284;
-    border-style: solid;
+    border: none;
     border-radius: 15px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
+
+
+/* Toggle */
+.toggle{
+    float: right;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: left;
+}
+
+.switch {
+    --button-width: 3.5em;
+    --button-height: 2em;
+    --toggle-diameter: 1.5em;
+    --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
+    --toggle-shadow-offset: 10px;
+    --toggle-wider: 3em;
+    --color-grey: #93A2B7;
+    --color-green: #476d9f;
+   }
+   
+   .slider {
+    display: inline-block;
+    width: var(--button-width);
+    height: var(--button-height);
+    background-color: var(--color-grey);
+    border-radius: calc(var(--button-height) / 2);
+    position: relative;
+    transition: 0.3s all ease-in-out;
+   }
+   
+   .slider::after {
+    content: "";
+    display: inline-block;
+    width: var(--toggle-diameter);
+    height: var(--toggle-diameter);
+    background-color: #fff;
+    border-radius: calc(var(--toggle-diameter) / 2);
+    position: absolute;
+    top: var(--button-toggle-offset);
+    transform: translateX(var(--button-toggle-offset));
+    box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+    transition: 0.3s all ease-in-out;
+   }
+   
+   .switch input[type="checkbox"]:checked + .slider {
+    background-color: var(--color-green);
+   }
+   
+   .switch input[type="checkbox"]:checked + .slider::after {
+    transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+    box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+   }
+   
+   .switch input[type="checkbox"] {
+    display: none;
+   }
+   
+   .switch input[type="checkbox"]:active + .slider::after {
+    width: var(--toggle-wider);
+   }
+   
+   .switch input[type="checkbox"]:checked:active + .slider::after {
+    transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
+   }
+   

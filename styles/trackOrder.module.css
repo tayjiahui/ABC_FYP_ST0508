@@ -1,1 +1,137 @@
 /* this is indv track orders css */
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+/* Search Box */
+.searchContainer{
+    display:inline-flexbox;
+    float: right;
+    padding-top: 45px;
+    /* position: fixed;
+    right:20px */
+}
+
+.searchBox{
+    height: 20px;
+    width: 190px;
+    border-radius: 15px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width: 1.5px;
+}
+
+.searchButton{
+    border-style: none;
+    background-color: transparent;
+    vertical-align:middle;
+}
+
+.orderBtn {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  cursor: pointer;
+}
+
+.orderRow{
+  background-color: #C0D8F7;
+  font-size: 15px;
+  height: 50px;
+  border-radius: 18px;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+  text-align: center;
+  object-fit: scale-down;
+  /* transition: transform .5s; */
+ 
+}
+
+/* .orderRow:hover{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+} */
+
+.orderTextRow{
+  padding-top: 25px;
+  padding-bottom: 20px;
+  vertical-align: middle;
+  display: grid;
+  text-align: left;
+  grid-template-columns: 110px 210px 300px 220px 190px 100px;
+} 
+
+.box {
+  display: flex;
+  width: 100%;
+  background-color: #C0D8F7;
+  height: 80px;
+  border-radius: 18px;
+  margin-bottom: 10px;
+}
+
+/* create status pop */
+.newStatusBox {
+  width: 450px;
+  height: 300px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px;
+  display: block;
+  border: 1px solid black;
+}
+
+.newStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.newStatus input[type="text"] {
+  padding: 10px 15px 10px 15px;
+  border-radius: 20px;
+  border-width: 1px;
+  margin-top: 15px;
+}
+
+.newStatus button {
+  padding: 6px 20px 6px 20px;
+  border-radius: 15px;
+  border-width: 1px;
+  background-color: #486284;
+  color: white;
+}
+
+.newStatus form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.closemeStatus {
+  background-color: transparent;
+  border: none;
+  margin-left: 370px;
+  margin-top: -65px;
+  font-size: x-large;
+  cursor: pointer;
+}
+
+.closemeStatus1 {
+  background-color: transparent;
+  border: none;
+  margin-left: 370px;
+  margin-top: 5px;
+  font-size: x-large;
+  cursor: pointer;
+}

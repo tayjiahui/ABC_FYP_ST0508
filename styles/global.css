@@ -7,8 +7,26 @@
     src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Light.ttf');
 }
 
+@font-face {
+    font-family: "Plus Jakarta Sans Medium";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Medium.ttf');
+}
+
 html{
     font-family: "Plus Jakarta Sans";
+}
+
+div{
+    font-family: "Plus Jakarta Sans";
+}
+
+h1,h2,h3,h4,h5{
+    font-family: "Plus Jakarta Sans Medium";
+    color: #1A202C;
+}
+
+p{
+    font-size: 16px;
 }
 
 body{
@@ -20,6 +38,7 @@ body{
     /* float: left; */
     /* display: inline; */
     width: 100%;
+    position: sticky;
 }
 
 ul{
@@ -64,3 +83,9 @@ ul{
     vertical-align: middle;
 }
 
+/* Input Boxes */
+
+input[type="text"], input[type="email"]{
+    box-sizing: border-box;
+    padding-left: 10px;
+}
