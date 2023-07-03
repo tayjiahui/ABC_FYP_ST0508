@@ -133,8 +133,7 @@ export default function CreateSupplier() {
 
         axios.post(`${baseUrl}/api/supplier/`, submitData)
             .then((response) => {
-                const createdId = parseInt(response.data.id);
-                console.log(createdId);
+                console.log(response.data);
                 alert(response.data);
             })
             .catch((err) => {
