@@ -1,0 +1,118 @@
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+.titleRow h1 {  
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    margin-left: 60px;
+    margin-bottom: 15px;
+    width: 75%;
+}
+
+/* column grid */
+.col1, .col2 {
+    float: left;
+    width: 50%;
+    padding: 10px;
+    flex: 50%;
+}
+
+.col1{
+    margin-left: 110px;
+}
+
+.row{
+    display: flex;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.colData{
+    margin-bottom: 50px;
+}
+
+.penIcon {
+    display: inline-flexbox;
+    float: right;
+    padding-top: 25px;
+    margin-left: 80px;
+}
+
+.trashBin {
+    display: inline-flexbox;
+    float: right;
+    padding-top: 25px;
+    margin-left: 30px;
+    cursor: pointer;
+}
+
+/* delete popup box */
+.popupContainer {
+    width: 450px;
+    height: 200px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+}
+
+.popupBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.confirmDeleteText {
+    font-size:xx-large;
+}
+
+.closeButton {
+    background-color: transparent;
+    border: none;
+    margin-left: 405px;
+    margin-top: -85px;
+    font-size: x-large;
+    cursor: pointer;
+}
+
+.buttons {
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+}
+
+.cancelButton, .deleteButton {
+    cursor: pointer;
+    color: white;
+    border-radius: 20px;
+    border-width: 1px;
+    padding: 10px 30px 10px 30px;
+    margin-left: 15px;
+}
+
+.cancelButton {
+    background-color: #93A0B1;
+}
+
+.deleteButton {
+    background-color: #486284;
+}
