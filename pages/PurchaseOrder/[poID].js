@@ -15,8 +15,7 @@ function isLocalhost(url) {
 // const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
 // const baseUrl = API_URL;
 // const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
-const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
-
+const baseUrl = 'http://localhost:3000';
 const baseURL = 'http://localhost:5000';
 
 
@@ -26,7 +25,6 @@ export async function getServerSideProps(context) {
   const { params } = context;
   const { poID } = params;
 
-  // console.log( "id" + poID)
 
   const paymentTrackResponse = await fetch(`${baseUrl}/api/paymentTrack/supplier/pr/${poID}`);
 
@@ -36,44 +34,31 @@ export async function getServerSideProps(context) {
   // console.log(response1);
   // console.log(supplierID);
 
+  //supplier info
   const supplierInfoResponse = await fetch(`${baseUrl}/api/paymentTrack/supplier/info/${supplierID}`);
   const supplierInfo = await supplierInfoResponse.json();
 
+  //product details
+  const productInfoResponse = await fetch(`${baseUrl}/api/purchaseReq/lineItem/${poID}`);
+  const productInfo = await productInfoResponse.json();
+
+  const remarksInfoResponse = await fetch(`${baseUrl}/api/purchaseReq/PR/${poID}`);
+  const remarksInfo = await remarksInfoResponse.json();
+
   // console.log(response2);
-  // console.log(supplierInfo);
 
   return {
     props: {
       poID,
-      supplierDetail: supplierInfo
+      supplierDetail: supplierInfo,
+      productDetail: productInfo,
+      remarkDetail: remarksInfo,
     }
   }
 
-  // try {
-  //   // const purchaseOrderResponse = await axios.get(`${baseUrl}/api/purchaseOrder/`);
-  //   // const prID = purchaseOrderResponse.data[0].prID;
-
-  //   const paymentTrackResponse = await axios.get(`${baseUrl}/api/paymentTrack/supplier/pr/${prId}`);
-  //   // const supplierID = await paymentTrackResponse.data[0].supplierID;
-  //   const supplierID = await supplierInfoResponse.json();
-  //   console.log(supplierID);
-
-  //   const supplierInfoResponse = await axios.get(`${baseUrl}/api/paymentTrack/supplier/info/${supplierID}`);
-  //   const supplierInfo =  await supplierInfoResponse.data;
-  //   // const supplierInfo = await supplierInfoResponse.json();
-
-  //   return {
-  //     props: {
-  //       supplierDetails: supplierInfo
-  //     },
-  //   };
-  // } 
-  // catch (error) {
-  //   console.log( "error" + error);
-  // }
 }
 
-export default function ViewPO({ supplierDetail }) {
+export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) {
   const router = useRouter()
   const poID = router.query.poID
   // const [supplierName, setSupplierName] = useState([]);
@@ -87,34 +72,106 @@ export default function ViewPO({ supplierDetail }) {
   // const [supplierID, setsupplierID] = useState(false);
   //statuses
   const [status, setStatus] = useState([]);
-  const [selectedStatus2, setSelectedStatus2] = useState('');
+  const [selectedStatus2, setSelectedStatus2] = useState({});
   //create status
   const [newStatusPop, setNewStatusPop] = useState(false); //status pop up
   const [statusInput, setStatusInput] = useState([]);
+
+
+  //saving of page 
+  const [paymentStatusID, setPaymentStatusID] = useState("");
   const [remarks, setRemarks] = useState([]);
+
+
   const [selectedFile, setSelectedFile] = useState([]);
 
-  const supplierDetails = supplierDetail[0];
+  //saving paymentstatus, need to get ID from status first. 
+  const handlePaymentStatusChange = (event) => {
+    setPaymentStatusID(event.target.value);
+    console.log('this is payment name, not ID i think', paymentStatusID)
+  };
 
-
+  //saving the remarks section 
   const handleRemarksChange = (event) => {
     setRemarks(event.target.value);
+    console.log('this is remarks ', remarks)
+  };
+
+  //saving the uploaded file onto webpage. 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+    console.log('this is uploaded file ', selectedFile)
   }
+    
+
+  // const multer = require('multer');
+  // const upload = multer({ dest: 'uploads/'});
+
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append('pdf', file);
+
+  //     await axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, formData);
+  //     alert('file uploaded successfully');
+
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+
+  // };
+
+
+  //end saving of page 
+
+  const supplierDetails = supplierDetail[0];
+  const productDetails = productDetail
+  const remarksDetails = remarkDetail[0].remarks
+  //product details 
+
+
+  //calculating subtotal 
+  let subtotal = 0;
+  productDetails.forEach((item) => {
+    subtotal += parseFloat(item.totalUnitPrice);
+  })
+
+  //calculating gst 8%
+  const gst = subtotal * 0.08;
+
+  //total price 
+  let total = subtotal + gst
+
+  console.log("product items stuff", productDetails)
+  console.log("remarks stuff ITS CORRECT RIGHT?: ", remarksDetails )
 
   const handleSave = () => {
-    alert(`Status :${selectedStatus2}, Remakrs : ${remarks}`)
+    alert(`Status :${selectedStatus2}, Remakrs : ${remarks}, Receipt : ${selectedFile.name},${selectedFile} POid : ${poID}`)
 
-    axios.get(`${baseUrl}/api/paymentTrack/status/${selectedStatus2}`)
+
+    axios.get(`${baseUrl}/api/paymentTrack/status/${selectedStatus2}`)  //gets status's id to save into PO table. 
       .then(res => {
-        console.log(res.data[0].PaymentStatusID)
+        console.log('status id', res.data[0].PaymentStatusID) //status's ID
+
+        axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
+          paymentStatusID: selectedStatus2,
+          ptRemarks: remarks,
+        })
+          .then(res => {
+            console.log('updated successfully')
+          })
+          .catch((err) => {
+            console.log('update failed', err);
+          })
+
       })
       .catch((err) => {
         console.log(err)
       })
-
-
   }
 
+  console.log("supplier details check", supplierDetails)
 
   const handleOpenReceipt = () => {
     setFileDisplay(true);
@@ -166,7 +223,7 @@ export default function ViewPO({ supplierDetail }) {
 
   const handleConfirmUpload = () => {
     setShowModal(false);
-    setShowModal2(false);
+    setShowModal2(true);
     setFileUpload(true);
   }
 
@@ -181,11 +238,6 @@ export default function ViewPO({ supplierDetail }) {
 
   const handleStatusChange = (e) => {
     setSelectedStatus(e.target.value);
-  }
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
   }
 
 
@@ -209,6 +261,9 @@ export default function ViewPO({ supplierDetail }) {
       console.log('other options')
     }
   };
+
+  
+
 
 
 
@@ -298,7 +353,7 @@ export default function ViewPO({ supplierDetail }) {
                   )}
 
                   <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', marginRight: '10px' }} onClick={handleCloseModal}>Cancel</button>
-                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={handleOpenModal2}>Upload</button>
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={() => { handleCloseModal(); handleOpenModal2(); }}>Upload</button>
                 </div>
               </div>
             </div>
@@ -314,7 +369,7 @@ export default function ViewPO({ supplierDetail }) {
 
             <div className={styles.uploadButtons}>
               <button className={styles.cancelBtn2} onClick={handleCloseModal2} >Cancel</button>
-              <button className={styles.uploadBtn2} onClick={handleConfirmUpload}>Upload</button>
+              <button className={styles.uploadBtn2} onClick={() => { handleConfirmUpload(); handleCloseModal2(); }}>Upload</button>
             </div>
 
           </div>
@@ -324,7 +379,7 @@ export default function ViewPO({ supplierDetail }) {
           <div className={styles.displayReceipt}>
             <button onClick={handleCloseReceipt} className={styles.closeReceipt}>X</button>
 
-            <h2>proof of payment / receipt</h2>
+            <h2>{selectedFile.name}</h2>
           </div>
         )}
 
@@ -342,6 +397,9 @@ export default function ViewPO({ supplierDetail }) {
             </div>
           </div>
         )}
+
+
+        
 
 
       </div>
@@ -397,6 +455,14 @@ export default function ViewPO({ supplierDetail }) {
           </div>
           <div className="col">
             <div>
+              <b>Bank Name</b>
+            </div>
+            <div>
+              <p>{supplierDetails.bankAccountNum}</p>
+            </div>
+          </div>
+          <div className="col">
+            <div>
               <b>Bank Account Number</b>
             </div>
             <div>
@@ -407,6 +473,7 @@ export default function ViewPO({ supplierDetail }) {
             <div>
               <b>Office Number</b>
             </div>
+            <br />
             <div>
               <p>{supplierDetails.officeNum}</p>
             </div>
@@ -422,7 +489,88 @@ export default function ViewPO({ supplierDetail }) {
         </div>
         <div className="row">
           <div className="col-12">
-            <hr className="mt-0" />
+            <hr className="mt-3" />
+          </div>
+
+
+          <div className="container mt-3">
+            <div className="row">
+              <div className="col-12">
+                <h4 className="col-12 mt-5">Product Details</h4>
+              </div>
+            </div>
+
+            <div className="row py-3 mt-1 mb-2 col-12 m-auto">
+              <hr />
+              <div className="col text-center">Item No.</div>
+              <div className="col text-center">Description</div>
+              <div className="col text-center">Quantity</div>
+              <div className="col text-center">Unit Price</div>
+              <div className="col text-center">Total Unit Price</div>
+              <div className="col text-center">No. Received</div> <br /><br />
+              <hr />
+            </div>
+
+            <div className="row col-12 m-auto">
+              {productDetails && productDetails.map((item, index) => (
+                <div className="row py-3 mt-2 mb-1 col-12 m-auto" key={index}>
+                  <div className="col text-center">{index + 1}</div>
+                  <div className="col text-center">{item.itemName}</div>
+                  <div className="col text-center">{item.quantity}</div>
+                  <div className="col text-center">{item.unitPrice}</div>
+                  <div className="col text-center">{item.totalUnitPrice}</div>
+                  <div className="col text-center">
+                    <input
+                      type="text"
+                      value={item.noReceived}
+                      // onChange={(e) => handleNoReceivedChange(index, e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+              ))}
+
+              {!productDetails || productDetails.length === 0 && (
+                <p className="col-12 text-center">No product details available</p>
+              )}
+            
+            <hr className="mt-4"></hr>
+
+            <div className="row col-8 m-auto">
+              <div className="col"></div>
+              <div className="col"></div>
+              <h4 className="col text-center">Subtotal</h4>
+              <div className="col text-center">{subtotal.toFixed(2)}</div> {/* Display subtotal value */}
+            </div>
+
+            <br />
+
+            <div className="row col-8 m-auto">
+              <div className="col"></div> {/* Empty column for spacing */}
+              <div className="col"></div> {/* Empty column for spacing */}
+              <h4 className="col text-center font-weight-bold">GST 8%</h4> {/* Column for GST with "font-weight-bold" class */}
+              <div className="col text-center">{gst.toFixed(2)}</div> {/* Display GST value */}
+            </div>
+
+            <hr className="col-4 offset-6"></hr>
+
+            <div className="row col-8 m-auto">
+              <div className="col"></div> {/* Empty column for spacing */}
+              <div className="col"></div> {/* Empty column for spacing */}
+              <h4 className="col text-center font-weight-bold">Total</h4> {/* Column for GST with "font-weight-bold" class */}
+              <div className="col text-center">{total.toFixed(2)}</div> {/* Display GST value */}
+            </div>
+
+            <br/>
+                
+
+            <div>
+              <h4>Remarks</h4> <br/>
+              <p>{remarkDetail[0].remarks}</p>
+            </div>
+
+            </div>
+
           </div>
         </div>
       </div>
@@ -432,23 +580,24 @@ export default function ViewPO({ supplierDetail }) {
 
 
 
+
       <div className="row">
-  <div className="col-md-10 offset-md-1">
-    <div className="mb-4 mt-5">
-      <b className="d-inline-block">Remarks</b> <br />
-      <input
-        type="text"
-        className="form-control mt-2"
-        style={{
-          height: '200px',
-          width: '100%',
-          maxWidth: '2000px'
-        }}
-        onChange={handleRemarksChange}
-      />
-    </div>
-  </div>
-</div>
+        <div className="col-md-10 offset-md-1">
+          <div className="mb-4 mt-5">
+            <b className="d-inline-block">Remarks</b> <br />
+            <input
+              type="text"
+              className="form-control mt-2"
+              style={{
+                height: '200px',
+                width: '100%',
+                maxWidth: '2000px'
+              }}
+              onChange={handleRemarksChange}
+            />
+          </div>
+        </div>
+      </div>
 
 
       {/*   <div className="mt-5">
@@ -468,30 +617,3 @@ export default function ViewPO({ supplierDetail }) {
   )
 }
 
-// export async function getServerSideProps() {
-//   const baseUrl = 'http:localhost:3000';
-
-//   try {
-//     const purchaseOrderResponse = await axios.get(`${baseUrl}/api/purchaseOrder/`);
-//     const prID = purchaseOrderResponse.data[0].prID;
-
-//     const paymentTrackResponse = await axios.get(`${baseUrl}/api/paymentTrack/supplier/pr/${prID}`);
-//     const supplierID = paymentTrackResponse.data[0].supplierID;
-
-//     const supplierInfoResponse = await axios.get(`${baseUrl}/api/paymentTrack/supplier/info/${supplierID}`);
-//     const supplierInfo = supplierInfoResponse.data[0];
-
-//     return {
-//       props: {
-//         supplierInfo,
-//       },
-//     };
-//   } catch (error) {
-//     console.log(error);
-//     return {
-//       props: {
-//         supplierInfo: null,
-//       },
-//     };
-//   }
-// }

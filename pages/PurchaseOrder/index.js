@@ -53,7 +53,7 @@ export default function TrackPayment({ purchaseOrder }) {
                 </div>
       </div>
 
-      <div className="row  py-2 border-top border-bottom mt-4 mb-4">
+      <div className="row py-2 border-top border-bottom mt-4 mb-4">
         <div className="col" >No.</div>
         <div className="col">Created</div>
         <div className="col">Price</div>
@@ -87,3 +87,4 @@ export async function getServerSideProps() {
     };
   }
 }
+
