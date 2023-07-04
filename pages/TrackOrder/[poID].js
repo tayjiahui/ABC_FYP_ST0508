@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import axios from 'axios';
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -39,17 +38,14 @@ const baseUrl = URL[0]
 function ItemLines(props) {
     return (
         <div>
-            <ul className="col-sm-md-lg-xl list-group list-group-horizontal text-center">
-                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0">{props.ItemNo}</li>
-                <li className="col-sm-md-lg-xl list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
-                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0">{props.Qty}</li>
-                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
-                <li className="col-sm-md-lg-xl list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
-                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived}/></li>
+            <ul className="list-group list-group-horizontal text-center">
+                <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
+                <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
+                <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
+                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled/></li>
             </ul>
-
-            {/* </div> */}
-
         </div>
     )
 };
@@ -69,17 +65,20 @@ export async function getServerSideProps(context) {
     }
 
     const { params } = context;
-    const { poID } = params;
+    const { poID } = params;    //PR ID FROM DATABASE DISGUISED AS POID FOR FRONTEND
+
 
     const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
-    const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
+    // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
+    const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
 
     const data1 = await poD.json();
     const data2 = await productD.json();
 
-    console.log(data1);
-    console.log(data2);
+    // console.log(data1);
+    // console.log(data2);
 
+    const qtyReceiveS = [];
 
     // filter out duplicated data & combine multiple locations
     data1.forEach((item, index) => {
@@ -88,18 +87,24 @@ export async function getServerSideProps(context) {
         }
     });
 
+    // GET BASE QTY RECEIVED VALUES
+    data2.forEach((item,index) => {
+        qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID});
+    });
+
     return {
         props: {
             host,
             purOrderD: data1,
             productDeets: data2,
+            QtyReceived: qtyReceiveS,
             poID
         }
     }
 }
 
 // main frontend page
-export default function Main({ purOrderD, productDeets }) {
+export default function Main({ purOrderD, productDeets, QtyReceived }) {
 
     const router = useRouter();
 
@@ -120,11 +125,51 @@ export default function Main({ purOrderD, productDeets }) {
     const [changeStatusPop2, setChangeStatusPop2] = useState();
     const [amount, setAmount] = useState('');
 
+    const [editQty, allowQtyEdit] = useState(false);
+    const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
 
     // const [checkRemark, setRemark] = useState();
     const [selectedValue, setSelectedValue] = useState('');
-    console.log("purchase status id", selectedValue);
-    console.log("po id", poID);
+    // console.log("purchase status id", selectedValue);
+    // console.log("po id", poID);
+
+    // Control Allow QTY Edit
+    const handleAllowQtyEdit = () => {
+        allowQtyEdit(true);
+    };
+
+    // Onclick Save button for QtY received
+    const handleDontAllowQtyEdit = async(e) => {
+        e.preventDefault();
+
+        QtyReceivedList.forEach(async(item, index) => {
+            await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`, 
+                {
+                    "qtyReceived": item.qtyReceived
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                allowQtyEdit(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        });
+        
+    };
+
+    // Handling Qty value edit
+    const handleQtyChange = (index, e) => {
+        const newQTY = e.target.value;
+
+        let data = [...QtyReceivedList];
+
+        data[index].qtyReceived = newQTY;
+
+        setQtyReceivedList(data);
+    };
+
 
     const handleCloseStatusPop = () => {
         setChangeStatusPop(false);
@@ -195,9 +240,6 @@ export default function Main({ purOrderD, productDeets }) {
                     console.log(err);
                 });
         }
-
-
-
     };
 
     useEffect(() => {
@@ -208,7 +250,7 @@ export default function Main({ purOrderD, productDeets }) {
 
         axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 setStatus(res.data);
                 setSelectedStatus(res.data[0]); //initial selected status
             })
@@ -218,37 +260,12 @@ export default function Main({ purOrderD, productDeets }) {
 
     // PR Details  
     const PR = purOrderD[0];
-    console.log("pr details", PR);
-
 
     useEffect(() => {
-
-        // // Test for status Circle
-        // const statusID = PR.prStatusID;
-
-        // function circleTest(statusID) {
-        //     if (statusID == 1) {
-        //         return '/yellowPendingCircle.svg';
-        //     }
-        //     else if (statusID == 2) {
-        //         return '/greenApprovedCircle.svg';
-        //     }
-        //     else if (statusID == 3) {
-        //         return '/redRejectedCircle.svg';
-        //     }
-        //     else {
-        //         return '/yellowPendingCircle.svg';
-        //     }
-        // }
-
-        // const circle = circleTest(statusID);
-        // testCircle(circle);
 
         // Target Delivery Date formatting
         const newDateFormat = moment(PR.requestDate).format('DD/MM/YYYY');
         setTargetDate(newDateFormat);
-
-        console.log(productDeets)
 
         // Product lines
         const itemLines = [];
@@ -263,7 +280,7 @@ export default function Main({ purOrderD, productDeets }) {
                         Qty={item.quantity}
                         UnitPrice={item.unitPrice}
                         TotalUnitPrice={item.totalUnitPrice}
-                        QtyReceived={item.qtyReceived} />
+                        QtyReceived={QtyReceivedList[index].qtyReceived} />
                 </div>
             );
 
@@ -396,8 +413,15 @@ export default function Main({ purOrderD, productDeets }) {
 
                 <div>
                     <div className="d-flex">
-                        <h5 className="col-sm mt-5 ms-5 fs-2 mb-0">Product Details</h5>
-                        <button onClick={setChangeStatusPop2} className="col-sm border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Details</button>
+                        <h5 className="mt-5 ms-5 fs-2 mb-0">Product Details</h5>
+                        {
+                            editQty === false &&
+                                <button onClick={handleAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Qty Received</button>
+                        }
+                        {
+                            editQty === true &&
+                                <button onClick={handleDontAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end btn btn-success">Save</button>
+                        }
                     </div>
 
                     <div className={styles.lineContainer}>
@@ -419,7 +443,41 @@ export default function Main({ purOrderD, productDeets }) {
                         <hr className={styles.lineDivider}></hr>
                     </div>
 
-                    {ProductDetails}
+                    {
+                        editQty === false &&
+                            productDeets.map((item, index) => {
+                                return <div key={index}>
+                                            <ul className="list-group list-group-horizontal text-center">
+                                                <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                                                <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                                                <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                                                <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                                                <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
+                                                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} disabled/></li>
+                                            </ul>
+                                        </div>
+                            })
+                    }
+
+                    {
+                        editQty === true &&
+                            productDeets.map((item, index) => {
+                                return <div key={index}>
+                                            <div>
+                                                <ul className="list-group list-group-horizontal text-center">
+                                                    <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                                                    <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                                                    <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                                                    <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                                                    <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
+                                                    <li className="list-group-item col-sm-2 border-0 ms-5"><input type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} id={QtyReceivedList[index].id}  onkeyup="if(value<0) value=0;" required/></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                            })
+                    }
+
+                    {/* {ProductDetails} */}
 
                     <div className={styles.lineContainer}>
                         <hr className={styles.lineDivider}></hr>
