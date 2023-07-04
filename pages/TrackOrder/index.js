@@ -93,7 +93,11 @@ function OrderRow(props) {
       .catch(err => console.log(err));
   }, []);
 
+  // PO ID FROM DATABASE
   const poID = props.poID;
+
+  // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
+  const poId = props.prID;
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -126,7 +130,7 @@ function OrderRow(props) {
   return (
     <div>
       <div className={styles.box}>
-        <a href={baseURL + '/TrackOrder/' + props.poID}>
+        <a href={baseURL + '/TrackOrder/' + poId}>
           <button className={styles.orderBtn}>
             <div className={styles.orderRow}>
               <div className={styles.orderTextRow}>

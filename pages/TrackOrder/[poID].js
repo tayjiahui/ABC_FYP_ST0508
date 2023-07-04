@@ -35,20 +35,20 @@ isLocalhost();
 
 const baseUrl = URL[0]
 
-function ItemLines(props) {
-    return (
-        <div>
-            <ul className="list-group list-group-horizontal text-center">
-                <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
-                <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
-                <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
-                <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
-                <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
-                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled/></li>
-            </ul>
-        </div>
-    )
-};
+// function ItemLines(props) {
+//     return (
+//         <div>
+//             <ul className="list-group list-group-horizontal text-center">
+//                 <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
+//                 <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
+//                 <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
+//                 <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
+//                 <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
+//                 <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled/></li>
+//             </ul>
+//         </div>
+//     )
+// };
 
 // get backend 
 export async function getServerSideProps(context) {
@@ -65,8 +65,8 @@ export async function getServerSideProps(context) {
     }
 
     const { params } = context;
-    // const { poID } = params;
-    const poID = 2
+    const { poID } = params;    //PR ID FROM DATABASE DISGUISED AS POID FOR FRONTEND
+
 
     const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
     // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
@@ -76,7 +76,7 @@ export async function getServerSideProps(context) {
     const data2 = await productD.json();
 
     // console.log(data1);
-    console.log(data2);
+    // console.log(data2);
 
     const qtyReceiveS = [];
 
@@ -87,12 +87,10 @@ export async function getServerSideProps(context) {
         }
     });
 
+    // GET BASE QTY RECEIVED VALUES
     data2.forEach((item,index) => {
-        console.log(index,item);
         qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID});
-        console.log(index, qtyReceiveS);
-    })
-    console.log(qtyReceiveS);
+    });
 
     return {
         props: {
@@ -135,23 +133,31 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
     // console.log("purchase status id", selectedValue);
     // console.log("po id", poID);
 
-    // Control Allow Edit
+    // Control Allow QTY Edit
     const handleAllowQtyEdit = () => {
-        if(editQty === false){
-            allowQtyEdit(true);
-        }
-        else if(editQty === true){
-            allowQtyEdit(false);
-        };
+        allowQtyEdit(true);
     };
 
+    // Onclick Save button for QtY received
     const handleDontAllowQtyEdit = async(e) => {
         e.preventDefault();
 
-        console.log("UPDATED", QtyReceivedList);
-
-        // await axios.put(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${7}`)
-    }
+        QtyReceivedList.forEach(async(item, index) => {
+            await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`, 
+                {
+                    "qtyReceived": item.qtyReceived
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                allowQtyEdit(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        });
+        
+    };
 
     // Handling Qty value edit
     const handleQtyChange = (index, e) => {
@@ -162,7 +168,8 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
         data[index].qtyReceived = newQTY;
 
         setQtyReceivedList(data);
-    }
+    };
+
 
     const handleCloseStatusPop = () => {
         setChangeStatusPop(false);
@@ -233,9 +240,6 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                     console.log(err);
                 });
         }
-
-
-
     };
 
     useEffect(() => {
@@ -418,8 +422,6 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                             editQty === true &&
                                 <button onClick={handleDontAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end btn btn-success">Save</button>
                         }
-                        {/* <button onClick={handleAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Details</button> */}
-
                     </div>
 
                     <div className={styles.lineContainer}>
@@ -443,17 +445,23 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
 
                     {
                         editQty === false &&
-                            <div>{ProductDetails}</div>
+                            productDeets.map((item, index) => {
+                                return <div key={index}>
+                                            <ul className="list-group list-group-horizontal text-center">
+                                                <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                                                <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                                                <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                                                <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                                                <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
+                                                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} disabled/></li>
+                                            </ul>
+                                        </div>
+                            })
                     }
 
                     {
                         editQty === true &&
                             productDeets.map((item, index) => {
-                                // const qty = item.qtyReceived;
-                                // setQtyReceived()
-                                // setQtyReceivedList([...QtyReceivedList, { qtyReceived: '', id: '' }]);
-                                // console.log(QtyReceivedList);
-
                                 return <div key={index}>
                                             <div>
                                                 <ul className="list-group list-group-horizontal text-center">
@@ -462,7 +470,7 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                                                     <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
                                                     <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
                                                     <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
-                                                    <li className="list-group-item col-sm-2 border-0 ms-5"><input value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} id={QtyReceivedList[index].id} type='number' min={0} max={item.Qty}/></li>
+                                                    <li className="list-group-item col-sm-2 border-0 ms-5"><input type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} id={QtyReceivedList[index].id}  onkeyup="if(value<0) value=0;" required/></li>
                                                 </ul>
                                             </div>
                                         </div>
