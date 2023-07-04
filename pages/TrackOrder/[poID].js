@@ -39,13 +39,13 @@ const baseUrl = URL[0]
 function ItemLines(props) {
     return (
         <div>
-            <ul className="list-group list-group-horizontal text-center">
-                <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
-                <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
-                <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
-                <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
-                <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
-                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived}/></li>
+            <ul className="col-sm-md-lg-xl list-group list-group-horizontal text-center">
+                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0">{props.ItemNo}</li>
+                <li className="col-sm-md-lg-xl list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
+                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0">{props.Qty}</li>
+                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
+                <li className="col-sm-md-lg-xl list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
+                <li className="col-sm-md-lg-xl list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived}/></li>
             </ul>
 
             {/* </div> */}
@@ -103,6 +103,7 @@ export default function Main({ purOrderD, productDeets }) {
 
     const router = useRouter();
 
+    // const prID = router.query.prID;
     const poID = router.query.poID;
     const [RequestDate, setTargetDate] = useState();
 
@@ -350,8 +351,8 @@ export default function Main({ purOrderD, productDeets }) {
         <div>
             <h1 className='firstHeaderTop'>
                 <a href={"/TrackOrder"} className='purchaseOrderNo'>
-                    <Image src={arrowIcon} className="pr-2 pb-2" alt="Back" />
-                </a>Purchase Order #{poID}
+                    <Image src={arrowIcon} className="col-sm pr-2 pb-2" alt="Back" />
+                </a>Purchase Order #{PR.prID}
             </h1>
 
             <div>
@@ -363,31 +364,31 @@ export default function Main({ purOrderD, productDeets }) {
                 </div>
 
                 <h5 className="col-sm ms-5 mt-3">Date Request</h5>
-                <h7 className="ms-5 pb-0">{RequestDate}</h7><br></br>
+                <h7 className="col-sm ms-5 pb-0">{RequestDate}</h7><br></br>
 
                 <div className="d-flex">
                     <div className={styles.nameCol}>
-                        <h5 className="col-sm-md-lg-xl mt-4 ms-5 mb-0">Name</h5>
-                        <h7 className="col-sm-md-lg-xl mt-0 ms-5">{PR.name}</h7>
+                        <h5 className="col-sm mt-4 ms-5 mb-0">Name</h5>
+                        <h7 className="col-sm mt-0 ms-5">{PR.name}</h7>
                     </div>
 
                     <div className={styles.supCol}>
-                        <h5 className="col-sm-md-lg-xl mt-4 mb-0">Supplier</h5>
-                        <h7 className="col-sm-md-lg-xl mt-0">{PR.supplierName}</h7>
+                        <h5 className="col-sm mt-4 mb-0">Supplier</h5>
+                        <h7 className="col-sm mt-0">{PR.supplierName}</h7>
                     </div>
 
                 </div><br></br>
 
                 <div className="d-flex">
                     <div className={styles.locCol}>
-                        <h5 className="col-sm-md-lg-xl mt-4 ms-5 mb-0">Location</h5>
-                        <h7 className="col-sm-md-lg-xl mt-4 ms-5">{PR.branchName}</h7><br></br>
+                        <h5 className="col-sm mt-4 ms-5 mb-0">Location</h5>
+                        <h7 className="col-sm mt-4 ms-5">{PR.branchName}</h7><br></br>
                         {/* <h7 className={styles.locInfo}>Takashimaya</h7> */}
                     </div><br></br>
 
                     <div className={styles.payCol}>
-                        <h5 className="col-sm-md-lg-xl mt-4 mb-0">Payment Mode</h5>
-                        <h7 className="col-sm-md-lg-xl mt-0">{PR.paymentMode}</h7>
+                        <h5 className="col-sm mt-4 mb-0">Payment Mode</h5>
+                        <h7 className="col-sm mt-0">{PR.paymentMode}</h7>
                     </div>
 
                 </div>
@@ -395,8 +396,8 @@ export default function Main({ purOrderD, productDeets }) {
 
                 <div>
                     <div className="d-flex">
-                        <h5 className="mt-5 ms-5 fs-2 mb-0">Product Details</h5>
-                        <button onClick={setChangeStatusPop2} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Details</button>
+                        <h5 className="col-sm mt-5 ms-5 fs-2 mb-0">Product Details</h5>
+                        <button onClick={setChangeStatusPop2} className="col-sm border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Details</button>
                     </div>
 
                     <div className={styles.lineContainer}>
@@ -404,13 +405,13 @@ export default function Main({ purOrderD, productDeets }) {
                     </div>
 
                     <div>
-                        <ul className="list-group list-group-horizontal text-center">
-                            <li className="list-group-item col-sm-2 border-0">Item No.</li>
-                            <li className="list-group-item col-sm-1 ms-1 me-1 border-0">Description</li>
-                            <li className="list-group-item col-sm-3 ms-5 border-0">Quantity</li>
-                            <li className="list-group-item col-sm-1 border-0">Unit Price</li>
-                            <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
-                            <li className="list-group-item col-sm-2 border-0">No. Received</li>
+                        <ul className="col-sm list-group list-group-horizontal text-center">
+                            <li className="col-sm list-group-item col-sm-2 border-0">Item No.</li>
+                            <li className="col-sm list-group-item col-sm-1 ms-1 me-1 border-0">Description</li>
+                            <li className="col-sm list-group-item col-sm-3 ms-5 border-0">Quantity</li>
+                            <li className="col-sm list-group-item col-sm-1 border-0">Unit Price</li>
+                            <li className="col-sm list-group-item col-sm-2 border-0">Total Unit Price</li>
+                            <li className="col-sm list-group-item col-sm-2 border-0">No. Received</li>
                         </ul>
                     </div>
 
@@ -430,42 +431,42 @@ export default function Main({ purOrderD, productDeets }) {
                 <div className="col-sm-11 d-flex align-items-end flex-column me-5 ms-0">
                     <div className="d-flex mt-3">
                         <h3>Subtotal</h3>
-                        <p className="ms-4 fs-4">${Subtotal}</p>
+                        <p className="col-sm ms-4 fs-4">${Subtotal}</p>
                     </div>
 
-                    <div className="d-flex mt-3">
+                    <div className="col-sm d-flex mt-3">
                         <h3>GST 8%</h3>
-                        <p className="ms-4 fs-4">${GST}</p>
+                        <p className="col-sm ms-4 fs-4">${GST}</p>
                     </div>
 
                     <div className={styles.lineContainer2}>
                         <hr className={styles.lineDivider2}></hr>
                     </div>
 
-                    <div className="d-flex mt-2">
-                            <h2 className="me-2">Total</h2>
-                            <p className="ms-4 fs-4">${Total}</p>
+                    <div className="col-sm d-flex mt-2">
+                            <h2 className="col-sm me-2">Total</h2>
+                            <p className="col-sm ms-4 fs-4">${Total}</p>
                     </div>
 
                 </div>
 
-                <div className="ms-5">
+                <div className="col-sm ms-5">
                         <h2>Remarks</h2>
                         <h5>{PR.remarks}</h5>      
                 </div>
 
                 <br></br>
                 <br></br>
-                <h3 className="ms-5">Purchase & Payment Status</h3>
+                <h3 className="col-sm ms-5">Purchase & Payment Status</h3>
 
                 <div className={styles.lineContainer}>
                     <hr className={styles.lineDivider}></hr>
                 </div>
 
 
-                <div className="d-flex">
+                <div className="col-sm d-flex">
 
-                    <div className="ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
+                    <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
                         <label for="payStatus" id={styles.payStatus}>Payment Status</label><br></br>
 
                         <select name="status" id={styles.words1}>
@@ -476,7 +477,7 @@ export default function Main({ purOrderD, productDeets }) {
                         </select>
                     </div>
 
-                    <div className="ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
+                    <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
                         <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
 
                         <div className={styles.blabla}>
@@ -505,9 +506,9 @@ export default function Main({ purOrderD, productDeets }) {
                     )}
                 </div>
 
-                <div className="border border-#486284 rounded-4 mt-3 mb-4 w-25 h-25 p-2 ms-5 text-white shadow text-center" style={{ backgroundColor: '#C1C8D0' }}>Upload Receipt</div>
+                <div className="col-sm border border-#486284 rounded-4 mt-3 mb-4 w-25 h-25 p-2 ms-5 text-white shadow text-center" style={{ backgroundColor: '#C1C8D0' }}>Upload Receipt</div>
 
-                <h3 className="ms-5">Upload Invoice & Delivery Orders</h3>
+                <h3 className="col-sm ms-5">Upload Invoice & Delivery Orders</h3>
                 <div className={styles.lineContainer}>
                     <hr className={styles.lineDivider}></hr>
                 </div>
@@ -527,28 +528,28 @@ export default function Main({ purOrderD, productDeets }) {
                     </div>
                 )}
 
-                <div className="d-flex">
-                    <div className="rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
-                        <h4 className="text-white pt-2">Upload Invoice</h4><br></br>
+                <div className="col-sm d-flex">
+                    <div className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                        <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
 
 
                     </div>
 
 
-                    <div className="rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
-                        <h4 className="text-white pt-2">Upload Delivery Order</h4><br></br>
+                    <div className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                        <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
                     </div>
                 </div>
 
-                <div className="d-flex mt-2">
+                <div className="col-sm d-flex mt-2">
                     <div style={{flex: 1}}>
-                        <Image src={plusIcon} className="img-responsive ms-5" alt="plus" />
-                        <h7 className="ms-2">Add Invoice</h7>
+                        <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
+                        <h7 className="col-sm ms-2">Add Invoice</h7>
                     </div>
 
                     <div style={{flex: 1}}>
-                        <Image src={plusIcon} className="img-responsive" alt="plus" />
-                        <h7 className="ms-2">Add Delivery Order</h7>
+                        <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
+                        <h7 className="col-sm ms-2">Add Delivery Order</h7>
                     </div>
                 </div>
 
