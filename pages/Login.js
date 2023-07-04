@@ -1,6 +1,5 @@
 // login page
 import { useSession, signIn, signOut } from "next-auth/react";
-import { getToken } from "next-auth/jwt"
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
 
@@ -33,50 +32,6 @@ function isLocalhost()
 isLocalhost();
 
 const baseUrl = URL[0];
-
-const logIn = async() => {
-    alert(`stop`);
-    // await signIn(null, { callbackUrl:"/Home" });
-    signIn(null, {callbackUrl: "/testLogout"});
-
-    await auth2(session?.accessToken);
-    alert(`stop`);
-}
-
-const auth2 = async (accessToken) => {
-
-    console.log("acesss auth2 print" + accessToken);
-    alert(`stop`)
-
-    await axios.post(`http://sso.abc-cooking.studio/auth/realms/test-pos/broker/oidc/token`,
-        {
-            Headers:{
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + accessToken
-            }
-        }
-    )
-    .then((response) => {
-        console.log("auth 2");
-        console.log("auth 2 responseee ++++++++++++++" + response);
-        // console.log(response.access_token);
-        // alert(response.access_token)
-    })
-    .catch((err) => {
-        console.log(err);
-        alert(err);
-    })
-
-    console.log("done")
-}
-
-const jwtTest = async(req,res) => {
-    console.log(req.headers)
-    const token = await getToken({req});
-    console.log(getToken());
-    console.log("JSON WEB TOKEN", token);
-    res.end();
-}
 
 export default function Login() {
     const { data: session, status, update} = useSession();
@@ -115,7 +70,7 @@ export default function Login() {
             }
         )
         .then((res) => {
-            alert(`Login Successful!`);
+            // alert(`Login Successful!`);
             // console.log(res.data);
             // console.log(res.data[0]);
 
@@ -128,7 +83,7 @@ export default function Login() {
             // localStorage.setItem("Email", data.email);
 
             // signIn();
-            signIn('keycloak', { callbackUrl:"/Home" });
+            signIn(null, { callbackUrl:"/Home" });
 
             // auth2(session?.accessToken);
             console.log({ session, status, update });

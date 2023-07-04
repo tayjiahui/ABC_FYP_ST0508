@@ -93,7 +93,11 @@ function OrderRow(props) {
       .catch(err => console.log(err));
   }, []);
 
+  // PO ID FROM DATABASE
   const poID = props.poID;
+
+  // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
+  const poId = props.prID;
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -126,24 +130,24 @@ function OrderRow(props) {
   return (
     <div>
       <div className={styles.box}>
-        <a href={baseURL + '/TrackOrder/' + props.poID}>
+        <a href={baseURL + '/TrackOrder/' + poId}>
           <button className={styles.orderBtn}>
             <div className={styles.orderRow}>
               <div className={styles.orderTextRow}>
                 <div>
-                  <p className={styles.orderTextNo} >{props.poID}</p>
+                  <p className="ms-5 d-flex" style={{ flex: 1 }}>{props.poID}</p>
                 </div>
                 <div>
-                  <p className={styles.orderTextNo2} >{props.prID}</p>
+                  <p className="ms-5 d-flex" style={{ flex: 1 }} >{props.prID}</p>
                 </div>
                 <div>
-                  <p className={styles.orderTextDate} >{props.date}</p>
+                  <p className="ms-1 d-flex" style={{ flex: 1 }} >{props.date}</p>
                 </div>
                 <div>
-                  <p className={styles.orderTextName} >{props.Name}</p>
+                  <p className="ms-3 d-flex" style={{ flex: 1 }} >{props.Name}</p>
                 </div>
                 <div>
-                  <p className={styles.orderTextSupplier} >{props.Supplier}</p>
+                  <p className="ms-5 d-flex" style={{ flex: 1 }} >{props.Supplier}</p>
                 </div>
               </div>
             </div>
@@ -167,8 +171,8 @@ function OrderRow(props) {
           </select>
         </div> */}
 
-        <div className={styles.container2}>
-          <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
+        <div className="ms-5 d-flex" style={{ flex: 1 }}>
+          <select className="mt-4 rounded text-center w-50 h-50" value={selectedStatus} onChange={handleStatusChange}>
             <option key={1} value={props.PurchaseStatusID} selected="selected">{props.PurchaseStatus}</option>
             {
               status.map((status, index) => {
@@ -183,10 +187,11 @@ function OrderRow(props) {
 
       </div>
 
+
       {newStatusPop && (
         <div className={styles.newStatusBox}>
           <div className={styles.newStatus}>
-            <h2 className={styles.newStatusText}> Create New Status </h2>
+            <h2 className="mb-4"> Create New Status </h2>
             <p onClick={handleCloseStatusPop} className={styles.closemeStatus}>X</p>
             <form onSubmit={handleSubmit}>
               <label htmlFor="statusInput">Enter status name : </label> <br />
@@ -202,7 +207,7 @@ function OrderRow(props) {
         <div className={styles.newStatusBox}>
           <div className={styles.newStatus}>
             <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
-            <h5 className={styles.changedStatusText}> Status has been changed successfully </h5>
+            <h5 className='mt-5'> Status has been changed successfully </h5>
 
           </div>
         </div>
@@ -234,7 +239,7 @@ export default function TrackOrder() {
         orderResult.forEach((item, index) => {
           // Time stamp formatting
           const reqDate = moment(orderResult[index].requestDate).format('DD/MM/YYYY');
-          
+
           trackOrderList.push(
             <div key={index}>
               <OrderRow
@@ -266,8 +271,8 @@ export default function TrackOrder() {
 
   return (
     <>
-      <div className={styles.headerRow}>
-        <h1 className={styles.header}>Order Tracking</h1>
+      <div className="d-flex">
+        <h1 className="w-75">Order Tracking</h1>
         <div>
           <div className={styles.searchContainer}>
             <form>
@@ -281,18 +286,18 @@ export default function TrackOrder() {
 
       <div>
         <hr />
-        <ul className={styles.tableLabel}>
-          <li className={styles.tableNo}>PO No.</li>
-          <li className={styles.tableNo2}>PR No.</li>
-          <li className={styles.tableCreated}>Created</li>
-          <li className={styles.tableName}>Name</li>
-          <li className={styles.tableSupplier}>Supplier</li>
-          <li className={styles.tableStatus}>Status</li>
+        <ul className="col-sm-10 list-group list-group-horizontal text-center">
+          <li className="list-group-item col-sm-1 border-0">PO No.</li>
+          <li className="list-group-item col-sm-1 border-0">PR No.</li>
+          <li className="list-group-item col-sm-3 border-0">Created</li>
+          <li className="list-group-item col-sm-3 border-0">Name</li>
+          <li className="list-group-item col-sm-2 border-0">Supplier</li>
+          <li className="list-group-item col-sm-4 border-0">Status</li>
         </ul>
         <hr />
       </div>
 
-      <div className={styles.prData}>
+      <div>
         {TrackOrderResults}
       </div>
 

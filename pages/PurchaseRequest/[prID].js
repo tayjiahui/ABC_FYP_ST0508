@@ -238,7 +238,8 @@ export default function Supplier({prDetails, pLDetails}) {
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
                 {
                     "comments": ApprComment,
-                    "prStatusID": 2
+                    "prStatusID": 2,
+                    "apprUserID": id
                 }
             )
             .then((response) => {
@@ -252,7 +253,8 @@ export default function Supplier({prDetails, pLDetails}) {
         else{
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
                 {
-                    "prStatusID": 2
+                    "prStatusID": 2,
+                    "apprUserID": id
                 }
             )
             .then((response) => {
@@ -272,7 +274,8 @@ export default function Supplier({prDetails, pLDetails}) {
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
                 {
                     "comments": ApprComment,
-                    "prStatusID": 3
+                    "prStatusID": 3,
+                    "apprUserID": id
                 }
             )
             .then((response) => {
@@ -286,7 +289,8 @@ export default function Supplier({prDetails, pLDetails}) {
         else{
             await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
                 {
-                    "prStatusID": 3
+                    "prStatusID": 3,
+                    "apprUserID": id
                 }
             )
             .then((response) => {

@@ -1,0 +1,115 @@
+import axios from "axios";
+import React from "react";
+import Image from "next/image";
+
+// styles & icons
+import styles from '../../styles/supplier.module.css';
+import searchIcon from '../../public/searchIcon.svg';
+import filterIcon from '../../public/filterIcon.svg';
+import plusIcon from '../../public/plusIcon.svg';
+
+const URL = [];
+
+function isLocalhost()
+{
+    if (typeof window !== "undefined") {
+        const hostname = window.location.hostname;
+        console.log("hostname   " + hostname);
+        if (hostname == "localhost") {
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
+        }
+        else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
+        }
+        return URL;
+    }
+}
+
+isLocalhost();
+
+const baseUrl = 'http://localhost:3000';
+const baseURL = 'http://localhost:5000';
+
+console.log(baseUrl, baseURL);
+
+// main supplier page
+export default function Supplier({ suppliers }) {
+    const supplierList = suppliers.map((supplier, index) => (
+        <a href={baseURL + '/Supplier/' + supplier.supplierID}>
+            <button className={styles.cardLink}>
+                <div className={styles.listRow}>
+                    <div key={index} className={styles.listContent}>
+                        <p className={styles.listNo}>{supplier.supplierID}</p>
+                        <p className={styles.listSupplierName}>{supplier.supplierName}</p>
+                        <p className={styles.listContactPerson}>{supplier.contactPersonName}</p>
+                        <p className={styles.listContactNumber}>{supplier.phoneNum}</p>
+                        <p className={styles.listCategory}>{supplier.Category}</p> 
+                    </div>  
+                </div>
+            </button>  
+        </a>
+    ));
+
+    return (
+        <>
+            <div className={styles.titleRow}>
+                <h1 className={styles.title}>Supplier</h1>
+
+                <div>
+                    <div className={styles.searchContainer}>
+                        <form>
+                            <input type="text" placeholder="Search..." name="search" className={styles.searchBox}/>
+                            <button type="submit" className={styles.searchButton}><Image src={searchIcon}/></button>
+                            <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20}/></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <hr />
+                <ul className={styles.tableHeader}>
+                    <li className={styles.headerNo}>No.</li>
+                    <li className={styles.headerSupplierName}>Supplier</li>
+                    <li className={styles.headerContactPerson}>Contact Person</li>
+                    <li className={styles.headerContactNumber}>Contact Number</li>
+                    <li className={styles.headerCategory}>Category</li>
+                </ul>
+                <hr /> 
+            </div>
+
+            <div>
+                {supplierList}
+            </div>
+
+            <div>
+                <a href={'/Supplier/CreateSupplier'}>
+                    <button className={styles.createButton}>
+                        <Image src={plusIcon} alt="Create Button" width={40} height={40}/>
+                    </button>
+                </a>
+            </div>
+        </>
+    )
+}
+
+export async function getServerSideProps() {
+    try {
+        const response = await axios.get(`${baseUrl}/api/supplier/all`);
+        const suppliers = await response.data;
+        return {
+            props: {
+                suppliers
+            }
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            props: {
+                suppliers: []
+            }
+        };
+    }
+}

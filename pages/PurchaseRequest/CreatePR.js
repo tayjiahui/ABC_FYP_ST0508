@@ -49,7 +49,7 @@ function DropdownOpt (props){
 function ItemDropDown (props){
     return(
         <>
-            <option id={props.ID} data-unitPrice={props.UnitPrice} value={props.Value}/>
+            <option id={props.ID} data-unitprice={props.UnitPrice} value={props.Value}/>
         </>
     );
 };
@@ -58,7 +58,7 @@ function getSelectedOption(e){
     const selectedValue = e.target.value;
     const selectedOption = Array.from(e.target.list.options).find((option) => option.value === selectedValue);
     const selectedID = selectedOption ? selectedOption.getAttribute('id') : '';
-    const selectedUnitPrice = selectedOption ? selectedOption.getAttribute('data-unitPrice') : '';
+    const selectedUnitPrice = selectedOption ? selectedOption.getAttribute('data-unitprice') : '';
 
     if(selectedUnitPrice == null){
         return [selectedValue, selectedID];
@@ -250,8 +250,7 @@ export default function Supplier() {
     };
 
     const adHocForm = async(e) => {
-        console.log(e.target.checked);
-        console.log("ad hoc!!")
+        // console.log(e.target.checked);
 
         if(e.target.checked === true){
             setAdHoc(true);
@@ -267,6 +266,7 @@ export default function Supplier() {
 
         await axios.post(`${baseUrl}/api/purchaseReq/`,
             {
+                "purchaseTypeID": 1,
                 "targetDeliveryDate": dateReqV,
                 "userID": id,
                 "supplierID": supplierV.id,
@@ -318,7 +318,25 @@ export default function Supplier() {
     // axios to create Ad Hoc
     const createAdHoc = async(e) => {
         e.preventDefault();
-        alert(`Creating ad hoc!`)
+
+        await axios.post(`${baseUrl}/api/purchaseReq/`,
+            {
+                "purchaseTypeID": 2,
+                "userID": id,
+                "remarks": Remark
+            }
+        )
+        .then((response) => {
+            console.log(response.data);
+
+            alert(response.data);
+
+            // redirect
+            router.push('/PurchaseRequest');
+        })
+        .catch((err) => {
+            console.log(err);
+        });
     }
 
     return (
@@ -471,7 +489,7 @@ export default function Supplier() {
                                                                 <input type="number" name="ItemNo" id="ItemNo" defaultValue={index + 1} onChange={(e) => handleItemChange(index, e)} className={styles.plItemNo} disabled/>
                                                             </div>
                                                             <div className="col-sm-4 px-5 text-start">
-                                                                <input list="items" type="text" name="ItemName" id={item.id} data-unitPrice={item.UnitPrice} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
+                                                                <input list="items" type="text" name="ItemName" id={item.id} data-unitprice={item.UnitPrice} value={item.ItemName} onChange={(e) => handleItemChange(index, e)} className={styles.plItemName} required/>
                                                                 <datalist id="items">
                                                                     {Items}
                                                                 </datalist>  
