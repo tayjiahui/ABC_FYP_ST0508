@@ -35,20 +35,20 @@ isLocalhost();
 
 const baseUrl = URL[0]
 
-// function ItemLines(props) {
-//     return (
-//         <div>
-//             <ul className="list-group list-group-horizontal text-center">
-//                 <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
-//                 <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
-//                 <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
-//                 <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
-//                 <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
-//                 <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled/></li>
-//             </ul>
-//         </div>
-//     )
-// };
+function ItemLines(props) {
+    return (
+        <div>
+            <ul className="list-group list-group-horizontal text-center">
+                <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
+                <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
+                <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
+                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled/></li>
+            </ul>
+        </div>
+    )
+};
 
 // get backend 
 export async function getServerSideProps(context) {
