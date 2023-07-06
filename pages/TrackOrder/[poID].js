@@ -188,15 +188,15 @@ export default function Main({ purOrderD, productDeets }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (amount == "") {
-            alert("Please put in an amount to update!")
-        }
-        else if (amount < 0) {
-            alert("Please put in a valid number!")
-        }
-        else if (isNaN(amount)) {
-            alert("Please put in a valid number!")
-        } else {
+        // if (amount == "") {
+        //     alert("Please put in an amount to update!")
+        // }
+        // else if (amount < 0) {
+        //     alert("Please put in a valid number!")
+        // }
+        // else if (isNaN(amount)) {
+        //     alert("Please put in a valid number!")
+        // } else {
             await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/qty/${poID}`,
                 {
                     "qtyReceived": amount
@@ -209,7 +209,7 @@ export default function Main({ purOrderD, productDeets }) {
                 .catch((err) => {
                     console.log(err);
                 });
-        }
+        //}
 
 
 
@@ -601,7 +601,7 @@ export default function Main({ purOrderD, productDeets }) {
                             <p onClick={handleCloseStatusPop2} className={styles.closemeStatus1}>X</p>
                             <h5 className={styles.changedQty}>Please input the amount received!</h5>
                             <form onSubmit={handleSubmit}>
-                                <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} id={styles.noRecInfo}></input><br></br>
+                                <input type="number" min={0} value={amount} onChange={(e) => setAmount(e.target.value)} id={styles.noRecInfo}></input><br></br>
                                 <button type="submit" >Update Amount</button>
                             </form>
 
