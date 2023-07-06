@@ -7,12 +7,6 @@
 }
 
 
-#arrow {
-    vertical-align: middle;
-    padding-right: 20px;
-    padding-bottom: 5px;
-}
-
 .lineContainer {
     height: 10px;
     width: 90%;
@@ -23,90 +17,18 @@
 
 .lineDivider {
     border-left: 2px solid #000000;
-    /* position: absolute; */
+    position: absolute;
     top: 50%;
     bottom: 0;
-
 }
 
-.h3header {
-    margin-left: 50px;
+.nameCol,
+.supCol,
+.locCol,
+.payCol {
+    flex: 1
 }
 
-#greenCircle {
-    margin-left: 5px;
-}
-
-.dateRequest {
-    margin-left: 50px;
-    margin-top: 40px;
-    margin-bottom: 0px;
-    padding-bottom: 0px;
-}
-
-.dateInfo {
-    margin-left: 50px;
-    margin-top: 0px;
-
-}
-
-.info1 {
-    margin: auto;
-    display: block;
-    display: flex;
-}
-
-.info2 {
-    display: flex;
-}
-
-.name,
-.location {
-    margin-top: 30px;
-    margin-bottom: 0px;
-    margin-left: 50px;
-    flex: 1;
-}
-
-
-.nameInfo,
-.locInfo {
-    margin-top: 0px;
-    margin-left: 50px;
-    flex: 1;
-}
-
-.supplier {
-    margin-top: 30px;
-    margin-bottom: 0px;
-    margin-left: 500px;
-    flex: 1;
-}
-
-.supInfo {
-    margin-top: 0px;
-    margin-left: 500px;
-    flex: 1;
-}
-
-.payMode {
-    margin-top: 30px;
-    margin-bottom: 0px;
-    margin-left: 480px;
-    flex: 1;
-}
-
-.payModeInfo {
-    margin-top: 0px;
-    margin-left: 480px;
-    flex: 1;
-}
-
-.prodDetails {
-    font-size: 30px;
-    margin-top: 100px;
-    margin-left: 50px;
-}
 
 .lineContainer {
     height: 10px;
@@ -125,7 +47,7 @@
 
 .lineContainer2 {
     height: 20px;
-    width: 120%;
+    width: 15%;
     position: relative;
     border-bottom: 5px solid #000000;
 }
@@ -135,276 +57,6 @@
     position: absolute;
     top: 50%;
     bottom: 0;
-}
-
-
-.prodDetailsHeader {
-    display: flex;
-}
-
-.itemNo,
-.description,
-.quantity,
-.unitPrice,
-.totalUPrice,
-.noReceived {
-    flex: 1;
-    padding: 10px;
-    padding-top: 20px;
-}
-
-.itemNoInfo {
-    margin-left: 50px;
-}
-
-.desInfo {
-    margin-left: 5px;
-}
-
-/* .prodDetailsInfo {
-    display: flex;
-} */
-
-/* .item,
-.des,
-.quan,
-.unitPrices,
-.totalUPrices,
-.numReceived {
-    flex: 1;
-    padding: 10px;
-    padding-top: 20px;
-} */
-
-/* .itemNo1,
-.itemNo2 {
-    margin-left: 50px;
-} */
-
-/* .quan {
-    margin-left: 40px;
-} */
-
-/* .noRecInfo {
-    margin-right: 300px;
-    margin-bottom: 20px;
-} */
-
-/* .numReceived {
-    font-size: 20px;
-    
-} */
-
-.remarks {
-    margin-left: 50px;
-}
-
-.remarksTitle {
-    font-size: 30px;
-}
-
-.details {
-    font-size: 20px;
-}
-
-.status,
-.files {
-    margin-left: 50px;
-}
-
-.statusInfo {
-    display: flex;
-}
-
-.container1 {
-    flex: 1;
-    margin-left: 50px;
-    font-size: 28px;
-    margin-top: 30px;
-}
-
-.container2 {
-    flex: 1;
-    padding: 30px;
-    font-size: 28px;
-}
-
-.words1,
-.words2 {
-    padding: 40px;
-}
-
-.uploadR {
-    width: 300px;
-    height: 50px;
-    background-color: #C1C8D0;
-    border-color: #486284;
-    border-radius: 50px;
-    border-width: 10px;
-    color: white;
-    font-size: 20px;
-    text-align: center;
-    padding-top: 10px;
-    margin-left: 50px;
-    margin-bottom: 60px;
-}
-
-.files {
-    margin-top: 20px;
-}
-
-.filesSub {
-    display: flex;
-}
-
-.invoice,
-.do {
-    width: 10px;
-    height: 50px;
-    border-radius: 5px;
-    background-color: #486284;
-}
-
-.invoice,
-.do {
-    flex: 1;
-    margin-left: 50px;
-    margin-top: 20px;
-    color: white;
-    text-align: center;
-    padding-top: 10px;
-}
-
-.do {
-    margin-right: 100px;
-}
-
-.hold {
-    display: flex;
-    margin-top: 20px;
-}
-
-/* .borderPlus {
-    display: flex;
-    flex: 1;
-}
-
-.borderPlus2 {
-    display: flex;
-    flex: 1;
-} */
-
-.borderPlus,
-.borderPlus2 {
-    flex: 1;
-}
-
-.borderBorder {
-    border-width: 3px;
-    border-style: solid;
-    border-radius: 10px;
-    width: 45px;
-    margin-left: 50px;
-    margin-top: 40px;
-    /* text-align: center; */
-    /* flex: 1; */
-}
-
-.borderBorder2 {
-    border-width: 3px;
-    border-style: solid;
-    border-radius: 10px;
-    width: 45px;
-    margin-top: 40px;
-}
-
-.plusIcon,
-.plusIcon2 {
-    flex: 1;
-    max-width: 100%;
-    height: auto;
-    width: 50px;
-}
-
-.add1,
-.add2 {
-    flex: 1;
-    margin-left: 10px;
-    font-size: 20px;
-}
-
-
-.totalRow {
-    float: right;
-    margin-right: 150px;
-    margin-bottom: 20px;
-}
-
-.row1,
-.row2 {
-    display: flex;
-    margin-top: 20px;
-}
-
-.totalRow3 {
-    display: flex;
-    margin-top: 10px;
-}
-
-.price1,
-.price2,
-.totalprice3 {
-    font-size: 20px;
-}
-
-.priceLabel1,
-.price1,
-.priceLabel2,
-.price2,
-.priceLabel3,
-.totalprice3 {
-    flex: 1;
-}
-
-.priceLabel1,
-.priceLabel2 {
-    margin-right: 20px;
-}
-
-.totalprice3 {
-    margin-left: 55px;
-    margin-top: 7px;
-}
-
-.plusIcon {
-    margin-left: 50px;
-}
-
-
-.plItemRow {
-    padding-top: 10px;
-    vertical-align: middle;
-    display: grid;
-    text-align: center;
-    grid-template-columns: 200px 220px 170px 480px 100px 400px;
-}
-
-.plItemRow>div>p {
-    margin: 0;
-}
-
-.plItemNo {
-    text-align: left;
-    margin-left: 80px;
-}
-
-.plItemName {
-    text-align: left;
-    margin-left: 70px;
-}
-
-.plQty {
-    margin-left: 90px;
 }
 
 .newStatusBox {
@@ -426,20 +78,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-
-.editPOButton {
-    background-color: #486284;
-    width: 250px;
-    color: white;
-    font-size: 15px;
-    font-family: "Plus Jakarta Sans";
-    width: 120px;
-    height: 40px;
-    border: none;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    margin-left: 1300px;
 }
 
 .closemeStatus1 {

@@ -265,13 +265,17 @@ export default function TrackOrder() {
         .catch(err => console.log(err));
     }, []);
 
-    const poID = props.poID;
+  // PO ID FROM DATABASE
+  const poID = props.poID;
 
-    const handleStatusChange = (event) => {
-      setSelectedStatus(event.target.value);
-      const selectedValue = event.target.value;
-      console.log(event.target)
-      console.log("value", selectedValue)
+  // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
+  const poId = props.prID;
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+    const selectedValue = event.target.value;
+    console.log(event.target)
+    console.log("value", selectedValue)
 
       if (selectedValue === "+ Create New Status") {
         setNewStatusPop(true);
@@ -298,7 +302,7 @@ export default function TrackOrder() {
     return (
       <div>
         <div className="d-flex w-5 h-5 rounded-4 mb-3" style={{ backgroundColor: '#C0D8F7' }}>
-          <a href={baseURL + '/TrackOrder/' + props.poID}>
+          <a href={baseURL + '/TrackOrder/' + poId}>
             <button className="border-0" style={{ backgroundColor: 'transparent' }}>
               <div className={styles.orderTextRow}>
                   {/* <div className="row ms-4">

@@ -1,0 +1,88 @@
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+.titleRow h1 {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-left: 30px;
+}
+
+.title {
+    padding-left: 30px;
+    font-size: 25pt;
+}
+
+.backArrow{
+    margin-left: 20px;
+}
+
+/* column grid */
+.col1, .col2 {
+    float: left;
+    padding: 10px;
+    flex: 50%;
+}
+
+.col1 {
+    margin-left: 110px;
+}
+
+.row {
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.colTitle {
+    display: flex;
+    margin-bottom: 13px;
+    font-size: 18px;
+}
+
+.textbox {
+    width: 500px;
+    padding: 7px;
+    margin-bottom: 25px;
+    border-color: #DDE1E6;
+    border-radius: 5px;
+    border-style: solid;
+    font-family: "Plus Jakarta Sans";
+    font-size: 14px;
+}
+
+.multiSelectBox, .selectBox {
+    width: 74%;
+    border-color: #DDE1E6;
+    border-radius: 10px;
+    font-family: "Plus Jakarta Sans";
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.submitButton {
+    background-color: #486284;
+    border-color: #486284;
+    color: white;
+    border-radius: 15px;
+    width: 100px;
+    float: right;
+    margin-bottom: 50px;
+    margin-right: 50px;
+    padding: 10px;
+    font-family: "Plus Jakarta Sans";
+    font-size: 15px;
+    border-style: solid;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}

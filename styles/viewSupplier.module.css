@@ -1,0 +1,136 @@
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+.titleRow h1 {  
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    margin-left: 80px;
+    margin-bottom: 45px;
+    padding-top: 30px;
+    width: 75%;
+    font-size: 25pt;
+}
+
+.backArrow{
+    margin-left: 20px;
+}
+
+/* column grid */
+.col1, .col2 {
+    float: left;
+    width: 50%;
+    padding: 10px;
+    flex: 50%;
+    margin-top: 5px;
+}
+
+.col1{
+    margin-left: 150px;
+}
+
+.col2{
+    margin-right: 20px;
+}
+
+.row{
+    display: flex;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.colData{
+    margin-bottom: 50px;
+}
+
+.penIcon {
+    display: inline-flexbox;
+    float: right;
+    padding-top: 20px;
+    width: 120%;
+    height: 120%;
+}
+
+.trashBin {
+    display: inline-flexbox;
+    float: right;
+    padding-top: 20px;
+    margin-left: 30px;
+    cursor: pointer;
+    width: 3%;
+    height: 3%;
+}
+
+/* delete popup box */
+.popupContainer {
+    width: 480px;
+    height: 270px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    padding-top: 60px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+    padding-left: 5px;
+}
+
+.popupBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.confirmDeleteText {
+    font-size:xx-large;
+    margin-left: 15px;
+}
+
+.closeButton {
+    background-color: transparent;
+    border: none;
+    margin-left: 415px;
+    margin-top: -85px;
+    font-size: xx-large;
+    cursor: pointer;
+}
+
+.buttons {
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+}
+
+.cancelButton, .deleteButton {
+    cursor: pointer;
+    color: white;
+    border-radius: 20px;
+    border-width: 1px;
+    padding: 10px 20px;
+    margin-left: 15px;
+    font-size: 20pt;
+}
+
+.cancelButton {
+    background-color: #93A0B1;
+}
+
+.deleteButton {
+    background-color: #486284;
+}

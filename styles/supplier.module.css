@@ -12,7 +12,8 @@
     src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Medium.ttf');
 }
 
-.titleBox {
+/* Page Title */
+.titleRow {
     display: flex;
 }
 
@@ -42,38 +43,49 @@
     vertical-align: middle;
 }
 
-/* Create Supplier Button */
-.createBtn {
-    background-color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 100%;
-    border-style: none;
-    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
-    position: fixed;
-    bottom: 20px;
-    right: 30px;
-    cursor: pointer;
+/* Table Header */
+.tableHeader > li {
+    display: inline;
+    padding: 0 30px 0 30px;
 }
 
-.createBtn:hover {
-    background-color: #efecec;
+.headerNo {
+    margin-left: 20px;
+}
+
+.headerSupplierName {
+    margin-left: 45px;
+}
+
+.headerContactPerson {
+    margin-left: 105px;
+}
+
+.headerContactNumber{
+    margin-left: 80px;
+}
+
+.headerCategory {
+    margin-left: 90px;
 }
 
 /* Suppliers List */
-.supplBtn {
+.cardLink {
     border: none;
     background-color: transparent;
     width: 100%;
     padding-bottom: 5px;
     cursor: pointer;
+    text-decoration: none;
+    color: black;
 }
 
 .listRow {
     background-color: #C0D8F7;
     font-size: 14px;
-    height: 80px;
+    height: 85px;
     border-radius: 18px;
+    margin-bottom: 5px;
     text-align: center;
     object-fit: scale-down;
     transition: transform .5s;
@@ -90,42 +102,48 @@
     display: grid;
     text-align: left;
     grid-template-columns: 110px 210px 400px 220px 190px 100px;
+    font-family: "Plus Jakarta Sans";
 }
 
-.contentNo {
+.listNo {
     padding-left: 50px;
 }
 
-.contentContactPerson {
-    padding-left: 70px;
+.listSupplierName {
+    padding-left: 65px;
+    text-align: left;
+    width: 120%
 }
 
-.contentSupplierName {
+.listContactPerson {
     padding-left: 90px;
+    text-align: left;
 }
 
-.contentCategory {
-    padding-left: 60px;
+.listContactNumber {
+    margin-left: -50px;
+    text-align: left;
 }
 
-/* Table */
-.headerRow > li {
-    display: inline;
-    padding: 0 30px 0 30px;
+.listCategory {
+    width: 250%;
+    text-align: left;
 }
 
-.headerNo {
-    margin-left: 20px;
+/* Create Supplier Button */
+.createButton {
+    background-color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    border-style: none;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2);
+    position: fixed;
+    bottom: 30px;
+    right: 50px;
+    cursor: pointer;
 }
 
-.headerContactPerson {
-    margin-left: 50px;
-}
-
-.headerName {
-    margin-left: 120px;
-}
-
-.headerCategory {
-    margin-left: 250px;
+.createButton:hover {
+    background-color: #efecec;
 }

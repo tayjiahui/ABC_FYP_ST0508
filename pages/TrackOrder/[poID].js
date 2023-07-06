@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import axios from 'axios';
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -38,33 +37,15 @@ const baseUrl = URL[0]
 
 function ItemLines(props) {
     return (
-        <div className={styles.productLines}>
-            <div className={styles.plRow}>
-                <div className={styles.plItemRow}>
-                    <div className={styles.newRow1}>
-                        <h5 className={styles.plItemNo}>{props.ItemNo}</h5>
-                    </div>
-                    <div className={styles.newRow2}>
-                        <h5 className={styles.plItemName}>{props.ItemName}</h5>
-                    </div>
-                    <div className={styles.newRow3}>
-                        <h5 className={styles.plQty}>{props.Qty}</h5>
-                    </div>
-                    <div className={styles.newRow4}>
-                        <h5 className={styles.plUnitPrice}>{props.UnitPrice}</h5>
-                    </div>
-                    <div className={styles.newRow5}>
-                        <h5 className={styles.plTotalUP}>{props.TotalUnitPrice}</h5>
-                    </div>
-                    <div className={styles.numReceived}>
-                        {/* <input type="text" id={styles.noRecInfo}>{props.QtyReceived}</input><br></br> */}
-                        {/* <input type="text" id={styles.noRecInfo2}></input> */}
-                        <h5 className={styles.qtyR}>{props.QtyReceived}</h5>
-                    </div>
-                </div>
-
-            </div>
-
+        <div>
+            <ul className="list-group list-group-horizontal text-center">
+                <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
+                <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
+                <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
+                <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
+                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled/></li>
+            </ul>
         </div>
     )
 };
@@ -84,17 +65,20 @@ export async function getServerSideProps(context) {
     }
 
     const { params } = context;
-    const { poID } = params;
+    const { poID } = params;    //PR ID FROM DATABASE DISGUISED AS POID FOR FRONTEND
+
 
     const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
-    const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
+    // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
+    const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
 
     const data1 = await poD.json();
     const data2 = await productD.json();
 
-    console.log(data1);
-    console.log(data2);
+    // console.log(data1);
+    // console.log(data2);
 
+    const qtyReceiveS = [];
 
     // filter out duplicated data & combine multiple locations
     data1.forEach((item, index) => {
@@ -103,23 +87,30 @@ export async function getServerSideProps(context) {
         }
     });
 
+    // GET BASE QTY RECEIVED VALUES
+    data2.forEach((item,index) => {
+        qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID});
+    });
+
     return {
         props: {
             host,
             purOrderD: data1,
             productDeets: data2,
+            QtyReceived: qtyReceiveS,
             poID
         }
     }
 }
 
 // main frontend page
-export default function Main({ purOrderD, productDeets }) {
+export default function Main({ purOrderD, productDeets, QtyReceived }) {
 
     const router = useRouter();
 
+    // const prID = router.query.prID;
     const poID = router.query.poID;
-    const [TargetDeliveryDate, setTargetDate] = useState();
+    const [RequestDate, setTargetDate] = useState();
 
     const [ProductDetails, setList] = useState();
 
@@ -134,11 +125,51 @@ export default function Main({ purOrderD, productDeets }) {
     const [changeStatusPop2, setChangeStatusPop2] = useState();
     const [amount, setAmount] = useState('');
 
+    const [editQty, allowQtyEdit] = useState(false);
+    const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
 
     // const [checkRemark, setRemark] = useState();
     const [selectedValue, setSelectedValue] = useState('');
-    console.log("purchase status id", selectedValue);
-    console.log("po id", poID);
+    // console.log("purchase status id", selectedValue);
+    // console.log("po id", poID);
+
+    // Control Allow QTY Edit
+    const handleAllowQtyEdit = () => {
+        allowQtyEdit(true);
+    };
+
+    // Onclick Save button for QtY received
+    const handleDontAllowQtyEdit = async(e) => {
+        e.preventDefault();
+
+        QtyReceivedList.forEach(async(item, index) => {
+            await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`, 
+                {
+                    "qtyReceived": item.qtyReceived
+                }
+            )
+            .then((response) => {
+                console.log(response);
+                allowQtyEdit(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        });
+        
+    };
+
+    // Handling Qty value edit
+    const handleQtyChange = (index, e) => {
+        const newQTY = e.target.value;
+
+        let data = [...QtyReceivedList];
+
+        data[index].qtyReceived = newQTY;
+
+        setQtyReceivedList(data);
+    };
+
 
     const handleCloseStatusPop = () => {
         setChangeStatusPop(false);
@@ -204,7 +235,6 @@ export default function Main({ purOrderD, productDeets }) {
             )
                 .then((response) => {
                     alert(`Quantity has been changed!`);
-                    router.push('/TrackOrder');
                 })
                 .catch((err) => {
                     console.log(err);
@@ -223,7 +253,7 @@ export default function Main({ purOrderD, productDeets }) {
 
         axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 setStatus(res.data);
                 setSelectedStatus(res.data[0]); //initial selected status
             })
@@ -233,37 +263,12 @@ export default function Main({ purOrderD, productDeets }) {
 
     // PR Details  
     const PR = purOrderD[0];
-    console.log("pr details", PR);
-
 
     useEffect(() => {
 
-        // // Test for status Circle
-        // const statusID = PR.prStatusID;
-
-        // function circleTest(statusID) {
-        //     if (statusID == 1) {
-        //         return '/yellowPendingCircle.svg';
-        //     }
-        //     else if (statusID == 2) {
-        //         return '/greenApprovedCircle.svg';
-        //     }
-        //     else if (statusID == 3) {
-        //         return '/redRejectedCircle.svg';
-        //     }
-        //     else {
-        //         return '/yellowPendingCircle.svg';
-        //     }
-        // }
-
-        // const circle = circleTest(statusID);
-        // testCircle(circle);
-
         // Target Delivery Date formatting
-        // const newDateFormat = moment(PR.targetDeliveryDate).format('DD/MM/YYYY');
-        // setTargetDate(newDateFormat);
-
-        console.log(productDeets)
+        const newDateFormat = moment(PR.requestDate).format('DD/MM/YYYY');
+        setTargetDate(newDateFormat);
 
         // Product lines
         const itemLines = [];
@@ -278,7 +283,7 @@ export default function Main({ purOrderD, productDeets }) {
                         Qty={item.quantity}
                         UnitPrice={item.unitPrice}
                         TotalUnitPrice={item.totalUnitPrice}
-                        QtyReceived={item.qtyReceived} />
+                        QtyReceived={QtyReceivedList[index].qtyReceived} />
                 </div>
             );
 
@@ -366,106 +371,116 @@ export default function Main({ purOrderD, productDeets }) {
         <div>
             <h1 className='firstHeaderTop'>
                 <a href={"/TrackOrder"} className='purchaseOrderNo'>
-                    <Image src={arrowIcon} id={styles.arrow} alt="Back" />
-                </a>Purchase Order #{poID}
-                {/* <Image src={greenCircle} id={styles.greenCircle} alt="greencircle" /> */}
+                    <Image src={arrowIcon} className="col-sm pr-2 pb-2" alt="Back" />
+                </a>Purchase Order #{PR.prID}
             </h1>
 
-            <div className='secondDiv'>
-                <h3 className={styles.h3header}>Purchase Order Details</h3>
+            <div>
+
+                <h3 className="col-sm ms-5">Purchase Order Details</h3>
+
                 <div className={styles.lineContainer}>
                     <hr className={styles.lineDivider}></hr>
                 </div>
 
+                <h5 className="col-sm ms-5 mt-3">Date Request</h5>
+                <h7 className="col-sm ms-5 pb-0">{RequestDate}</h7><br></br>
 
-                <h5 className={styles.dateRequest}>Date Request</h5>
-                <h7 className={styles.dateInfo}>{PR.requestDate}</h7><br></br>
-
-                <div className={styles.info1}>
+                <div className="d-flex">
                     <div className={styles.nameCol}>
-                        <h5 className={styles.name}>Name</h5>
-                        <h7 className={styles.nameInfo}>{PR.name}</h7>
+                        <h5 className="col-sm mt-4 ms-5 mb-0">Name</h5>
+                        <h7 className="col-sm mt-0 ms-5">{PR.name}</h7>
                     </div>
 
                     <div className={styles.supCol}>
-                        <h5 className={styles.supplier}>Supplier</h5>
-                        <h7 className={styles.supInfo}>{PR.supplierName}</h7>
+                        <h5 className="col-sm mt-4 mb-0">Supplier</h5>
+                        <h7 className="col-sm mt-0">{PR.supplierName}</h7>
                     </div>
 
                 </div><br></br>
 
-                <div className={styles.info2}>
+                <div className="d-flex">
                     <div className={styles.locCol}>
-                        <h5 className={styles.location}>Location</h5>
-                        <h7 className={styles.locInfo}>{PR.branchName}</h7><br></br>
+                        <h5 className="col-sm mt-4 ms-5 mb-0">Location</h5>
+                        <h7 className="col-sm mt-4 ms-5">{PR.branchName}</h7><br></br>
                         {/* <h7 className={styles.locInfo}>Takashimaya</h7> */}
                     </div><br></br>
 
                     <div className={styles.payCol}>
-                        <h5 className={styles.payMode}>Payment Mode</h5>
-                        <h7 className={styles.payModeInfo}>{PR.paymentMode}</h7>
+                        <h5 className="col-sm mt-4 mb-0">Payment Mode</h5>
+                        <h7 className="col-sm mt-0">{PR.paymentMode}</h7>
                     </div>
 
                 </div>
 
 
-                <div className={styles.box}>
-                    <h5 className={styles.prodDetails}>Product Details</h5>
-
-
-                    <div className={styles.updateQty}>
-                        <button onClick={setChangeStatusPop2} className={styles.editPOButton}>Edit Details</button>
+                <div>
+                    <div className="d-flex">
+                        <h5 className="mt-5 ms-5 fs-2 mb-0">Product Details</h5>
+                        {
+                            editQty === false &&
+                                <button onClick={handleAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Qty Received</button>
+                        }
+                        {
+                            editQty === true &&
+                                <button onClick={handleDontAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end btn btn-success">Save</button>
+                        }
                     </div>
-
-
-
-
-
-
-
 
                     <div className={styles.lineContainer}>
                         <hr className={styles.lineDivider}></hr>
                     </div>
 
-                    <div className={styles.prodDetailsHeader}>
-                        <div className={styles.itemNo}>
-                            <h5 className={styles.itemNoInfo}>Item No.</h5>
-                        </div>
-
-                        <div className={styles.description}>
-                            <h5 className={styles.desInfo}>Description</h5>
-                        </div>
-
-                        <div className={styles.quantity}>
-                            <h5 className={styles.quanInfo}>Quantity</h5>
-                        </div>
-
-                        <div className={styles.unitPrice}>
-                            <h5 className={styles.uPriceInfo}>Unit Price</h5>
-                        </div>
-
-                        <div className={styles.totalUPrice}>
-                            <h5 className={styles.totalInfo}>Total Unit Price</h5>
-                        </div>
-
-                        <div className={styles.noReceived}>
-                            <h5 className={styles.RecInfo}>No. Received</h5>
-                        </div>
-
-
+                    <div>
+                        <ul className="col-sm list-group list-group-horizontal text-center">
+                            <li className="col-sm list-group-item col-sm-2 border-0">Item No.</li>
+                            <li className="col-sm list-group-item col-sm-1 ms-1 me-1 border-0">Description</li>
+                            <li className="col-sm list-group-item col-sm-3 ms-5 border-0">Quantity</li>
+                            <li className="col-sm list-group-item col-sm-1 border-0">Unit Price</li>
+                            <li className="col-sm list-group-item col-sm-2 border-0">Total Unit Price</li>
+                            <li className="col-sm list-group-item col-sm-2 border-0">No. Received</li>
+                        </ul>
                     </div>
+
                     <div className={styles.lineContainer}>
                         <hr className={styles.lineDivider}></hr>
                     </div>
 
-                    <div className={styles.hello}>
-                        <div className={styles.important}>
-                            {ProductDetails}
-                        </div>
-                    </div>
+                    {
+                        editQty === false &&
+                            productDeets.map((item, index) => {
+                                return <div key={index}>
+                                            <ul className="list-group list-group-horizontal text-center">
+                                                <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                                                <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                                                <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                                                <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                                                <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
+                                                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} disabled/></li>
+                                            </ul>
+                                        </div>
+                            })
+                    }
 
+                    {
+                        editQty === true &&
+                            productDeets.map((item, index) => {
+                                return <div key={index}>
+                                            <div>
+                                                <ul className="list-group list-group-horizontal text-center">
+                                                    <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                                                    <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                                                    <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                                                    <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                                                    <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
+                                                    <li className="list-group-item col-sm-2 border-0 ms-5"><input type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} id={QtyReceivedList[index].id}  onkeyup="if(value<0) value=0;" required/></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                            })
+                    }
 
+                    {/* {ProductDetails} */}
 
                     <div className={styles.lineContainer}>
                         <hr className={styles.lineDivider}></hr>
@@ -474,70 +489,45 @@ export default function Main({ purOrderD, productDeets }) {
                 </div>
 
 
-                <div className={styles.totalRow}>
-                    {/* <hr /> */}
-                    <div className={styles.row1}>
-                        <div className={styles.totalCol1}>
-                            <h3 className={styles.priceLabel1}>Subtotal</h3>
-                        </div>
-                        <div className={styles.totalCol1}>
-                            <p className={styles.price1}>${Subtotal}</p>
-                        </div>
+                <div className="col-sm-11 d-flex align-items-end flex-column me-5 ms-0">
+                    <div className="d-flex mt-3">
+                        <h3>Subtotal</h3>
+                        <p className="col-sm ms-4 fs-4">${Subtotal}</p>
                     </div>
 
-                    <div className={styles.row2}>
-                        <div className={styles.totalCol2}>
-                            <h3 className={styles.priceLabel2}>GST 8%</h3>
-                        </div>
-                        <div className={styles.totalCol2}>
-                            <p className={styles.price2}>${GST}</p>
-                        </div>
+                    <div className="col-sm d-flex mt-3">
+                        <h3>GST 8%</h3>
+                        <p className="col-sm ms-4 fs-4">${GST}</p>
                     </div>
-
-                    {/* <hr id={styles.totalLine} /> */}
 
                     <div className={styles.lineContainer2}>
                         <hr className={styles.lineDivider2}></hr>
                     </div>
 
-                    <div className={styles.totalRow3}>
-                        <div className={styles.totalCol3}>
-                            <h2 className={styles.priceLabel3}>Total</h2>
-                        </div>
-                        <div className={styles.totalCol3}>
-                            <p className={styles.totalprice3}>${Total}</p>
-                        </div>
+                    <div className="col-sm d-flex mt-2">
+                            <h2 className="col-sm me-2">Total</h2>
+                            <p className="col-sm ms-4 fs-4">${Total}</p>
                     </div>
 
                 </div>
 
-
-                <br></br>
-                <br></br>
-                <div className={styles.remarks}>
-
-                    <div>
-                        <h5 className={styles.remarksTitle}>Remarks</h5>
-                        <h7 className={styles.details}>{PR.remarks}</h7>
-                    </div>
-
-
-
+                <div className="col-sm ms-5">
+                        <h2>Remarks</h2>
+                        <h5>{PR.remarks}</h5>      
                 </div>
 
                 <br></br>
                 <br></br>
-                <h3 className={styles.status}>Purchase & Payment Status</h3>
+                <h3 className="col-sm ms-5">Purchase & Payment Status</h3>
+
                 <div className={styles.lineContainer}>
                     <hr className={styles.lineDivider}></hr>
                 </div>
 
-                <br></br>
 
+                <div className="col-sm d-flex">
 
-                <div className={styles.statusInfo}>
-
-                    <div className={styles.container1}>
+                    <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
                         <label for="payStatus" id={styles.payStatus}>Payment Status</label><br></br>
 
                         <select name="status" id={styles.words1}>
@@ -548,18 +538,8 @@ export default function Main({ purOrderD, productDeets }) {
                         </select>
                     </div>
 
-                    <div className={styles.container2}>
+                    <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
                         <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
-
-                        {/* <div className={styles.blabla} onClick={handleClick}>
-                            <select id={styles.words2} value={selectedValue} onChange={handleChange}>
-                                <option value="1">Accept Order</option>
-                                <option value="2">Preparing Order</option>
-                                <option value="3">Preparing Delivery</option>
-                                <option value="4">Shipping Item</option>
-                                <option value="5">Item Delivered</option>
-                            </select>
-                        </div> */}
 
                         <div className={styles.blabla}>
                             <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
@@ -587,9 +567,9 @@ export default function Main({ purOrderD, productDeets }) {
                     )}
                 </div>
 
-                <div className={styles.uploadR}>Upload Receipt</div>
+                <div className="col-sm border border-#486284 rounded-4 mt-3 mb-4 w-25 h-25 p-2 ms-5 text-white shadow text-center" style={{ backgroundColor: '#C1C8D0' }}>Upload Receipt</div>
 
-                <h3 className={styles.files}>Upload Invoice & Delivery Orders</h3>
+                <h3 className="col-sm ms-5">Upload Invoice & Delivery Orders</h3>
                 <div className={styles.lineContainer}>
                     <hr className={styles.lineDivider}></hr>
                 </div>
@@ -609,28 +589,28 @@ export default function Main({ purOrderD, productDeets }) {
                     </div>
                 )}
 
-                <div className={styles.filesSub}>
-                    <div className={styles.invoice}>
-                        <h5 className={styles.invoiceText}>Upload Invoice</h5><br></br>
+                <div className="col-sm d-flex">
+                    <div className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                        <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
 
 
                     </div>
 
 
-                    <div className={styles.do}>
-                        <h5 className={styles.doText}>Upload Delivery Order</h5><br></br>
+                    <div className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                        <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
                     </div>
                 </div>
 
-                <div className={styles.hold}>
-                    <div className={styles.borderPlus}>
-                        <Image src={plusIcon} className={styles.plusIcon} alt="plus" />
-                        <h7 className={styles.add1}>Add Invoice</h7>
+                <div className="col-sm d-flex mt-2">
+                    <div style={{flex: 1}}>
+                        <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
+                        <h7 className="col-sm ms-2">Add Invoice</h7>
                     </div>
 
-                    <div className={styles.borderPlus2}>
-                        <Image src={plusIcon} className={styles.plusIcon2} alt="plus" />
-                        <h7 className={styles.add2}>Add Delivery Order</h7>
+                    <div style={{flex: 1}}>
+                        <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
+                        <h7 className="col-sm ms-2">Add Delivery Order</h7>
                     </div>
                 </div>
 
