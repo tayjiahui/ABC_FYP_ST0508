@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
 import moment from 'moment';
+import axios from "axios";
 
 import styles from '../../styles/viewPR.module.css';
 
@@ -11,8 +12,6 @@ import pendingCircle from '../../public/yellowPendingCircle.svg';
 import approvedCircle from '../../public/greenApprovedCircle.svg';
 import rejectedCircle from '../../public/redRejectedCircle.svg';
 import nextArrow from '../../public/rightArrowWhite.svg';
-
-import axios from "axios";
 
 // Base urls
 const URL = [];
@@ -70,23 +69,40 @@ export async function getServerSideProps(context){
     const { params } = context;
     const { prID } = params;
 
+    const POCheck = [];
+
     const response1 = await fetch(`${backBaseURL}/api/purchaseReq/PR/${prID}`);
     const response2 = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${prID}`);
 
     const data1 = await response1.json();
     const data2 = await response2.json();
 
+    // Check if PO present
+    await axios(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${prID}`)
+    .then(() => {
+        POCheck.push(true);
+    })
+    .catch((err) => {
+        if(err.response.status === 404){
+            POCheck.push(false);
+        }
+        else{
+            console.log(err.response);
+        }
+    });
+
     return { 
         props:{
             host,
             prDetails: data1,
             pLDetails: data2,
+            POCheck: POCheck,
             prID
         }
     };
 };
 
-export default function Supplier({prDetails, pLDetails}) {
+export default function Supplier({prDetails, pLDetails,POCheck}) {
     const router = useRouter();
 
     const prID = router.query.prID;
@@ -114,10 +130,15 @@ export default function Supplier({prDetails, pLDetails}) {
     const [isApproved, setIsApproved] = useState(false);
     const [isRejected, setIsRejected] = useState(false);
 
+    const [havePO, checkHavePO] = useState(false);
+
     const [viewApprComment, setViewApprComment] = useState();
+
+    const [Reappeal, allowReappeal] = useState(false);
 
     // PR Details  
     const PR = prDetails[0];
+
     
     useEffect(() => {
         // set user id taken from localstorage
@@ -134,6 +155,11 @@ export default function Supplier({prDetails, pLDetails}) {
         // check if admin/ approver
         if(roleID === 1){
             setAdmin(true);
+        };
+
+        // Chcek if already have PO
+        if(POCheck[0] === true){
+            checkHavePO(true)
         };
 
         // Test for status Circle
@@ -305,7 +331,7 @@ export default function Supplier({prDetails, pLDetails}) {
     };
 
     const convertToPO = async(e) => {
-        e.preventDefault();
+        // e.preventDefault();
 
         await axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`, 
             {
@@ -314,204 +340,358 @@ export default function Supplier({prDetails, pLDetails}) {
         )
         .then((response) => {
             console.log(response);
-            alert(response.data)
+            alert(response.data);
+
+            // redirect to traCk PO
+            // router.push(`/TrackOrder`);
         })
         .catch((err) => {
             console.log(err);
             alert(err.response.data)
         });
+    };
 
+    // enable reappeal form
+    const handleReappealPR = () => {
+        // allowReappeal(true)
     };
 
     return (
         <>
-            <div className="pb-5">
-                <div className="headerRow">
-                    <div>
-                        <h1>
-                            <a href={"/PurchaseRequest"}>
-                                <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
-                            </a>
-                            Purchase Request #{prID}
-                            <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
-                        </h1>
-                    </div>
-                </div>
-
-                <div className={styles.prDetails}>
-                    <div className="py-3">
-                        <h4>Target Delivery Date</h4>
-                        <p>{TargetDeliveryDate}</p>
-                    </div>
-                    
-                    <div className={styles.viewRow}>
-                        <div className="py-3">
-                            <div className={styles.viewCol}>
-                                <h4>Name</h4>
-                                <p>{PR.name}</p>
-                            </div>
-                            <div className={styles.viewCol}>
-                                <h4>Supplier</h4>
-                                <p>{PR.supplierName}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className={styles.viewRow}>
-                        <div className="py-3">
-                            <div className={styles.viewCol}>
-                                <h4>Location</h4>
-                                <p>{PR.branchName}</p>
-                            </div>
-                            <div className={styles.viewCol}>
-                                <h4>Payment Mode</h4>
-                                <p>{PR.paymentMode}</p>
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
-
-                <div className={styles.productDetails}>
-                    <div className={styles.pDTop}>
-                        <h4>Product Details</h4>
-                        <hr/>
-                        <ul className="list-group list-group-horizontal text-center">
-                            <li className="list-group-item col-sm-2 border-0">Item No.</li>
-                            <li className="list-group-item col-sm-4 px-2 border-0 text-start">Item</li>
-                            <li className="list-group-item col-sm-2 border-0">Quantity</li>
-                            <li className="list-group-item col-sm-2 border-0">Unit Price</li>
-                            <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
-                        </ul>
-                        <hr/>
-                    </div>
-                    <div>
-                        {ProductDetails}
-                    </div>
-                    <div>
-                        <hr/>
-                        <ul className="list-group list-group-horizontal text-center">
-                            <li className="list-group-item col-sm-8 border-0"></li>
-                            <li className="list-group-item col-sm-2 border-0"><h3>Subtotal</h3></li>
-                            <li className="list-group-item col-sm-2 pt-3 border-0">${Subtotal}</li>
-                        </ul>
-                        <ul className="list-group list-group-horizontal text-center">
-                            <li className="list-group-item col-sm-8 border-0"></li>
-                            <li className="list-group-item col-sm-2 border-0"><h3>GST 8%</h3></li>
-                            <li className="list-group-item col-sm-2 pt-3 border-0">${GST}</li>
-                        </ul>
-
-                        <hr id={styles.totalLine}/>
-
-                        <ul className="list-group list-group-horizontal text-center pt-1 w-100">
-                            <li className="list-group-item col-sm-8 border-0"></li>
-                            <li className="list-group-item col-sm-2 border-0"><h2>Total</h2></li>
-                            <li className="list-group-item col-sm-2 pt-3 border-0">${Total}</li>
-                        </ul>
-                        
-                    </div>
-                    
-                </div>
-            
-                <div className={styles.prDetails}>
-                    {
-                        checkRemark && 
-                            <div className="pt-3">
-                                <h4>Remarks</h4>
-                                <p>{PR.remarks}</p>
-                            </div>
-                    }
-                </div>
-
-                <div className="px-5">
-                    <hr className={styles.endLine}/>
-                </div>
-
-                <div>
-                    {
-                        isPending && isAdmin &&
+            {
+                Reappeal === false &&
+                    <div className="pb-5">
+                        <div className="headerRow">
                             <div>
-                                <div className="px-5 mx-5 pb-5 pt-2">
-                                    <h2>Approve Purchase Request?</h2>
-                                    <form>
-                                        <div className="py-3 mb-3">
-                                            <p>Comments</p>
-                                            <textarea value={ApprComment} onChange={(e) => setApprComment(e.target.value)} className={styles.textArea}></textarea>
-                                        </div>
-                                        
-                                        <div className="py-3">
-                                            <div className={styles.apprButtons}>
-                                                <button onClick={submitDeny} className={styles.denyButton}>Reject</button>
-                                                <div className={styles.divider}></div>
-                                                <button onClick={submitApproval} className={styles.approveButton}>Approve</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                <h1>
+                                    <a href={"/PurchaseRequest"}>
+                                        <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
+                                    </a>
+                                    Purchase Request #{prID}
+                                    <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/>
+                                </h1>
+                            </div>
+                        </div>
+
+                        <div className={styles.prDetails}>
+                            <div className="py-3">
+                                <h4>Target Delivery Date</h4>
+                                <p>{TargetDeliveryDate}</p>
+                            </div>
+                            
+                            <div className={styles.viewRow}>
+                                <div className="py-3">
+                                    <div className={styles.viewCol}>
+                                        <h4>Name</h4>
+                                        <p>{PR.name}</p>
+                                    </div>
+                                    <div className={styles.viewCol}>
+                                        <h4>Supplier</h4>
+                                        <p>{PR.supplierName}</p>
+                                    </div>
                                 </div>
                             </div>
-                    }
-                </div>
 
-                <div>
-                    {
-                        checkApprComment &&
-                            <div className="px-5 mx-5 pb-5 pt-2">
-                                <div>
-                                    {
-                                        isRejected &&
-                                            <h2>Purchase Request #{prID} has been <b className={styles.rejectedB}>Rejected</b>!</h2>
-                                    }
-                                    {
-                                        isApproved &&
-                                            <h2>Purchase Request #{prID} has been <b className={styles.approvedB}>Approved</b>!</h2>
-                                    }
-                                    <div className="pt-5">
-                                        <h4>Approver's Comments</h4>
-                                        <div className="py-3 w-70">
-                                            <div className={styles.apprCommentsBox}>
-                                                <div className="px-4 py-5">
-                                                    {/* <p>{PR.apprRemarks}</p> */}
-                                                    <textarea value={viewApprComment} onChange={(e) => setViewApprComment(e.target.value)}></textarea>
+                            <div className={styles.viewRow}>
+                                <div className="py-3">
+                                    <div className={styles.viewCol}>
+                                        <h4>Location</h4>
+                                        <p>{PR.branchName}</p>
+                                    </div>
+                                    <div className={styles.viewCol}>
+                                        <h4>Payment Mode</h4>
+                                        <p>{PR.paymentMode}</p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        <div className={styles.productDetails}>
+                            <div className={styles.pDTop}>
+                                <h4>Product Details</h4>
+                                <hr/>
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-2 border-0">Item No.</li>
+                                    <li className="list-group-item col-sm-4 px-2 border-0 text-start">Item</li>
+                                    <li className="list-group-item col-sm-2 border-0">Quantity</li>
+                                    <li className="list-group-item col-sm-2 border-0">Unit Price</li>
+                                    <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
+                                </ul>
+                                <hr/>
+                            </div>
+                            <div>
+                                {ProductDetails}
+                            </div>
+                            <div>
+                                <hr/>
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-8 border-0"></li>
+                                    <li className="list-group-item col-sm-2 border-0"><h3>Subtotal</h3></li>
+                                    <li className="list-group-item col-sm-2 pt-3 border-0">${Subtotal}</li>
+                                </ul>
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-8 border-0"></li>
+                                    <li className="list-group-item col-sm-2 border-0"><h3>GST 8%</h3></li>
+                                    <li className="list-group-item col-sm-2 pt-3 border-0">${GST}</li>
+                                </ul>
+
+                                <hr id={styles.totalLine}/>
+
+                                <ul className="list-group list-group-horizontal text-center pt-1 w-100">
+                                    <li className="list-group-item col-sm-8 border-0"></li>
+                                    <li className="list-group-item col-sm-2 border-0"><h2>Total</h2></li>
+                                    <li className="list-group-item col-sm-2 pt-3 border-0">${Total}</li>
+                                </ul>
+                                
+                            </div>
+                            
+                        </div>
+                    
+                        <div className={styles.prDetails}>
+                            {
+                                checkRemark && 
+                                    <div className="pt-3">
+                                        <h4>Remarks</h4>
+                                        <p>{PR.remarks}</p>
+                                    </div>
+                            }
+                        </div>
+
+                        <div className="px-5">
+                            <hr className={styles.endLine}/>
+                        </div>
+
+                        <div>
+                            {
+                                isPending && isAdmin &&
+                                    <div>
+                                        <div className="px-5 mx-5 pb-5 pt-2">
+                                            <h2>Approve Purchase Request?</h2>
+                                            <form>
+                                                <div className="py-3 mb-3">
+                                                    <p>Comments</p>
+                                                    <textarea value={ApprComment} onChange={(e) => setApprComment(e.target.value)} className={styles.textArea}></textarea>
+                                                </div>
+                                                
+                                                <div className="py-3">
+                                                    <div className={styles.apprButtons}>
+                                                        <button onClick={submitDeny} className={styles.denyButton}>Reject</button>
+                                                        <div className={styles.divider}></div>
+                                                        <button onClick={submitApproval} className={styles.approveButton}>Approve</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                            }
+                        </div>
+
+                        <div>
+                            {
+                                checkApprComment &&
+                                    <div className="px-5 mx-5 pb-5 pt-2">
+                                        <div>
+                                            {
+                                                isRejected &&
+                                                    <h2>Purchase Request #{prID} has been <b className={styles.rejectedB}>Rejected</b>!</h2>
+                                            }
+                                            {
+                                                isApproved &&
+                                                    <h2>Purchase Request #{prID} has been <b className={styles.approvedB}>Approved</b>!</h2>
+                                            }
+                                            <div className="pt-5">
+                                                <h4>Approver's Comments</h4>
+                                                <div className="py-3 w-70">
+                                                    <div className={styles.apprCommentsBox}>
+                                                        <div className="p-4">
+                                                            {/* <p>{PR.apprRemarks}</p> */}
+                                                            <textarea value={viewApprComment} onChange={(e) => setViewApprComment(e.target.value)} className={styles.apprCommentTextArea}></textarea>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                    }
-                </div>
+                            }
+                        </div>
 
-                <div>
-                    {
-                        isApproved &&
-                            <div>
-                                <div className="px-5 mx-5 py-5">
-                                    <div className={styles.createPO}>
-                                        
-                                        <button onClick={convertToPO} className={styles.createPOButton}>
-                                            <div className="ms-5 me-2 ps-2">
-                                                Next<Image src={nextArrow} width={25} height={25} alt="Next Arrow" className="ms-5"/>
+                        <div>
+                            {
+                                isApproved &&
+                                    <div>
+                                        <div className="px-5 mx-5 py-5">
+                                            <div className={styles.createPO}>
+                                                {
+                                                    havePO === false &&
+                                                        <div className="pb-5">
+                                                            <div>
+                                                                <a href={baseUrl + `/api/pdf/PurchaseOrder/` +  prID}>
+                                                                    <button onClick={convertToPO} className={styles.createPOButton}>
+                                                                        {/* <div className="ms-5 me-2 ps-2">
+                                                                            Next<Image src={nextArrow} width={25} height={25} alt="Next Arrow" className="ms-5"/>
+                                                                        </div> */}
+                                                                        <div className="px-5">
+                                                                            Convert To Purchase Order<Image src={nextArrow} width={25} height={25} alt="Next Arrow"/>
+                                                                        </div>
+                                                                    </button>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                }
+                                                
+                                                {
+                                                    havePO === true && 
+                                                        <div className="pb-5 W-100">
+                                                            <div className="pt-2">
+                                                                <a href={baseUrl + `/api/pdf/PurchaseOrder/view/` +  prID} target="_blank">
+                                                                    <button className={styles.viewPOButton}>
+                                                                        <div className="px-5">
+                                                                            View Purchase Order PDF
+                                                                        </div>
+                                                                    </button>
+                                                                </a>
+                                                            </div>
+
+                                                            <div className="pt-2">
+                                                                <a href={baseUrl + `/api/pdf/PurchaseOrder/` +  prID}>
+                                                                    <button className={styles.downloadPOButton}>
+                                                                        <div className="px-5">
+                                                                            Download Purchase Order
+                                                                        </div>
+                                                                    </button>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                }
                                             </div>
-                                        </button>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                    }
-                </div>
+                            }
+                        </div>
 
-                <div>        
-                    {
-                        isRejected &&
+                        <div>        
+                            {
+                                isRejected &&
+                                    <div>
+                                        <div className="px-5 py-3 mx-5 mb-5">
+                                            <div className={styles.reappealPR}>
+                                                <button onClick={handleReappealPR} className={styles.reappealPRButton}>Reappeal Purchase Order</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                            }
+                        </div>
+                    </div>
+            }
+
+            {
+                Reappeal === true &&
+                    <div className="pb-5">
+                        <div className="headerRow">
                             <div>
-                                <div className="px-5 py-3 mx-5 mb-5">
-                                    <div className={styles.reappealPR}>
-                                        <button className={styles.reappealPRButton}>Reappeal Purchase Order</button>
+                                <h1>
+                                    <a href={"/PurchaseRequest"}>
+                                        <Image src={arrowIcon} id={styles.arrow} alt="Back"/> 
+                                    </a>
+                                    Reappeal Purchase Request #{prID}
+                                    {/* <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/> */}
+                                </h1>
+                            </div>
+                        </div>
+
+                        <div className={styles.prDetails}>
+                            <div className="py-3">
+                                <h4>Target Delivery Date</h4>
+                                <p>{TargetDeliveryDate}</p>
+                                
+                            </div>
+                            
+                            <div className={styles.viewRow}>
+                                <div className="py-3">
+                                    <div className={styles.viewCol}>
+                                        <h4>Name</h4>
+                                        <p>{PR.name}</p>
+                                    </div>
+                                    <div className={styles.viewCol}>
+                                        <h4>Supplier</h4>
+                                        <p>{PR.supplierName}</p>
                                     </div>
                                 </div>
                             </div>
-                    }
-                </div>
-            </div>
+
+                            <div className={styles.viewRow}>
+                                <div className="py-3">
+                                    <div className={styles.viewCol}>
+                                        <h4>Location</h4>
+                                        <p>{PR.branchName}</p>
+                                    </div>
+                                    <div className={styles.viewCol}>
+                                        <h4>Payment Mode</h4>
+                                        <p>{PR.paymentMode}</p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                        <div className={styles.productDetails}>
+                            <div className={styles.pDTop}>
+                                <h4>Product Details</h4>
+                                <hr/>
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-2 border-0">Item No.</li>
+                                    <li className="list-group-item col-sm-4 px-2 border-0 text-start">Item</li>
+                                    <li className="list-group-item col-sm-2 border-0">Quantity</li>
+                                    <li className="list-group-item col-sm-2 border-0">Unit Price</li>
+                                    <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
+                                </ul>
+                                <hr/>
+                            </div>
+                            <div>
+                                {ProductDetails}
+                            </div>
+                            <div>
+                                <hr/>
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-8 border-0"></li>
+                                    <li className="list-group-item col-sm-2 border-0"><h3>Subtotal</h3></li>
+                                    <li className="list-group-item col-sm-2 pt-3 border-0">${Subtotal}</li>
+                                </ul>
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-8 border-0"></li>
+                                    <li className="list-group-item col-sm-2 border-0"><h3>GST 8%</h3></li>
+                                    <li className="list-group-item col-sm-2 pt-3 border-0">${GST}</li>
+                                </ul>
+
+                                <hr id={styles.totalLine}/>
+
+                                <ul className="list-group list-group-horizontal text-center pt-1 w-100">
+                                    <li className="list-group-item col-sm-8 border-0"></li>
+                                    <li className="list-group-item col-sm-2 border-0"><h2>Total</h2></li>
+                                    <li className="list-group-item col-sm-2 pt-3 border-0">${Total}</li>
+                                </ul>
+                                
+                            </div>
+                            
+                        </div>
+                    
+                        <div className={styles.prDetails}>
+                            {
+                                checkRemark && 
+                                    <div className="pt-3">
+                                        <h4>Remarks</h4>
+                                        <p>{PR.remarks}</p>
+                                    </div>
+                            }
+                        </div>
+
+                        <div className="px-5">
+                            <hr className={styles.endLine}/>
+                        </div>
+                    </div>
+            }
+            
         </>
     )
 };

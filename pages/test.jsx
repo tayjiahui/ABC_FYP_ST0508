@@ -16,6 +16,8 @@ function getOptionId(e){
 export default function YourComponent() {
   const [selectedOption, setSelectedOption] = useState({ value: '', id: '' });
 
+  const [invoiceUrl, setInvoiceUrl] = useState(null);
+
   // Your component code
 
   const handleInputChange = (e) => {
@@ -40,6 +42,12 @@ export default function YourComponent() {
       </datalist>
       <p>Selected Value: {selectedOption.value}</p>
       <p>Selected ID: {selectedOption.id}</p>
+
+
+      <a href='http://localhost:8080/invoice'>
+        <button >CLICK ME</button>
+      </a>
+      
     </div>
   );
 }
