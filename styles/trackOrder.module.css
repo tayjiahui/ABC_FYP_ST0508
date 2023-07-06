@@ -31,24 +31,16 @@
     vertical-align:middle;
 }
 
-.orderBtn {
-  border: none;
-  background-color: transparent;
-  width: 100%;
-  cursor: pointer;
-}
-
-.orderRow{
+/* .orderRow{
   background-color: #C0D8F7;
   font-size: 15px;
   height: 50px;
   border-radius: 18px;
-  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   text-align: center;
   object-fit: scale-down;
-  /* transition: transform .5s; */
- 
-}
+  transition: transform .5s;
+} */
 
 /* .orderRow:hover{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
@@ -63,15 +55,6 @@
   text-align: left;
   grid-template-columns: 110px 210px 300px 220px 190px 100px;
 } 
-
-.box {
-  display: flex;
-  width: 100%;
-  background-color: #C0D8F7;
-  height: 80px;
-  border-radius: 18px;
-  margin-bottom: 10px;
-}
 
 /* create status pop */
 .newStatusBox {
