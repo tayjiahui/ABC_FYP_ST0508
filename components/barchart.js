@@ -54,14 +54,14 @@ const BarChart = () => {
 
         axios.get(`${baseUrl}/api/trackOrder/purchaseStatuses`)
             .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 for (const dataObj of res.data) {
                     // console.log(dataObj)
                     number.push(parseInt(dataObj.order_count))
                     // console.log(number)
                     let statusName = dataObj.purchaseStatus
                     status.push(statusName);
-                    console.log(status)
+                    // console.log(status)
                 }
                 setBarData ({
                     labels: status,
