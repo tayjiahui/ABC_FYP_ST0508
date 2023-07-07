@@ -122,7 +122,7 @@ export default function viewSupplier({ supplierDetails }) {
         contactPersonName: supplierDetail.contactPersonName,
         phoneNum: supplierDetail.phoneNum,
         address: supplierDetail.address,
-        // bankID: null,
+        bankID: supplierDetail.bankID,
         bankAccountNum: supplierDetail.bankAccountNum
     });
 
@@ -136,7 +136,7 @@ export default function viewSupplier({ supplierDetails }) {
         contactPersonName: '',
         phoneNum: '',
         address: '', 
-        // bankID: null,
+        bankID: null,
         bankAccountNum: ''
     })
 
@@ -151,6 +151,7 @@ export default function viewSupplier({ supplierDetails }) {
 
     // handle bank name dropdown change
     const handleSelectBank = (selectedBankOpt) => {
+        // console.log(selectedBankOpt)
         setSelectedBank(selectedBankOpt);
     };
 
@@ -209,14 +210,14 @@ export default function viewSupplier({ supplierDetails }) {
         const updatedValues = {
             supplierName: updatedFormData.supplierName || formData.supplierName,
             email: updatedFormData.email || formData.email,
-            officeNum: updatedFormData.officeNum || formData.supplierName,
-            webAddress: updatedFormData.webAddress || formData.supplierName,
-            bankAccName: updatedFormData.bankAccName || formData.supplierName,
-            contactPersonName: updatedFormData.contactPersonName || formData.supplierName,
-            phoneNum: updatedFormData.phoneNum || formData.supplierName,
-            address: updatedFormData.address || formData.supplierName,
-            bankAccountNum: updatedFormData.bankAccountNum || formData.supplierName,
-            bankID: selectedBank ? selectedBank.value: null,
+            officeNum: updatedFormData.officeNum || formData.officeNum,
+            webAddress: updatedFormData.webAddress || formData.webAddress,
+            bankAccName: updatedFormData.bankAccName || formData.bankAccName,
+            contactPersonName: updatedFormData.contactPersonName || formData.contactPersonName,
+            phoneNum: updatedFormData.phoneNum || formData.phoneNum,
+            address: updatedFormData.address || formData.address,
+            bankAccountNum: updatedFormData.bankAccountNum || formData.bankAccountNum,
+            bankID: selectedBank ? selectedBank.value: formData.bankID,
         };
 
         console.log(updatedValues);
@@ -287,14 +288,12 @@ export default function viewSupplier({ supplierDetails }) {
 
                                             <b className={styles.editInput1}>Bank Name</b>
                                             <Select
-                                                isSearchable
                                                 options={bankDropdownOptions}
-                                                value={selectedBank}
+                                                name="bankID"
+                                                value={selectedBank || formData.bankID} 
                                                 onChange={handleSelectBank}
                                                 className={styles.selectBox}
                                                 placeholder={supplierDetail.bankName}
-                                                noOptionsMessage={() => "Bank does not exist."}
-                                                required
                                             /> 
                                         </div>
                                         <br></br>
