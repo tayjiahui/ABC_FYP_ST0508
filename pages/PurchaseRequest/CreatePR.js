@@ -68,7 +68,39 @@ function getSelectedOption(e){
     };
 };
 
-export default function Supplier() {
+export async function getServerSideProps(context){
+    const host = context.req.headers.host;
+    const previousURL = context.req.headers.referer;
+
+    const backBaseURL = [];
+
+    if(host == 'localhost:5000'){
+        backBaseURL.push('http://localhost:5000');
+    }
+    else{
+        backBaseURL.push('https://abc-cooking-studio.azurewebsites.net');
+    };
+
+    // console.log(previousURL);
+    // console.log(`${backBaseURL}/Home`);
+    const resObj = {};
+
+    // check if previous URL was from homepage
+    if(previousURL === `${backBaseURL}/Home`){
+        resObj.fromHome = true;
+    }
+    else{
+        resObj.fromHome = false;
+    };
+
+    return {
+        props:{
+            from: resObj
+        }
+    }
+}
+
+export default function CreatePR({from}) {
     const { data: session} = useSession();
     const router = useRouter();
 
@@ -82,13 +114,17 @@ export default function Supplier() {
     const [PaymentModes, pmList] = useState();
     const [Items, itemList] = useState();
 
-    useEffect(() => {
-        const userID = parseInt(localStorage.getItem("ID"), 10);
-        setUserID(userID);
-    }, []);
-
     // get drop down list
     useEffect(() => {
+        // set user id
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
+
+        // if show adhoc(from home page)
+        if(from.fromHome === true){
+            setAdHoc(true);
+        };
+
         axios.all([
             axios.get(`${baseUrl}/api/supplier/all`,{}),
             axios.get(`${baseUrl}/api/purchaseReq/branch/all`,{}),
