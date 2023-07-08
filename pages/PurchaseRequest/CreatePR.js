@@ -294,7 +294,7 @@ export default function CreatePR({from}) {
         else{
             setAdHoc(false);
         }
-    }
+    };
 
     // axios to create PR
     const createPR = async(e) => {
@@ -373,7 +373,7 @@ export default function CreatePR({from}) {
         .catch((err) => {
             console.log(err);
         });
-    }
+    };
 
     return (
         <>

@@ -123,9 +123,9 @@
 }
 
 /* Remarks */
-.remarksTestArea{
+/* .remarksTestArea{
     
-}
+} */
 
 .textArea{
     width: 100%;
@@ -141,13 +141,15 @@
 .submit{
     float: right;
     padding-bottom: 100px;
+    width: 100%;
+    height: 100%;
 }
 
-.submitButton{
+.submitButton,.resetReappealButton{
     color: white;
     font-size: 15px;
     font-family: "Plus Jakarta Sans";
-    width: 120px;
+    width: 100%;
     height: 40px;
     background-color: #486284;
     border: none;
@@ -155,6 +157,9 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
+.resetReappealButton{
+    background-color: #e16060;
+}
 
 /* Toggle */
 .toggle{
