@@ -58,8 +58,8 @@
     display: inline-flexbox;
     float: right;
     padding-top: 20px;
-    width: 120%;
-    height: 120%;
+    width: 60px;
+    height: 60px;
 }
 
 .trashBin {
@@ -98,11 +98,11 @@
 }
 
 .confirmDeleteText {
-    font-size:xx-large;
+    font-size: xx-large;
     margin-left: 15px;
 }
 
-.closeButton {
+.closeButton2 {
     background-color: transparent;
     border: none;
     margin-left: 415px;
@@ -111,7 +111,7 @@
     cursor: pointer;
 }
 
-.buttons {
+.deleteButtons {
     margin-top: 80px;
     display: flex;
     justify-content: center;
@@ -122,7 +122,7 @@
     color: white;
     border-radius: 20px;
     border-width: 1px;
-    padding: 10px 20px;
+    padding: 10px 25px;
     margin-left: 15px;
     font-size: 20pt;
 }
@@ -131,6 +131,119 @@
     background-color: #93A0B1;
 }
 
-.deleteButton {
+.deleteButton, .submitButton {
     background-color: #486284;
 }
+
+/* update popup box */
+.updatePopContainer {
+    width: 70%;
+    height: 120%;
+    position: absolute;
+    top: 73%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    padding-top: 40px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+    justify-content: center;
+    align-items: center;
+    padding-left: 5px; 
+}
+
+.updatePopBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.updateTitle {
+    font-size: xx-large;
+    margin-left: 15px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.submitButton{
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    border-radius: 20px;
+    border-width: 1px;
+    padding: 8px 15px;
+    margin-left: 150px;
+    font-size: 15pt;
+    justify-content: center;
+    align-items: center;
+}
+
+.closeButton1 {
+    background-color: transparent;
+    border: none;
+    margin-left: 980px;
+    font-size: xx-large;
+    cursor: pointer;
+    margin-top: -80px;
+}
+
+.editInput1 {
+    margin-top: 80px;
+    font-size: large;
+}
+
+.editInputs {
+    margin-top: 20px;
+    font-size: medium   ;
+    border-radius: 5px;
+    border-color: #c2c2c3;
+    border-style: solid;
+    border-width: 1px;  
+    height: 35px;
+}
+
+.selectBox {
+    width: 74%;
+    /* border-color: #DDE1E6;
+    border-radius: 10px; */
+    font-family: "Plus Jakarta Sans";
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+
+.formRow {
+    display: flex;
+    margin-top: 50px;
+}
+
+/* update form column grid */
+/* .formCol1, .formCol2 {
+    float: left;
+    padding: 10px;
+    flex: 50%;
+    background-color: #93A0B1;
+}
+
+.formCol1 {
+
+}
+
+.formCol2 {
+    margin-top: 60px;
+}
+
+.formRow {
+    display: flex;
+    margin-bottom: 50px;
+}
+
+.formRow:after {
+    content: "";
+    display: table;
+    clear: both;
+} */

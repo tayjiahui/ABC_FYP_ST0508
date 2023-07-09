@@ -9,13 +9,14 @@
 .titleRow h1 {
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
     margin-left: 30px;
 }
 
 .title {
     padding-left: 30px;
     font-size: 25pt;
+    margin-top: 15px;
 }
 
 .backArrow{

@@ -126,7 +126,7 @@
     background-color: #486284;
 }
 
-.denyButton,.approveButton,.createPOButton,.reappealPRButton{
+.denyButton,.approveButton,.createPOButton,.reappealPRButton,.viewPOButton,.downloadPOButton{
     color: white;
     font-size: 15px;
     font-family: "Plus Jakarta Sans";
@@ -143,7 +143,7 @@
 }
 
 /* Create PO Section */
-.createPOButton,.reappealPRButton{
+.createPOButton,.reappealPRButton,.viewPOButton,.downloadPOButton{
     background-color: #486284;
     width: 100%;
 }
@@ -152,6 +152,12 @@
 .apprCommentsBox{
     background-color: #c0d8f751;
     border-radius: 10px;
+}
+
+.apprCommentTextArea{
+    width: 100%;
+    height: 100px;
+    resize: none;
 }
 
 .rejectedB{
