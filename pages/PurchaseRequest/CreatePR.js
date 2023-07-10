@@ -286,14 +286,7 @@ export default function CreatePR({from}) {
     };
 
     const adHocForm = async(e) => {
-        // console.log(e.target.checked);
-
-        if(e.target.checked === true){
-            setAdHoc(true);
-        }
-        else{
-            setAdHoc(false);
-        }
+        setAdHoc(e.target.checked);
     };
 
     // axios to create PR
@@ -410,7 +403,7 @@ export default function CreatePR({from}) {
                     </div>
 
                     <label className={styles.switch}>
-                        <input type="checkbox" onChange={(e) => {adHocForm(e)}}/>
+                        <input type="checkbox" onChange={(e) => {adHocForm(e)}} checked={showAdHoc}/>
                         <span className={styles.slider}></span>
                     </label>
                 </div>
