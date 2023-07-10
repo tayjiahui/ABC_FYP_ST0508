@@ -124,9 +124,7 @@ export async function getServerSideProps(context) {
 
   // Normal View PR by ID page
   const getPRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${prID}`);
-  const getPRProductLines = await fetch(
-    `${backBaseURL}/api/purchaseReq/lineItem/${prID}`
-  );
+  const getPRProductLines = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${prID}`);
 
   const prDetails = await getPRDetails.json();
   const prProductLines = await getPRProductLines.json();
@@ -134,9 +132,7 @@ export async function getServerSideProps(context) {
   // Reappeal PR Form
   const getSuppliers = await fetch(`${backBaseURL}/api/supplier/all`);
   const getBranches = await fetch(`${backBaseURL}/api/purchaseReq/branch/all`);
-  const getPaymentModes = await fetch(
-    `${backBaseURL}/api/purchaseReq/paymentMode/all`
-  );
+  const getPaymentModes = await fetch(`${backBaseURL}/api/purchaseReq/paymentMode/all`);
   const getInventory = await fetch(`${backBaseURL}/api/inventory/item/all`);
 
   const suppliers = await getSuppliers.json();
@@ -158,7 +154,7 @@ export async function getServerSideProps(context) {
 
   for (let i = 0; i < locArr.length; i++) {
     ogLocations.push({ location: locArr[i], id: locIDArr[i] });
-  }
+  };
 
   // Get Original PR PL Data
   prProductLines.forEach((item, index) => {
@@ -182,7 +178,7 @@ export async function getServerSideProps(context) {
         POCheck.push(false);
       } else {
         console.log(err.response);
-      }
+      };
     });
 
   return {
@@ -220,6 +216,7 @@ export default function ViewPR({
   const [id, setUserID] = useState();
   const [role, setRoleID] = useState();
 
+//   Normal view PR ID
   const [Circle, testCircle] = useState();
 
   const [TargetDeliveryDate, setTargetDate] = useState();
@@ -231,6 +228,8 @@ export default function ViewPR({
   const [Total, totalCal] = useState();
 
   const [checkRemark, setRemark] = useState(false);
+
+    // Approver Sections
   const [checkApprComment, setComment] = useState(false);
 
   const [ApprComment, setApprComment] = useState();
@@ -246,7 +245,6 @@ export default function ViewPR({
 
   // Reappeal
   const [Reappeal, allowReappeal] = useState(false);
-
   // dropdown lists states for Reappeal
   const [Suppliers, supplierList] = useState();
   const [Locations, locationList] = useState();
@@ -682,7 +680,7 @@ export default function ViewPR({
 
             // redirect
             router.push(`/PurchaseRequest/${latestPRID}`);
-
+ 
           });
       })
       .catch((err) => {
@@ -1346,7 +1344,7 @@ export default function ViewPR({
                                     </div> */}
               </div>
               <div className="col-sm-4 mx-5 pt-5">
-                <div className={styles2.submit}>
+                <div className={styles2.reappeal}>
                   <button type="submit" className={styles2.submitButton}>
                     <div className="px-5">Reappeal PR</div>
                   </button>
