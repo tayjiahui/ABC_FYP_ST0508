@@ -76,7 +76,7 @@ export async function getServerSideProps(context) {
     const data2 = await productD.json();
 
     // console.log(data1);
-    // console.log(data2);
+    console.log(data2);
 
     const qtyReceiveS = [];
 

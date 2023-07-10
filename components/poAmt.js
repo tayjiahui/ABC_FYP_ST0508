@@ -33,9 +33,9 @@ const PoAmt = () => {
             try {
                 const res = await axios.get(`${baseUrl}/api/trackOrder/poAmnt`);
 
-                console.log(res.data);
+                // console.log(res.data);
                 const blank = res.data[0].PO_count
-                console.log(blank)
+                // console.log(blank)
                 setAmt(blank)
             } catch (error) {
                 console.log(error)
