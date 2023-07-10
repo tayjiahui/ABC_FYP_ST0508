@@ -70,14 +70,14 @@ console.log(baseUrl, baseURL);
 export default function CreateSupplier() {
     const router = useRouter();
     
-    // initialise created supplierID 
-    const [CreateID, setCreateID] = useState(''); 
+    // initialise supplierID 
+    const [SupplierID, setSupplierID] = useState(''); 
 
     // dropdown options
     const [bankDropdownOptions, setbankDropdownOptions] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
     
-    // dropdowns values
+    // selected dropdowns values
     const [selectedBank, setSelectedBank] = useState(null);
     const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -94,6 +94,19 @@ export default function CreateSupplier() {
         // bankID: null,
         bankAccountNum: ''
     });
+
+    // get latest supplierID
+    useEffect(() => {
+        axios.get(`${baseUrl}/api/supplier/supplierid`)
+            .then((res) => {
+                console.log(res.data.supplierID);
+                setSupplierID(res.data.supplierID);
+            })
+            .catch((err) => {
+                console.log(err);
+                alert(err);
+            });
+    }, []);
 
     // get dropdown options
     useEffect(() => {
@@ -140,15 +153,14 @@ export default function CreateSupplier() {
 
     // handle category dropdown change
     const handleMultiCategory = (selectedOpts) => {
-        console.log(selectedOpts);
-        setSelectedCategories(selectedOpts.map(option => option.value));
+        // console.log(selectedOpts);
+        setSelectedCategories(selectedOpts);
     };
 
     // send form data using axios POST
     const handleSubmit = async(e) => {
         e.preventDefault();
 
-        // handleFormSubmit(formData, selectedCategories);
         // email validation
         // const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
@@ -156,6 +168,7 @@ export default function CreateSupplier() {
         //     setEmailError("Email requirements")
         // }
         
+        // form data
         const submitData = {
             supplierName: formData.supplierName,
             email: formData.email,
@@ -171,50 +184,30 @@ export default function CreateSupplier() {
 
         console.log(submitData);
 
-        axios.post(`${baseUrl}/api/supplier/`, submitData)
-            .then((response) => {
-                console.log(response.data);
-                alert(response.data);
-                router.push('/Supplier'); // redirect back to main page
+        await axios.post(`${baseUrl}/api/supplier/`, submitData)
+            .then((res) => {
+                console.log(res.data);
+
+                axios.get(`${baseUrl}/api/supplier/supplierid`)
+                .then((res) => {
+                    const supplierId = res.data[0].supplierID;
+                    console.log(supplierId);
+
+                    axios.post(`${baseUrl}/api/supplier/suppliersCategory`, {
+                        fkSupplier_id: supplierId,
+                        categoryIDs: selectedCategories.map((option) => option.value).join(',')
+                    });
+                })
+
+                alert(res.data);
+                
+                // redirect back to main page
+                router.push('/Supplier'); 
             })
             .catch((err) => {
                 console.log(err);
                 alert(err);
             });
-
-        // try {
-        //     // step 1: create basic supplier info
-        //     const res1 = await axios.post(`${baseUrl}/api/supplier/`, submitData)
-        //     const createdSupplierID = res1.data.id; // get id from axios post res.data
-        //     setCreateID(createdSupplierID);
-        //     // console.log(res1.data);
-        //     // alert(res1.data);
-
-        //     //step 2: create supplier category thru dropdown
-        //     const postCategory = {
-        //         fkSupplier_id: createdSupplierID,
-        //         fkCategory_id: CategoryDropdownValues.map((option) => option.value),
-        //     };
-
-        //     const res2 = await axios.post(`${baseUrl}/api/supplier/suppliersCategory`, postCategory);
-        //     const createdSupplierCategory = res2.data;
-        //     setCategoryDropdownValues(createdSupplierCategory);
-
-        // }
-        // catch(err) {
-        //     console.log(err);
-        //     alert(err);
-        // };
-
-        /*try {
-            const response = await axios.post(`${baseUrl}/api/supplier/`, {formValue});
-            console.log(response.data);
-            alert(response.data);
-        }
-        catch(err) {
-            console.log(err);
-            alert(err);
-        };*/
     };
 
     return (
