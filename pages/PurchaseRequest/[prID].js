@@ -143,8 +143,8 @@ export async function getServerSideProps(context) {
   const ogLocations = [];
   const ogPL = [];
 
-  console.log(prDetails);
-  console.log(prProductLines);
+//   console.log(prDetails);
+//   console.log(prProductLines);
 
   const PR = prDetails[0];
 
