@@ -137,10 +137,10 @@
 
 /* update popup box */
 .updatePopContainer {
-    width: 70%;
-    height: 120%;
+    width: 50%;
+    height: 128%;
     position: absolute;
-    top: 73%;
+    top: 83%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
@@ -157,6 +157,7 @@
 .updatePopBox {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
 }
 
@@ -168,7 +169,7 @@
 }
 
 .submitButton{
-    margin-top: 40px;
+    margin-top: 30px;
     display: flex;
     justify-content: center;
     cursor: pointer;
@@ -180,12 +181,13 @@
     font-size: 15pt;
     justify-content: center;
     align-items: center;
+    margin-bottom: 50px;
 }
 
 .closeButton1 {
     background-color: transparent;
     border: none;
-    margin-left: 980px;
+    margin-left: 700px;
     font-size: xx-large;
     cursor: pointer;
     margin-top: -80px;
@@ -206,7 +208,7 @@
     height: 35px;
 }
 
-.selectBox {
+.selectBox, .multiSelectBox {
     width: 74%;
     /* border-color: #DDE1E6;
     border-radius: 10px; */
@@ -215,35 +217,7 @@
     margin-bottom: 10px;
 }
 
-
 .formRow {
     display: flex;
     margin-top: 50px;
 }
-
-/* update form column grid */
-/* .formCol1, .formCol2 {
-    float: left;
-    padding: 10px;
-    flex: 50%;
-    background-color: #93A0B1;
-}
-
-.formCol1 {
-
-}
-
-.formCol2 {
-    margin-top: 60px;
-}
-
-.formRow {
-    display: flex;
-    margin-bottom: 50px;
-}
-
-.formRow:after {
-    content: "";
-    display: table;
-    clear: both;
-} */
