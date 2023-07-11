@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router'
 import Image from "next/image";
 import Select from "react-select";
 
@@ -10,31 +10,34 @@ import arrowIcon from "../../public/arrowIcon.svg";
 import editIcon from "../../public/penIcon.svg";
 import deleteIcon from "../../public/trashBinIcon.svg";
 
+// Base urls
 const URL = [];
 
-function isLocalhost()
-{
+function isLocalhost() {
     if (typeof window !== "undefined") {
         const hostname = window.location.hostname;
         console.log("hostname   " + hostname);
         if (hostname == "localhost") {
-            URL.push('http://localhost:3000', 'http://localhost:5000');
+            URL.push("http://localhost:3000", "http://localhost:5000");
+            console.log(URL);
+        } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
+            URL.push(
+                "https://abc-cooking-studio-backend.azurewebsites.net",
+                "https://abc-cooking-studio.azurewebsites.net"
+            );
             console.log(URL);
         }
-        else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-            console.log(URL);
-        }
+
         return URL;
     }
-}
+};
 
 isLocalhost();
 
-const baseUrl = 'http://localhost:3000';
-const baseURL = 'http://localhost:5000';
+const baseUrl = URL[0];
+const baseURL = URL[1];
 
-console.log(baseUrl, baseURL);
+// console.log(baseUrl, baseURL);
 
 // get supplier info
 export async function getServerSideProps(context) {
@@ -68,7 +71,7 @@ export async function getServerSideProps(context) {
 // view supplier page
 export default function viewSupplier({ supplierDetails }) {
 
-    const router = useRouter();
+    const router = useRouter()
     const supplierID = router.query.supplierID;
     
     const supplierDetail = supplierDetails[0];
@@ -112,7 +115,7 @@ export default function viewSupplier({ supplierDetails }) {
         });
     }, []);
 
-    // initial state for the update form inputs - shows current data
+    // current data of the form inputs
     const [formData, setFormData] = useState({
         supplierName: supplierDetail.supplierName,
         email: supplierDetail.email,
@@ -126,7 +129,7 @@ export default function viewSupplier({ supplierDetails }) {
         bankAccountNum: supplierDetail.bankAccountNum
     });
 
-    // const [supplierName, setSupplierName] = useState(supplierDetail.supplierName);
+    // update form states
     const [updatedFormData, setUpdatedFormData] = useState({
         supplierName: '',
         email: '',
@@ -158,7 +161,7 @@ export default function viewSupplier({ supplierDetails }) {
     // handle category dropdown change
     const handleMultiCategory = (selectedOpts) => {
         console.log(selectedOpts);
-        setSelectedCategories(selectedOpts.map(option => option.value));
+        setSelectedCategories(selectedOpts);
     };
 
     const [deleteSupplierPop, setDeleteSupplierPop] = useState(false);
@@ -178,7 +181,7 @@ export default function viewSupplier({ supplierDetails }) {
         e.preventDefault();
 
         try {
-            const response = await axios.delete(`${baseUrl}/api/supplier/${supplierID}`,{});
+            const response = await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`);
             console.log(response.data);
             alert(response.data);
         }
@@ -222,19 +225,35 @@ export default function viewSupplier({ supplierDetails }) {
 
         console.log(updatedValues);
 
-        try {
-            const response = await axios.put(`${baseUrl}/api/supplier/${supplierID}`, updatedValues);
-            console.log(response.data);
-            alert(response.data);
+        if (selectedCategories.length === 0) {
+            alert("Please select at least one option for Category");
+            setUpdateSupplierPop(true);
+        } 
+        else {
+            await axios.put(`${baseUrl}/api/supplier/${supplierID}`, updatedValues)
+            .then((res1) => {
+                console.log(res1.data);
+                alert(res1.data);
 
-            // refresh page to show updated content
-            router.reload(window.location.pathname);
+                axios.put(`${baseUrl}/api/supplier/suppliersCategory/${supplierID}`, {
+                    categoryIDs: selectedCategories.map((option) => option.value).join(',')
+                })
+                .then((res2) => {
+                    console.log(res2.data);
+                    // alert(res2.data);
+                })
+
+                // refresh page to show updates
+                router.push('/Supplier');
+                // router.reload() --> didnt work
+
+            })
+            .catch((err) => {
+                console.log(err);
+                alert(err);
+            });
         }
-        catch(err) {
-            console.log(err);
-            alert(err);
-        }
-        setUpdateSupplierPop(false);
+        setUpdateSupplierPop(true);
     }
 
     return (
@@ -288,6 +307,7 @@ export default function viewSupplier({ supplierDetails }) {
 
                                             <b className={styles.editInput1}>Bank Name</b>
                                             <Select
+                                                isSearchable
                                                 options={bankDropdownOptions}
                                                 name="bankID"
                                                 value={selectedBank || formData.bankID} 
@@ -295,6 +315,20 @@ export default function viewSupplier({ supplierDetails }) {
                                                 className={styles.selectBox}
                                                 placeholder={supplierDetail.bankName}
                                             /> 
+
+                                            <b className={styles.editInput1}>Category</b>
+                                            <Select
+                                                isMulti
+                                                isSearchable
+                                                options={categoryOptions}
+                                                value={selectedCategories}
+                                                onChange={handleMultiCategory}
+                                                className={styles.multiSelectBox}
+                                                placeholder={supplierDetail.Category}
+                                                // placeholder="What do you sell?"
+                                                noOptionsMessage={() => "Category does not exist."}
+                                                require d
+                                            />
                                         </div>
                                         <br></br>
                                         <button type="submit" className={styles.submitButton} onClick={handleConfirmUpdate}>Update</button>

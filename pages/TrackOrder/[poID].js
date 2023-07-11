@@ -76,7 +76,7 @@ export async function getServerSideProps(context) {
     const data2 = await productD.json();
 
     // console.log(data1);
-    // console.log(data2);
+    console.log(data2);
 
     const qtyReceiveS = [];
 
@@ -527,7 +527,7 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
 
                 <div className="col-sm d-flex">
 
-                    <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
+                    {/* <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
                         <label for="payStatus" id={styles.payStatus}>Payment Status</label><br></br>
 
                         <select name="status" id={styles.words1}>
@@ -536,7 +536,7 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                             <option value="received">Payment Received</option>
                             <option value="create">Create New Status</option>
                         </select>
-                    </div>
+                    </div> */}
 
                     <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
                         <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
@@ -567,7 +567,7 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                     )}
                 </div>
 
-                <div className="col-sm border border-#486284 rounded-4 mt-3 mb-4 w-25 h-25 p-2 ms-5 text-white shadow text-center" style={{ backgroundColor: '#C1C8D0' }}>Upload Receipt</div>
+                <br></br>
 
                 <h3 className="col-sm ms-5">Upload Invoice & Delivery Orders</h3>
                 <div className={styles.lineContainer}>

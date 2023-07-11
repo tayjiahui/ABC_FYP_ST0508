@@ -256,4 +256,88 @@
    .switch input[type="checkbox"]:checked:active + .slider::after {
     transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
    }
-   
+
+   /* Filter */
+   .closePopUpButton{
+    background-color: transparent;
+    border: none;
+   }
+
+.newStatusBox {
+    width: 450px;
+    height: 300px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+}
+
+.newStatus {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* checkboxes for filter */
+.materialCheckbox {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #777777;
+    cursor: pointer;
+  }
+  
+  .materialCheckbox input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .checkmark {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    border: 2px solid #93A2B7;
+    border-radius: 4px;
+    transition: all 0.3s;
+  }
+  
+  .materialCheckbox input[type="checkbox"]:checked ~ .checkmark {
+    background-color: #C0D8F7;
+    /* border-color: #55759f9c; */
+  }
+  
+  .materialCheckbox input[type="checkbox"]:checked ~ .checkmark:after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 4px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  .materialCheckbox:hover input[type="checkbox"] ~ .checkmark {
+    border-color: #033575;
+  }
+  
+  .materialCheckbox input[type="checkbox"]:disabled ~ .checkmark {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .materialCheckbox input[type="checkbox"]:disabled ~ .checkmark:hover {
+    border-color: #93A2B7;
+  }
+  
