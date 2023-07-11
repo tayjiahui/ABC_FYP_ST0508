@@ -6,6 +6,30 @@ import BarChart from '../components/barchart';
 import PrAmt from '../components/prAmt';
 import PoAmt from '../components/poAmt';
 
+// Base urls
+const URL = [];
+
+function isLocalhost (){
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        // console.log('hostname   ' + hostname);
+        if(hostname == 'localhost'){
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
+            
+        }
+        else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
+        };
+
+        return URL;
+    };
+};
+
+isLocalhost();
+
+const baseUrl = URL[0];
 
 //----------------------function name has to be uppercase
 export default function Home() {
@@ -35,7 +59,7 @@ export default function Home() {
                 <div className="col-sm rounded-4 mt-3 mb-4 w-25 h-25 p-4 ms-5 text-white shadow text-center" style={{ backgroundColor: '#486284' }}>
                     <a>
                         <button className='bg-transparent text-white text-center border-0 w-100 h-100'>
-                            View Calendar
+                        View Calendar
                         </button>
                     </a>
                 </div>
