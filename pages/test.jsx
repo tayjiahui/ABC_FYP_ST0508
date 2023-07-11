@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import AlertBox from "../components/alert";
-import { flattenedDecrypt } from "jose";
 
 function getOptionId(e) {
   // console.log(e);
@@ -166,7 +165,7 @@ export default function YourComponent() {
         content="This is the content of the modal"
       /> */}
 
-      {/* {
+      {
         showAlert1 &&
           <div> 
             <h1>HXSHXDKJCHKD</h1>
@@ -174,13 +173,13 @@ export default function YourComponent() {
               Show={showAlert1}
               Body={`HELOOO`}/>
           </div>
-      } */}
+      }
 
       {/* <AlertBox 
               Show={showAlert1}
               Body={`HELOOO`}/> */}
 
-      <div
+      {/* <div
         className="modal fade"
         id="exampleModal"
         tabindex="-1"
@@ -215,7 +214,7 @@ export default function YourComponent() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
