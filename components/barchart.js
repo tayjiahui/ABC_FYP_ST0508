@@ -29,7 +29,6 @@ function isLocalhost() {
         if (hostname == 'localhost') {
             URL.push('http://localhost:3000', 'http://localhost:5000');
             console.log(URL);
-
         }
         else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');

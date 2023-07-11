@@ -502,7 +502,7 @@ export default function ViewPR({
         prID: prID,
       })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         alert(response.data);
 
         // redirect to traCk PO

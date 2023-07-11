@@ -373,7 +373,7 @@ export default function CreatePR({ from }) {
         remarks: Remark,
       })
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
 
         alert(response.data);
 

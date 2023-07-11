@@ -50,10 +50,10 @@ export default function Profile() {
 
         axios.get(`${baseUrl}/api/user/${userID}`)
             .then((response) => {
-                console.log(response.data);
+                // console.log(response.data);
 
                 const userData = response.data[0];
-                console.log("USER DATA", userData);
+                // console.log("USER DATA", userData);
 
                 setUsername(userData.name)
                 setEmail(userData.email);

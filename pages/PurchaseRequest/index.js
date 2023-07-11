@@ -1095,7 +1095,7 @@ export default function PurchaseRequest() {
             ByPRStatus: byPRStatus,
           })
           .then((response) => {
-            console.log(response.config.data);
+            // console.log(response.config.data);
             const searchResult = response.data;
 
             // Show List of Searched PR results
