@@ -49,6 +49,16 @@ h2 {
   color: black;
 }
 
+.demoappmain > a{
+    color: black;
+    text-decoration: none;
+}
+
+.fc-scrollgrid-sync-inner{
+    color: black;
+    text-decoration: none;
+}
+
 /* .fc { 
   max-width: 1100px;
   margin: 0 auto;
