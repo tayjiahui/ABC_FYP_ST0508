@@ -932,14 +932,15 @@ export default function PurchaseRequest() {
       setViewType(checked);
     }
 
-    handlePRSearch(e);
+    // currently beacuse of e gives error because searchValue Changes to "on" => from checkbox e.target.value
+    // handlePRSearch(e);
   };
 
   //   search PR
   const handlePRSearch = async (e) => {
     e.preventDefault();
 
-    setSearchValue(e.target.value);
+    // setSearchValue(e.target.value);
 
     // purchaser
     if (role === 2) {
@@ -963,7 +964,7 @@ export default function PurchaseRequest() {
           .then((response) => {
             // console.log(searchValue);
             // console.log(response.data);
-            console.log(response.config.data);
+            // console.log(response.config.data);
 
             const searchResult = response.data;
 
@@ -1214,7 +1215,7 @@ export default function PurchaseRequest() {
 
     setSearchValue(e.target.value);
 
-    handlePRSearch(e);
+    // handlePRSearch(e);
   };
 
   return (
@@ -1248,7 +1249,7 @@ export default function PurchaseRequest() {
                 type="text"
                 placeholder="  Search.."
                 value={searchValue}
-                onChange={handlePRSearch}
+                onChange={(e) => {PRSearch(e)}}
                 name="search"
                 className={styles.searchBox}
               />
