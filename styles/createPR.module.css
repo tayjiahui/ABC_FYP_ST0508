@@ -7,10 +7,11 @@
 }
 
 /* Header */
-.headerRow{
+.headerRow {
     vertical-align: middle;
 }
-#arrow{
+
+#arrow {
     vertical-align: middle;
     padding-right: 20px;
     padding-bottom: 5px;
@@ -22,50 +23,55 @@
     border-color: aqua;
 } */
 
-.prDetails,.productDetails{
+.prDetails,
+.productDetails {
     padding: 30px 0 30px 90px;
 }
 
-.viewRow,.productDetails{
+.viewRow,
+.productDetails {
     content: "";
     display: item;
     clear: both;
 }
 
-.viewCol{
-    float:left;
+.viewCol {
+    float: left;
     width: 50%;
 }
 
-.viewCol > input, .viewCol > div > div > input{
+.viewCol>input,
+.viewCol>div>div>input {
     width: 70%;
     height: 40px;
     border-radius: 10px;
     border-color: #93A2B7;
     border-style: solid;
-    border-width:2px;
+    border-width: 2px;
 }
-.locationInputs{
+
+.locationInputs {
     padding-bottom: 5px;
 }
 
-.addLocationButton, .removeLocationButton{
+.addLocationButton,
+.removeLocationButton {
     background-color: transparent;
     border: none;
 }
 
-.addLocIcon{
+.addLocIcon {
     vertical-align: middle;
 }
 
-.addLocationText{
+.addLocationText {
     margin: 0;
     padding-top: 5px;
 }
 
 /* Product Details */
 
-.plItemRow{
+.plItemRow {
     padding-top: 10px;
     vertical-align: middle;
     display: flex;
@@ -73,34 +79,40 @@
     text-align: left;
 }
 
-.plItemRow > div > p {
+.plItemRow>div>p {
     margin: 0;
 }
 
-.plItemNo{
+.plItemNo {
     text-align: center;
     width: 90%;
 }
 
-.plQty, .plUnitPrice, .plTotalUP{
+.plQty,
+.plUnitPrice,
+.plTotalUP {
     text-align: center;
     width: 50%;
-} 
+}
 
-.plItemName{
+.plItemName {
     width: 110%;
 }
 
-.plItemNo, .plItemName, .plQty, .plUnitPrice, .plTotalUP{
+.plItemNo,
+.plItemName,
+.plQty,
+.plUnitPrice,
+.plTotalUP {
     height: 30px;
     border-radius: 8px;
     border-color: #93A2B7;
     border-style: solid;
-    border-width:1.5px;
+    border-width: 1.5px;
 }
 
 /* Create PL line Button */
-.createButton{
+.createButton {
     background-color: rgb(255, 255, 255);
     width: 35px;
     height: 35px;
@@ -109,15 +121,15 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-.createButton:hover{
+.createButton:hover {
     background-color: #efecec;
 }
 
-.addIcon{
+.addIcon {
     vertical-align: middle;
 }
 
-.cancelIcon{
+.cancelIcon {
     transform: rotate(45deg);
     transition: 0.5s;
 }
@@ -127,30 +139,31 @@
     
 } */
 
-.textArea{
+.textArea {
     width: 100%;
     height: 200px;
     border-radius: 8px;
     border-color: #93A2B7;
     border-style: solid;
-    border-width:2px;
+    border-width: 2px;
     resize: none;
 }
 
 /* Submit Button */
-.submit{
+.submit {
     float: right;
     padding-bottom: 100px;
 }
 
-.reappeal{
+.reappeal {
     float: right;
     padding-bottom: 100px;
     width: 100%;
     height: 100%;
 }
 
-.submitButton,.resetReappealButton{
+.submitButton,
+.resetReappealButton {
     color: white;
     font-size: 15px;
     font-family: "Plus Jakarta Sans";
@@ -162,12 +175,12 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-.resetReappealButton{
+.resetReappealButton {
     background-color: #e16060;
 }
 
 /* Toggle */
-.toggle{
+.toggle {
     float: right;
     display: flex;
     flex-wrap: wrap;
@@ -183,9 +196,9 @@
     --toggle-wider: 3em;
     --color-grey: #93A2B7;
     --color-green: #476d9f;
-   }
-   
-   .slider {
+}
+
+.slider {
     display: inline-block;
     width: var(--button-width);
     height: var(--button-height);
@@ -193,9 +206,9 @@
     border-radius: calc(var(--button-height) / 2);
     position: relative;
     transition: 0.3s all ease-in-out;
-   }
-   
-   .slider::after {
+}
+
+.slider::after {
     content: "";
     display: inline-block;
     width: var(--toggle-diameter);
@@ -207,26 +220,25 @@
     transform: translateX(var(--button-toggle-offset));
     box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
     transition: 0.3s all ease-in-out;
-   }
-   
-   .switch input[type="checkbox"]:checked + .slider {
+}
+
+.switch input[type="checkbox"]:checked+.slider {
     background-color: var(--color-green);
-   }
-   
-   .switch input[type="checkbox"]:checked + .slider::after {
+}
+
+.switch input[type="checkbox"]:checked+.slider::after {
     transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
     box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
-   }
-   
-   .switch input[type="checkbox"] {
+}
+
+.switch input[type="checkbox"] {
     display: none;
-   }
-   
-   .switch input[type="checkbox"]:active + .slider::after {
+}
+
+.switch input[type="checkbox"]:active+.slider::after {
     width: var(--toggle-wider);
-   }
-   
-   .switch input[type="checkbox"]:checked:active + .slider::after {
+}
+
+.switch input[type="checkbox"]:checked:active+.slider::after {
     transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
-   }
-   
+}
