@@ -56,7 +56,6 @@ export default function Home() {
             </div>
 
             <div className="d-flex">
-
                 <div className="col-sm rounded-4 mt-3 mb-4 w-25 h-25 p-4 ms-5 text-white shadow text-center" style={{ backgroundColor: '#486284' }}>
                     <a>
                         <button className='bg-transparent text-white text-center border-0 w-100 h-100'>
@@ -73,9 +72,6 @@ export default function Home() {
                 </div>
             </div>
 
-
         </div>
-
-
     );
 };
