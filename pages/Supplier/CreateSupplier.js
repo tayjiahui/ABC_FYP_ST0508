@@ -14,22 +14,22 @@ import arrowIcon from '../../public/arrowIcon.svg';
 const URL = [];
 
 function isLocalhost() {
-  if (typeof window !== "undefined") {
-    const hostname = window.location.hostname;
-    console.log("hostname   " + hostname);
-    if (hostname == "localhost") {
-      URL.push("http://localhost:3000", "http://localhost:5000");
-      console.log(URL);
-    } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
-      URL.push(
-        "https://abc-cooking-studio-backend.azurewebsites.net",
-        "https://abc-cooking-studio.azurewebsites.net"
-      );
-      console.log(URL);
-    }
+    if (typeof window !== "undefined") {
+        const hostname = window.location.hostname;
+        console.log("hostname   " + hostname);
+        if (hostname == "localhost") {
+            URL.push("http://localhost:3000", "http://localhost:5000");
+            console.log(URL);
+        } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
+            URL.push(
+                "https://abc-cooking-studio-backend.azurewebsites.net",
+                "https://abc-cooking-studio.azurewebsites.net"
+            );
+            console.log(URL);
+        }
 
-    return URL;
-  }
+        return URL;
+    }
 };
 
 isLocalhost();
@@ -37,37 +37,7 @@ isLocalhost();
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-console.log(baseUrl, baseURL);
-
-// when submit button is clicked
-// formData - data for creating new supplier
-// selectedCategories - array of categoryIDs selected from multiselect dropdown
-// const handleFormSubmit = async(formData, selectedCategories) => {
-//     try {
-//         // create new supplier
-//         const response = await axios.post(`${baseUrl}/api/supplier/`, formData);
-//         const supplierID = response.data.supplierID;
-//         console.log(supplierID)
-
-//         // fetch latest supplierID
-//         const supplierIdResponse =await axios.get(`${baseUrl}/api/supplier/supplierid`);
-//         const supplier = supplierIdResponse.data;
-//         console.log(supplier)
-
-//         // create suppliers categories
-//         await axios.post(`${baseUrl}/api/supplier/suppliersCategory`, {
-//             fkSupplier_id: supplier.supplierID,
-//             fkCategory_id: selectedCategories
-//         });
-
-//         console.log("Supplier created: ", supplier);
-//         alert("Supplier created: ", supplier);
-//     }
-//     catch(err) {
-//         console.error(err);
-//         alert(err);
-//     }
-// };
+// console.log(baseUrl, baseURL);
 
 // create supplier form
 export default function CreateSupplier() {
