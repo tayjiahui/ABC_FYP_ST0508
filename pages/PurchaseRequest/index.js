@@ -6,6 +6,8 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+import WIP from "../../components/WIP";
+
 // Style Sheet
 import styles from "../../styles/purchaseReq.module.css";
 
@@ -65,7 +67,7 @@ function PRRow(props) {
     } else {
       return "/yellowPendingCircle.svg";
     }
-  }
+  };
 
   const circle = circleTest(statusID);
 
@@ -417,6 +419,9 @@ function AdHocRow(props) {
 
   const [showDescript, setShowDescript] = useState(false);
 
+  // in progress modal
+  const [showInProg, setInProg] = useState(false);
+
   function circleTest(statusID) {
     if (statusID == 1) {
       return "/yellowPendingCircle.svg";
@@ -427,7 +432,7 @@ function AdHocRow(props) {
     } else {
       return "/yellowPendingCircle.svg";
     }
-  }
+  };
 
   const circle = circleTest(statusID);
 
@@ -441,197 +446,208 @@ function AdHocRow(props) {
     setShowDescript(false);
   };
 
+  const WipModalOpen = () => {
+    setInProg(true);
+    console.log(showInProg)
+  };
+
   return (
-    <div className="py-1">
-      <a href={baseURL + "/PurchaseRequest/" + props.prID}>
-        <button className={styles.prButton}>
-          {props.RoleID === 2 && (
-            <div className={styles.prRow}>
-              <div className="pt-2 row">
-                <div className={styles.prTextRow}>
-                  <div className="px-4 ms-3 col-sm-1">
-                    {showDescript === false && (
-                      <button
-                        onClick={viewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                    {showDescript === true && (
-                      <button
-                        onClick={closeViewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                  </div>
+    <div>
+      <div className="py-1">
+        <a onClick={WipModalOpen}>
+          <button className={styles.prButton}>
+            {props.RoleID === 2 && (
+              <div className={styles.prRow}>
+                <div className="pt-2 row">
+                  <div className={styles.prTextRow}>
+                    <div className="px-4 ms-3 col-sm-1">
+                      {showDescript === false && (
+                        <button
+                          onClick={viewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <p>#{props.prID}</p>
+                        </button>
+                      )}
+                      {showDescript === true && (
+                        <button
+                          onClick={closeViewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <p>#{props.prID}</p>
+                        </button>
+                      )}
+                    </div>
 
-                  <div className="px-1 col-sm-1">
-                    <p>{props.ReqDate}</p>
-                  </div>
+                    <div className="px-1 col-sm-1">
+                      <p>{props.ReqDate}</p>
+                    </div>
 
-                  <div className="px-1 col-sm-1">
-                    <p>{props.TargetDate}</p>
-                  </div>
+                    <div className="px-1 col-sm-1">
+                      <p>{props.TargetDate}</p>
+                    </div>
 
-                  <div className="px-5 mx-3 col-sm-2">
-                    <div className="row">
-                      <div className="col-sm-1">
-                        <p className={styles.prTextStatus}>{props.Status}</p>
-                      </div>
-                      <div className="ps-5 ms-4 col-sm-2">
-                        <Icon item={circle} />
+                    <div className="px-5 mx-3 col-sm-2">
+                      <div className="row">
+                        <div className="col-sm-1">
+                          <p className={styles.prTextStatus}>{props.Status}</p>
+                        </div>
+                        <div className="ps-5 ms-4 col-sm-2">
+                          <Icon item={circle} />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="col-sm-1 px-0">
-                    {showDescript === false && (
-                      <button
-                        onClick={viewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={eyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                    {showDescript === true && (
-                      <button
-                        onClick={closeViewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={closeEyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {showDescript && (
-                <div className={styles.plRow}>
-                  <h5 className="ps-5 pt-3 text-start">
-                    <u>Description</u>
-                  </h5>
-
-                  <div className="py-2 ps-5 text-start">
-                    <p>{props.Description}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {props.RoleID === 1 && (
-            <div className={styles.prRow}>
-              <div className="pt-2 row">
-                <div className={styles.prTextRow}>
-                  <div className="px-4 mx-2 col-sm-1">
-                    {showDescript === false && (
-                      <button
-                        onClick={viewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                    {showDescript === true && (
-                      <button
-                        onClick={closeViewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="col-sm-1">
-                    <p>{props.ReqDate}</p>
-                  </div>
-
-                  <div className="px-1 ms-4 col-sm-1">
-                    <p>{props.Name}</p>
-                  </div>
-
-                  <div className="px-0 mx-4 col-sm-1 text-center">
-                    <p>{props.TargetDate}</p>
-                  </div>
-
-                  <div className="px-5 col-sm-2">
-                    <div className="row">
-                      <div className="col-sm-1">
-                        <p className={styles.prTextStatus}>{props.Status}</p>
-                      </div>
-                      <div className="ps-5 ms-4 col-sm-2">
-                        <Icon item={circle} />
-                      </div>
+                    <div className="col-sm-1 px-0">
+                      {showDescript === false && (
+                        <button
+                          onClick={viewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <Image
+                            src={eyeCon}
+                            width={30}
+                            height={30}
+                            alt="Eye Icon"
+                          />
+                        </button>
+                      )}
+                      {showDescript === true && (
+                        <button
+                          onClick={closeViewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <Image
+                            src={closeEyeCon}
+                            width={30}
+                            height={30}
+                            alt="Eye Icon"
+                          />
+                        </button>
+                      )}
                     </div>
                   </div>
-
-                  <div className="col-sm-1">
-                    {showDescript === false && (
-                      <button
-                        onClick={viewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={eyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                    {showDescript === true && (
-                      <button
-                        onClick={closeViewDescription}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={closeEyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                  </div>
                 </div>
+
+                {showDescript && (
+                  <div className={styles.plRow}>
+                    <h5 className="ps-5 pt-3 text-start">
+                      <u>Description</u>
+                    </h5>
+
+                    <div className="py-2 ps-5 text-start">
+                      <p>{props.Description}</p>
+                    </div>
+                  </div>
+                )}
               </div>
+            )}
 
-              {showDescript && (
-                <div className={styles.plRow}>
-                  <h5 className="ps-5 pt-3 text-start">
-                    <u>Description</u>
-                  </h5>
+            {props.RoleID === 1 && (
+              <div className={styles.prRow}>
+                <div className="pt-2 row">
+                  <div className={styles.prTextRow}>
+                    <div className="px-4 mx-2 col-sm-1">
+                      {showDescript === false && (
+                        <button
+                          onClick={viewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <p>#{props.prID}</p>
+                        </button>
+                      )}
+                      {showDescript === true && (
+                        <button
+                          onClick={closeViewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <p>#{props.prID}</p>
+                        </button>
+                      )}
+                    </div>
 
-                  <div className="py-2 ps-5 text-start">
-                    <p>{props.Description}</p>
+                    <div className="col-sm-1">
+                      <p>{props.ReqDate}</p>
+                    </div>
+
+                    <div className="px-1 ms-4 col-sm-1">
+                      <p>{props.Name}</p>
+                    </div>
+
+                    <div className="px-0 mx-4 col-sm-1 text-center">
+                      <p>{props.TargetDate}</p>
+                    </div>
+
+                    <div className="px-5 col-sm-2">
+                      <div className="row">
+                        <div className="col-sm-1">
+                          <p className={styles.prTextStatus}>{props.Status}</p>
+                        </div>
+                        <div className="ps-5 ms-4 col-sm-2">
+                          <Icon item={circle} />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="col-sm-1">
+                      {showDescript === false && (
+                        <button
+                          onClick={viewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <Image
+                            src={eyeCon}
+                            width={30}
+                            height={30}
+                            alt="Eye Icon"
+                          />
+                        </button>
+                      )}
+                      {showDescript === true && (
+                        <button
+                          onClick={closeViewDescription}
+                          type="button"
+                          className={styles.viewIconButton}
+                        >
+                          <Image
+                            src={closeEyeCon}
+                            width={30}
+                            height={30}
+                            alt="Eye Icon"
+                          />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
-          )}
-        </button>
-      </a>
+
+                {showDescript && (
+                  <div className={styles.plRow}>
+                    <h5 className="ps-5 pt-3 text-start">
+                      <u>Description</u>
+                    </h5>
+
+                    <div className="py-2 ps-5 text-start">
+                      <p>{props.Description}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </button>
+        </a>
+      </div>
+      {
+        showInProg &&
+        <WIP Show={showInProg} />
+      }
     </div>
   );
 };
@@ -658,6 +674,9 @@ export default function PurchaseRequest() {
   const [byPaymentMode, setByPaymentMode] = useState(true);
   const [byRemarks, setByRemarks] = useState(true);
   const [byPRStatus, setByPRStatus] = useState(true);
+
+  // in progress modal
+  const [showInProg, setInProg] = useState(false);
 
   // show all PR
   useEffect(() => {
@@ -902,11 +921,15 @@ export default function PurchaseRequest() {
     } else if(id === "viewAll"){
         setViewType(checked);
     };
+
+    handlePRSearch(e);
   };
 
   //   search PR
   const handlePRSearch = async (e) => {
     e.preventDefault();
+
+    setSearchValue(e.target.value);
 
     // purchaser
     if (role === 2) {
@@ -1176,6 +1199,14 @@ export default function PurchaseRequest() {
     }
   };
 
+  const PRSearch = async(e) => {
+    e.preventDefault();
+
+    setSearchValue(e.target.value);
+
+    handlePRSearch(e);
+  };
+
   return (
     <>
       <h1 className={styles.header}>Purchase Request</h1>
@@ -1207,7 +1238,7 @@ export default function PurchaseRequest() {
                 type="text"
                 placeholder="  Search.."
                 value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                onChange={handlePRSearch}
                 name="search"
                 className={styles.searchBox}
               />
@@ -1434,6 +1465,11 @@ export default function PurchaseRequest() {
           </div>
         </div>
       )}
+
+      {
+        showInProg === false &&
+          <WIP Show={showInProg} />
+      }
     </>
   );
 }
