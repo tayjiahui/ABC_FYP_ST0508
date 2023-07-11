@@ -448,7 +448,8 @@ function AdHocRow(props) {
   };
 
   // open WIP Modal & Set timer to close
-  const WipModalOpen = () => {
+  const WipModalOpen = async(e) => {
+    e.preventDefault();
     setInProg(true);
     timeFunc();
   };
@@ -467,7 +468,7 @@ function AdHocRow(props) {
   return (
     <div>
       <div className="py-1">
-        <a onClick={WipModalOpen}>
+        <a>
           <button className={styles.prButton}>
             {props.RoleID === 2 && (
               <div className={styles.prRow}>
@@ -516,7 +517,7 @@ function AdHocRow(props) {
                     <div className="col-sm-1 px-0">
                       {showDescript === false && (
                         <button
-                          onClick={viewDescription}
+                          onClick={e => {viewDescription(e)}}
                           type="button"
                           className={styles.viewIconButton}
                         >
