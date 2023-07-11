@@ -8,31 +8,34 @@ import searchIcon from '../../public/searchIcon.svg';
 import filterIcon from '../../public/filterIcon.svg';
 import plusIcon from '../../public/plusIcon.svg';
 
+// Base urls
 const URL = [];
 
-function isLocalhost()
-{
-    if (typeof window !== "undefined") {
-        const hostname = window.location.hostname;
-        console.log("hostname   " + hostname);
-        if (hostname == "localhost") {
-            URL.push('http://localhost:3000', 'http://localhost:5000');
-            console.log(URL);
-        }
-        else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-            console.log(URL);
-        }
-        return URL;
+function isLocalhost() {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    console.log("hostname: " + hostname);
+    if (hostname == "localhost") {
+      URL.push("http://localhost:3000", "http://localhost:5000");
+      console.log(URL);
+    } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
+      URL.push(
+        "https://abc-cooking-studio-backend.azurewebsites.net",
+        "https://abc-cooking-studio.azurewebsites.net"
+      );
+      console.log("URL: "+URL);
     }
-}
+
+    return URL;
+  }
+};
 
 isLocalhost();
 
-const baseUrl = 'http://localhost:3000';
-const baseURL = 'http://localhost:5000';
+const baseUrl = URL[0];
+const baseURL = URL[1];
 
-console.log(baseUrl, baseURL);
+console.log("baseUrl:"+baseUrl, baseURL);
 
 // main supplier page
 export default function Supplier({ suppliers }) {
