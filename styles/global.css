@@ -95,3 +95,10 @@ input[type="email"] {
     box-sizing: border-box;
     padding-left: 10px;
 }
+
+/* Calendar */
+
+a{
+    text-decoration: none;
+    color: black;
+}

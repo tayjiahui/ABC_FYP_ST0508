@@ -265,17 +265,17 @@ export default function TrackOrder() {
         .catch(err => console.log(err));
     }, []);
 
-  // PO ID FROM DATABASE
-  const poID = props.poID;
+    // PO ID FROM DATABASE
+    const poID = props.poID;
 
-  // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
-  const poId = props.prID;
+    // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
+    const poId = props.prID;
 
-  const handleStatusChange = (event) => {
-    setSelectedStatus(event.target.value);
-    const selectedValue = event.target.value;
-    console.log(event.target)
-    console.log("value", selectedValue)
+    const handleStatusChange = (event) => {
+      setSelectedStatus(event.target.value);
+      const selectedValue = event.target.value;
+      console.log(event.target)
+      console.log("value", selectedValue)
 
       if (selectedValue === "+ Create New Status") {
         setNewStatusPop(true);
@@ -305,22 +305,22 @@ export default function TrackOrder() {
           <a href={baseURL + '/TrackOrder/' + poId}>
             <button className="border-0" style={{ backgroundColor: 'transparent' }}>
               <div className={styles.orderTextRow}>
-                  {/* <div className="row ms-4">
+                {/* <div className="row ms-4">
                   <p>{props.poID}</p>
                 </div> */}
-                  <div className="row ms-4">
-                    <p>{props.prID}</p>
-                  </div>
-                  <div className="row ms-5">
-                    <p>{props.date}</p>
-                  </div>
-                  <div className="row ms-5">
-                    <p>{props.Name}</p>
-                  </div>
-                  <div className="row ms-5">
-                    <p>{props.Supplier}</p>
-                  </div>
+                <div className="row ms-4">
+                  <p>{props.prID}</p>
                 </div>
+                <div className="row ms-5">
+                  <p>{props.date}</p>
+                </div>
+                <div className="row ms-5">
+                  <p>{props.Name}</p>
+                </div>
+                <div className="row ms-5">
+                  <p>{props.Supplier}</p>
+                </div>
+              </div>
             </button>
           </a>
           {/* <div className={styles.container2}>
@@ -388,6 +388,8 @@ export default function TrackOrder() {
   };
 
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
+  const [searchValue, setSearchValue] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   // show all Track Order
   useEffect(() => {
@@ -437,17 +439,48 @@ export default function TrackOrder() {
       });
   }, []);
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    await axios.post(`${baseUrl}/api/trackOrder/POsearch`,
+      {
+        "searchValue": searchValue
+      }
+    )
+      .then((response) => {
+        console.log(response.data)
+        setSearchResults(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.code === "ERR_NETWORK") {
+          alert(err.message);
+        }
+        else if (err.response.status === 404) {
+          setlist1(<div className="p-5">No Results Found!</div>)
+        }
+        else {
+          alert(err.response.data);
+        };
+      });
+  }
+
   return (
     <>
       <div className="d-flex">
         <h1 className="w-75">Order Tracking</h1>
         <div>
           <div className={styles.searchContainer}>
-            <form>
-              <input type="text" placeholder="Search.." name="search" className={styles.searchBox} />
-              <button type="submit" className={styles.searchButton}><Image src={searchIcon} /></button>
-              <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20} /></button>
+            <form onSubmit={handleSearch}>
+              <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox} />
+              <button type="submit" className={styles.searchButton}><Image src={searchIcon} width={25} alt='Search' /></button>
+              <button type="button" className={styles.searchButton}><Image src={filterIcon} width={25} alt='Filter' /></button>
             </form>
+            <ul>
+              {searchResults.map((result) => (
+                <li key={result.id}>{result.name}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

@@ -8,36 +8,42 @@ import searchIcon from '../../public/searchIcon.svg';
 import filterIcon from '../../public/filterIcon.svg';
 import plusIcon from '../../public/plusIcon.svg';
 
+// Base urls
 const URL = [];
 
-function isLocalhost()
-{
+function isLocalhost() {
     if (typeof window !== "undefined") {
         const hostname = window.location.hostname;
-        console.log("hostname   " + hostname);
+        console.log("hostname: " + hostname);
         if (hostname == "localhost") {
             URL.push('http://localhost:3000', 'http://localhost:5000');
             console.log(URL);
+        } else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+            URL.push(
+                'https://abc-cooking-studio-backend.azurewebsites.net',
+                'https://abc-cooking-studio.azurewebsites.net'
+            );
+            console.log("URL: " + URL);
         }
-        else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-            console.log(URL);
-        }
+
         return URL;
     }
-}
+};
 
 isLocalhost();
 
-const baseUrl = 'http://localhost:3000';
-const baseURL = 'http://localhost:5000';
+console.log("url[0]: "+URL[0]);
+console.log("url[1]: "+URL[1]);
 
-console.log(baseUrl, baseURL);
+const baseUrl = URL[0];
+const baseURL = URL[1];
+
+// console.log(baseUrl, baseURL);
 
 // main supplier page
 export default function Supplier({ suppliers }) {
     const supplierList = suppliers.map((supplier, index) => (
-        <a href={baseURL + '/Supplier/' + supplier.supplierID}>
+        <a href={'/Supplier/' + supplier.supplierID}>
             <button className={styles.cardLink}>
                 <div className={styles.listRow}>
                     <div key={index} className={styles.listContent}>
@@ -95,9 +101,19 @@ export default function Supplier({ suppliers }) {
     )
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
+    const host = context.req.headers.host;
+    const backBaseURL = [];
+
+    if(host == 'localhost:5000') {
+        backBaseURL.push('http://localhost:3000');
+    }
+    else {
+        backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
+    }
+
     try {
-        const response = await axios.get(`${baseUrl}/api/supplier/all`);
+        const response = await axios.get(`${backBaseURL}/api/supplier/all`);
         const suppliers = await response.data;
         return {
             props: {
