@@ -1,7 +1,5 @@
 // this is the homepage
-
-import Link from 'next/link'
-// import { useEffect, useState } from "react";
+import Link from 'next/link';
 import BarChart from '../components/barchart';
 import PrAmt from '../components/prAmt';
 import PoAmt from '../components/poAmt';
