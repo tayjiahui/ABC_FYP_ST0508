@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+// Component
 import WIP from "../../components/WIP";
 
 // Style Sheet
@@ -446,9 +447,21 @@ function AdHocRow(props) {
     setShowDescript(false);
   };
 
+  // open WIP Modal & Set timer to close
   const WipModalOpen = () => {
     setInProg(true);
-    console.log(showInProg)
+    timeFunc();
+  };
+
+  // timer
+  function timeFunc() {
+    // 2 seconds
+    setTimeout(closeWIPModal, 2000);
+  };
+
+  // close WIP Modal
+  function closeWIPModal() {
+    setInProg(false);
   };
 
   return (
