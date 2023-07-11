@@ -7,13 +7,12 @@ import styles from "../styles/WIP.module.css"
 import xIcon from '../public/xIcon.svg';
 
 export default function WIPModal(props){
+    // WIP Modal State
     const [showInProg, setInProg] = useState(props.Show);
-    console.log(showInProg, "atfirst")
 
     //   Filter Pop Up Close
     const handleFilterPopUpClose = async() => {
         setInProg(false);
-        console.log(showInProg,"modale kfkf");
     };
 
     return(
