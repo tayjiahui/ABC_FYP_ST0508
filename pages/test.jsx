@@ -167,12 +167,12 @@ export default function YourComponent() {
 
       {
         showAlert1 &&
-          <div> 
-            <h1>HXSHXDKJCHKD</h1>
-            <AlertBox 
-              Show={showAlert1}
-              Body={`HELOOO`}/>
-          </div>
+        <div>
+          <h1>HXSHXDKJCHKD</h1>
+          <AlertBox
+            Show={showAlert1}
+            Body={`HELOOO`} />
+        </div>
       }
 
       {/* <AlertBox 

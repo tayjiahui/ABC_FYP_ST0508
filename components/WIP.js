@@ -6,17 +6,17 @@ import styles from "../styles/WIP.module.css"
 
 import xIcon from '../public/xIcon.svg';
 
-export default function WIPModal(props){
+export default function WIPModal(props) {
     // WIP Modal State
     const [showInProg, setInProg] = useState(props.Show);
 
     //   Filter Pop Up Close
-    const handleFilterPopUpClose = async() => {
+    const handleFilterPopUpClose = async () => {
         setInProg(false);
     };
 
-    return(
-        <>  
+    return (
+        <>
             {showInProg &&
                 <div className={styles.inProgressBox}>
                     <div className={styles.inProgBox}>
@@ -27,7 +27,7 @@ export default function WIPModal(props){
 
                             <div className="col-sm-1 pt-1 ps-5">
                                 <button onClick={handleFilterPopUpClose} className={styles.closePopUpButton}>
-                                    <Image src={xIcon} width={35} height={35} alt="Cancel"/>
+                                    <Image src={xIcon} width={35} height={35} alt="Cancel" />
                                 </button>
                             </div>
                         </div>
@@ -41,7 +41,7 @@ export default function WIPModal(props){
                     </div>
                 </div>
             }
-            
+
         </>
     );
 };

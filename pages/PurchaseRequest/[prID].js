@@ -124,7 +124,9 @@ export async function getServerSideProps(context) {
 
   // Normal View PR by ID page
   const getPRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${prID}`);
-  const getPRProductLines = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${prID}`);
+  const getPRProductLines = await fetch(
+    `${backBaseURL}/api/purchaseReq/lineItem/${prID}`
+  );
 
   const prDetails = await getPRDetails.json();
   const prProductLines = await getPRProductLines.json();
@@ -132,7 +134,9 @@ export async function getServerSideProps(context) {
   // Reappeal PR Form
   const getSuppliers = await fetch(`${backBaseURL}/api/supplier/all`);
   const getBranches = await fetch(`${backBaseURL}/api/purchaseReq/branch/all`);
-  const getPaymentModes = await fetch(`${backBaseURL}/api/purchaseReq/paymentMode/all`);
+  const getPaymentModes = await fetch(
+    `${backBaseURL}/api/purchaseReq/paymentMode/all`
+  );
   const getInventory = await fetch(`${backBaseURL}/api/inventory/item/all`);
 
   const suppliers = await getSuppliers.json();
@@ -143,8 +147,8 @@ export async function getServerSideProps(context) {
   const ogLocations = [];
   const ogPL = [];
 
-//   console.log(prDetails);
-//   console.log(prProductLines);
+  //   console.log(prDetails);
+  //   console.log(prProductLines);
 
   const PR = prDetails[0];
 
@@ -178,7 +182,7 @@ export async function getServerSideProps(context) {
         POCheck.push(false);
       } else {
         console.log(err.response);
-      };
+      }
     });
 
   return {
@@ -216,7 +220,7 @@ export default function ViewPR({
   const [id, setUserID] = useState();
   const [role, setRoleID] = useState();
 
-//   Normal view PR ID
+  //   Normal view PR ID
   const [Circle, testCircle] = useState();
 
   const [TargetDeliveryDate, setTargetDate] = useState();
@@ -229,7 +233,7 @@ export default function ViewPR({
 
   const [checkRemark, setRemark] = useState(false);
 
-    // Approver Sections
+  // Approver Sections
   const [checkApprComment, setComment] = useState(false);
 
   const [ApprComment, setApprComment] = useState();
@@ -511,33 +515,31 @@ export default function ViewPR({
   };
 
   // enable reappeal form
-  const handleReappealPR = async(e) => {
+  const handleReappealPR = async (e) => {
     e.preventDefault();
 
-    await axios.put(`${baseUrl}/api/purchaseReq/PR/ApprComment/${prID}`,
-        {
-            comments: viewApprComment
-        }
-    )
-    .catch((err) => {
+    await axios
+      .put(`${baseUrl}/api/purchaseReq/PR/ApprComment/${prID}`, {
+        comments: viewApprComment,
+      })
+      .catch((err) => {
         console.log(err);
-    });
+      });
     allowReappeal(true);
     scrollToTop();
   };
 
-//   Close reappeal form
-  const handleBackReappeal= async(e) => {
+  //   Close reappeal form
+  const handleBackReappeal = async (e) => {
     e.preventDefault();
 
-    await axios.put(`${baseUrl}/api/purchaseReq/PR/ApprComment/${prID}`,
-        {
-            comments: viewApprComment
-        }
-    )
-    .catch((err) => {
+    await axios
+      .put(`${baseUrl}/api/purchaseReq/PR/ApprComment/${prID}`, {
+        comments: viewApprComment,
+      })
+      .catch((err) => {
         console.log(err);
-    });
+      });
     allowReappeal(false);
   };
 
@@ -623,7 +625,10 @@ export default function ViewPR({
     value: PR.supplierName,
     id: PR.supplierID,
   });
-  const [PMV, setPM] = useState({ value: PR.paymentMode, id: PR.paymentModeID });
+  const [PMV, setPM] = useState({
+    value: PR.paymentMode,
+    id: PR.paymentModeID,
+  });
   const [Remark, setRemarkR] = useState(PR.remarks);
 
   const handleSupplierInput = (e) => {
@@ -680,7 +685,6 @@ export default function ViewPR({
 
             // redirect
             router.push(`/PurchaseRequest/${latestPRID}`);
- 
           });
       })
       .catch((err) => {
@@ -1396,10 +1400,9 @@ export default function ViewPR({
                           <div className={styles.reappealPR}>
                             <button
                               onClick={handleBackReappeal}
-                              className={styles.reappealPRButton}>
-                                <div className="px-5">
-                                    Back
-                                </div>
+                              className={styles.reappealPRButton}
+                            >
+                              <div className="px-5">Back</div>
                             </button>
                           </div>
                         </div>
