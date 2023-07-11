@@ -38,15 +38,12 @@ console.log("url[1]: "+URL[1]);
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-// const baseUrl = 'http://localhost:3000';
-// const baseURL = 'http://localhost:5000';
-
-console.log("baseUrl:"+baseUrl, baseURL);
+// console.log(baseUrl, baseURL);
 
 // main supplier page
 export default function Supplier({ suppliers }) {
     const supplierList = suppliers.map((supplier, index) => (
-        <a href={baseURL + '/Supplier/' + supplier.supplierID}>
+        <a href={'/Supplier/' + supplier.supplierID}>
             <button className={styles.cardLink}>
                 <div className={styles.listRow}>
                     <div key={index} className={styles.listContent}>

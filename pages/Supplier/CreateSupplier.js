@@ -37,7 +37,7 @@ isLocalhost();
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-console.log(baseUrl, baseURL);
+// console.log(baseUrl, baseURL);
 
 // create supplier form
 export default function CreateSupplier() {

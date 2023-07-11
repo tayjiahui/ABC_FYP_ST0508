@@ -34,12 +34,10 @@ function isLocalhost() {
 
 isLocalhost();
 
-// const baseUrl = 'http://localhost:3000';
-// const baseURL = 'http://localhost:5000';
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-console.log(baseUrl, baseURL);
+// console.log(baseUrl, baseURL);
 
 // get supplier info
 export async function getServerSideProps(context) {
