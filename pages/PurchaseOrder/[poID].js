@@ -7,27 +7,62 @@ import arrowIcon from '../../public/arrowIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 
+// Base urls
+const URL = [];
 
+function isLocalhost (){
+    if (typeof window !== 'undefined') {
+        const hostname = window.location.hostname;
+        console.log("hostname",hostname)
+        // console.log('hostname   ' + hostname);
+        if(hostname == 'localhost'){
+            URL.push('http://localhost:3000', 'http://localhost:5000');
+            console.log(URL);
+            
+        }
+        else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
+            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+            console.log(URL);
+        };
 
-function isLocalhost(url) {
-  return url.includes('localhost') || url.includes('127.0.0.1');
-}
+        return URL;
+    };
+};
+
+isLocalhost();
+
+const baseUrl = URL[0];
+const frontendBaseUrl = URL[1]
+
 
 // const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
 // const baseUrl = API_URL;
 // const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
-const baseUrl = 'http://localhost:3000';
-const baseURL = 'http://localhost:5000';
+// const baseUrl = 'http://localhost:3000';
+// const baseURL = 'http://localhost:5000';
 
 
 
 
 export async function getServerSideProps(context) {
+
+  const host = context.req.headers.host;
+    // console.log(host);
+    
+    const backBaseURL = [];
+
+    if(host == 'localhost:5000'){
+        backBaseURL.push('http://localhost:3000');
+    }
+    else{
+        backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
+    };
+
   const { params } = context;
   const { poID } = params;
 
 
-  const paymentTrackResponse = await fetch(`${baseUrl}/api/paymentTrack/supplier/pr/${poID}`);
+  const paymentTrackResponse = await fetch(`${backBaseURL}/api/paymentTrack/supplier/pr/${poID}`);
 
   const response1 = await paymentTrackResponse.json();
   const supplierID = response1[0].supplierID;
@@ -36,14 +71,14 @@ export async function getServerSideProps(context) {
   // console.log(supplierID);
 
   //supplier info
-  const supplierInfoResponse = await fetch(`${baseUrl}/api/paymentTrack/supplier/info/${supplierID}`);
+  const supplierInfoResponse = await fetch(`${backBaseURL}/api/paymentTrack/supplier/info/${supplierID}`);
   const supplierInfo = await supplierInfoResponse.json();
 
   //product details
-  const productInfoResponse = await fetch(`${baseUrl}/api/purchaseReq/lineItem/${poID}`);
+  const productInfoResponse = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
   const productInfo = await productInfoResponse.json();
 
-  const remarksInfoResponse = await fetch(`${baseUrl}/api/purchaseReq/PR/${poID}`);
+  const remarksInfoResponse = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
   const remarksInfo = await remarksInfoResponse.json();
 
   //purchase order details 
@@ -106,72 +141,77 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   };
 
   const handleSave = () => {
-    axios.put(`${baseUrl}/api/purchaseOrder/remarks/${poID}`,{
+    axios.put(`${baseUrl}/api/purchaseOrder/remarks/${poID}`, {
       ptRemarks: remarks
     })
-    .then (res => {
-      console.log("succesfully updated remarks.")
-    })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(res => {
+        console.log("succesfully updated remarks.")
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   const fetchRemarks = () => {
     axios.get(`${baseUrl}/api/purchaseOrder/remarks/${poID}`)
-    .then(res => {
-      console.log("REMARKS FETCHING",res.data[0].ptRemarks)
-      const remarksData = res.data[0].ptRemarks;
-      setRemarks(remarksData);
-    })
-    .catch(err => {
-      console.log(err)
-    })
+      .then(res => {
+        console.log("REMARKS FETCHING", res.data[0].ptRemarks)
+        const remarksData = res.data[0].ptRemarks;
+        setRemarks(remarksData);
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   //load remarks when page load
   useEffect(() => {
     fetchRemarks();
-  },[])
+  }, [])
 
   //saving the uploaded file onto webpage. 
   // const fileType = ['application/pdf']
+
+
+  // const handleFileUpload = async (e) => {
+  //   const file = e.target.files[0];
+  //   const reader = new FileReader();
+
+  //   reader.onload = () => {
+  //     const blob = new Blob([reader.result], { tyle: file.type });
+  //     setSelectedFile(blob);
+  //   };
+
+  //   reader.readAsArrayBuffer(file);
+
+  // }
+
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
-    setSelectedFile(file);
-    //   if (selectedFile) {
-    //     if (selectedFile && fileType.includes(selectedFile.type)) {
-    //       let reader = new FileReader()
-    //       reader.readAsDataURL(selectedFile)
-    //       reader.onload = (e) => {
-    //           setPDFFile(e.target.result)
-    //       }
-    //     } 
-    //     else {
-    //       setPDFFile([])
-    //     }
-    // } else {
-    //   console.log("select pdf file")
+    const reader = new FileReader();
+  
+    reader.onload = () => {
+      const blob = new Blob([reader.result], { tyle: file.type });
+      setSelectedFile(blob);
+    };
+  
+    reader.readAsArrayBuffer(file);
   }
-
-
-  // const multer = require('multer');
-  // const upload = multer({ dest: 'uploads/'});
-
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('pdf', file);
-
-  //     await axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, formData);
-  //     alert('file uploaded successfully');
-
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-
-  // };
-
+  
+  const handleUpload = async () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('pdfData', selectedFile); 
+  
+      axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, formData)
+        .then(() => {
+          console.log('receipt uploaded..');
+        })
+        .catch((err) => {
+          console.log("error uploading receipt",err);
+        })
+    }
+  }
 
   //end saving of page 
 
@@ -304,38 +344,38 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           .catch(poErr => console.log(poErr));
       })
       .catch(err => console.log(err));
-  },[])
+  }, [])
 
   const handleStatusChange2 = (event) => {
     setSelectedStatus2(event.target.value);
     const selectedValue = event.target.value;
 
-    alert(selectedValue) 
+    alert(selectedValue)
 
     //fetching id from status 
     axios.get(`${baseUrl}/api/paymentTrack/status/${selectedValue}`)
-    .then(res => {
-      console.log(res.data[0].PaymentStatusID);
-      const ID = (res.data[0].PaymentStatusID)
-      console.log("New Status: " + ID)
+      .then(res => {
+        console.log(res.data[0].PaymentStatusID);
+        const ID = (res.data[0].PaymentStatusID)
+        console.log("New Status: " + ID)
 
-      //updating payment status in db
-      axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
-        paymentStatusID: ID
-      })
-      .then (res => {
-        console.log('payment status updated sucessfully')
+        //updating payment status in db
+        axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
+          paymentStatusID: ID
+        })
+          .then(res => {
+            console.log('payment status updated sucessfully')
+          })
+          .catch(err => {
+            console.log(err);
+          })
+
       })
       .catch(err => {
         console.log(err);
       })
 
-    })
-    .catch(err =>{
-      console.log(err);
-    })
 
-    
 
     if (selectedValue === "+ Create New Status") {
       setNewStatusPop(true);
@@ -358,15 +398,15 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           <a href={"/PurchaseOrder"}>
             <Image src={arrowIcon} className={styles.back} />
           </a>
-          <p className={styles.title}>Purchase Order #{poID}</p>
+          Purchase Order #{poID}
         </h1>
       </div>
 
 
 
-      <div className="containersupplier mt-5 m-auto col-10">
+      <div className="containersupplier mt-5 m-auto col-11">
         <div className="row row-cols-4">
-          <h4 className="col-12 mt-10">Supplier Information</h4>
+          <h4 className="col-12">Supplier Information</h4>
           <div className="col-12">
             <hr /> <br />
           </div>
@@ -549,7 +589,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
               <br />
 
 
-              <div>
+              <div className="containersupplier mt-5 col-11">
                 <h4>Remarks</h4> <br />
                 <p>{remarkDetail[0].remarks}</p>
               </div>
@@ -562,9 +602,9 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
 
       {/* payment */}
-      <div className="container-fluid mt-5">
+      <div className="mt-5 col-12">
         <div className="row">
-          <div className="col-md-5 offset-md-1">
+          <div className="col-md-5 offset-md-1" >
             <div className="form-group">
               <label htmlFor="paymentStatus">Payment Status:</label>
               <select className="form-control" id="paymentStatus" value={selectedPaymentStatus} onChange={handleStatusChange2}>
@@ -619,9 +659,9 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                       <span aria-hidden="true">&times;</span>
                     </button> <br />
                     <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <p className="mb-3">Drag and drop file here</p>
-                      <p>or</p>
-                      <input type="file" className="btn btn-custom-primary mt-3" style={{ display: 'none' }} /*onChange={handleFileUpload}*/ id="fileUpload" />
+                      {/* <p className="mb-3">Drag and drop file here</p>
+                      <p>or</p> */}
+                      <input type="file" className="btn btn-custom-primary mt-3" style={{ display: 'none' }} onChange={(e) => { handleFileUpload(e); }} id="fileUpload" />
 
                       <label htmlFor="fileUpload" className="btn btn-custom-primary mt-3" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', cursor: 'pointer' }}>
                         Browse Computer
@@ -638,7 +678,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                   )}
 
                   <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', marginRight: '10px' }} onClick={handleCloseModal}>Cancel</button>
-                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={() => { handleCloseModal(); handleOpenModal2(); }}>Upload</button>
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={() => { handleCloseModal(); handleOpenModal2(); handleUpload() }}>Upload</button>
                 </div>
               </div>
             </div>
@@ -696,7 +736,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         <div className="col-md-10 offset-md-1">
           <div className="mb-4 mt-5">
             <b className="d-inline-block">Remarks</b> <br />
-            <input
+            <textarea
               type="text"
               className="form-control mt-2"
               style={{
@@ -712,12 +752,17 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         </div>
       </div>
 
-      <div className={styles.save}>
-        <button className={styles.saveButton} onClick={handleSave}> Save </button>
+      <div className="row">
+        <div className="col-md-10 offset-md-1">
+          <div className="text-end">
+            <button className="btn" style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '10px 50px 10px 50px' }} onClick={handleSave}>
+              Save Remarks
+            </button>
+          </div>
+        </div>
       </div>
-
-
     </>
   )
 }
 
+//<button className={`btn ${selectedStatus2.paymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={handleOpenModal} disabled={selectedStatus2.paymentStatus === 'Pending'}>Upload Receipt</button>
