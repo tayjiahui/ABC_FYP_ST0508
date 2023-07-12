@@ -1337,8 +1337,8 @@ export default function ViewPR({
             </div>
 
             <div className="d-flex mx-5">
-              <div className="col-sm"></div>
-              <div className="col-sm-4 mx-5 pt-5">
+              {/* <div className="col-sm"></div> */}
+              <div className="col-sm-9">
                 {/* <div className={styles2.submit}>
                                         <button type="button" onClick={handleRefresh} className={styles2.resetReappealButton}>
                                             <div className="px-5">
@@ -1347,9 +1347,9 @@ export default function ViewPR({
                                         </button>
                                     </div> */}
               </div>
-              <div className="col-sm-4 mx-5 pt-5">
+              <div className="col-sm py-5">
                 <div className={styles2.reappeal}>
-                  <button type="submit" className={styles2.submitButton}>
+                  <button type="submit" className={styles2.reappealButton}>
                     <div className="px-5">Reappeal PR</div>
                   </button>
                 </div>
