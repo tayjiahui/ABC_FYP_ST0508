@@ -43,7 +43,6 @@ const frontendBaseUrl = URL[1]
 
 
 
-
 export async function getServerSideProps(context) {
 
   const host = context.req.headers.host;
@@ -374,8 +373,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       .catch(err => {
         console.log(err);
       })
-
-
 
     if (selectedValue === "+ Create New Status") {
       setNewStatusPop(true);
