@@ -8,6 +8,33 @@ import moment from 'moment';
 import Image from 'next/image';
 import searchBtn from '../../public/searchIcon.svg';
 
+// Base urls
+const URL = [];
+
+function isLocalhost() {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    // console.log('hostname   ' + hostname);
+    if (hostname == "localhost") {
+      URL.push("http://localhost:3000", "http://localhost:5000");
+      console.log(URL);
+    } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
+      URL.push(
+        "https://abc-cooking-studio-backend.azurewebsites.net",
+        "https://abc-cooking-studio.azurewebsites.net"
+      );
+      console.log(URL);
+    }
+
+    return URL;
+  }
+}
+
+isLocalhost();
+
+const baseUrl = URL[0];
+const baseURL = URL[1];
+
 export default function TrackPayment({ purchaseOrder }) {
   const [searchInput, setSearchInput] = useState([]);
   const [filteredPurchaseOrders, setFilteredPurchaseOrders] = useState(purchaseOrder);
@@ -55,7 +82,7 @@ export default function TrackPayment({ purchaseOrder }) {
 
       <div>
         {filteredPurchaseOrders.map((po, index) => (
-          <Link key={index} href={'http://localhost:5000/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark drop-shadow ">
+          <Link key={index} href={baseURL + '/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark drop-shadow ">
             <div className="row py-4 border-bottom mb-2 " style={{ backgroundColor: '#C0D8F7', borderRadius: '15px', height: '85px'}}>
               <div className="col">{po.prID}</div>
               <div className="col">{moment(po.requestDate).format('DD MMM YYYY')}</div>
@@ -71,9 +98,20 @@ export default function TrackPayment({ purchaseOrder }) {
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
+  const host = context.req.headers.host;
+  // console.log(host);
+
+  const backBaseURL = [];
+
+  if (host == "localhost:5000") {
+    backBaseURL.push("http://localhost:3000");
+  } else {
+    backBaseURL.push("https://abc-cooking-studio-backend.azurewebsites.net");
+  }
+
   try {
-    const response = await axios.get(`http://localhost:3000/api/purchaseOrder/`);
+    const response = await axios.get(`${backBaseURL}/api/purchaseOrder/`);
     const purchaseOrder = await response.data;
     return {
       props: {
