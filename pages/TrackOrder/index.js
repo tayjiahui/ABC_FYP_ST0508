@@ -131,32 +131,32 @@ export default function TrackOrder() {
 
     return (
       <div>
-        <div className="row w-4 h-4 py-3 rounded-4 mb-3 m-2" style={{ backgroundColor: '#C0D8F7' }}>
+        <div className="row w-4 h-4 py-4 rounded-4 mb-3 m-2" style={{ backgroundColor: '#C0D8F7' }}>
           <div className="row d-flex">
             <a href={baseURL + '/TrackOrder/' + poId} className="col text-decoration-none text-black ps-3">
               {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}
-              <ul className="list-group list-group-horizontal text-center">
+              <div className="d-flex text-center">
                 {/* <div className="row ms-4">
                   <p>{props.poID}</p>
                 </div> */}
-                <li className="list-group-item col-sm-1 border-0 bg-transparent ms-4">
+                <div className=" col-sm-1 ms-1">
                   <p>{props.prID}</p>
-                </li>
-                <li className="list-group-item col-sm-1 border-0 bg-transparent ms-5">
+                </div>
+                <div className="col-sm-2 ms-5">
                   <p>{props.date}</p>
-                </li>
-                <li className="list-group-item col-sm-3 border-0 bg-transparent ms-5">
+                </div>
+                <div className="col-sm-2 ms-3">
                   <p>{props.Name}</p>
-                </li>
-                <li className="list-group-item col-sm-3 border-0 bg-transparent ms-5">
+                </div>
+                <div className="col-sm-5 ms-3">
                   <p>{props.Supplier}</p>
-                </li>
-              </ul>
+                </div>
+              </div>
               {/* </button> */}
             </a>
 
             <div className="col-sm-2 me-5">
-              <select className="col-sm-2 mt-1 rounded text-center w-100 h-75" value={selectedStatus} onChange={handleStatusChange}>
+              <select className="col-sm-2 rounded text-center w-100 h-100" value={selectedStatus} onChange={handleStatusChange}>
                 <option key={1} value={props.PurchaseStatusID} selected="selected">{props.PurchaseStatus}</option>
                 {
                   status.map((status, index) => {
@@ -169,7 +169,6 @@ export default function TrackOrder() {
               </select>
             </div>
           </div>
-
 
         </div>
 
@@ -305,9 +304,9 @@ export default function TrackOrder() {
         <hr />
         <ul className="col-sm-9 list-group list-group-horizontal text-center">
           {/* <li className="list-group-item col-sm-1 border-0">PO No.</li> */}
-          <li className="list-group-item col-sm-1 border-0 ms-3">PR No.</li>
+          <li className="list-group-item col-sm-1 border-0 ms-4">PR No.</li>
           <li className="list-group-item col-sm-3 border-0 ms-2">Created</li>
-          <li className="list-group-item col-sm-1 border-0 ms-4">Name</li>
+          <li className="list-group-item col-sm-1 border-0 ms-3">Name</li>
           <li className="list-group-item col-sm-6 border-0 ms-4">Supplier</li>
           <li className="list-group-item col-sm-3 border-0 ms-5">Status</li>
         </ul>
