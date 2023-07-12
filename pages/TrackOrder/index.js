@@ -139,16 +139,16 @@ export default function TrackOrder() {
                 {/* <div className="row ms-4">
                   <p>{props.poID}</p>
                 </div> */}
-                <li className="list-group-item col-sm-1 border-0 bg-transparent ms-4">
+                <li className="list-group-item col-sm-1 border-0 bg-transparent ms-1">
                   <p>{props.prID}</p>
                 </li>
-                <li className="list-group-item col-sm-1 border-0 bg-transparent ms-5">
+                <li className="list-group-item col-sm-2 border-0 bg-transparent ms-5">
                   <p>{props.date}</p>
                 </li>
-                <li className="list-group-item col-sm-3 border-0 bg-transparent ms-5">
+                <li className="list-group-item col-sm-2 border-0 bg-transparent ms-3">
                   <p>{props.Name}</p>
                 </li>
-                <li className="list-group-item col-sm-3 border-0 bg-transparent ms-5">
+                <li className="list-group-item col-sm-5 border-0 bg-transparent ms-3">
                   <p>{props.Supplier}</p>
                 </li>
               </ul>
@@ -305,9 +305,9 @@ export default function TrackOrder() {
         <hr />
         <ul className="col-sm-9 list-group list-group-horizontal text-center">
           {/* <li className="list-group-item col-sm-1 border-0">PO No.</li> */}
-          <li className="list-group-item col-sm-1 border-0 ms-3">PR No.</li>
+          <li className="list-group-item col-sm-1 border-0 ms-4">PR No.</li>
           <li className="list-group-item col-sm-3 border-0 ms-2">Created</li>
-          <li className="list-group-item col-sm-1 border-0 ms-4">Name</li>
+          <li className="list-group-item col-sm-1 border-0 ms-3">Name</li>
           <li className="list-group-item col-sm-6 border-0 ms-4">Supplier</li>
           <li className="list-group-item col-sm-3 border-0 ms-5">Status</li>
         </ul>
