@@ -10,31 +10,34 @@ import arrowIcon from "../../public/arrowIcon.svg";
 import editIcon from "../../public/penIcon.svg";
 import deleteIcon from "../../public/trashBinIcon.svg";
 
+// Base urls
 const URL = [];
 
-function isLocalhost()
-{
+function isLocalhost() {
     if (typeof window !== "undefined") {
         const hostname = window.location.hostname;
         console.log("hostname   " + hostname);
         if (hostname == "localhost") {
-            URL.push('http://localhost:3000', 'http://localhost:5000');
+            URL.push("http://localhost:3000", "http://localhost:5000");
+            console.log(URL);
+        } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
+            URL.push(
+                "https://abc-cooking-studio-backend.azurewebsites.net",
+                "https://abc-cooking-studio.azurewebsites.net"
+            );
             console.log(URL);
         }
-        else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-            console.log(URL);
-        }
+
         return URL;
     }
-}
+};
 
 isLocalhost();
 
-const baseUrl = 'http://localhost:3000';
-const baseURL = 'http://localhost:5000';
+const baseUrl = URL[0];
+const baseURL = URL[1];
 
-console.log(baseUrl, baseURL);
+// console.log(baseUrl, baseURL);
 
 // get supplier info
 export async function getServerSideProps(context) {
@@ -178,7 +181,7 @@ export default function viewSupplier({ supplierDetails }) {
         e.preventDefault();
 
         try {
-            const response = await axios.delete(`${baseUrl}/api/supplier/${supplierID}`,{});
+            const response = await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`);
             console.log(response.data);
             alert(response.data);
         }
@@ -313,7 +316,7 @@ export default function viewSupplier({ supplierDetails }) {
                                                 placeholder={supplierDetail.bankName}
                                             /> 
 
-                                            <b className={styles.editInput1}>Category*</b>
+                                            <b className={styles.editInput1}>Category</b>
                                             <Select
                                                 isMulti
                                                 isSearchable
@@ -324,7 +327,7 @@ export default function viewSupplier({ supplierDetails }) {
                                                 placeholder={supplierDetail.Category}
                                                 // placeholder="What do you sell?"
                                                 noOptionsMessage={() => "Category does not exist."}
-                                                required
+                                                require d
                                             />
                                         </div>
                                         <br></br>

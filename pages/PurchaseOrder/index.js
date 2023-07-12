@@ -8,53 +8,71 @@ import moment from 'moment';
 import Image from 'next/image';
 import searchBtn from '../../public/searchIcon.svg';
 
-function isLocalhost(url) {
-  return url.includes('localhost') || url.includes('127.0.0.1');
+// Base urls
+const URL = [];
+
+function isLocalhost() {
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    // console.log('hostname   ' + hostname);
+    if (hostname == "localhost") {
+      URL.push("http://localhost:3000", "http://localhost:5000");
+      console.log(URL);
+    } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
+      URL.push(
+        "https://abc-cooking-studio-backend.azurewebsites.net",
+        "https://abc-cooking-studio.azurewebsites.net"
+      );
+      console.log(URL);
+    }
+
+    return URL;
+  }
 }
 
-// const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
-const baseUrl = 'http://localhost:3000';
-const baseURL = 'http://localhost:5000';
+isLocalhost();
 
+const baseUrl = URL[0];
+const baseURL = URL[1];
 
 export default function TrackPayment({ purchaseOrder }) {
-  const poList = purchaseOrder.map((po, index) => (
+  const [searchInput, setSearchInput] = useState([]);
+  const [filteredPurchaseOrders, setFilteredPurchaseOrders] = useState(purchaseOrder);
 
-    
-    // <Link href={'https://abc-cooking-studio.azurewebsites.net/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark">
-    <Link key={index} href={'http://localhost:5000/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark">
-    <div className="row py-4 border-bottom mb-2 shadow" style={{ backgroundColor: '#C0D8F7', borderRadius: '15px' }}>
-      <div className="col">{po.prID}</div>
-      <div className="col">{moment(po.requestDate).format('DD/MM/YYYY')}</div>
-      <div className="col">${Number(po.Price).toFixed(2)}</div>
-      <div className="col">{po.paymentMode}</div>
-      <div className="col">{po.supplierName}</div>
-      <div className="col">{po.Status}</div>
-    </div>
-  </Link>
-  ));
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+    filterPurchaseOrders(event.target.value);
+  };
+
+  const filterPurchaseOrders = (searchValue) => {
+    const filteredPOs = purchaseOrder.filter(
+      (po) =>
+        po.supplierName.toLowerCase().includes(searchValue.toLowerCase()) ||
+        po.Status.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    setFilteredPurchaseOrders(filteredPOs);
+  };
 
   return (
-    <div className="container-fluid px-5">
+    <div className="container-fluid px-3">
       <div className="d-flex align-items-center justify-content-between">
         <h1 className="m-0">Payment Tracking</h1>
-        {/* <div className="d-flex">
-          <input type="text" placeholder="Search..." className="form-control me-2" />
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
-        </div> */}
-
         <div className="d-flex">
-                    <input type="text" placeholder="Search..." className={styles.searchText} />
-                    <button type="submit" className={styles.searchButton}>
-                        <Image src={searchBtn} />
-                    </button>
-                </div>
+          <input
+            type="text"
+            placeholder="Search..."
+            className={styles.searchText}
+            value={searchInput}
+            onChange={handleSearchInputChange}
+          />
+          <button type="submit" className={styles.searchButton}>
+            <Image src={searchBtn} />
+          </button>
+        </div>
       </div>
 
-      <div className="row py-2 border-top border-bottom mt-4 mb-4">
-        <div className="col" >No.</div>
+      <div className="row py-4 border-top border-bottom mt-4 mb-4">
+        <div className="col">PO No.</div>
         <div className="col">Created</div>
         <div className="col">Price</div>
         <div className="col">Mode of Payment</div>
@@ -63,28 +81,49 @@ export default function TrackPayment({ purchaseOrder }) {
       </div>
 
       <div>
-        {poList}
+        {filteredPurchaseOrders.map((po, index) => (
+          <Link key={index} href={baseURL + '/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark drop-shadow ">
+            <div className="row py-4 border-bottom mb-2 " style={{ backgroundColor: '#C0D8F7', borderRadius: '15px', height: '85px'}}>
+              <div className="col">{po.prID}</div>
+              <div className="col">{moment(po.requestDate).format('DD MMM YYYY')}</div>
+              <div className="col">${Number(po.Price).toFixed(2)}</div>
+              <div className="col">{po.paymentMode}</div>
+              <div className="col">{po.supplierName}</div>
+              <div className="col">{po.Status}</div>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
-  )
+  );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
+  const host = context.req.headers.host;
+  // console.log(host);
+
+  const backBaseURL = [];
+
+  if (host == "localhost:5000") {
+    backBaseURL.push("http://localhost:3000");
+  } else {
+    backBaseURL.push("https://abc-cooking-studio-backend.azurewebsites.net");
+  }
+
   try {
-    const response = await axios.get(`http://localhost:3000/api/purchaseOrder/`);
+    const response = await axios.get(`${backBaseURL}/api/purchaseOrder/`);
     const purchaseOrder = await response.data;
     return {
       props: {
-        purchaseOrder
-      }
+        purchaseOrder,
+      },
     };
   } catch (error) {
     console.log(error);
     return {
       props: {
-        purchaseOrder: []
-      }
+        purchaseOrder: [],
+      },
     };
   }
 }
-

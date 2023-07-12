@@ -8,22 +8,22 @@ import { useEffect, useState } from "react";
 const URL = [];
 
 function isLocalhost() {
-  if (typeof window !== "undefined") {
-    const hostname = window.location.hostname;
-    console.log("hostname   " + hostname);
-    if (hostname == "localhost") {
-      URL.push("http://localhost:3000", "http://localhost:5000");
-      console.log(URL);
-    } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
-      URL.push(
-        "https://abc-cooking-studio-backend.azurewebsites.net",
-        "https://abc-cooking-studio.azurewebsites.net"
-      );
-      console.log(URL);
-    }
+    if (typeof window !== "undefined") {
+        const hostname = window.location.hostname;
+        console.log("hostname   " + hostname);
+        if (hostname == "localhost") {
+            URL.push("http://localhost:3000", "http://localhost:5000");
+            console.log(URL);
+        } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
+            URL.push(
+                "https://abc-cooking-studio-backend.azurewebsites.net",
+                "https://abc-cooking-studio.azurewebsites.net"
+            );
+            console.log(URL);
+        }
 
-    return URL;
-  }
+        return URL;
+    }
 };
 
 isLocalhost();
@@ -49,19 +49,19 @@ export default function Profile() {
         // setRoleID(roleID);
 
         axios.get(`${baseUrl}/api/user/${userID}`)
-        .then((response) => {
-            console.log(response.data);
+            .then((response) => {
+                // console.log(response.data);
 
-            const userData = response.data[0];
-            console.log("USER DATA", userData);
+                const userData = response.data[0];
+                // console.log("USER DATA", userData);
 
-            setUsername(userData.name)
-            setEmail(userData.email);
-            setRoleID(userData.role);
-        })
+                setUsername(userData.name)
+                setEmail(userData.email);
+                setRoleID(userData.role);
+            })
     }, [])
 
-    const logOut = async(e) => {
+    const logOut = async (e) => {
         e.preventDefault();
 
         localStorage.clear();
@@ -75,7 +75,7 @@ export default function Profile() {
             <div>
                 <h1 className='PageHeader'>User Profile</h1>
             </div>
-            
+
             <div className="pt-4 px-4">
                 <div className="d-flex">
                     <div className="col-sm-2">
@@ -102,14 +102,14 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
-            
+
             <div className="py-4 px-4">
                 <a href="/api/auth/signout">
                     <button onClick={logOut} className="btn btn-secondary">
                         Logout
                     </button>
                 </a>
-                
+
             </div>
         </div>
     );

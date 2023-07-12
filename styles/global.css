@@ -12,80 +12,86 @@
     src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Medium.ttf');
 }
 
-html{
+html {
     font-family: "Plus Jakarta Sans";
 }
 
-div{
+div {
     font-family: "Plus Jakarta Sans";
 }
 
-h1,h2,h3,h4,h5{
+h1,
+h2,
+h3,
+h4,
+h5 {
     font-family: "Plus Jakarta Sans Medium";
     color: #1A202C;
 }
 
-p{
+p {
     font-size: 16px;
 }
 
-body{
+body {
     padding: 10px;
 }
 
 /* navbar */
-.header-nav{
+.header-nav {
     /* float: left; */
     /* display: inline; */
     width: 100%;
     position: sticky;
 }
 
-ul{
+ul {
     padding: 0;
-    margin:0;
+    margin: 0;
 }
 
-.navbar-left > li{
+.navbar-left>li {
     display: inline;
     padding: 0 20px 0 20px;
 }
 
-.navbar-right > li{
+.navbar-right>li {
     display: inline;
     float: right;
 }
 
-.navbar-left, .navbar-right{
+.navbar-left,
+.navbar-right {
     display: inline;
 }
 
-.header-nav a{
+.header-nav a {
     color: #8495AD;
     text-decoration: none;
 }
 
-.header-nav a:hover{
+.header-nav a:hover {
     color: #011f60;
 }
 
-.header-nav a.active{
+.header-nav a.active {
     color: #011f60;
 }
 
-#logoImage{
+#logoImage {
     padding-left: 0;
     vertical-align: middle;
 }
 
-#profPicImage{
+#profPicImage {
     padding-left: 10px;
     vertical-align: middle;
 }
 
 /* Input Boxes */
 
-input[type="text"], input[type="email"]{
+input[type="text"],
+input[type="email"] {
     box-sizing: border-box;
     padding-left: 10px;
 }

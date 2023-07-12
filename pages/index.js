@@ -15,11 +15,9 @@ export default function Index() {
                                 <button type="button" className="btn btn-secondary">Login</button>
                             </a>
                         </div>
-                        
                     </div>
                 </div>
             </div>
-            
         </div>
     );
 };
