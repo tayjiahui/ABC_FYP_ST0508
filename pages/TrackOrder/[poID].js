@@ -8,6 +8,7 @@ import plusIcon from '../../public/addLocationIcon.svg';
 import styles from '../../styles/trackOrderById.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
+import WIP from '../../components/WIP'
 
 //----------------------function name has to be uppercase
 
@@ -44,7 +45,7 @@ function ItemLines(props) {
                 <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
                 <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
                 <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
-                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled/></li>
+                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled /></li>
             </ul>
         </div>
     )
@@ -88,8 +89,8 @@ export async function getServerSideProps(context) {
     });
 
     // GET BASE QTY RECEIVED VALUES
-    data2.forEach((item,index) => {
-        qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID});
+    data2.forEach((item, index) => {
+        qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
     });
 
     return {
@@ -127,7 +128,7 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
 
     const [editQty, allowQtyEdit] = useState(false);
     const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
-
+    const [showInProg, setInProg] = useState(false);
     // const [checkRemark, setRemark] = useState();
     const [selectedValue, setSelectedValue] = useState('');
     // console.log("purchase status id", selectedValue);
@@ -139,24 +140,24 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
     };
 
     // Onclick Save button for QtY received
-    const handleDontAllowQtyEdit = async(e) => {
+    const handleDontAllowQtyEdit = async (e) => {
         e.preventDefault();
 
-        QtyReceivedList.forEach(async(item, index) => {
-            await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`, 
+        QtyReceivedList.forEach(async (item, index) => {
+            await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`,
                 {
                     "qtyReceived": item.qtyReceived
                 }
             )
-            .then((response) => {
-                console.log(response);
-                allowQtyEdit(false);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+                .then((response) => {
+                    console.log(response);
+                    allowQtyEdit(false);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         });
-        
+
     };
 
     // Handling Qty value edit
@@ -194,28 +195,48 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
     };
 
 
-    const handleClick = async (e) => {
+    // const handleClick = async (e) => {
 
-        // const { value } = e.target;
-        // setSelectedValue(value);
-        e.preventDefault();
+    // const { value } = e.target;
+    // setSelectedValue(value);
+    //     e.preventDefault();
 
-        try {
-            // Send the selected option to the server using Axios PUT request
-            const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
-                purchaseStatusID: selectedValue,
-            });
-            console.log(response.data); // Handle the response as needed
+    //     try {
+    //         // Send the selected option to the server using Axios PUT request
+    //         const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+    //             purchaseStatusID: selectedValue,
+    //         });
+    //         console.log(response.data); // Handle the response as needed
 
-        } catch (error) {
-            console.error(error);
-        }
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
 
-    }
+    // }
 
     // const handleAmountChange = (event) => {
     //     setAmount(event.target.value);
     // };
+
+    // timer
+    function timeFunc() {
+        // 2 seconds
+        setTimeout(closeWIPModal, 2000);
+    }
+
+    const handleOpenWip =() => {
+        setInProg(true);
+        timeFunc()
+    }
+
+    // close WIP Modal
+    function closeWIPModal() {
+        setInProg(false);
+    }
+
+  
+
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -228,17 +249,17 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
         // else if (isNaN(amount)) {
         //     alert("Please put in a valid number!")
         // } else {
-            await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/qty/${poID}`,
-                {
-                    "qtyReceived": amount
-                }
-            )
-                .then((response) => {
-                    alert(`Quantity has been changed!`);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+        await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/qty/${poID}`,
+            {
+                "qtyReceived": amount
+            }
+        )
+            .then((response) => {
+                alert(`Quantity has been changed!`);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
         //}
 
 
@@ -359,6 +380,8 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
         setChangeStatusPop(true);
     }
 
+ 
+
 
     // const editPO = async (e) => {
     //     e.preventDefault();
@@ -419,11 +442,11 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                         <h5 className="mt-5 ms-5 fs-2 mb-0">Product Details</h5>
                         {
                             editQty === false &&
-                                <button onClick={handleAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Qty Received</button>
+                            <button onClick={handleAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end" style={{ backgroundColor: '#486284' }}>Edit Qty Received</button>
                         }
                         {
                             editQty === true &&
-                                <button onClick={handleDontAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end btn btn-success">Save</button>
+                            <button onClick={handleDontAllowQtyEdit} className="col-sm-md-lg-xl border-0 rounded-3 mt-5 h-25 p-2 ms-5 text-white shadow align-items-end btn btn-success">Save</button>
                         }
                     </div>
 
@@ -448,36 +471,36 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
 
                     {
                         editQty === false &&
-                            productDeets.map((item, index) => {
-                                return <div key={index}>
-                                            <ul className="list-group list-group-horizontal text-center">
-                                                <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
-                                                <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
-                                                <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
-                                                <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
-                                                <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
-                                                <li className="list-group-item col-sm-2 border-0 ms-5"><input value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} disabled/></li>
-                                            </ul>
-                                        </div>
-                            })
+                        productDeets.map((item, index) => {
+                            return <div key={index}>
+                                <ul className="list-group list-group-horizontal text-center">
+                                    <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                                    <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                                    <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                                    <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                                    <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
+                                    <li className="list-group-item col-sm-2 border-0 ms-5"><input value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index, e)} disabled /></li>
+                                </ul>
+                            </div>
+                        })
                     }
 
                     {
                         editQty === true &&
-                            productDeets.map((item, index) => {
-                                return <div key={index}>
-                                            <div>
-                                                <ul className="list-group list-group-horizontal text-center">
-                                                    <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
-                                                    <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
-                                                    <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
-                                                    <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
-                                                    <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
-                                                    <li className="list-group-item col-sm-2 border-0 ms-5"><input type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index,e)} id={QtyReceivedList[index].id}  onkeyup="if(value<0) value=0;" required/></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                            })
+                        productDeets.map((item, index) => {
+                            return <div key={index}>
+                                <div>
+                                    <ul className="list-group list-group-horizontal text-center">
+                                        <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                                        <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                                        <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                                        <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                                        <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
+                                        <li className="list-group-item col-sm-2 border-0 ms-5"><input type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index, e)} id={QtyReceivedList[index].id} onkeyup="if(value<0) value=0;" required /></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        })
                     }
 
                     {/* {ProductDetails} */}
@@ -505,15 +528,15 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                     </div>
 
                     <div className="col-sm d-flex mt-2">
-                            <h2 className="col-sm me-2">Total</h2>
-                            <p className="col-sm ms-4 fs-4">${Total}</p>
+                        <h2 className="col-sm me-2">Total</h2>
+                        <p className="col-sm ms-4 fs-4">${Total}</p>
                     </div>
 
                 </div>
 
                 <div className="col-sm ms-5">
-                        <h2>Remarks</h2>
-                        <h5>{PR.remarks}</h5>      
+                    <h2>Remarks</h2>
+                    <h5>{PR.remarks}</h5>
                 </div>
 
                 <br></br>
@@ -538,7 +561,7 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                         </select>
                     </div> */}
 
-                    <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{flex: 1}}>
+                    <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{ flex: 1 }}>
                         <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
 
                         <div className={styles.blabla}>
@@ -590,25 +613,25 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
                 )}
 
                 <div className="col-sm d-flex">
-                    <div className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                    <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
                         <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
+                        {showInProg && <WIP Show={showInProg} />}
+                    </button>
 
 
-                    </div>
-
-
-                    <div className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                    <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
                         <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
-                    </div>
+                        {showInProg && <WIP Show={showInProg} />}
+                    </button>
                 </div>
 
                 <div className="col-sm d-flex mt-2">
-                    <div style={{flex: 1}}>
+                    <div style={{ flex: 1 }}>
                         <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
                         <h7 className="col-sm ms-2">Add Invoice</h7>
                     </div>
 
-                    <div style={{flex: 1}}>
+                    <div style={{ flex: 1 }}>
                         <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
                         <h7 className="col-sm ms-2">Add Delivery Order</h7>
                     </div>
