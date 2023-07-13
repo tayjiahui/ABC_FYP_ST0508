@@ -227,8 +227,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     subtotal += parseFloat(item.totalUnitPrice);
   })
 
+  const gstPercent = remarkDetail[0].GST.gst;
+  console.log(gstPercent)
+
   //calculating gst 8%
-  const gst = subtotal * 0.08;
+  const gst = subtotal * (gstPercent/100);
 
   //total price 
   let total = subtotal + gst

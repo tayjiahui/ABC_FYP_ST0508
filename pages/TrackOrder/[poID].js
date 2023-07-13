@@ -71,12 +71,16 @@ export async function getServerSideProps(context) {
     const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
     // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
     const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
+    const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
 
     const data1 = await poD.json();
     const data2 = await productD.json();
+    const data3 = await PRDetails.json();
 
     // console.log(data1);
-    console.log(data2);
+    // console.log(data2);
+    console.log(data3);
+    const gst = data3[0].GST;
 
     const qtyReceiveS = [];
 
@@ -97,6 +101,7 @@ export async function getServerSideProps(context) {
             host,
             purOrderD: data1,
             productDeets: data2,
+            gstDetails: gst,
             QtyReceived: qtyReceiveS,
             poID
         }
@@ -104,7 +109,7 @@ export async function getServerSideProps(context) {
 }
 
 // main frontend page
-export default function Main({ purOrderD, productDeets, QtyReceived }) {
+export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived }) {
 
     const router = useRouter();
 
@@ -303,9 +308,11 @@ export default function Main({ purOrderD, productDeets, QtyReceived }) {
             return total;
         }
 
+        const gstPercent = gstDetails.gst;
+
         // Calculate GST
         function GSTFinder(amt) {
-            const gst = (8 / 100) * amt;
+            const gst = (gstPercent / 100) * amt;
             return gst;
         }
 
