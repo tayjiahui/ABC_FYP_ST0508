@@ -79,7 +79,7 @@ export async function getServerSideProps(context) {
 
     // console.log(data1);
     // console.log(data2);
-    console.log(data3);
+    
     const gst = data3[0].GST;
 
     const qtyReceiveS = [];

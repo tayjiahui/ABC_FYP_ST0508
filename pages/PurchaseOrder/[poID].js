@@ -228,7 +228,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   })
 
   const gstPercent = remarkDetail[0].GST.gst;
-  console.log(gstPercent)
 
   //calculating gst 8%
   const gst = subtotal * (gstPercent/100);
