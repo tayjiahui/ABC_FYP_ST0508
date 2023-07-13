@@ -50,10 +50,6 @@
     clear: both;
 }
 
-.colData{
-    margin-bottom: 50px;
-}
-
 .penIcon {
     display: inline-flexbox;
     float: right;
@@ -117,7 +113,7 @@
     justify-content: center;
 }
 
-.cancelButton, .deleteButton {
+.cancelButton1, .deleteButton {
     cursor: pointer;
     color: white;
     border-radius: 20px;
@@ -127,12 +123,44 @@
     font-size: 20pt;
 }
 
-.cancelButton {
+.cancelButton1 {
     background-color: #93A0B1;
 }
 
 .deleteButton, .submitButton {
     background-color: #486284;
+}
+
+/* edit mode styling */
+.updateButtons {
+    cursor: pointer;
+    border-radius: 20px;
+    border-width: 1px;
+    padding: 10px 25px;
+    font-size: 20pt;
+    left: 67%;
+    top: 90%;
+    position: fixed;
+}
+
+.cancelButton2 {
+    background-color: #93A0B1;
+}
+
+.submitButton {
+    background-color: #486284;
+}
+
+.submitButton, .cancelButton2 {
+    color: white;
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans";
+    width: 100px;
+    height: 40px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-right: 20px;
 }
 
 /* update popup box */
@@ -168,7 +196,7 @@
     margin-top: 10px;
 }
 
-.submitButton{
+/* .submitButton{
     margin-top: 30px;
     display: flex;
     justify-content: center;
@@ -182,7 +210,7 @@
     justify-content: center;
     align-items: center;
     margin-bottom: 50px;
-}
+} */
 
 .closeButton1 {
     background-color: transparent;
@@ -199,22 +227,22 @@
 }
 
 .editInputs {
-    margin-top: 20px;
-    font-size: medium   ;
+    font-size: medium;
     border-radius: 5px;
     border-color: #c2c2c3;
     border-style: solid;
     border-width: 1px;  
     height: 35px;
+    margin-bottom: 20px;
+    width: 70%;
 }
 
 .selectBox, .multiSelectBox {
-    width: 74%;
+    width: 70%;
     /* border-color: #DDE1E6;
     border-radius: 10px; */
     font-family: "Plus Jakarta Sans";
     font-size: 14px;
-    margin-bottom: 10px;
 }
 
 .formRow {
