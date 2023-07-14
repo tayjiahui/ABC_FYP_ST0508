@@ -400,21 +400,9 @@ function PRRow(props) {
       </a>
     </div>
   );
-}
+};
 
-// Status icon for each PR row
-function Icon(props) {
-  return (
-    <Image
-      src={baseURL + props.item}
-      width={25}
-      height={25}
-      id={styles.statusCircle}
-      alt="status indicator"
-    />
-  );
-}
-
+// Ad Hoc Row
 function AdHocRow(props) {
   const statusID = props.StatusID;
 
@@ -458,12 +446,12 @@ function AdHocRow(props) {
   function timeFunc() {
     // 2 seconds
     setTimeout(closeWIPModal, 2000);
-  }
+  };
 
   // close WIP Modal
   function closeWIPModal() {
     setInProg(false);
-  }
+  };
 
   return (
     <div>
@@ -472,9 +460,9 @@ function AdHocRow(props) {
           <button className={styles.prButton}>
             {props.RoleID === 2 && (
               <div className={styles.prRow}>
-                <div className="pt-2 row">
+                <div className="pt-2 row text-start">
                   <div className={styles.prTextRow}>
-                    <div className="px-4 ms-3 col-sm-1">
+                    <div className="col-sm ps-4">
                       {showDescript === false && (
                         <button
                           onClick={viewDescription}
@@ -495,15 +483,15 @@ function AdHocRow(props) {
                       )}
                     </div>
 
-                    <div className="px-1 col-sm-1">
+                    <div className="col-sm">
                       <p>{props.ReqDate}</p>
                     </div>
 
-                    <div className="px-1 col-sm-1">
+                    <div className="col-sm ps-3">
                       <p>{props.TargetDate}</p>
                     </div>
 
-                    <div className="px-5 mx-3 col-sm-2">
+                    <div className="col-sm">
                       <div className="row">
                         <div className="col-sm-1">
                           <p className={styles.prTextStatus}>{props.Status}</p>
@@ -514,7 +502,7 @@ function AdHocRow(props) {
                       </div>
                     </div>
 
-                    <div className="col-sm-1 px-0">
+                    <div className="col-sm">
                       {showDescript === false && (
                         <button
                           onClick={e => {viewDescription(e)}}
@@ -565,7 +553,7 @@ function AdHocRow(props) {
               <div className={styles.prRow}>
                 <div className="pt-2 row">
                   <div className={styles.prTextRow}>
-                    <div className="px-4 mx-2 col-sm-1">
+                    <div className="col-sm">
                       {showDescript === false && (
                         <button
                           onClick={viewDescription}
@@ -586,19 +574,19 @@ function AdHocRow(props) {
                       )}
                     </div>
 
-                    <div className="col-sm-1">
+                    <div className="col-sm">
                       <p>{props.ReqDate}</p>
                     </div>
 
-                    <div className="px-1 ms-4 col-sm-1">
+                    <div className="col-sm">
                       <p>{props.Name}</p>
                     </div>
 
-                    <div className="px-0 mx-4 col-sm-1 text-center">
+                    <div className="col-sm">
                       <p>{props.TargetDate}</p>
                     </div>
 
-                    <div className="px-5 col-sm-2">
+                    <div className="col-sm">
                       <div className="row">
                         <div className="col-sm-1">
                           <p className={styles.prTextStatus}>{props.Status}</p>
@@ -609,7 +597,7 @@ function AdHocRow(props) {
                       </div>
                     </div>
 
-                    <div className="col-sm-1">
+                    <div className="col-sm">
                       {showDescript === false && (
                         <button
                           onClick={viewDescription}
@@ -661,7 +649,20 @@ function AdHocRow(props) {
       {showInProg && <WIP Show={showInProg} />}
     </div>
   );
-}
+};
+
+// Status icon for each PR row
+function Icon(props) {
+  return (
+    <Image
+      src={baseURL + props.item}
+      width={25}
+      height={25}
+      id={styles.statusCircle}
+      alt="status indicator"
+    />
+  );
+};
 
 export default function PurchaseRequest() {
   const [id, setUserID] = useState();
@@ -1323,18 +1324,18 @@ export default function PurchaseRequest() {
           )}
 
           {role === 2 && showAdHoc === true && (
-            <ul className="list-group list-group-horizontal">
-              <li className="list-group-item col-sm-1 px-3 mx-2 border-0">
+            <ul className="list-group list-group-horizontal px-3">
+              <li className="list-group-item col-sm border-0">
                 PR No.
               </li>
-              <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
-              <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">
+              <li className="list-group-item col-sm border-0">Date</li>
+              <li className="list-group-item col-sm border-0">
                 Target Date
               </li>
-              <li className="list-group-item col-sm-2 px-5 mx-2 border-0">
+              <li className="list-group-item col-sm border-0">
                 Status
               </li>
-              <li className="list-group-item col-sm-1 border-0"></li>
+              <li className="list-group-item col-sm border-0 w-25"></li>
             </ul>
           )}
 
@@ -1544,4 +1545,4 @@ export default function PurchaseRequest() {
       {showInProg === false && <WIP Show={showInProg} />}
     </>
   );
-}
+};
