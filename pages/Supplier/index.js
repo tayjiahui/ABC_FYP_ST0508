@@ -1,12 +1,16 @@
 import axios from "axios";
 import React from "react";
 import Image from "next/image";
+import { useState, useEffect } from "react"; 
 
 // styles & icons
 import styles from '../../styles/supplier.module.css';
 import searchIcon from '../../public/searchIcon.svg';
 import filterIcon from '../../public/filterIcon.svg';
 import plusIcon from '../../public/plusIcon.svg';
+
+// WIP component
+import WIP from "../../components/WIP";
 
 // Base urls
 const URL = [];
@@ -42,6 +46,24 @@ const baseURL = URL[1];
 
 // main supplier page
 export default function Supplier({ suppliers }) {
+
+    // WIP modal for search bar
+    const [wip, setWip] = useState(false);
+
+    const wipOpen = async (e) => {
+        e.preventDefault()
+        setWip(true);
+        timer();
+    }
+
+    function timer() {
+        setTimeout(closeWIP, 2000);
+    }
+
+    function closeWIP() {
+        setWip(false);
+    }
+
     const supplierList = suppliers.map((supplier, index) => (
         <a href={'/Supplier/' + supplier.supplierID}>
             <button className={styles.cardLink}>
@@ -67,9 +89,10 @@ export default function Supplier({ suppliers }) {
                     <div className={styles.searchContainer}>
                         <form>
                             <input type="text" placeholder="Search..." name="search" className={styles.searchBox}/>
-                            <button type="submit" className={styles.searchButton}><Image src={searchIcon}/></button>
-                            <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20}/></button>
+                            <button type="submit" className={styles.searchButton}><Image src={searchIcon} onClick={wipOpen}/></button>
+                            <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={wipOpen}/></button>
                         </form>
+                        {wip && <WIP Show={wip} />}
                     </div>
                 </div>
             </div>
