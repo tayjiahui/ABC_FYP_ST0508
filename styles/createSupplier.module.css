@@ -6,21 +6,10 @@
     src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
 }
 
-.titleRow h1 {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-    margin-left: 30px;
-}
-
-.title {
-    padding-left: 30px;
-    font-size: 25pt;
-    margin-top: 15px;
-}
-
 .backArrow{
-    margin-left: 20px;
+    margin-left: 30px;
+    margin-right: 20px;
+    display: inline;
 }
 
 /* column grid */
@@ -52,7 +41,7 @@
 }
 
 .textbox {
-    width: 500px;
+    width: 70%;
     padding: 7px;
     margin-bottom: 25px;
     border-color: #DDE1E6;
@@ -63,7 +52,7 @@
 }
 
 .multiSelectBox, .selectBox {
-    width: 74%;
+    width: 70%;
     border-color: #DDE1E6;
     border-radius: 10px;
     font-family: "Plus Jakarta Sans";

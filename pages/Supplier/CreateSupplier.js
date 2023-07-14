@@ -2,13 +2,14 @@ import axios from "axios";
 import React from "react";
 import Select from "react-select";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
 // styles & icons
 import styles from '../../styles/createSupplier.module.css'
 import arrowIcon from '../../public/arrowIcon.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Base urls
 const URL = [];
@@ -68,18 +69,34 @@ export default function CreateSupplier() {
         bankAccountNum: ''
     });
 
-    // get latest supplierID
-    useEffect(() => {
-        axios.get(`${baseUrl}/api/supplier/supplierid`)
-            .then((res) => {
-                console.log(res.data.supplierID);
-                setSupplierID(res.data.supplierID);
-            })
-            .catch((err) => {
-                console.log(err);
-                alert(err);
-            });
-    }, []);
+    // error messages in form validation
+    const [errors, setErrors] = useState({});
+
+    // ------ regex patterns
+    // valid email format
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // 8 digits
+    const phonePattern = /^\d{8}$/;
+
+    // valid url format starting with http or https
+    const webAddressPattern = /^(http|https):\/\/[^ "]+$/;
+
+    // 8-18 digits
+    const bankAccountPattern = /^\d{8,18}$/;
+
+    // // get latest supplierID
+    // useEffect(() => {
+    //     axios.get(`${baseUrl}/api/supplier/supplierid`)
+    //         .then((res) => {
+    //             console.log(res.data.supplierID);
+    //             setSupplierID(res.data.supplierID);
+    //         })
+    //         .catch((err) => {
+    //             console.log(err);
+    //             alert(err);
+    //         });
+    // }, []);
 
     // get dropdown options
     useEffect(() => {
@@ -130,34 +147,80 @@ export default function CreateSupplier() {
         setSelectedCategories(selectedOpts);
     };
 
+    // set first input to autofocus - Supplier Name
+    const firstInput = useCallback((inputElement) => {
+        if (inputElement) {
+            inputElement.focus();
+        }
+    }, []);
+
     // send form data using axios POST
     const handleSubmit = async(e) => {
         e.preventDefault();
 
-        // email validation
-        // const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        const errors = {};
 
-        // if(!emailPattern.test(email)) {
-        //     setEmailError("Email requirements")
-        // }
+        //------ form validation
+        // email
+        if (!formData.email) { // no input
+            errors.email = "Please enter a valid email address.";
+        } else if (!emailPattern.test(formData.email)) { // not matched with regex pattern
+            errors.email = "Please enter your email address in the format yourname@example.com";
+        }
+
+        // phone number
+        if (!formData.phoneNum) { // no input
+            errors.phoneNum = 'Phone number is required';
+        } 
+        else if (!phonePattern.test(formData.phoneNum)) { // not matched with regex pattern
+            errors.phoneNum = 'Invalid phone number format';
+        }
+
+        // office number
+        if (!formData.officeNum) {
+            errors.officeNum = 'Office number is required';
+        } 
+        else if (!phonePattern.test(formData.officeNum)) {
+            errors.officeNum = 'Invalid office number format';
+        }
+
+        // web address
+        if (!formData.webAddress) {
+            errors.webAddress = 'Web address is required';
+        } 
+        else if (!webAddressPattern.test(formData.webAddress)) {
+            errors.webAddress = 'Invalid web address format';
+        }
+
+        // bank account number
+        if (!formData.bankAccountNum) {
+            errors.bankAccountNum = 'Bank account number is required';
+        } 
+        else if (!bankAccountPattern.test(formData.bankAccountNum)) {
+            errors.bankAccountNum = 'Invalid bank account number format';
+        }
         
-        // form data
-        const submitData = {
-            supplierName: formData.supplierName,
-            email: formData.email,
-            officeNum: formData.officeNum,
-            webAddress: formData.webAddress,
-            bankAccName: formData.bankAccName,
-            contactPersonName: formData.contactPersonName,
-            phoneNum: formData.phoneNum,
-            address: formData.address,
-            bankAccountNum: formData.bankAccountNum,
-            bankID: selectedBank ? selectedBank.value: null,
-        };
+        if (Object.keys(errors).length > 0) {
+            setErrors(errors);
+        } 
+        else { // submit form
+            // form data
+            const submitData = {
+                supplierName: formData.supplierName,
+                email: formData.email,
+                officeNum: formData.officeNum,
+                webAddress: formData.webAddress,
+                bankAccName: formData.bankAccName,
+                contactPersonName: formData.contactPersonName,
+                phoneNum: formData.phoneNum,
+                address: formData.address,
+                bankAccountNum: formData.bankAccountNum,
+                bankID: selectedBank ? selectedBank.value: null,
+            };
 
-        console.log(submitData);
+            console.log(submitData);
 
-        await axios.post(`${baseUrl}/api/supplier/`, submitData)
+            await axios.post(`${baseUrl}/api/supplier/`, submitData)
             .then((res) => {
                 console.log(res.data);
 
@@ -180,82 +243,177 @@ export default function CreateSupplier() {
             .catch((err) => {
                 console.log(err);
                 alert(err);
-            });
+            });    
+        }
     };
 
     return (
         <>
-            <div className={styles.titleRow}>
+            <div className="mt-2 mb-4">
                 <h1>
                     <a href={'/Supplier'}>
                         <Image src={arrowIcon} className={styles.backArrow} alt="Back Arrow" />
                     </a>
-                    <p className={styles.title}>Create Supplier</p>
+
+                    <p className="h1 d-inline">Create Supplier</p>
                 </h1>
             </div>
 
-            <form onSubmit={handleSubmit}>
-                <div className={styles.row}>
-                    <div className={styles.col1}>
-                        <b className={styles.colTitle}>Supplier Name</b>
-                        <input type="text" name="supplierName" value={formData.supplierName} onChange={handleInput} placeholder="Enter Supplier Name" className={styles.textbox} required />
+            <div className="container">
+                <form onSubmit={handleSubmit}>
+                    <div className="row justify-content-center ms-5">
+                        <div className="col-6">
+                            <b>Supplier Name</b><br></br>
+                            <input 
+                                type="text" 
+                                name="supplierName" 
+                                value={formData.supplierName} 
+                                onChange={handleInput} 
+                                className={styles.textbox}
+                                ref={firstInput}
+                                required 
+                            />
+                            <br></br>
 
-                        <b className={styles.colTitle}>Email</b>
-                        <input type="email" name="email" value={formData.email} onChange={handleInput} placeholder="eg. example@email.com" className={styles.textbox} required />
+                            <b>Email</b> {errors.email && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.email}</small></span>}
+                            <br></br>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                value={formData.email} 
+                                onChange={handleInput} 
+                                className={styles.textbox} 
+                                placeholder="example@email.com" 
+                                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                                title="Please enter your email address in the format yourname@example.com" 
+                                required 
+                             />
+                            <br></br>
 
-                        <b className={styles.colTitle}>Office Number</b>
-                        <input type="text" name="officeNum" value={formData.officeNum} onChange={handleInput} placeholder="eg. 12345678" className={styles.textbox} required />
+                            <b>Office Number</b> {errors.officeNum && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.officeNum}</small></span>}
+                            <br></br>
+                            <input 
+                                type="tel" 
+                                name="officeNum" 
+                                value={formData.officeNum} 
+                                onChange={handleInput} 
+                                className={styles.textbox}
+                                pattern="[3689][0-9]{7}" 
+                                title="Please enter a valid SG phone number" 
+                                required 
+                            />
+                            <br></br>
 
-                        <b className={styles.colTitle}>Web Address</b>
-                        <input type="text" name="webAddress" value={formData.webAddress} onChange={handleInput} placeholder="eg. www.example.com" className={styles.textbox} required />
-                        
-                        <b className={styles.colTitle}>Bank Account Name</b>
-                        <input type="text" name="bankAccName" value={formData.bankAccName} onChange={handleInput} placeholder="Enter Bank Account Holder's Name" className={styles.textbox} required />
+                            <b>Web Address</b>
+                            <span className="text-secondary"><small> (optional)</small></span> 
+                            {errors.webAddress && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.webAddress}</small></span>}
+                            <br></br>
+                            <input 
+                                type="url" 
+                                name="webAddress" 
+                                value={formData.webAddress} 
+                                onChange={handleInput} 
+                                className={styles.textbox} 
+                                placeholder="https://www.example.com" 
+                                pattern="^https?:\/\/.+$"
+                                title="EDIT LATER Please include http/https in your web address"
+                            />
+                            <br></br>
 
-                        <b className={styles.colTitle}>Category</b>
-                        <Select
-                            isMulti
-                            isSearchable
-                            options={categoryOptions} 
-                            value={selectedCategories}
-                            onChange={handleMultiCategory}
-                            className={styles.multiSelectBox}
-                            placeholder="What do you sell?"
-                            noOptionsMessage={() => "Category does not exist."}
-                        />
-                    </div>
-                
-                    <div className={styles.col2}>
-                        <b className={styles.colTitle}>Contact Person</b>
-                        <input type="text" name="contactPersonName" value={formData.contactPersonName} onChange={handleInput} placeholder="Enter Contact Person's Name" className={styles.textbox} required />
+                            <b>Bank Account Name</b><br></br>
+                            <input 
+                                type="text" 
+                                name="bankAccName" 
+                                value={formData.bankAccName} 
+                                onChange={handleInput} 
+                                className={styles.textbox} 
+                                placeholder="Enter Bank Account Holder's Name" 
+                                required 
+                            />
+                            <br></br>
+
+                            <b>Category</b><br></br>
+                            <Select
+                                isMulti
+                                isSearchable
+                                options={categoryOptions} 
+                                value={selectedCategories}
+                                onChange={handleMultiCategory}
+                                className={styles.multiSelectBox}
+                                placeholder="What do you sell?"
+                                noOptionsMessage={() => "Category does not exist."}
+                            />
+                        </div>
                     
-                        <b className={styles.colTitle}>Phone Number</b>
-                        <input type="text" name="phoneNum" value={formData.phoneNum} onChange={handleInput} placeholder="eg. 12345678" className={styles.textbox} required />
-                        
-                        <b className={styles.colTitle}>Address</b>
-                        <input type="text" name="address" value={formData.address} onChange={handleInput} className={styles.textbox} required />
+                        <div className="col-6">
+                            <b>Contact Person</b><br></br>
+                            <input 
+                                type="text" 
+                                name="contactPersonName" 
+                                value={formData.contactPersonName} 
+                                onChange={handleInput} 
+                                className={styles.textbox} 
+                                required 
+                            />
+                            <br></br>
 
-                        <b className={styles.colTitle}>Bank Account Number</b>
-                        <input type="text" name="bankAccountNum" value={formData.bankAccountNum} onChange={handleInput} placeholder="eg. 001-2345-6789" className={styles.textbox} required />
+                            <b>Phone Number</b> {errors.phoneNum && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.phoneNum}</small></span>}
+                            <br></br>
+                            <input 
+                                type="tel" 
+                                name="phoneNum" 
+                                value={formData.phoneNum} 
+                                onChange={handleInput} 
+                                className={styles.textbox} 
+                                pattern="[3689][0-9]{7}" 
+                                title="Not a valid SG phone number" 
+                                required 
+                            />
+                            <br></br>
 
-                        <b className={styles.colTitle}>Bank Name</b>
-                        <Select
-                            isSearchable
-                            options={bankDropdownOptions}
-                            value={selectedBank}
-                            onChange={handleSelectBank}
-                            className={styles.selectBox}
-                            placeholder="Select Bank"
-                            noOptionsMessage={() => "Bank does not exist."}
-                            required
-                        />
+                            <b>Address</b><br></br>
+                            <input 
+                                type="text" 
+                                name="address" 
+                                value={formData.address} 
+                                onChange={handleInput} 
+                                className={styles.textbox} 
+                                required 
+                            />
+                            <br></br>
 
+                            <b>Bank Account Number</b> {errors.bankAccountNum && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.bankAccountNum}</small></span>}
+                            <br></br>
+                            <input 
+                                type="text" 
+                                name="bankAccountNum" 
+                                value={formData.bankAccountNum} 
+                                onChange={handleInput} 
+                                className={styles.textbox}
+                                required 
+                            />
+                            <br></br>
+
+                            <b>Bank Name</b><br></br>
+                            <Select
+                                isSearchable
+                                options={bankDropdownOptions}
+                                value={selectedBank}
+                                onChange={handleSelectBank}
+                                className={styles.selectBox}
+                                placeholder="Select Bank"
+                                noOptionsMessage={() => "Bank does not exist."}
+                                required
+                            />
+
+                        </div>
                     </div>
-                </div>
 
-                <button type="submit" className={styles.submitButton}>Create</button>
+                    <button type="submit" className={styles.submitButton}>Create</button>
 
-            </form>
+                </form>
+            </div>
+            
         </>
     );
 }

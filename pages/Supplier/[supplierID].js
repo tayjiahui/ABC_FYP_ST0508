@@ -268,36 +268,40 @@ export default function viewSupplier({ supplierDetails }) {
 
     return (
         <>
-            <div className={styles.titleRow}>
-                <h1>
-                    <a href={'/Supplier'}>
-                        <Image src={arrowIcon} className={styles.backArrow} alt="Back Arrow" />
-                    </a>
+            <div className="row">
+                <div className="col-10 mt-2 mb-4">
+                    <h1>
+                        <a href={'/Supplier'}>
+                            <Image src={arrowIcon} className={styles.backArrow} alt="Back Arrow" />
+                        </a>
 
-                    <p className={styles.title}>{supplierDetail.supplierName}</p>
+                        <p className="h1 d-inline">{supplierDetail.supplierName}</p>
+                    </h1>
+                </div>
 
-                    <Image src={editIcon} onClick={handleAllowEdit} className={styles.penIcon} alt="Edit Button" />
+                <div className="col-2 mt-2 mb-4">
+                    <Image src={editIcon} onClick={handleAllowEdit} className="d-inline" style={{marginLeft:"30px", width:"40px", height:"40px", cursor: "pointer"}} alt="Edit Button" />
 
-                    <Image src={deleteIcon} onClick={handleOpenPopup} className={styles.trashBin} alt="Delete Button" />
+                    <Image src={deleteIcon} onClick={handleOpenPopup} className="d-inline" style={{marginLeft:"40px", width:"45px", height:"45px", cursor: "pointer"}} alt="Delete Button" />
 
-                    {deleteSupplierPop && (
-                        <div className={styles.popupContainer}>
-                            <div className={styles.popupBox}>
-                                <h2 className={styles.confirmDeleteText}> Confirm Delete?</h2>
-                                <button onClick={handleClosePopup} className={styles.closeButton2}>X</button>
+                        {deleteSupplierPop && (
+                            <div className={styles.popupContainer}>
+                                <div className={styles.popupBox}>
+                                    <h2 className={styles.confirmDeleteText}> Confirm Delete?</h2>
+                                    <button onClick={handleClosePopup} className={styles.closeButton2}>X</button>
+                                </div>
+                                <div className={styles.deleteButtons}>
+                                    <button className={styles.deleteButton} onClick={handleConfirmDelete}>Delete</button>
+                                    <button className={styles.cancelButton1} onClick={handleClosePopup} >Cancel</button>
+                                </div>
                             </div>
-                            <div className={styles.deleteButtons}>
-                                <button className={styles.cancelButton1} onClick={handleClosePopup} >Cancel</button>
-                                <button className={styles.deleteButton} onClick={handleConfirmDelete}>Delete</button>
-                            </div>
-                        </div>
-                    )}
-                </h1>
+                        )}
+                </div>
             </div>
 
             <div className="container">
-                <div className="row justify-content-center ms-5">
-                    <div className="col-6">
+                <div className="row" style={{marginLeft: "20px"}}>
+                    <div className="col-6" style={{fontSize:"large"}}>
                             
                         <b>Supplier Name</b><br></br>
                         {editSupplier === false &&
@@ -305,7 +309,13 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="supplierName" value={updatedFormData.supplierName || formData.supplierName} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="text" 
+                                name="supplierName" 
+                                value={updatedFormData.supplierName || formData.supplierName} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
                         }
                         <br></br>
 
@@ -315,7 +325,14 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="email" value={updatedFormData.email || formData.email} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                value={updatedFormData.email || formData.email} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                            />            
                         }
                         <br></br>
 
@@ -325,7 +342,14 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="officeNum" value={updatedFormData.officeNum || formData.officeNum} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="tel" 
+                                name="officeNum" 
+                                value={updatedFormData.officeNum || formData.officeNum} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="[3689][0-9]{7}" 
+                            />
                         }
                         <br></br>
 
@@ -335,7 +359,14 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="webAddress" value={updatedFormData.webAddress || formData.webAddress} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="url" 
+                                name="webAddress" 
+                                value={updatedFormData.webAddress || formData.webAddress} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="^https?:\/\/.+$"
+                            />
                         }
                         <br></br>
 
@@ -345,7 +376,13 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="bankAccName" value={updatedFormData.bankAccName || formData.bankAccName} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="text" 
+                                name="bankAccName" 
+                                value={updatedFormData.bankAccName || formData.bankAccName} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
                         }
                         <br></br>
 
@@ -371,7 +408,7 @@ export default function viewSupplier({ supplierDetails }) {
                         <br></br>
                     </div>
 
-                    <div className="col-6">
+                    <div className="col-6" style={{fontSize:"large"}}>
 
                         <b>Contact Person</b><br></br>
                         {editSupplier === false &&
@@ -379,7 +416,13 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="contactPersonName" value={updatedFormData.contactPersonName || formData.contactPersonName} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="text" 
+                                name="contactPersonName" 
+                                value={updatedFormData.contactPersonName || formData.contactPersonName} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
                         }
                         <br></br>
 
@@ -389,7 +432,14 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="phoneNum" value={updatedFormData.phoneNum || formData.phoneNum} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="tel" 
+                                name="phoneNum" 
+                                value={updatedFormData.phoneNum || formData.phoneNum} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="[3689][0-9]{7}"
+                            />
                         }
                         <br></br>
 
@@ -399,7 +449,13 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="address" value={updatedFormData.address || formData.address} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="text" 
+                                name="address" 
+                                value={updatedFormData.address || formData.address} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
                         }
                         <br></br>
 
@@ -409,7 +465,13 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input type="text" name="bankAccountNum" value={updatedFormData.bankAccountNum || formData.bankAccountNum} onChange={handleInput} className={styles.editInputs}></input>
+                            <input 
+                                type="text" 
+                                name="bankAccountNum" 
+                                value={updatedFormData.bankAccountNum || formData.bankAccountNum} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
                         }
                         <br></br>
 
@@ -435,8 +497,8 @@ export default function viewSupplier({ supplierDetails }) {
 
                     {editSupplier == true &&
                         <div className={styles.updateButtons} >
-                            <button type="button" className={styles.cancelButton2} onClick={handleCancelEdit}>Cancel</button>
                             <button type="submit" className={styles.submitButton} onClick={handleConfirmUpdate}>Update</button>
+                            <button type="button" className={styles.cancelButton2} onClick={handleCancelEdit}>Cancel</button>
                         </div>
                     }
             
