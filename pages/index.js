@@ -8,7 +8,7 @@ export default function Index() {
             <div className="pt-5">
                 <div className="card card-block w-100 border-0">
                     <div className={styles.box}>
-                        <h1 className='PageHeader'>ABC Cooking Studios</h1>
+                        <h1 className='PageHeader'>ABC Cooking Studio</h1>
                         <h2>Purchase Ordering System</h2>
                         <div className="p-3">
                             <a href="/Login">
