@@ -412,3 +412,8 @@
     border: 1px solid #486284;
     cursor: default;
 }
+
+.back {
+    vertical-align: middle;
+    padding-right: 20px;
+}
