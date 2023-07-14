@@ -6,21 +6,10 @@
     src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
 }
 
-.titleRow h1 {  
-    display: flex;
-    align-items: center;
-}
-
-.title {
-    margin-left: 80px;
-    margin-bottom: 45px;
-    padding-top: 30px;
-    width: 75%;
-    font-size: 25pt;
-}
-
 .backArrow{
-    margin-left: 20px;
+    margin-left: 30px;
+    margin-right: 20px;
+    display: inline;
 }
 
 /* column grid */
@@ -163,69 +152,6 @@
     margin-right: 20px;
 }
 
-/* update popup box */
-.updatePopContainer {
-    width: 50%;
-    height: 128%;
-    position: absolute;
-    top: 83%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    padding-top: 40px;
-    border-radius: 20px;
-    display: block;
-    border: 1px solid black;
-    justify-content: center;
-    align-items: center;
-    padding-left: 5px; 
-}
-
-.updatePopBox {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.updateTitle {
-    font-size: xx-large;
-    margin-left: 15px;
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
-
-/* .submitButton{
-    margin-top: 30px;
-    display: flex;
-    justify-content: center;
-    cursor: pointer;
-    color: white;
-    border-radius: 20px;
-    border-width: 1px;
-    padding: 8px 15px;
-    margin-left: 150px;
-    font-size: 15pt;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 50px;
-} */
-
-.closeButton1 {
-    background-color: transparent;
-    border: none;
-    margin-left: 700px;
-    font-size: xx-large;
-    cursor: pointer;
-    margin-top: -80px;
-}
-
-.editInput1 {
-    margin-top: 80px;
-    font-size: large;
-}
-
 .editInputs {
     font-size: medium;
     border-radius: 5px;
@@ -243,9 +169,4 @@
     border-radius: 10px; */
     font-family: "Plus Jakarta Sans";
     font-size: 14px;
-}
-
-.formRow {
-    display: flex;
-    margin-top: 50px;
 }
