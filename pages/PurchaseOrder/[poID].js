@@ -7,26 +7,29 @@ import arrowIcon from '../../public/arrowIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 
+//component
+import WIP from "../../components/WIP";
+
 // Base urls
 const URL = [];
 
-function isLocalhost (){
-    if (typeof window !== 'undefined') {
-        const hostname = window.location.hostname;
-        console.log("hostname",hostname)
-        // console.log('hostname   ' + hostname);
-        if(hostname == 'localhost'){
-            URL.push('http://localhost:3000', 'http://localhost:5000');
-            console.log(URL);
-            
-        }
-        else if(hostname == 'abc-cooking-studio.azurewebsites.net'){
-            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-            console.log(URL);
-        };
+function isLocalhost() {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    console.log("hostname", hostname)
+    // console.log('hostname   ' + hostname);
+    if (hostname == 'localhost') {
+      URL.push('http://localhost:3000', 'http://localhost:5000');
+      console.log(URL);
 
-        return URL;
+    }
+    else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+      URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+      console.log(URL);
     };
+
+    return URL;
+  };
 };
 
 isLocalhost();
@@ -46,16 +49,16 @@ const frontendBaseUrl = URL[1]
 export async function getServerSideProps(context) {
 
   const host = context.req.headers.host;
-    // console.log(host);
-    
-    const backBaseURL = [];
+  // console.log(host);
 
-    if(host == 'localhost:5000'){
-        backBaseURL.push('http://localhost:3000');
-    }
-    else{
-        backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
-    };
+  const backBaseURL = [];
+
+  if (host == 'localhost:5000') {
+    backBaseURL.push('http://localhost:3000');
+  }
+  else {
+    backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
+  };
 
   const { params } = context;
   const { poID } = params;
@@ -128,10 +131,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const [pdfFile, setPDFFile] = useState([]);
   const [viewPdf, setViewPdf] = useState([]);
 
+  const [wip, setWip] = useState(false);
+
   //saving paymentstatus, need to get ID from status first. 
   const handlePaymentStatusChange = (event) => {
     setPaymentStatusID(event.target.value);
-    console.log('this is payment name, not ID i think', paymentStatusID)
   };
 
   //saving the remarks section 
@@ -154,7 +158,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const fetchRemarks = () => {
     axios.get(`${baseUrl}/api/purchaseOrder/remarks/${poID}`)
       .then(res => {
-        console.log("REMARKS FETCHING", res.data[0].ptRemarks)
         const remarksData = res.data[0].ptRemarks;
         setRemarks(remarksData);
       })
@@ -185,29 +188,44 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
   // }
 
+  //wip 
+  const wipOpen = async (e) => {
+    e.preventDefault()
+    setWip(true);
+    timer()
+  }
+
+  function timer() {
+    setTimeout(closeWIP, 2000);
+  }
+
+  function closeWIP() {
+    setWip(false);
+  }
+
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
-  
+
     reader.onload = () => {
       const blob = new Blob([reader.result], { tyle: file.type });
       setSelectedFile(blob);
     };
-  
+
     reader.readAsArrayBuffer(file);
   }
-  
+
   const handleUpload = async () => {
     if (selectedFile) {
       const formData = new FormData();
-      formData.append('pdfData', selectedFile); 
-  
+      formData.append('pdfData', selectedFile);
+
       axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, formData)
         .then(() => {
           console.log('receipt uploaded..');
         })
         .catch((err) => {
-          console.log("error uploading receipt",err);
+          console.log("error uploading receipt", err);
         })
     }
   }
@@ -230,16 +248,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const gstPercent = remarkDetail[0].GST.gst;
 
   //calculating gst 8%
-  const gst = subtotal * (gstPercent/100);
+  const gst = subtotal * (gstPercent / 100);
 
   //total price 
   let total = subtotal + gst
 
-  console.log("product items stuff", productDetails)
-  console.log("remarks stuff ITS CORRECT RIGHT?: ", remarksDetails)
-
-
-  console.log("supplier details check", supplierDetails)
 
   const handleOpenReceipt = () => {
     setFileDisplay(true);
@@ -268,7 +281,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       .then(res => {
         alert(`sucessfully created new status ${statusInput}`)
         setNewStat(false)
-        console.log(res.data);
         setStatus((prevStatus) => [...prevStatus, res.data]);
         onSubmit(statusInput)
       })
@@ -358,7 +370,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       .then(res => {
         console.log(res.data[0].PaymentStatusID);
         const ID = (res.data[0].PaymentStatusID)
-        console.log("New Status: " + ID)
 
         //updating payment status in db
         axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
@@ -472,10 +483,10 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             <div>
               <b>Office Number</b>
             </div>
-            <br />
             <div>
               <p>{supplierDetails.officeNum}</p>
             </div>
+            <br />
           </div>
           <div className="col">
             <div>
@@ -595,39 +606,81 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
             </div>
 
+
+            {/* payment */}
+            <div className="mt-5 col-12">
+              <div className="row">
+                <div className="col-md-6" >
+                  <div className="form-group">
+                    <label htmlFor="paymentStatus">Payment Status:</label>
+                    <select className="form-control" id="paymentStatus" value={selectedPaymentStatus} onChange={handleStatusChange2}>
+                      {paymentStatuses.map((status, index) => (
+                        <option key={index} value={status.paymentStatus}>{status.paymentStatus}</option>
+                      ))}
+                      <option value="+ Create New Status"> + Create New Status</option>
+                    </select>
+
+                  </div>
+                </div>
+
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="paymentMode">Payment Mode:</label>
+                    <select className="form-control" id="paymentMode" disabled>
+                      <option value="option1">Bank Transfer</option>
+                      <option value="option2">Cash on Delivery</option>
+                      <option value="option3">+ New Method</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <div className="col-md-6">
+                <button className={`btn ${selectedStatus2.paymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={wipOpen} disabled={selectedStatus2.paymentStatus === 'Pending'}>Upload Receipt</button>
+              </div>
+            </div>
+
+            {wip && <WIP Show={wip} />}
+
+
+            <div className="row">
+              <div className="col-md-12">
+                <div className="mb-4 mt-5">
+                  <b className="d-inline-block">Remarks</b> <br />
+                  <textarea
+                    type="text"
+                    className="form-control mt-2"
+                    style={{
+                      height: '200px',
+                      width: '100%',
+                      maxWidth: '2000px'
+                    }}
+                    value={remarks} //so user can see exising remarks.
+
+                    onChange={handleRemarksChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="row">
+              <div className="col-md-12 ">
+                <div className="text-end">
+                  <button className="btn" style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '10px 50px 10px 50px' }} onClick={handleSave}>
+                    Save Remarks
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
 
-      {/* payment */}
-      <div className="mt-5 col-12">
-        <div className="row">
-          <div className="col-md-5 offset-md-1" >
-            <div className="form-group">
-              <label htmlFor="paymentStatus">Payment Status:</label>
-              <select className="form-control" id="paymentStatus" value={selectedPaymentStatus} onChange={handleStatusChange2}>
-                {paymentStatuses.map((status, index) => (
-                  <option key={index} value={status.paymentStatus}>{status.paymentStatus}</option>
-                ))}
-                <option value="+ Create New Status"> + Create New Status</option>
-              </select>
 
-            </div>
-          </div>
-
-          <div className="col-md-5">
-            <div className="form-group">
-              <label htmlFor="paymentMode">Payment Mode:</label>
-              <select className="form-control" id="paymentMode" disabled>
-                <option value="option1">Bank Transfer</option>
-                <option value="option2">Cash on Delivery</option>
-                <option value="option3">+ New Method</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
 
 
       {fileUpload && (
@@ -640,11 +693,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
       <div>
 
-        <div className="mt-5">
-          <div className="col-md-6 offset-md-1">
-            <button className={`btn ${selectedStatus2.paymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={handleOpenModal} disabled={selectedStatus2.paymentStatus === 'Pending'}>Upload Receipt</button>
-          </div>
-        </div>
+
 
 
         {showModal && (
@@ -729,37 +778,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       </div>
 
 
-
-
-      <div className="row">
-        <div className="col-md-10 offset-md-1">
-          <div className="mb-4 mt-5">
-            <b className="d-inline-block">Remarks</b> <br />
-            <textarea
-              type="text"
-              className="form-control mt-2"
-              style={{
-                height: '200px',
-                width: '100%',
-                maxWidth: '2000px'
-              }}
-              value={remarks} //so user can see exising remarks.
-
-              onChange={handleRemarksChange}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="row">
-        <div className="col-md-10 offset-md-1">
-          <div className="text-end">
-            <button className="btn" style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '10px 50px 10px 50px' }} onClick={handleSave}>
-              Save Remarks
-            </button>
-          </div>
-        </div>
-      </div>
     </>
   )
 }
