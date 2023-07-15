@@ -74,6 +74,7 @@ export default function Login() {
                 // console.log(res.data[0]);
 
                 const data = res.data[0];
+                console.log(res)
 
                 // add user data to local storage
                 localStorage.setItem("ID", data.userID);
@@ -104,16 +105,7 @@ export default function Login() {
                 if (err.code === "ERR_NETWORK") {
                     alert(err);
                 }
-                else if (err.response.status == 404) {
-                    alert(err.response.data);
-                }
-                // else{
-                //     alert(err);
-                // }
-                if (err.code === "ERR_NETWORK") {
-                    alert(err);
-                }
-                else if (err.response.status == 404) {
+                else if (err.response.status === 404) {
                     alert(err.response.data);
                 }
                 // else{
