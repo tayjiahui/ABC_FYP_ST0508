@@ -54,7 +54,7 @@
 }
 
 .headerSupplierName {
-    margin-left: 45px;
+    margin-left: 25px;
 }
 
 .headerContactPerson {
@@ -110,7 +110,7 @@
 }
 
 .listSupplierName {
-    padding-left: 65px;
+    padding-left: 35px;
     text-align: left;
     width: 120%
 }

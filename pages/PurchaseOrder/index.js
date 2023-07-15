@@ -7,6 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 import Image from 'next/image';
 import searchBtn from '../../public/searchIcon.svg';
+import filterIcon from "../../public/filterIcon.svg";
+
+//component
+import WIP from "../../components/WIP";
+
 
 // Base urls
 const URL = [];
@@ -39,6 +44,24 @@ export default function TrackPayment({ purchaseOrder }) {
   const [searchInput, setSearchInput] = useState([]);
   const [filteredPurchaseOrders, setFilteredPurchaseOrders] = useState(purchaseOrder);
 
+  const [wip, setWip] = useState(false);
+
+  //wip 
+  const wipOpen = async (e) => {
+    e.preventDefault()
+    setWip(true);
+    timer()
+  }
+
+  function timer() {
+    setTimeout(closeWIP, 2000);
+  }
+
+  function closeWIP() {
+    setWip(false);
+  }
+
+
   const handleSearchInputChange = (event) => {
     setSearchInput(event.target.value);
     filterPurchaseOrders(event.target.value);
@@ -66,8 +89,12 @@ export default function TrackPayment({ purchaseOrder }) {
             onChange={handleSearchInputChange}
           />
           <button type="submit" className={styles.searchButton}>
-            <Image src={searchBtn} />
+            <Image src={searchBtn} className="me-2" />
+            <Image src={filterIcon} onClick={wipOpen} />
           </button>
+
+          {wip && <WIP Show={wip} />}
+
         </div>
       </div>
 
@@ -80,11 +107,11 @@ export default function TrackPayment({ purchaseOrder }) {
         <div className="col">Status</div>
       </div>
 
-      <div>
+      <div className={styles.poListsMain}>
         {filteredPurchaseOrders.map((po, index) => (
-          <Link key={index} href={baseURL + '/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark drop-shadow ">
-            <div className="row py-4 border-bottom mb-2 " style={{ backgroundColor: '#C0D8F7', borderRadius: '15px', height: '85px'}}>
-              <div className="col">{po.prID}</div>
+          <Link key={index} href={baseURL + '/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark"  >
+            <div className={`row py-4 border-bottom mb-2 ${styles['hover-box-shadow']}`} style={{ backgroundColor: '#C0D8F7', borderRadius: '15px', height: '85px'}}>
+              <div className="col">#{po.prID}</div>
               <div className="col">{moment(po.requestDate).format('DD MMM YYYY')}</div>
               <div className="col">${Number(po.Price).toFixed(2)}</div>
               <div className="col">{po.paymentMode}</div>

@@ -9,6 +9,7 @@ import styles from "../../styles/viewSupplier.module.css";
 import arrowIcon from "../../public/arrowIcon.svg";
 import editIcon from "../../public/penIcon.svg";
 import deleteIcon from "../../public/trashBinIcon.svg";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Base urls
 const URL = [];
@@ -36,8 +37,6 @@ isLocalhost();
 
 const baseUrl = URL[0];
 const baseURL = URL[1];
-
-// console.log(baseUrl, baseURL);
 
 // get supplier info
 export async function getServerSideProps(context) {
@@ -164,10 +163,9 @@ export default function viewSupplier({ supplierDetails }) {
         setSelectedCategories(selectedOpts);
     };
 
+    // handle delete popup
     const [deleteSupplierPop, setDeleteSupplierPop] = useState(false);
-    const [updateSupplierPop, setUpdateSupplierPop] = useState(false);
 
-    // delete popup handling
     const handleClosePopup = () => {
         setDeleteSupplierPop(false);
     }
@@ -180,15 +178,24 @@ export default function viewSupplier({ supplierDetails }) {
     const handleConfirmDelete = async(e) => {
         e.preventDefault();
 
-        try {
-            const response = await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`);
-            console.log(response.data);
-            alert(response.data);
-        }
-        catch(err) {
-            console.log(err);
-            alert(err);
-        }
+        await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`)
+            .then((res1) => {
+                console.log(res1.data);
+                alert(res1.data);
+
+                axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`)
+                    .then((res2) => {
+                        console.log(res2.data);
+                        // alert(res2.data);
+                    })
+
+                // refresh page to show updates
+                router.push('/Supplier');
+            })
+            .catch((err) => {
+                console.log(err);
+                alert(err);
+            });
         
         setDeleteSupplierPop(false);
 
@@ -196,13 +203,17 @@ export default function viewSupplier({ supplierDetails }) {
         router.push('/Supplier');
     }
 
-    // update popup handling
-    const handleOpenUpdate = () => {
-        setUpdateSupplierPop(true);
-    }
+    // text edit for update
+    const [editSupplier, allowEditSupplier] = useState(false);
 
-    const handleCloseUpdate = () => {
-        setUpdateSupplierPop(false);
+    // allow edit mode when pen icon is clicked
+    const handleAllowEdit = () => {
+        allowEditSupplier(true);
+    };
+
+    // cancel button for update
+    const handleCancelEdit = () => {
+        allowEditSupplier(false);
     }
 
     // handle update button
@@ -225,11 +236,12 @@ export default function viewSupplier({ supplierDetails }) {
 
         console.log(updatedValues);
 
+        // check for category inputs
         if (selectedCategories.length === 0) {
             alert("Please select at least one option for Category");
-            setUpdateSupplierPop(true);
         } 
         else {
+            // send form data using axios PUT
             await axios.put(`${baseUrl}/api/supplier/${supplierID}`, updatedValues)
             .then((res1) => {
                 console.log(res1.data);
@@ -245,7 +257,6 @@ export default function viewSupplier({ supplierDetails }) {
 
                 // refresh page to show updates
                 router.push('/Supplier');
-                // router.reload() --> didnt work
 
             })
             .catch((err) => {
@@ -253,147 +264,246 @@ export default function viewSupplier({ supplierDetails }) {
                 alert(err);
             });
         }
-        setUpdateSupplierPop(true);
     }
 
     return (
         <>
-            <div className={styles.titleRow}>
-                <h1>
-                    <a href={'/Supplier'}>
-                        <Image src={arrowIcon} className={styles.backArrow} alt="Back Arrow" />
-                    </a>
+            <div className="row">
+                <div className="col-10 mt-2 mb-4">
+                    <h1>
+                        <a href={'/Supplier'}>
+                            <Image src={arrowIcon} className={styles.backArrow} alt="Back Arrow" />
+                        </a>
 
-                    <p className={styles.title}>{supplierDetail.supplierName}</p>
-
-                    <Image src={editIcon} onClick={handleOpenUpdate} className={styles.penIcon} alt="Edit Button" />
-                    
-                    {updateSupplierPop && (
-                        <div className={styles.updatePopContainer}>
-                            <div className={styles.updatePopBox}>
-                                <h5 className={styles.updateTitle}>Update Supplier</h5>
-                                <button onClick={handleCloseUpdate} className={styles.closeButton1}>X</button>
-                                <div className={styles.formRow}>
-                                    <form>
-                                        <div className={styles.formCol1}>
-                                            <b className={styles.editInput1}>Supplier Name</b>
-                                            <input type="text" name="supplierName" value={updatedFormData.supplierName || formData.supplierName} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Email</b>
-                                            <input type="text" name="email" value={updatedFormData.email || formData.email} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Office Number</b>
-                                            <input type="text" name="officeNum" value={updatedFormData.officeNum || formData.officeNum} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Web Address</b>
-                                            <input type="text" name="webAddress" value={updatedFormData.webAddress || formData.webAddress} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Bank Account Name</b>
-                                            <input type="text" name="bankAccName" value={updatedFormData.bankAccName || formData.bankAccName} onChange={handleInput} className={styles.editInputs}></input><br></br>
-                                        </div>
-
-                                        <div className={styles.formCol2}>
-                                            <b className={styles.editInput1}>Contact Person</b>
-                                            <input type="text" name="contactPersonName" value={updatedFormData.contactPersonName || formData.contactPersonName} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Phone Number</b>
-                                            <input type="text" name="phoneNum" value={updatedFormData.phoneNum || formData.phoneNum} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Address</b>
-                                            <input type="text" name="address" value={updatedFormData.address || formData.address} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Bank Account Number</b>
-                                            <input type="text" name="bankAccountNum" value={updatedFormData.bankAccountNum || formData.bankAccountNum} onChange={handleInput} className={styles.editInputs}></input><br></br>
-
-                                            <b className={styles.editInput1}>Bank Name</b>
-                                            <Select
-                                                isSearchable
-                                                options={bankDropdownOptions}
-                                                name="bankID"
-                                                value={selectedBank || formData.bankID} 
-                                                onChange={handleSelectBank}
-                                                className={styles.selectBox}
-                                                placeholder={supplierDetail.bankName}
-                                            /> 
-
-                                            <b className={styles.editInput1}>Category</b>
-                                            <Select
-                                                isMulti
-                                                isSearchable
-                                                options={categoryOptions}
-                                                value={selectedCategories}
-                                                onChange={handleMultiCategory}
-                                                className={styles.multiSelectBox}
-                                                placeholder={supplierDetail.Category}
-                                                // placeholder="What do you sell?"
-                                                noOptionsMessage={() => "Category does not exist."}
-                                                require d
-                                            />
-                                        </div>
-                                        <br></br>
-                                        <button type="submit" className={styles.submitButton} onClick={handleConfirmUpdate}>Update</button>
-                                    </form>
-                                </div> 
-                            </div>
-                        </div>
-                    )}
-
-                    <Image src={deleteIcon} onClick={handleOpenPopup} className={styles.trashBin} alt="Delete Button" />
-
-                    {deleteSupplierPop && (
-                        <div className={styles.popupContainer}>
-                            <div className={styles.popupBox}>
-                                <h2 className={styles.confirmDeleteText}> Confirm Delete?</h2>
-                                <button onClick={handleClosePopup} className={styles.closeButton2}>X</button>
-                            </div>
-                            <div className={styles.deleteButtons}>
-                                <button className={styles.cancelButton} onClick={handleClosePopup} >Cancel</button>
-                                <button className={styles.deleteButton} onClick={handleConfirmDelete}>Delete</button>
-                            </div>
-                        </div>
-                    )}
-                </h1>
-
-                <div className={styles.row}>
-                    <div className={styles.col1}>
-                        <b className={styles.colTitle}>Supplier Name</b>
-                        <p className={styles.colData}>{supplierDetail.supplierName}</p>
-
-                        <b className={styles.colTitle}>Email</b>
-                        <p className={styles.colData}>{supplierDetail.email}</p>
-
-                        <b className={styles.colTitle}>Office Number</b>
-                        <p className={styles.colData}>{supplierDetail.officeNum}</p>
-
-                        <b className={styles.colTitle}>Web Address</b>
-                        <p className={styles.colData}>{supplierDetail.webAddress}</p>
-
-                        <b className={styles.colTitle}>Bank Account Name</b>
-                        <p className={styles.colData}>{supplierDetail.bankAccName}</p>
-
-                        <b className={styles.colTitle}>Category</b>
-                        <p className={styles.colData}>{supplierDetail.Category}</p>
-                    </div>
-
-                    <div className={styles.col2}>
-                        <b className={styles.colTitle}>Contact Person</b>
-                        <p className={styles.colData}>{supplierDetail.contactPersonName}</p>
-
-                        <b className={styles.colTitle}>Phone Number</b>
-                        <p className={styles.colData}>{supplierDetail.phoneNum}</p>
-
-                        <b className={styles.colTitle}>Address</b>
-                        <p className={styles.colData}>{supplierDetail.address}</p>
-
-                        <b className={styles.colTitle}>Bank Name</b>
-                        <p className={styles.colData}>{supplierDetail.bankName}</p>
-
-                        <b className={styles.colTitle}>Bank Account Number</b>
-                        <p className={styles.colData}>{supplierDetail.bankAccountNum}</p>
-
-                    </div>
+                        <p className="h1 d-inline">{supplierDetail.supplierName}</p>
+                    </h1>
                 </div>
-                
+
+                <div className="col-2 mt-2 mb-4">
+                    <Image src={editIcon} onClick={handleAllowEdit} className="d-inline" style={{marginLeft:"30px", width:"40px", height:"40px", cursor: "pointer"}} alt="Edit Button" />
+
+                    <Image src={deleteIcon} onClick={handleOpenPopup} className="d-inline" style={{marginLeft:"40px", width:"45px", height:"45px", cursor: "pointer"}} alt="Delete Button" />
+
+                        {deleteSupplierPop && (
+                            <div className={styles.popupContainer}>
+                                <div className={styles.popupBox}>
+                                    <h2 className={styles.confirmDeleteText}> Confirm Delete?</h2>
+                                    <button onClick={handleClosePopup} className={styles.closeButton2}>X</button>
+                                </div>
+                                <div className={styles.deleteButtons}>
+                                    <button className={styles.deleteButton} onClick={handleConfirmDelete}>Delete</button>
+                                    <button className={styles.cancelButton1} onClick={handleClosePopup} >Cancel</button>
+                                </div>
+                            </div>
+                        )}
+                </div>
+            </div>
+
+            <div className="container">
+                <div className="row" style={{marginLeft: "20px"}}>
+                    <div className="col-6" style={{fontSize:"large"}}>
+                            
+                        <b>Supplier Name</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.supplierName}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="text" 
+                                name="supplierName" 
+                                value={updatedFormData.supplierName || formData.supplierName} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
+                        }
+                        <br></br>
+
+                        <b>Email</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.email}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="email" 
+                                name="email" 
+                                value={updatedFormData.email || formData.email} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                            />            
+                        }
+                        <br></br>
+
+                        <b>Office Number</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.officeNum}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="tel" 
+                                name="officeNum" 
+                                value={updatedFormData.officeNum || formData.officeNum} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="[3689][0-9]{7}" 
+                            />
+                        }
+                        <br></br>
+
+                        <b>Web Address</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.webAddress}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="url" 
+                                name="webAddress" 
+                                value={updatedFormData.webAddress || formData.webAddress} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="^https?:\/\/.+$"
+                            />
+                        }
+                        <br></br>
+
+                        <b>Bank Account Name</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.bankAccName}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="text" 
+                                name="bankAccName" 
+                                value={updatedFormData.bankAccName || formData.bankAccName} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
+                        }
+                        <br></br>
+
+                        <b>Category</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.Category}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <Select
+                                isMulti
+                                isSearchable
+                                options={categoryOptions}
+                                value={selectedCategories}
+                                onChange={handleMultiCategory}
+                                className={styles.multiSelectBox}
+                                placeholder={supplierDetail.Category}
+                                // placeholder="What do you sell?"
+                                noOptionsMessage={() => "Category does not exist."}
+                                required
+                            />
+                        }
+                        <br></br>
+                    </div>
+
+                    <div className="col-6" style={{fontSize:"large"}}>
+
+                        <b>Contact Person</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.contactPersonName}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="text" 
+                                name="contactPersonName" 
+                                value={updatedFormData.contactPersonName || formData.contactPersonName} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
+                        }
+                        <br></br>
+
+                        <b>Phone Number</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.phoneNum}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="tel" 
+                                name="phoneNum" 
+                                value={updatedFormData.phoneNum || formData.phoneNum} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                                pattern="[3689][0-9]{7}"
+                            />
+                        }
+                        <br></br>
+
+                        <b>Address</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.address}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="text" 
+                                name="address" 
+                                value={updatedFormData.address || formData.address} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
+                        }
+                        <br></br>
+
+                        <b>Bank Account Number</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.bankAccountNum}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input 
+                                type="text" 
+                                name="bankAccountNum" 
+                                value={updatedFormData.bankAccountNum || formData.bankAccountNum} 
+                                onChange={handleInput} 
+                                className={styles.editInputs}
+                            />
+                        }
+                        <br></br>
+
+                        <b>Bank Name</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.bankName}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <Select
+                                isSearchable
+                                options={bankDropdownOptions}
+                                name="bankID"
+                                value={selectedBank || formData.bankID}
+                                onChange={handleSelectBank}
+                                className={styles.selectBox}
+                                placeholder={supplierDetail.bankName}
+                            />
+                        }
+                        <br></br>
+
+                    </div>
+
+                    {editSupplier == true &&
+                        <div className={styles.updateButtons} >
+                            <button type="submit" className={styles.submitButton} onClick={handleConfirmUpdate}>Update</button>
+                            <button type="button" className={styles.cancelButton2} onClick={handleCancelEdit}>Cancel</button>
+                        </div>
+                    }
+            
+                </div>
+
             </div>
         </>
     );

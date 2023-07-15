@@ -147,8 +147,11 @@ export async function getServerSideProps(context) {
   const ogLocations = [];
   const ogPL = [];
 
-  //   console.log(prDetails);
-  //   console.log(prProductLines);
+  // console.log(prDetails);
+  // console.log(prProductLines);
+
+  // get gst
+  const gstDetails = prDetails[0].GST;
 
   const PR = prDetails[0];
 
@@ -190,6 +193,7 @@ export async function getServerSideProps(context) {
       host,
       prDetails: prDetails,
       pLDetails: prProductLines,
+      gstDetails,
       POCheck,
       suppliers,
       locations,
@@ -205,6 +209,7 @@ export async function getServerSideProps(context) {
 export default function ViewPR({
   prDetails,
   pLDetails,
+  gstDetails,
   POCheck,
   suppliers,
   locations,
@@ -339,9 +344,12 @@ export default function ViewPR({
       return total;
     }
 
+    // get gst by based on PR
+    const gstPercent = gstDetails.gst;
+
     // Calculate GST
     function GSTFinder(amt) {
-      const gst = (8 / 100) * amt;
+      const gst = (gstPercent / 100) * amt;
       return gst;
     }
 
@@ -1337,8 +1345,8 @@ export default function ViewPR({
             </div>
 
             <div className="d-flex mx-5">
-              <div className="col-sm"></div>
-              <div className="col-sm-4 mx-5 pt-5">
+              {/* <div className="col-sm"></div> */}
+              <div className="col-sm-9">
                 {/* <div className={styles2.submit}>
                                         <button type="button" onClick={handleRefresh} className={styles2.resetReappealButton}>
                                             <div className="px-5">
@@ -1347,9 +1355,9 @@ export default function ViewPR({
                                         </button>
                                     </div> */}
               </div>
-              <div className="col-sm-4 mx-5 pt-5">
+              <div className="col-sm py-5">
                 <div className={styles2.reappeal}>
-                  <button type="submit" className={styles2.submitButton}>
+                  <button type="submit" className={styles2.reappealButton}>
                     <div className="px-5">Reappeal PR</div>
                   </button>
                 </div>
