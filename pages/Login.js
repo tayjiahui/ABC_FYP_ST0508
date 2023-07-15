@@ -17,7 +17,6 @@ function isLocalhost() {
         if (hostname == 'localhost') {
             URL.push('http://localhost:3000', 'http://localhost:5000');
             console.log(URL);
-
         }
         else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
@@ -74,6 +73,7 @@ export default function Login() {
                 // console.log(res.data[0]);
 
                 const data = res.data[0];
+                // console.log(res);
 
                 // add user data to local storage
                 localStorage.setItem("ID", data.userID);
@@ -85,14 +85,14 @@ export default function Login() {
                 signIn(null, { callbackUrl: "/Home" });
 
                 // auth2(session?.accessToken);
-                console.log({ session, status, update });
+                // console.log({ session, status, update });
 
-                console.log("this is session ========= " + session?.accessToken);
+                // console.log("this is session ========= " + session?.accessToken);
 
                 // redirect to home page
                 // router.push('/Home');
 
-                console.log("success")
+                // console.log("success")
 
                 // react sign in
                 // signIn();
@@ -104,16 +104,7 @@ export default function Login() {
                 if (err.code === "ERR_NETWORK") {
                     alert(err);
                 }
-                else if (err.response.status == 404) {
-                    alert(err.response.data);
-                }
-                // else{
-                //     alert(err);
-                // }
-                if (err.code === "ERR_NETWORK") {
-                    alert(err);
-                }
-                else if (err.response.status == 404) {
+                else if (err.response.status === 404) {
                     alert(err.response.data);
                 }
                 // else{

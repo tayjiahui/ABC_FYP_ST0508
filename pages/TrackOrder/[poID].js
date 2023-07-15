@@ -37,7 +37,6 @@ isLocalhost();
 const baseUrl = URL[0]
 
 function ItemLines(props) {
-<<<<<<< HEAD
     return (
         <div>
             <ul className="list-group list-group-horizontal text-center">
@@ -50,7 +49,7 @@ function ItemLines(props) {
             </ul>
         </div>
     )
-=======
+
   return (
     <div>
       <ul className="list-group list-group-horizontal text-center">
@@ -63,7 +62,6 @@ function ItemLines(props) {
       </ul>
     </div>
   )
->>>>>>> main
 };
 
 // get backend 
@@ -84,19 +82,19 @@ export async function getServerSideProps(context) {
   const { poID } = params;    //PR ID FROM DATABASE DISGUISED AS POID FOR FRONTEND
 
 
-    const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
-    // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
-    const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
-    const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
+  const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
+  // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
+  const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
+  const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
 
-    const data1 = await poD.json();
-    const data2 = await productD.json();
-    const data3 = await PRDetails.json();
+  const data1 = await poD.json();
+  const data2 = await productD.json();
+  const data3 = await PRDetails.json();
 
-    // console.log(data1);
-    // console.log(data2);
-    
-    const gst = data3[0].GST;
+  // console.log(data1);
+  // console.log(data2);
+
+  const gst = data3[0].GST;
 
   const qtyReceiveS = [];
 
@@ -107,28 +105,28 @@ export async function getServerSideProps(context) {
     }
   });
 
-<<<<<<< HEAD
+
     // GET BASE QTY RECEIVED VALUES
     data2.forEach((item, index) => {
         qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
     });
-=======
+
   // GET BASE QTY RECEIVED VALUES
   data2.forEach((item, index) => {
     qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
   });
->>>>>>> main
 
-    return {
-        props: {
-            host,
-            purOrderD: data1,
-            productDeets: data2,
-            gstDetails: gst,
-            QtyReceived: qtyReceiveS,
-            poID
-        }
+
+  return {
+    props: {
+      host,
+      purOrderD: data1,
+      productDeets: data2,
+      gstDetails: gst,
+      QtyReceived: qtyReceiveS,
+      poID
     }
+  }
 }
 
 // main frontend page
@@ -153,7 +151,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
   const [changeStatusPop2, setChangeStatusPop2] = useState();
   const [amount, setAmount] = useState('');
 
-<<<<<<< HEAD
+
     const [editQty, allowQtyEdit] = useState(false);
     const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
     const [showInProg, setInProg] = useState(false);
@@ -161,7 +159,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     const [selectedValue, setSelectedValue] = useState('');
     // console.log("purchase status id", selectedValue);
     // console.log("po id", poID);
-=======
+
   const [editQty, allowQtyEdit] = useState(false);
   const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
 
@@ -169,12 +167,12 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
   const [selectedValue, setSelectedValue] = useState('');
   // console.log("purchase status id", selectedValue);
   // console.log("po id", poID);
->>>>>>> main
+
 
   //validation for number received for line item
   const [validation, setValidation] = useState('');
 
-<<<<<<< HEAD
+
     // Onclick Save button for QtY received
     const handleDontAllowQtyEdit = async (e) => {
         e.preventDefault();
@@ -195,7 +193,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
         });
 
     };
-=======
 
   // Control Allow QTY Edit
   const handleAllowQtyEdit = () => {
@@ -220,7 +217,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
           console.log(err);
         });
     });
->>>>>>> main
 
   };
 
@@ -318,49 +314,68 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     //}
 
 
-<<<<<<< HEAD
+
     // const handleClick = async (e) => {
 
-    // const { value } = e.target;
-    // setSelectedValue(value);
-    //     e.preventDefault();
+  // const { value } = e.target;
+  // setSelectedValue(value);
+  //     e.preventDefault();
 
-    //     try {
-    //         // Send the selected option to the server using Axios PUT request
-    //         const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
-    //             purchaseStatusID: selectedValue,
-    //         });
-    //         console.log(response.data); // Handle the response as needed
+  //     try {
+  //         // Send the selected option to the server using Axios PUT request
+  //         const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+  //             purchaseStatusID: selectedValue,
+  //         });
+  //         console.log(response.data); // Handle the response as needed
 
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
+  //     } catch (error) {
+  //         console.error(error);
+  //     }
 
-    // }
+  // }
 
-    // const handleAmountChange = (event) => {
-    //     setAmount(event.target.value);
-    // };
+  // const handleAmountChange = (event) => {
+  //     setAmount(event.target.value);
+  // };
 
-    // timer
-    function timeFunc() {
-        // 2 seconds
-        setTimeout(closeWIPModal, 2000);
+  // timer
+  function timeFunc() {
+    // 2 seconds
+    setTimeout(closeWIPModal, 2000);
+  };
+
+  const handleOpenWip = () => {
+    setInProg(true);
+    timeFunc();
+  };
+
+  // close WIP Modal
+  function closeWIPModal() {
+    setInProg(false);
+  };
+
+  const handleCloseStatusPop = () => {
+    setChangeStatusPop(false);
+    setValidation(false);
+  };
+
+  const handleCloseStatusPop2 = () => {
+    setChangeStatusPop2(false);
+  };
+
+  const handleChange = (event) => {
+    // console.log(event.target.value);
+
+    setSelectedValue(event.target.value);
+    // localStorage.setItem('selectedValue', event.target.value);
+    const selectednewValue = event.target.value;
+    if (selectednewValue === "1" || "2" || "3" || "4" || "5") {
+      setChangeStatusPop(true)
     }
-
-    const handleOpenWip =() => {
-        setInProg(true);
-        timeFunc()
+    else {
+      // console.log("other options")
     }
-
-    // close WIP Modal
-    function closeWIPModal() {
-        setInProg(false);
-    }
-
-  
-
-
+  };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -385,7 +400,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
                 console.log(err);
             });
         //}
-=======
+
 
   };
 
@@ -403,7 +418,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
       })
       .catch(err => console.log(err));
   }, []);
->>>>>>> main
+
 
 
   // PR Details  
@@ -431,7 +446,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
             QtyReceived={QtyReceivedList[index].qtyReceived} />
         </div>
       );
-
       totalPrices.push(item.totalUnitPrice);
     });
 
@@ -443,18 +457,17 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
       for (let i = 0; i < array.length; i++) {
         let num = +array[i]
         total = total + num
-      }
-
+      };
       return total;
-    }
+    };
 
-        const gstPercent = gstDetails.gst;
+    const gstPercent = gstDetails.gst;
 
-        // Calculate GST
-        function GSTFinder(amt) {
-            const gst = (gstPercent / 100) * amt;
-            return gst;
-        }
+    // Calculate GST
+    function GSTFinder(amt) {
+      const gst = (gstPercent / 100) * amt;
+      return gst;
+    };
 
     const totalArr = [];
 
@@ -473,48 +486,30 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     const total = CalculateTotal(totalArr).toFixed(2);
     totalCal(total);
 
-    // check if there is remarks
-    // if (PR.remarks !== "") {
-    //     setRemark(true)
-    // }
-    // else {
-    //     setRemark(false)
-    // }
-
   }, []);
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
     const selectedValue = event.target.value;
-    console.log(event.target)
-    console.log("value", selectedValue)
+    // console.log(event.target);
+    // console.log("value", selectedValue);
 
     // else if (selectedValue === "Preparing Order") {
     //   setChangedStatusPop(true);
     // }
 
-    console.log('other options')
+    // console.log('other options')
     axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
       purchaseStatusID: selectedValue,
     })
       .then((res) => {
-        console.log(res)
+        console.log(res);
       })
       .catch((err) => {
-        console.log(err)
-      })
+        console.log(err);
+      });
     setChangeStatusPop(true);
-  }
-
- 
-
-
-  // const editPO = async (e) => {
-  //     e.preventDefault();
-
-
-
-  // };
+  };
 
   return (
     <div>
@@ -561,7 +556,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
           </div>
 
         </div>
-
 
         <div>
           <div className="d-flex">
@@ -616,7 +610,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
             productDeets.map((item, index) => {
               return <div key={index}>
                 <div>
-<<<<<<< HEAD
+
                     <div className="d-flex">
                         <h5 className="mt-5 ms-5 fs-2 mb-0">Product Details</h5>
                         {
@@ -688,7 +682,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
                         <hr className={styles.lineDivider}></hr>
                     </div>
 
-=======
+
                   <ul className="list-group list-group-horizontal text-center">
                     <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
                     <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
@@ -697,7 +691,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
                     <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
                     <li className="list-group-item col-sm-2 border-0 ms-5"><input type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index, e, item)} id={QtyReceivedList[index].id} onkeyup="if(value<0) value=0;" required /></li>
                   </ul>
->>>>>>> main
+
                 </div>
               </div>
             })
@@ -727,31 +721,31 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
             <hr className={styles.lineDivider2}></hr>
           </div>
 
-<<<<<<< HEAD
+
                     <div className="col-sm d-flex mt-2">
                         <h2 className="col-sm me-2">Total</h2>
                         <p className="col-sm ms-4 fs-4">${Total}</p>
                     </div>
-=======
+
           <div className="col-sm d-flex mt-2">
             <h2 className="col-sm me-2">Total</h2>
             <p className="col-sm ms-4 fs-4">${Total}</p>
           </div>
->>>>>>> main
+
 
         </div>
 
-<<<<<<< HEAD
+
                 <div className="col-sm ms-5">
                     <h2>Remarks</h2>
                     <h5>{PR.remarks}</h5>
                 </div>
-=======
+=========
         <div className="col-sm ms-5">
           <h2>Remarks</h2>
           <h5>{PR.remarks}</h5>
         </div>
->>>>>>> main
+
 
         <br></br>
         <br></br>
@@ -775,7 +769,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
                         </select>
                     </div> */}
 
-<<<<<<< HEAD
+
                     <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{ flex: 1 }}>
                         <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
 
@@ -854,10 +848,10 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
 
 
 
-=======
+
           <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{ flex: 1 }}>
             <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
->>>>>>> main
+
 
             <div className={styles.blabla}>
               <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
@@ -918,16 +912,16 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
         )}
 
         <div className="col-sm d-flex">
-          <div className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
+          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow border-0 text-center" style={{ backgroundColor: '#486284' }}>
             <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
+            {showInProg && <WIP Show={showInProg} />}
+          </button>
 
 
-          </div>
-
-
-          <div className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
+          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow border-0 text-center" style={{ backgroundColor: '#486284' }}>
             <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
-          </div>
+            {showInProg && <WIP Show={showInProg} />}
+          </button>
         </div>
 
         <div className="col-sm d-flex mt-2">
@@ -941,13 +935,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
             <h7 className="col-sm ms-2">Add Delivery Order</h7>
           </div>
         </div>
-
-
-
-
       </div>
-
     </div>
-
   );
 };

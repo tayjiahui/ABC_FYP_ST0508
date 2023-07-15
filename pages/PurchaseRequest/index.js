@@ -436,7 +436,7 @@ function AdHocRow(props) {
   };
 
   // open WIP Modal & Set timer to close
-  const WipModalOpen = async(e) => {
+  const WipModalOpen = async (e) => {
     e.preventDefault();
     setInProg(true);
     timeFunc();
@@ -505,7 +505,7 @@ function AdHocRow(props) {
                     <div className="col-sm">
                       {showDescript === false && (
                         <button
-                          onClick={e => {viewDescription(e)}}
+                          onClick={e => { viewDescription(e) }}
                           type="button"
                           className={styles.viewIconButton}
                         >
@@ -1251,7 +1251,7 @@ export default function PurchaseRequest() {
                 type="text"
                 placeholder="  Search.."
                 value={searchValue}
-                onChange={(e) => {PRSearch(e)}}
+                onChange={(e) => { PRSearch(e) }}
                 name="search"
                 className={styles.searchBox}
               />
