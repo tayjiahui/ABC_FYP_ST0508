@@ -140,7 +140,7 @@ export default function TrackOrder() {
                   <p>{props.poID}</p>
                 </div> */}
                 <div className=" col-sm-1 ms-1">
-                  <p>{props.prID}</p>
+                  <p>#{props.poID}</p>
                 </div>
                 <div className="col-sm-2 ms-5">
                   <p>{props.date}</p>
@@ -304,7 +304,7 @@ export default function TrackOrder() {
         <hr />
         <ul className="col-sm-9 list-group list-group-horizontal text-center">
           {/* <li className="list-group-item col-sm-1 border-0">PO No.</li> */}
-          <li className="list-group-item col-sm-1 border-0 ms-4">PR No.</li>
+          <li className="list-group-item col-sm-1 border-0 ms-4">PO No.</li>
           <li className="list-group-item col-sm-3 border-0 ms-2">Created</li>
           <li className="list-group-item col-sm-1 border-0 ms-3">Name</li>
           <li className="list-group-item col-sm-6 border-0 ms-4">Supplier</li>
