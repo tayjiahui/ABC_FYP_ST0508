@@ -8,6 +8,7 @@ import plusIcon from '../../public/addLocationIcon.svg';
 import styles from '../../styles/trackOrderById.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
+import WIP from '../../components/WIP'
 
 //----------------------function name has to be uppercase
 
@@ -91,7 +92,6 @@ export async function getServerSideProps(context) {
     }
   });
 
-  // GET BASE QTY RECEIVED VALUES
   data2.forEach((item, index) => {
     qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
   });
@@ -130,22 +130,45 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
   const [changeStatusPop2, setChangeStatusPop2] = useState();
   const [amount, setAmount] = useState('');
 
-  const [editQty, allowQtyEdit] = useState(false);
-  const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
 
-  // const [checkRemark, setRemark] = useState();
-  const [selectedValue, setSelectedValue] = useState('');
-  // console.log("purchase status id", selectedValue);
-  // console.log("po id", poID);
+    const [editQty, allowQtyEdit] = useState(false);
+    const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
+    const [showInProg, setInProg] = useState(false);
+    // const [checkRemark, setRemark] = useState();
+    const [selectedValue, setSelectedValue] = useState('');
+    // console.log("purchase status id", selectedValue);
+    // console.log("po id", poID);
+
 
   //validation for number received for line item
   const [validation, setValidation] = useState('');
 
+    // Onclick Save button for QtY received
+    const handleDontAllowQtyEdit = async (e) => {
+        e.preventDefault();
+
+        QtyReceivedList.forEach(async (item, index) => {
+            await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`,
+                {
+                    "qtyReceived": item.qtyReceived
+                }
+            )
+                .then((response) => {
+                    console.log(response);
+                    allowQtyEdit(false);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        });
+
+    };
 
   // Control Allow QTY Edit
   const handleAllowQtyEdit = () => {
     allowQtyEdit(true);
   };
+
 
   // Onclick Save button for QtY received
   const handleDontAllowQtyEdit = async (e) => {
@@ -189,6 +212,68 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     //setQtyReceivedList(data);
   };
 
+    // const handleClick = async (e) => {
+
+    // const { value } = e.target;
+    // setSelectedValue(value);
+    //     e.preventDefault();
+
+    //     try {
+    //         // Send the selected option to the server using Axios PUT request
+    //         const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+    //             purchaseStatusID: selectedValue,
+    //         });
+    //         console.log(response.data); // Handle the response as needed
+
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+
+    // }
+
+    // const handleAmountChange = (event) => {
+    //     setAmount(event.target.value);
+    // };
+
+    // timer
+    function timeFunc() {
+        // 2 seconds
+        setTimeout(closeWIPModal, 2000);
+    }
+
+    const handleOpenWip =() => {
+        setInProg(true);
+        timeFunc()
+    }
+
+    // close WIP Modal
+    function closeWIPModal() {
+        setInProg(false);
+    }
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        // if (amount == "") {
+        //     alert("Please put in an amount to update!")
+        // }
+        // else if (amount < 0) {
+        //     alert("Please put in a valid number!")
+        // }
+        // else if (isNaN(amount)) {
+        //     alert("Please put in a valid number!")
+        // } else {
+        await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/qty/${poID}`,
+            {
+                "qtyReceived": amount
+            }
+        )
+            .then((response) => {
+                alert(`Quantity has been changed!`);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+        //}
 
   const handleCloseStatusPop = () => {
     setChangeStatusPop(false);
@@ -212,7 +297,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
       console.log("other options")
     }
   };
-
 
   const handleClick = async (e) => {
 
@@ -381,6 +465,8 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     setChangeStatusPop(true);
   }
 
+ 
+
 
   // const editPO = async (e) => {
   //     e.preventDefault();
@@ -434,7 +520,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
           </div>
 
         </div>
-
 
         <div>
           <div className="d-flex">
@@ -563,6 +648,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
           <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{ flex: 1 }}>
             <label for="payStatus" id={styles.purStatus}>Purchase Status</label><br></br>
 
+
             <div className={styles.blabla}>
               <select className={styles.dropdownStatus} value={selectedStatus} onChange={handleStatusChange}>
                 <option key={1} value={PR.purchaseStatusID} selected="selected">{PR.purchaseStatus}</option>
@@ -622,33 +708,29 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
         )}
 
         <div className="col-sm d-flex">
-          <div className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
-            <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
+                    <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                        <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
+                        {showInProg && <WIP Show={showInProg} />}
+                    </button>
 
 
-          </div>
+                    <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                        <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
+                        {showInProg && <WIP Show={showInProg} />}
+                    </button>
+                </div>
 
+                <div className="col-sm d-flex mt-2">
+                    <div style={{ flex: 1 }}>
+                        <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
+                        <h7 className="col-sm ms-2">Add Invoice</h7>
+                    </div>
 
-          <div className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
-            <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
-          </div>
-        </div>
-
-        <div className="col-sm d-flex mt-2">
-          <div style={{ flex: 1 }}>
-            <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
-            <h7 className="col-sm ms-2">Add Invoice</h7>
-          </div>
-
-          <div style={{ flex: 1 }}>
-            <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
-            <h7 className="col-sm ms-2">Add Delivery Order</h7>
-          </div>
-        </div>
-
-
-
-
+                    <div style={{ flex: 1 }}>
+                        <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
+                        <h7 className="col-sm ms-2">Add Delivery Order</h7>
+                    </div>
+                </div>
       </div>
 
     </div>
