@@ -8,8 +8,8 @@ export default function AlertBox(props){
     // { showModal, handleCloseModal, Body, title, content }
     // const [showAlert, setShowAlert] = useState(props.Show);
     const [showAlert, setShowAlert] = useState(props.Show);
-    console.log("ALERT");
-    console.log(showAlert);
+    // console.log("ALERT");
+    // console.log(showAlert);
 
     useEffect(() => {
         require("bootstrap/dist/js/bootstrap.bundle.min.js");

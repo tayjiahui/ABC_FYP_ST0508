@@ -25,7 +25,7 @@ const URL = [];
 function isLocalhost() {
     if (typeof window !== 'undefined') {
         const hostname = window.location.hostname;
-        console.log('hostname   ' + hostname);
+        // console.log('hostname   ' + hostname);
         if (hostname == 'localhost') {
             URL.push('http://localhost:3000', 'http://localhost:5000');
             console.log(URL);

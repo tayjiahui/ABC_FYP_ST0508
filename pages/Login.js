@@ -73,7 +73,7 @@ export default function Login() {
                 // console.log(res.data[0]);
 
                 const data = res.data[0];
-                console.log(res)
+                // console.log(res);
 
                 // add user data to local storage
                 localStorage.setItem("ID", data.userID);
@@ -85,14 +85,14 @@ export default function Login() {
                 signIn(null, { callbackUrl: "/Home" });
 
                 // auth2(session?.accessToken);
-                console.log({ session, status, update });
+                // console.log({ session, status, update });
 
-                console.log("this is session ========= " + session?.accessToken);
+                // console.log("this is session ========= " + session?.accessToken);
 
                 // redirect to home page
                 // router.push('/Home');
 
-                console.log("success")
+                // console.log("success")
 
                 // react sign in
                 // signIn();
