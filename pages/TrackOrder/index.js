@@ -135,20 +135,20 @@ export default function TrackOrder() {
           <div className="row d-flex">
             <a href={baseURL + '/TrackOrder/' + poId} className="col text-decoration-none text-black ps-3">
               {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}
-              <div className="d-flex text-center">
+              <div className=" col d-flex">
                 {/* <div className="row ms-4">
                   <p>{props.poID}</p>
                 </div> */}
-                <div className=" col-sm-1 ms-1">
+                <div className="col-sm-2 ms-5">
                   <p>#{props.poID}</p>
                 </div>
-                <div className="col-sm-2 ms-5">
+                <div className="col-sm-3 ms-5">
                   <p>{props.date}</p>
                 </div>
-                <div className="col-sm-2 ms-3">
+                <div className="col-sm-2 ms-1">
                   <p>{props.Name}</p>
                 </div>
-                <div className="col-sm-5 ms-3">
+                <div className="col-sm-5 ms-5">
                   <p>{props.Supplier}</p>
                 </div>
               </div>
@@ -156,7 +156,7 @@ export default function TrackOrder() {
             </a>
 
             <div className="col-sm-2 me-5">
-              <select className="col-sm-2 rounded text-center w-100 h-100" value={selectedStatus} onChange={handleStatusChange}>
+              <select className="rounded text-center w-76 h-100" value={selectedStatus} onChange={handleStatusChange}>
                 <option key={1} value={props.PurchaseStatusID} selected="selected">{props.PurchaseStatus}</option>
                 {
                   status.map((status, index) => {
@@ -304,11 +304,11 @@ export default function TrackOrder() {
         <hr />
         <ul className="col-sm-9 list-group list-group-horizontal text-center">
           {/* <li className="list-group-item col-sm-1 border-0">PO No.</li> */}
-          <li className="list-group-item col-sm-1 border-0 ms-4">PO No.</li>
+          <li className="list-group-item col-sm-2 border-0 ms-1">PO No.</li>
           <li className="list-group-item col-sm-3 border-0 ms-2">Created</li>
-          <li className="list-group-item col-sm-1 border-0 ms-3">Name</li>
-          <li className="list-group-item col-sm-6 border-0 ms-4">Supplier</li>
-          <li className="list-group-item col-sm-3 border-0 ms-5">Status</li>
+          <li className="list-group-item col-sm-3 border-0">Name</li>
+          <li className="list-group-item col-sm-2 border-0 ms-3">Supplier</li>
+          <li className="list-group-item col-sm-5 border-0 ms-5">Status</li>
         </ul>
         <hr />
       </div>
