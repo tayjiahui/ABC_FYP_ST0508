@@ -69,19 +69,19 @@ export async function getServerSideProps(context) {
   const { poID } = params;    //PR ID FROM DATABASE DISGUISED AS POID FOR FRONTEND
 
 
-    const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
-    // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
-    const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
-    const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
+  const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
+  // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
+  const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
+  const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
 
-    const data1 = await poD.json();
-    const data2 = await productD.json();
-    const data3 = await PRDetails.json();
+  const data1 = await poD.json();
+  const data2 = await productD.json();
+  const data3 = await PRDetails.json();
 
-    // console.log(data1);
-    // console.log(data2);
-    
-    const gst = data3[0].GST;
+  // console.log(data1);
+  // console.log(data2);
+
+  const gst = data3[0].GST;
 
   const qtyReceiveS = [];
 
@@ -96,16 +96,16 @@ export async function getServerSideProps(context) {
     qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
   });
 
-    return {
-        props: {
-            host,
-            purOrderD: data1,
-            productDeets: data2,
-            gstDetails: gst,
-            QtyReceived: qtyReceiveS,
-            poID
-        }
+  return {
+    props: {
+      host,
+      purOrderD: data1,
+      productDeets: data2,
+      gstDetails: gst,
+      QtyReceived: qtyReceiveS,
+      poID
     }
+  }
 }
 
 // main frontend page
@@ -130,45 +130,21 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
   const [changeStatusPop2, setChangeStatusPop2] = useState();
   const [amount, setAmount] = useState('');
 
-
-    const [editQty, allowQtyEdit] = useState(false);
-    const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
-    const [showInProg, setInProg] = useState(false);
-    // const [checkRemark, setRemark] = useState();
-    const [selectedValue, setSelectedValue] = useState('');
-    // console.log("purchase status id", selectedValue);
-    // console.log("po id", poID);
-
+  const [editQty, allowQtyEdit] = useState(false);
+  const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
+  const [showInProg, setInProg] = useState(false);
+  // const [checkRemark, setRemark] = useState();
+  const [selectedValue, setSelectedValue] = useState('');
+  // console.log("purchase status id", selectedValue);
+  // console.log("po id", poID);
 
   //validation for number received for line item
   const [validation, setValidation] = useState('');
-
-    // Onclick Save button for QtY received
-    const handleDontAllowQtyEdit = async (e) => {
-        e.preventDefault();
-
-        QtyReceivedList.forEach(async (item, index) => {
-            await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`,
-                {
-                    "qtyReceived": item.qtyReceived
-                }
-            )
-                .then((response) => {
-                    console.log(response);
-                    allowQtyEdit(false);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        });
-
-    };
 
   // Control Allow QTY Edit
   const handleAllowQtyEdit = () => {
     allowQtyEdit(true);
   };
-
 
   // Onclick Save button for QtY received
   const handleDontAllowQtyEdit = async (e) => {
@@ -212,80 +188,56 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     //setQtyReceivedList(data);
   };
 
-    // const handleClick = async (e) => {
+  // const handleClick = async (e) => {
 
-    // const { value } = e.target;
-    // setSelectedValue(value);
-    //     e.preventDefault();
+  // const { value } = e.target;
+  // setSelectedValue(value);
+  //     e.preventDefault();
 
-    //     try {
-    //         // Send the selected option to the server using Axios PUT request
-    //         const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
-    //             purchaseStatusID: selectedValue,
-    //         });
-    //         console.log(response.data); // Handle the response as needed
+  //     try {
+  //         // Send the selected option to the server using Axios PUT request
+  //         const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+  //             purchaseStatusID: selectedValue,
+  //         });
+  //         console.log(response.data); // Handle the response as needed
 
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
+  //     } catch (error) {
+  //         console.error(error);
+  //     }
 
-    // }
+  // }
 
-    // const handleAmountChange = (event) => {
-    //     setAmount(event.target.value);
-    // };
+  // const handleAmountChange = (event) => {
+  //     setAmount(event.target.value);
+  // };
 
-    // timer
-    function timeFunc() {
-        // 2 seconds
-        setTimeout(closeWIPModal, 2000);
-    }
+  // timer
+  function timeFunc() {
+    // 2 seconds
+    setTimeout(closeWIPModal, 2000);
+  };
 
-    const handleOpenWip =() => {
-        setInProg(true);
-        timeFunc()
-    }
+  const handleOpenWip = () => {
+    setInProg(true);
+    timeFunc();
+  };
 
-    // close WIP Modal
-    function closeWIPModal() {
-        setInProg(false);
-    }
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        // if (amount == "") {
-        //     alert("Please put in an amount to update!")
-        // }
-        // else if (amount < 0) {
-        //     alert("Please put in a valid number!")
-        // }
-        // else if (isNaN(amount)) {
-        //     alert("Please put in a valid number!")
-        // } else {
-        await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/qty/${poID}`,
-            {
-                "qtyReceived": amount
-            }
-        )
-            .then((response) => {
-                alert(`Quantity has been changed!`);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        //}
+  // close WIP Modal
+  function closeWIPModal() {
+    setInProg(false);
+  };
 
   const handleCloseStatusPop = () => {
     setChangeStatusPop(false);
     setValidation(false);
-  }
+  };
 
   const handleCloseStatusPop2 = () => {
     setChangeStatusPop2(false);
-  }
+  };
 
   const handleChange = (event) => {
-    console.log(event.target.value);
+    // console.log(event.target.value);
 
     setSelectedValue(event.target.value);
     // localStorage.setItem('selectedValue', event.target.value);
@@ -294,32 +246,9 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
       setChangeStatusPop(true)
     }
     else {
-      console.log("other options")
+      // console.log("other options")
     }
   };
-
-  const handleClick = async (e) => {
-
-    // const { value } = e.target;
-    // setSelectedValue(value);
-    e.preventDefault();
-
-    try {
-      // Send the selected option to the server using Axios PUT request
-      const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
-        purchaseStatusID: selectedValue,
-      });
-      console.log(response.data); // Handle the response as needed
-
-    } catch (error) {
-      console.error(error);
-    }
-
-  }
-
-  // const handleAmountChange = (event) => {
-  //     setAmount(event.target.value);
-  // };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -344,9 +273,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
         console.log(err);
       });
     //}
-
-
-
   };
 
   useEffect(() => {
@@ -363,7 +289,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
       })
       .catch(err => console.log(err));
   }, []);
-
 
   // PR Details  
   const PR = purOrderD[0];
@@ -390,7 +315,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
             QtyReceived={QtyReceivedList[index].qtyReceived} />
         </div>
       );
-
       totalPrices.push(item.totalUnitPrice);
     });
 
@@ -402,18 +326,17 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
       for (let i = 0; i < array.length; i++) {
         let num = +array[i]
         total = total + num
-      }
-
+      };
       return total;
-    }
+    };
 
-        const gstPercent = gstDetails.gst;
+    const gstPercent = gstDetails.gst;
 
-        // Calculate GST
-        function GSTFinder(amt) {
-            const gst = (gstPercent / 100) * amt;
-            return gst;
-        }
+    // Calculate GST
+    function GSTFinder(amt) {
+      const gst = (gstPercent / 100) * amt;
+      return gst;
+    };
 
     const totalArr = [];
 
@@ -432,48 +355,30 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     const total = CalculateTotal(totalArr).toFixed(2);
     totalCal(total);
 
-    // check if there is remarks
-    // if (PR.remarks !== "") {
-    //     setRemark(true)
-    // }
-    // else {
-    //     setRemark(false)
-    // }
-
   }, []);
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
     const selectedValue = event.target.value;
-    console.log(event.target)
-    console.log("value", selectedValue)
+    // console.log(event.target);
+    // console.log("value", selectedValue);
 
     // else if (selectedValue === "Preparing Order") {
     //   setChangedStatusPop(true);
     // }
 
-    console.log('other options')
+    // console.log('other options')
     axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
       purchaseStatusID: selectedValue,
     })
       .then((res) => {
-        console.log(res)
+        console.log(res);
       })
       .catch((err) => {
-        console.log(err)
-      })
+        console.log(err);
+      });
     setChangeStatusPop(true);
-  }
-
- 
-
-
-  // const editPO = async (e) => {
-  //     e.preventDefault();
-
-
-
-  // };
+  };
 
   return (
     <div>
@@ -708,32 +613,30 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
         )}
 
         <div className="col-sm d-flex">
-                    <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
-                        <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
-                        {showInProg && <WIP Show={showInProg} />}
-                    </button>
+          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow border-0 text-center" style={{ backgroundColor: '#486284' }}>
+            <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
+            {showInProg && <WIP Show={showInProg} />}
+          </button>
 
 
-                    <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
-                        <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
-                        {showInProg && <WIP Show={showInProg} />}
-                    </button>
-                </div>
+          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow border-0 text-center" style={{ backgroundColor: '#486284' }}>
+            <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
+            {showInProg && <WIP Show={showInProg} />}
+          </button>
+        </div>
 
-                <div className="col-sm d-flex mt-2">
-                    <div style={{ flex: 1 }}>
-                        <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
-                        <h7 className="col-sm ms-2">Add Invoice</h7>
-                    </div>
+        <div className="col-sm d-flex mt-2">
+          <div style={{ flex: 1 }}>
+            <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
+            <h7 className="col-sm ms-2">Add Invoice</h7>
+          </div>
 
-                    <div style={{ flex: 1 }}>
-                        <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
-                        <h7 className="col-sm ms-2">Add Delivery Order</h7>
-                    </div>
-                </div>
+          <div style={{ flex: 1 }}>
+            <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
+            <h7 className="col-sm ms-2">Add Delivery Order</h7>
+          </div>
+        </div>
       </div>
-
     </div>
-
   );
 };

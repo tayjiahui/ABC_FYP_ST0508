@@ -12,6 +12,8 @@ import styles from '../../styles/trackOrder.module.css';
 import searchIcon from '../../public/searchIcon.svg';
 import filterIcon from '../../public/filterIcon.svg';
 
+import WIP from '../../components/WIP'
+
 // Base urls
 const URL = [];
 
@@ -37,9 +39,6 @@ isLocalhost();
 
 const baseUrl = URL[0];
 const baseURL = URL[1];
-
-console.log(baseUrl);
-console.log(baseURL);
 
 export default function TrackOrder() {
 
@@ -83,7 +82,7 @@ export default function TrackOrder() {
         })
     }
 
-    console.log(statusInput)
+    // console.log(statusInput)
 
     useEffect(() => {
       axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
@@ -206,6 +205,9 @@ export default function TrackOrder() {
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
+  // wip modal
+  const [showInProg, setInProg] = useState(false);
+
   // show all Track Order
   useEffect(() => {
     axios.all([
@@ -278,7 +280,23 @@ export default function TrackOrder() {
           alert(err.response.data);
         };
       });
-  }
+  };
+
+  // wip modal
+  function timeFunc() {
+    // 2 seconds
+    setTimeout(closeWIPModal, 2000);
+  };
+
+  const handleOpenWip = () => {
+    setInProg(true);
+    timeFunc();
+  };
+
+  // close WIP Modal
+  function closeWIPModal() {
+    setInProg(false);
+  };
 
   return (
     <>
@@ -286,10 +304,11 @@ export default function TrackOrder() {
         <h1 className="w-75">Order Tracking</h1>
         <div>
           <div className={styles.searchContainer}>
-            <form onSubmit={handleSearch}>
+            {/* <form onSubmit={handleSearch}> */}
+            <form>
               <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox} />
-              <button type="submit" className={styles.searchButton}><Image src={searchIcon} width={25} alt='Search' /></button>
-              <button type="button" className={styles.searchButton}><Image src={filterIcon} width={25} alt='Filter' /></button>
+              <button onClick={handleOpenWip} type="submit" className={styles.searchButton}><Image src={searchIcon} width={25} alt='Search' /></button>
+              <button onClick={handleOpenWip} type="button" className={styles.searchButton}><Image src={filterIcon} width={25} alt='Filter' /></button>
             </form>
             <ul>
               {searchResults.map((result) => (
@@ -316,6 +335,8 @@ export default function TrackOrder() {
       <div className="col-sm-12">
         {TrackOrderResults}
       </div>
+
+      {showInProg && <WIP Show={showInProg} />}
 
     </>
   )

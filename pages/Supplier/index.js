@@ -92,7 +92,7 @@ export default function Supplier({ suppliers }) {
                             <button type="submit" className={styles.searchButton}><Image src={searchIcon} onClick={wipOpen}/></button>
                             <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={wipOpen}/></button>
                         </form>
-                        {wip && <WIP Show={wip} />}
+                        {/* {wip && <WIP Show={wip} />} */}
                     </div>
                 </div>
             </div>
@@ -120,6 +120,8 @@ export default function Supplier({ suppliers }) {
                     </button>
                 </a>
             </div>
+
+            {wip && <WIP Show={wip} />}
         </>
     )
 }
