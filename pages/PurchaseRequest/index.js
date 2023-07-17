@@ -983,10 +983,6 @@ export default function PurchaseRequest() {
       setByPRStatus(checked);
     } else if (id === "viewAll") {
       setViewType(checked);
-
-      console.log("i am working chill")
-
-
     };
 
     // currently beacuse of e gives error because searchValue Changes to "on" => from checkbox e.target.value
@@ -1349,7 +1345,7 @@ export default function PurchaseRequest() {
       </div>
 
       <div className="pt-1">
-        <div className={styles.labelRow}>
+        <div>
           <div className="pt-1">
             <hr />
           </div>
