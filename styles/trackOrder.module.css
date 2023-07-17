@@ -189,3 +189,74 @@
 .switch input[type="checkbox"]:checked:active+.slider::after {
   transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
 }
+
+
+/* Ad Hoc View */
+.prButton {
+  border: none;
+  background-color: transparent;
+  width: 100%;
+  padding-bottom: 5px;
+}
+
+.prRow {
+  background-color: #C0D8F7;
+  font-size: 16px;
+  height: auto;
+  border-radius: 18px;
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+  text-align: center;
+  object-fit: scale-down;
+  transition: transform .5s;
+}
+
+.prRow:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.prTextRow {
+  padding-top: 25px;
+  padding-bottom: 20px;
+  vertical-align: middle;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: left;
+}
+
+.prTextStatus {
+  text-align: right;
+  /* padding-left: 130px; */
+}
+
+.statusCol {
+  vertical-align: middle;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#statusCircle {
+  vertical-align: middle;
+  padding: 1px;
+}
+
+.viewIconButton {
+  background-color: transparent;
+  border: none;
+  transition: transform .2s;
+}
+
+.viewIconButton:hover {
+  transform: scale(1.2);
+}
+
+.plRow {
+  background-color: #93bcf166;
+  font-size: 16px;
+  height: auto;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  /* border-radius: 18px; */
+  /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); */
+  text-align: center;
+  object-fit: scale-down;
+}

@@ -11,6 +11,8 @@ import styles from '../../styles/trackOrder.module.css';
 // Images
 import searchIcon from '../../public/searchIcon.svg';
 import filterIcon from '../../public/filterIcon.svg';
+import eyeCon from "../../public/eyeCon.svg";
+import closeEyeCon from "../../public/closeEyeCon.svg";
 
 import WIP from '../../components/WIP'
 
@@ -40,176 +42,347 @@ isLocalhost();
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-export default function TrackOrder() {
+// each PO row
+function OrderRow(props) {
 
-  function OrderRow(props) {
+  const [status, setStatus] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
-    const [status, setStatus] = useState([]);
-    const [selectedStatus, setSelectedStatus] = useState("");
+  const [newStatusPop, setNewStatusPop] = useState(false);
+  const [statusInput, setStatusInput] = useState([]);
 
-    const [newStatusPop, setNewStatusPop] = useState(false);
-    const [statusInput, setStatusInput] = useState([]);
+  const [changedStatusPop, setChangedStatusPop] = useState(false);
 
-    const [changedStatusPop, setChangedStatusPop] = useState(false);
+  const handleCloseStatusPop = () => {
+    setNewStatusPop(false);
+    setChangedStatusPop(false);
+  }
 
-    const handleCloseStatusPop = () => {
-      setNewStatusPop(false);
-      setChangedStatusPop(false);
-    }
+  const handleInputChange = (event) => {
+    setStatusInput(event.target.value);
+  }
 
-    const handleInputChange = (event) => {
-      setStatusInput(event.target.value);
-    }
+  const handleSubmit = (event) => {
 
-    const handleSubmit = (event) => {
+    console.log("submitting status");
+    // event.preventDefault();
+    alert(`Sucessfully created new status: ${statusInput}`);
 
-      console.log("submitting status");
-      // event.preventDefault();
-      alert(`Sucessfully created new status: ${statusInput}`);
-
-      axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
-        purchaseStatus: statusInput
+    axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
+      purchaseStatus: statusInput
+    })
+      .then(res => {
+        alert(`sucessfully created new status ${statusInput}`)
+        setNewStat(false)
+        console.log(res.data);
+        setStatus((prevStatus) => [...prevStatus, res.data]);
+        onSubmit(statusInput)
       })
-        .then(res => {
-          alert(`sucessfully created new status ${statusInput}`)
-          setNewStat(false)
-          console.log(res.data);
-          setStatus((prevStatus) => [...prevStatus, res.data]);
-          onSubmit(statusInput)
+      .catch((err) => {
+        console.log(err);
+      })
+  }
+
+  // console.log(statusInput)
+
+  useEffect(() => {
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
+      .then(res => {
+        // console.log(res.data)
+        setStatus(res.data);
+        setSelectedStatus(res.data[0]); //initial selected status
+      })
+      .catch(err => console.log(err));
+  }, []);
+
+  // PO ID FROM DATABASE
+  const poID = props.poID;
+
+  // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
+  const poId = props.prID;
+
+  const handleStatusChange = (event) => {
+    setSelectedStatus(event.target.value);
+    const selectedValue = event.target.value;
+    console.log(event.target)
+    console.log("value", selectedValue)
+
+    if (selectedValue === "+ Create New Status") {
+      setNewStatusPop(true);
+    }
+    // else if (selectedValue === "Preparing Order") {
+    //   setChangedStatusPop(true);
+    // }
+    else {
+      console.log('other options')
+      axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+        purchaseStatusID: selectedValue,
+      })
+        .then((res) => {
+          console.log(res)
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err)
         })
+      setChangedStatusPop(true);
+
     }
-
-    // console.log(statusInput)
-
-    useEffect(() => {
-      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
-        .then(res => {
-          // console.log(res.data)
-          setStatus(res.data);
-          setSelectedStatus(res.data[0]); //initial selected status
-        })
-        .catch(err => console.log(err));
-    }, []);
-
-    // PO ID FROM DATABASE
-    const poID = props.poID;
-
-    // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
-    const poId = props.prID;
-
-    const handleStatusChange = (event) => {
-      setSelectedStatus(event.target.value);
-      const selectedValue = event.target.value;
-      console.log(event.target)
-      console.log("value", selectedValue)
-
-      if (selectedValue === "+ Create New Status") {
-        setNewStatusPop(true);
-      }
-      // else if (selectedValue === "Preparing Order") {
-      //   setChangedStatusPop(true);
-      // }
-      else {
-        console.log('other options')
-        axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
-          purchaseStatusID: selectedValue,
-        })
-          .then((res) => {
-            console.log(res)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-        setChangedStatusPop(true);
-
-      }
-    };
-
-    return (
-      <div>
-        <div className="row w-4 h-4 py-4 rounded-4 mb-3 m-2" style={{ backgroundColor: '#C0D8F7' }}>
-          <div className="row d-flex">
-            <a href={baseURL + '/TrackOrder/' + poId} className="col text-decoration-none text-black ps-3">
-              {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}
-              <div className=" col d-flex">
-                {/* <div className="row ms-4">
-                  <p>{props.poID}</p>
-                </div> */}
-                <div className=" col-sm-1 ms-1">
-                  <p>#{props.poID}</p>
-                </div>
-                <div className="col-sm-2 ms-5">
-                  <p>#{props.poID}</p>
-                </div>
-                <div className="col-sm-3 ms-5">
-                  <p>{props.date}</p>
-                </div>
-                <div className="col-sm-2 ms-1">
-                  <p>{props.Name}</p>
-                </div>
-                <div className="col-sm-5 ms-5">
-                  <p>{props.Supplier}</p>
-                </div>
-              </div>
-              {/* </button> */}
-            </a>
-
-            <div className="col-sm-2 me-5">
-              <select className="rounded text-center w-76 h-100" value={selectedStatus} onChange={handleStatusChange}>
-                <option key={1} value={props.PurchaseStatusID} selected="selected">{props.PurchaseStatus}</option>
-                {
-                  status.map((status, index) => {
-                    if (status.purchaseStatusID !== props.PurchaseStatusID) {
-                      return <option key={index + 2} value={status.purchaseStatusID}>{status.purchaseStatus}</option>
-                    }
-                  })
-                }
-                <option key={status.length + 2}> + Create New Status</option>
-              </select>
-            </div>
-          </div>
-
-        </div>
-
-
-        {newStatusPop && (
-          <div className={styles.newStatusBox}>
-            <div className={styles.newStatus}>
-              <h2 className="mb-4"> Create New Status </h2>
-              <p onClick={handleCloseStatusPop} className={styles.closemeStatus}>X</p>
-              <form onSubmit={handleSubmit}>
-                <label htmlFor="statusInput">Enter status name : </label> <br />
-                <input type="text" id="statusInput" value={statusInput} onChange={handleInputChange} /> <br />
-                <button type="submit" className={styles.createStatusBtn}> Create Status</button>
-              </form>
-
-            </div>
-          </div>
-        )}
-
-        {changedStatusPop && (
-          <div className={styles.newStatusBox}>
-            <div className={styles.newStatus}>
-              <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
-              <h5 className='mt-5'> Status has been changed successfully </h5>
-
-            </div>
-          </div>
-        )}
-      </div>
-
-    )
   };
 
-  // adhoc toggle
-  const [showAdHoc, setShowAdHoc] = useState(false);
+  return (
+    <div>
+      <div className="row w-4 h-4 py-4 rounded-4 mb-3 m-2" style={{ backgroundColor: '#C0D8F7' }}>
+        <div className="row d-flex">
+          <a href={baseURL + '/TrackOrder/' + poId} className="col text-decoration-none text-black ps-3">
+            {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}
+            <div className=" col d-flex">
+              {/* <div className="row ms-4">
+                <p>{props.poID}</p>
+              </div> */}
+              <div className=" col-sm-1 ms-1">
+                <p>#{props.poID}</p>
+              </div>
+              <div className="col-sm-2 ms-5">
+                <p>#{props.poID}</p>
+              </div>
+              <div className="col-sm-3 ms-5">
+                <p>{props.date}</p>
+              </div>
+              <div className="col-sm-2 ms-1">
+                <p>{props.Name}</p>
+              </div>
+              <div className="col-sm-5 ms-5">
+                <p>{props.Supplier}</p>
+              </div>
+            </div>
+            {/* </button> */}
+          </a>
+
+          <div className="col-sm-2 me-5">
+            <select className="rounded text-center w-76 h-100" value={selectedStatus} onChange={handleStatusChange}>
+              <option key={1} value={props.PurchaseStatusID} selected="selected">{props.PurchaseStatus}</option>
+              {
+                status.map((status, index) => {
+                  if (status.purchaseStatusID !== props.PurchaseStatusID) {
+                    return <option key={index + 2} value={status.purchaseStatusID}>{status.purchaseStatus}</option>
+                  }
+                })
+              }
+              <option key={status.length + 2}> + Create New Status</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+
+      {newStatusPop && (
+        <div className={styles.newStatusBox}>
+          <div className={styles.newStatus}>
+            <h2 className="mb-4"> Create New Status </h2>
+            <p onClick={handleCloseStatusPop} className={styles.closemeStatus}>X</p>
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="statusInput">Enter status name : </label> <br />
+              <input type="text" id="statusInput" value={statusInput} onChange={handleInputChange} /> <br />
+              <button type="submit" className={styles.createStatusBtn}> Create Status</button>
+            </form>
+
+          </div>
+        </div>
+      )}
+
+      {changedStatusPop && (
+        <div className={styles.newStatusBox}>
+          <div className={styles.newStatus}>
+            <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
+            <h5 className='mt-5'> Status has been changed successfully </h5>
+
+          </div>
+        </div>
+      )}
+    </div>
+
+  )
+};
+
+// Each Ad Hoc Row
+function AdHocRow(props) {
+  const statusID = props.StatusID;
+
+  const [showDescript, setShowDescript] = useState(false);
+
+  // in progress modal
+  const [showInProg, setInProg] = useState(false);
+
+  function circleTest(statusID) {
+    if (statusID == 1) {
+      return "/yellowPendingCircle.svg";
+    } else if (statusID == 2) {
+      return "/greenApprovedCircle.svg";
+    } else if (statusID == 3) {
+      return "/redRejectedCircle.svg";
+    } else {
+      return "/yellowPendingCircle.svg";
+    }
+  };
+
+  const circle = circleTest(statusID);
+
+  const viewDescription = async (e) => {
+    e.preventDefault();
+    setShowDescript(true);
+  };
+
+  const closeViewDescription = async (e) => {
+    e.preventDefault();
+    setShowDescript(false);
+  };
+
+  // open WIP Modal & Set timer to close
+  const WipModalOpen = async (e) => {
+    e.preventDefault();
+    setInProg(true);
+    timeFunc();
+  };
+
+  // timer
+  function timeFunc() {
+    // 2 seconds
+    setTimeout(closeWIPModal, 2000);
+  };
+
+  // close WIP Modal
+  function closeWIPModal() {
+    setInProg(false);
+  };
+
+  return (
+    <div>
+      <div className="py-1">
+        <a>
+          <button className={styles.prButton}>
+            <div className={styles.prRow}>
+              <div className="pt-2 row text-start">
+                <div className={styles.prTextRow}>
+                  <div className="col-sm px-3">
+                    {showDescript === false && (
+                      <button
+                        onClick={viewDescription}
+                        type="button"
+                        className={styles.viewIconButton}
+                      >
+                        <p>#{props.prID}</p>
+                      </button>
+                    )}
+                    {showDescript === true && (
+                      <button
+                        onClick={closeViewDescription}
+                        type="button"
+                        className={styles.viewIconButton}
+                      >
+                        <p>#{props.prID}</p>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="col-sm">
+                    <p>{props.ReqDate}</p>
+                  </div>
+
+                  <div className="col-sm">
+                    <p>{props.Name}</p>
+                  </div>
+
+                  <div className="col-sm">
+                    <p>{props.TargetDate}</p>
+                  </div>
+
+                  <div className="col-sm">
+                    <div className="row">
+                      <div className="col-sm-1">
+                        <p className={styles.prTextStatus}>{props.Status}</p>
+                      </div>
+                      <div className="ps-5 ms-4 col-sm-2">
+                        <Icon item={circle} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-sm">
+                    {showDescript === false && (
+                      <button
+                        onClick={viewDescription}
+                        type="button"
+                        className={styles.viewIconButton}
+                      >
+                        <Image
+                          src={eyeCon}
+                          width={30}
+                          height={30}
+                          alt="Eye Icon"
+                        />
+                      </button>
+                    )}
+                    {showDescript === true && (
+                      <button
+                        onClick={closeViewDescription}
+                        type="button"
+                        className={styles.viewIconButton}
+                      >
+                        <Image
+                          src={closeEyeCon}
+                          width={30}
+                          height={30}
+                          alt="Eye Icon"
+                        />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {showDescript && (
+                <div className={styles.plRow}>
+                  <h5 className="ps-5 pt-3 text-start">
+                    <u>Description</u>
+                  </h5>
+
+                  <div className="py-2 ps-5 text-start">
+                    <p>{props.Description}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </button>
+        </a>
+      </div>
+      {showInProg && <WIP Show={showInProg} />}
+    </div>
+  );
+};
+
+// Status icon for each PR row
+function Icon(props) {
+  return (
+    <Image
+      src={baseURL + props.item}
+      width={25}
+      height={25}
+      id={styles.statusCircle}
+      alt="status indicator"
+    />
+  );
+};
+
+export default function TrackOrder() {
 
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+
+  // adhoc view
+  const [showAdHoc, setShowAdHoc] = useState(true);
+  const [AdHocResults, setAdHocResults] = useState([<div>Loading...</div>]);
 
   // wip modal
   const [showInProg, setInProg] = useState(false);
@@ -260,6 +433,51 @@ export default function TrackOrder() {
           alert(err.code);
         };
       });
+  }, []);
+
+  // show all adhoc purchases
+  useEffect(() => {
+    axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
+      headers: {
+        // 'user': userID
+        // 'authorization': 'Bearer ' + token
+      }
+    })
+      .then((response) => {
+        console.log(response);
+        console.log(response.data);
+
+        const adHocResult = response.data;
+
+        // Show List of Ad-hoc Purchases
+        const adHocList = [];
+
+        adHocResult.forEach((item, index) => {
+          // Time stamp formatting
+          const reqDate = moment(adHocResult[index].requestDate).format(
+            "D MMM YYYY"
+          );
+          const targetDeliveryDate = moment(
+            adHocResult[index].targetDeliveryDate
+          ).format("D MMM YYYY");
+
+          adHocList.push(
+            <div key={index}>
+              <AdHocRow
+                prID={item.prID}
+                ReqDate={reqDate}
+                Name={item.name}
+                TargetDate={targetDeliveryDate}
+                Status={item.prStatus}
+                StatusID={item.prStatusID}
+                Description={item.remarks}
+              />
+            </div>
+          );
+        });
+
+        setAdHocResults(adHocList);
+      })
   }, []);
 
   const handleSearch = async (e) => {
@@ -354,19 +572,44 @@ export default function TrackOrder() {
 
       <div>
         <hr />
-        <ul className="col-sm-9 list-group list-group-horizontal text-center">
-          {/* <li className="list-group-item col-sm-1 border-0">PO No.</li> */}
-          <li className="list-group-item col-sm-2 border-0 ms-1">PO No.</li>
-          <li className="list-group-item col-sm-3 border-0 ms-2">Created</li>
-          <li className="list-group-item col-sm-3 border-0">Name</li>
-          <li className="list-group-item col-sm-2 border-0 ms-3">Supplier</li>
-          <li className="list-group-item col-sm-5 border-0 ms-5">Status</li>
-        </ul>
+        {
+          showAdHoc === false &&
+          <ul className="col-sm-9 list-group list-group-horizontal text-center">
+            {/* <li className="list-group-item col-sm-1 border-0">PO No.</li> */}
+            <li className="list-group-item col-sm-2 border-0 ms-1">PO No.</li>
+            <li className="list-group-item col-sm-3 border-0 ms-2">Created</li>
+            <li className="list-group-item col-sm-3 border-0">Name</li>
+            <li className="list-group-item col-sm-2 border-0 ms-3">Supplier</li>
+            <li className="list-group-item col-sm-5 border-0 ms-5">Status</li>
+          </ul>
+        }
+
+        {
+          showAdHoc === true &&
+          <ul className="list-group list-group-horizontal px-3">
+            <li className="list-group-item col-sm border-0">PR No.</li>
+            <li className="list-group-item col-sm border-0">Date</li>
+            <li className="list-group-item col-sm border-0">Name</li>
+            <li className="list-group-item col-sm border-0">Target Date</li>
+            <li className="list-group-item col-sm border-0">Status</li>
+            <li className="list-group-item col-sm border-0"></li>
+          </ul>
+        }
+
         <hr />
       </div>
 
       <div className="col-sm-12">
-        {TrackOrderResults}
+        {
+          showAdHoc === false &&
+          <div>{TrackOrderResults}</div>
+        }
+
+        {
+          showAdHoc === true &&
+          <div>{AdHocResults}</div>
+        }
+
       </div>
 
       {showInProg && <WIP Show={showInProg} />}
