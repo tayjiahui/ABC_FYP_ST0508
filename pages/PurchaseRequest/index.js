@@ -660,6 +660,9 @@ export default function PurchaseRequest() {
   const [PRResults, setlist1] = useState([<div>Loading...</div>]);
   const [AdHocResults, setAdHocResults] = useState([<div>Loading...</div>]);
 
+  // store original view by id list
+  const [ogPRlist, setOGPRList] = useState();
+
   const [showAdHoc, setShowAdHoc] = useState(false);
 
   const [searchValue, setSearchValue] = useState("");
@@ -745,6 +748,7 @@ export default function PurchaseRequest() {
               );
             });
 
+            setOGPRList(prList);
             setlist1(prList);
 
             // Show List of Ad-hoc Purchases
@@ -891,6 +895,61 @@ export default function PurchaseRequest() {
     setShowAdHoc(e.target.checked);
   };
 
+  // View ALL Toggle
+  const ViewAllToggle = async (e) => {
+    const showAllPR = e.target.checked;
+
+    // set view all for filter options
+    filterChecker(e);
+
+    if(showAllPR === true){
+      await axios.get(`${baseUrl}/api/purchaseReq/`)
+      .then((response) => {
+        const allResult = response.data;
+        const resultsList = [];
+
+        allResult.forEach((item, index) => {
+          // Time stamp formatting
+          const reqDate = moment(allResult[index].requestDate).format(
+            "D MMM YYYY"
+          );
+          const targetDeliveryDate = moment(
+            allResult[index].targetDeliveryDate
+          ).format("D MMM YYYY");
+
+          resultsList.push(
+            <div key={index}>
+              <PRRow
+                RoleID={role}
+                prID={item.prID}
+                ReqDate={reqDate}
+                Name={item.name}
+                Location={item.branchName}
+                Supplier={item.supplierName}
+                TargetDate={targetDeliveryDate}
+                Status={item.prStatus}
+                StatusID={item.prStatusID}
+              />
+            </div>
+          );
+        });
+
+        setlist1(resultsList);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err.code === "ERR_NETWORK") {
+          alert(err.message);
+        } else {
+          alert(err.response.data);
+        }
+      });
+    }
+    else{
+      setlist1(ogPRlist);
+    };
+  };
+
   // Filter Pop Up Open
   const handleFilterPopUp = () => {
     setShowFilter(true);
@@ -924,6 +983,10 @@ export default function PurchaseRequest() {
       setByPRStatus(checked);
     } else if (id === "viewAll") {
       setViewType(checked);
+
+      console.log("i am working chill")
+
+      
     };
 
     // currently beacuse of e gives error because searchValue Changes to "on" => from checkbox e.target.value
@@ -1251,9 +1314,7 @@ export default function PurchaseRequest() {
                   <input
                     type="checkbox"
                     id="viewAll"
-                    onChange={(e) => {
-                      filterChecker(e);
-                    }}
+                    onChange={ViewAllToggle}
                     checked={viewAllPR}
                   />
                   <span className={styles.slider}></span>
