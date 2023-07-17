@@ -138,6 +138,9 @@ export default function TrackOrder() {
                 {/* <div className="row ms-4">
                   <p>{props.poID}</p>
                 </div> */}
+                <div className=" col-sm-1 ms-1">
+                  <p>#{props.poID}</p>
+                </div>
                 <div className="col-sm-2 ms-5">
                   <p>#{props.poID}</p>
                 </div>
