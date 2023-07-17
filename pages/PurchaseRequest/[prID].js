@@ -37,7 +37,7 @@ function isLocalhost() {
 
     return URL;
   }
-}
+};
 
 isLocalhost();
 
@@ -48,7 +48,7 @@ const isBrowser = () => typeof window !== "undefined"; //The approach recommende
 function scrollToTop() {
   if (!isBrowser()) return;
   window.scrollTo({ top: 0, behavior: "smooth" });
-}
+};
 
 function ItemLines(props) {
   return (
@@ -66,7 +66,7 @@ function ItemLines(props) {
       </ul>
     </div>
   );
-}
+};
 
 function DropdownOpt(props) {
   return (
@@ -74,7 +74,7 @@ function DropdownOpt(props) {
       <option id={props.ID} value={props.Value} />
     </>
   );
-}
+};
 
 function ItemDropDown(props) {
   return (
@@ -86,7 +86,7 @@ function ItemDropDown(props) {
       />
     </>
   );
-}
+};
 
 function getSelectedOption(e) {
   const selectedValue = e.target.value;
@@ -103,7 +103,7 @@ function getSelectedOption(e) {
   } else {
     return [selectedValue, selectedID, selectedUnitPrice];
   }
-}
+};
 
 export async function getServerSideProps(context) {
   const host = context.req.headers.host;
@@ -115,7 +115,7 @@ export async function getServerSideProps(context) {
     backBaseURL.push("http://localhost:3000");
   } else {
     backBaseURL.push("https://abc-cooking-studio-backend.azurewebsites.net");
-  }
+  };
 
   const { params } = context;
   const { prID } = params;
@@ -204,7 +204,7 @@ export async function getServerSideProps(context) {
       prID,
     },
   };
-}
+};
 
 export default function ViewPR({
   prDetails,
@@ -279,12 +279,12 @@ export default function ViewPR({
     // check if admin/ approver
     if (roleID === 1) {
       setAdmin(true);
-    }
+    };
 
     // Chcek if already have PO
     if (POCheck[0] === true) {
       checkHavePO(true);
-    }
+    };
 
     // Test for status Circle
     const statusID = PR.prStatusID;
@@ -302,7 +302,7 @@ export default function ViewPR({
       } else {
         return "/yellowPendingCircle.svg";
       }
-    }
+    };
 
     const circle = circleTest(statusID);
     testCircle(circle);
@@ -342,7 +342,7 @@ export default function ViewPR({
       }
 
       return total;
-    }
+    };
 
     // get gst by based on PR
     const gstPercent = gstDetails.gst;
@@ -351,7 +351,7 @@ export default function ViewPR({
     function GSTFinder(amt) {
       const gst = (gstPercent / 100) * amt;
       return gst;
-    }
+    };
 
     const totalArr = [];
 
@@ -373,12 +373,12 @@ export default function ViewPR({
     // check if there is remarks
     if (PR.remarks !== "" && PR.remarks !== null) {
       setRemark(true);
-    }
+    };
 
     // check if there is approver comment
     if (PR.apprRemarks !== "" && PR.apprRemarks !== null) {
       setComment(true);
-    }
+    };
   }, []);
 
   // Reappeal Page
@@ -513,8 +513,8 @@ export default function ViewPR({
         // console.log(response);
         alert(response.data);
 
-        // redirect to traCk PO
-        // router.push(`/TrackOrder`);
+        // redirect to track PO
+        router.push(`/TrackOrder/${prID}`);
       })
       .catch((err) => {
         console.log(err);
