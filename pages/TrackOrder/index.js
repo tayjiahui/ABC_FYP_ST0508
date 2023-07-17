@@ -87,7 +87,7 @@ export default function TrackOrder() {
     useEffect(() => {
       axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
         .then(res => {
-          console.log(res.data)
+          // console.log(res.data)
           setStatus(res.data);
           setSelectedStatus(res.data[0]); //initial selected status
         })
@@ -204,6 +204,9 @@ export default function TrackOrder() {
     )
   };
 
+  // adhoc toggle
+  const [showAdHoc, setShowAdHoc] = useState(false);
+
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -285,6 +288,13 @@ export default function TrackOrder() {
       });
   };
 
+  // adhoc toggle
+  const adHocView = async (e) => {
+    console.log(e.target.checked);
+    setShowAdHoc(e.target.checked);
+    console.log(showAdHoc)
+  };
+
   // wip modal
   function timeFunc() {
     // 2 seconds
@@ -303,9 +313,29 @@ export default function TrackOrder() {
 
   return (
     <>
-      <div className="d-flex">
-        <h1 className="w-75">Order Tracking</h1>
-        <div>
+      <h1 className="w-75">Order Tracking</h1>
+
+      <div className="pb-5">
+        <div className={styles.rightFloater}>
+          <div className="px-3 pb-4">
+            <div className={styles.toggle}>
+              <div className="px-3 pt-1">
+                <h5>Ad-Hoc</h5>
+              </div>
+
+              <label className={styles.switch}>
+                <input
+                  type="checkbox"
+                  onChange={(e) => {
+                    adHocView(e);
+                  }}
+                  checked={showAdHoc}
+                />
+                <span className={styles.slider}></span>
+              </label>
+            </div>
+          </div>
+
           <div className={styles.searchContainer}>
             {/* <form onSubmit={handleSearch}> */}
             <form>

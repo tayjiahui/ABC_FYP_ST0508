@@ -3,32 +3,38 @@
 
 /* Fonts */
 @font-face {
-    font-family: "Plus Jakarta Sans";
-    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+  font-family: "Plus Jakarta Sans";
+  src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
 }
 
 /* Search Box */
-.searchContainer{
-    display:inline-flexbox;
-    float: right;
-    padding-top: 45px;
-    /* position: fixed;
-    right:20px */
+.searchContainer {
+  float: right;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: left;
 }
 
-.searchBox{
-    height: 20px;
-    width: 190px;
-    border-radius: 15px;
-    border-color: #93A2B7;
-    border-style: solid;
-    border-width: 1.5px;
+.searchBox {
+  height: 55%;
+  width: 70%;
+  border-radius: 20px;
+  border-color: #93A2B7;
+  border-style: solid;
+  border-width: 1.5px;
 }
 
-.searchButton{
-    border-style: none;
-    background-color: transparent;
-    vertical-align:middle;
+.searchButton {
+  border-style: none;
+  background-color: transparent;
+  vertical-align: middle;
+}
+
+.rightFloater {
+  float: right;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: left;
 }
 
 /* .orderRow{
@@ -47,14 +53,14 @@
   transform: scale(1.05);
 } */
 
-.orderTextRow{
+.orderTextRow {
   padding-top: 25px;
   padding-bottom: 20px;
   vertical-align: middle;
   display: grid;
   text-align: left;
   grid-template-columns: 110px 210px 300px 220px 190px 100px;
-} 
+}
 
 /* create status pop */
 .newStatusBox {
@@ -117,4 +123,69 @@
   margin-top: 5px;
   font-size: x-large;
   cursor: pointer;
+}
+
+
+/* Adhoc toggle */
+.toggle {
+  float: right;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: left;
+}
+
+.switch {
+  --button-width: 3.5em;
+  --button-height: 2em;
+  --toggle-diameter: 1.5em;
+  --button-toggle-offset: calc((var(--button-height) - var(--toggle-diameter)) / 2);
+  --toggle-shadow-offset: 10px;
+  --toggle-wider: 3em;
+  --color-grey: #93A2B7;
+  --color-green: #476d9f;
+}
+
+.slider {
+  display: inline-block;
+  width: var(--button-width);
+  height: var(--button-height);
+  background-color: var(--color-grey);
+  border-radius: calc(var(--button-height) / 2);
+  position: relative;
+  transition: 0.3s all ease-in-out;
+}
+
+.slider::after {
+  content: "";
+  display: inline-block;
+  width: var(--toggle-diameter);
+  height: var(--toggle-diameter);
+  background-color: #fff;
+  border-radius: calc(var(--toggle-diameter) / 2);
+  position: absolute;
+  top: var(--button-toggle-offset);
+  transform: translateX(var(--button-toggle-offset));
+  box-shadow: var(--toggle-shadow-offset) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+  transition: 0.3s all ease-in-out;
+}
+
+.switch input[type="checkbox"]:checked+.slider {
+  background-color: var(--color-green);
+}
+
+.switch input[type="checkbox"]:checked+.slider::after {
+  transform: translateX(calc(var(--button-width) - var(--toggle-diameter) - var(--button-toggle-offset)));
+  box-shadow: calc(var(--toggle-shadow-offset) * -1) 0 calc(var(--toggle-shadow-offset) * 4) rgba(0, 0, 0, 0.1);
+}
+
+.switch input[type="checkbox"] {
+  display: none;
+}
+
+.switch input[type="checkbox"]:active+.slider::after {
+  width: var(--toggle-wider);
+}
+
+.switch input[type="checkbox"]:checked:active+.slider::after {
+  transform: translateX(calc(var(--button-width) - var(--toggle-wider) - var(--button-toggle-offset)));
 }
