@@ -526,7 +526,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
             <hr className={styles.lineDivider2}></hr>
           </div>
 
-
           <div className="col-sm d-flex mt-2">
             <h2 className="col-sm me-2">Total</h2>
             <p className="col-sm ms-4 fs-4">${Total}</p>
