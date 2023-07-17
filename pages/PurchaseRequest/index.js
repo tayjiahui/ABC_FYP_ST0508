@@ -43,7 +43,7 @@ function isLocalhost() {
 
     return URL;
   }
-}
+};
 
 isLocalhost();
 
