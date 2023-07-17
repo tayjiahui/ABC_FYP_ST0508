@@ -50,25 +50,39 @@ isLocalhost();
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-// Each pr row
+// check for row status for status indicator
+function circleTest(statusID) {
+  if (statusID == 1) {
+    return "/yellowPendingCircle.svg";
+  } else if (statusID == 2) {
+    return "/greenApprovedCircle.svg";
+  } else if (statusID == 3) {
+    return "/redRejectedCircle.svg";
+  } else {
+    return "/yellowPendingCircle.svg";
+  }
+};
+
+// Status icon for each PR row
+function Icon(props) {
+  return (
+    <Image
+      src={baseURL + props.item}
+      width={25}
+      height={25}
+      id={styles.statusCircle}
+      alt="status indicator"
+    />
+  );
+};
+
+// Each PR Row
 function PRRow(props) {
   const statusID = props.StatusID;
 
   const [showPL, setShowPL] = useState(false);
 
   const [plRows, setPLRows] = useState([]);
-
-  function circleTest(statusID) {
-    if (statusID == 1) {
-      return "/yellowPendingCircle.svg";
-    } else if (statusID == 2) {
-      return "/greenApprovedCircle.svg";
-    } else if (statusID == 3) {
-      return "/redRejectedCircle.svg";
-    } else {
-      return "/yellowPendingCircle.svg";
-    }
-  }
 
   const circle = circleTest(statusID);
 
@@ -402,7 +416,7 @@ function PRRow(props) {
   );
 };
 
-// Ad Hoc Row
+// Each Ad Hoc Row
 function AdHocRow(props) {
   const statusID = props.StatusID;
 
@@ -410,18 +424,6 @@ function AdHocRow(props) {
 
   // in progress modal
   const [showInProg, setInProg] = useState(false);
-
-  function circleTest(statusID) {
-    if (statusID == 1) {
-      return "/yellowPendingCircle.svg";
-    } else if (statusID == 2) {
-      return "/greenApprovedCircle.svg";
-    } else if (statusID == 3) {
-      return "/redRejectedCircle.svg";
-    } else {
-      return "/yellowPendingCircle.svg";
-    }
-  }
 
   const circle = circleTest(statusID);
 
@@ -651,19 +653,6 @@ function AdHocRow(props) {
   );
 };
 
-// Status icon for each PR row
-function Icon(props) {
-  return (
-    <Image
-      src={baseURL + props.item}
-      width={25}
-      height={25}
-      id={styles.statusCircle}
-      alt="status indicator"
-    />
-  );
-};
-
 export default function PurchaseRequest() {
   const [id, setUserID] = useState();
   const [role, setRoleID] = useState();
@@ -700,6 +689,7 @@ export default function PurchaseRequest() {
     const roleID = parseInt(localStorage.getItem("roleID"), 10);
     setRoleID(roleID);
 
+    // Purchaser View
     if (roleID === 2) {
       axios
         .all([
@@ -798,7 +788,9 @@ export default function PurchaseRequest() {
             alert(err.code);
           }
         });
-    } else if (roleID === 1) {
+    }
+    // Approver View
+    else if (roleID === 1) {
       // setting default filter view
       setViewType(true);
 
@@ -891,7 +883,7 @@ export default function PurchaseRequest() {
             alert(err.message);
           }
         });
-    }
+    };
   }, []);
 
   // adhoc toggle
@@ -932,7 +924,7 @@ export default function PurchaseRequest() {
       setByPRStatus(checked);
     } else if (id === "viewAll") {
       setViewType(checked);
-    }
+    };
 
     // currently beacuse of e gives error because searchValue Changes to "on" => from checkbox e.target.value
     // handlePRSearch(e);
@@ -1212,6 +1204,7 @@ export default function PurchaseRequest() {
     }
   };
 
+  // set value for search input
   const PRSearch = async (e) => {
     e.preventDefault();
 
@@ -1226,6 +1219,7 @@ export default function PurchaseRequest() {
 
       <div className="pb-5">
         <div className={styles.rightFloater}>
+
           <div className="px-3 pb-4">
             <div className={styles.toggle}>
               <div className="px-3 pt-1">
@@ -1244,6 +1238,29 @@ export default function PurchaseRequest() {
               </label>
             </div>
           </div>
+
+          {
+            role === 2 &&
+            <div className="px-3 pb-4">
+              <div className={styles.toggle}>
+                <div className="px-3 pt-1">
+                  <h5>View All</h5>
+                </div>
+
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    id="viewAll"
+                    onChange={(e) => {
+                      filterChecker(e);
+                    }}
+                    checked={viewAllPR}
+                  />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
+            </div>
+          }
 
           <div className={styles.searchContainer}>
             <form onSubmit={handlePRSearch}>
@@ -1520,22 +1537,6 @@ export default function PurchaseRequest() {
                     Status
                   </label>
                 </div>
-                {role === 2 && (
-                  <div class="col">
-                    <label className={styles.materialCheckbox}>
-                      <input
-                        type="checkbox"
-                        id="viewAll"
-                        onChange={(e) => {
-                          filterChecker(e);
-                        }}
-                        checked={viewAllPR}
-                      />
-                      <span className={styles.checkmark}></span>
-                      View All
-                    </label>
-                  </div>
-                )}
               </div>
             </div>
           </div>
