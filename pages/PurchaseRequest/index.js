@@ -902,50 +902,50 @@ export default function PurchaseRequest() {
     // set view all for filter options
     filterChecker(e);
 
-    if(showAllPR === true){
+    if (showAllPR === true) {
       await axios.get(`${baseUrl}/api/purchaseReq/`)
-      .then((response) => {
-        const allResult = response.data;
-        const resultsList = [];
+        .then((response) => {
+          const allResult = response.data;
+          const resultsList = [];
 
-        allResult.forEach((item, index) => {
-          // Time stamp formatting
-          const reqDate = moment(allResult[index].requestDate).format(
-            "D MMM YYYY"
-          );
-          const targetDeliveryDate = moment(
-            allResult[index].targetDeliveryDate
-          ).format("D MMM YYYY");
+          allResult.forEach((item, index) => {
+            // Time stamp formatting
+            const reqDate = moment(allResult[index].requestDate).format(
+              "D MMM YYYY"
+            );
+            const targetDeliveryDate = moment(
+              allResult[index].targetDeliveryDate
+            ).format("D MMM YYYY");
 
-          resultsList.push(
-            <div key={index}>
-              <PRRow
-                RoleID={role}
-                prID={item.prID}
-                ReqDate={reqDate}
-                Name={item.name}
-                Location={item.branchName}
-                Supplier={item.supplierName}
-                TargetDate={targetDeliveryDate}
-                Status={item.prStatus}
-                StatusID={item.prStatusID}
-              />
-            </div>
-          );
+            resultsList.push(
+              <div key={index}>
+                <PRRow
+                  RoleID={role}
+                  prID={item.prID}
+                  ReqDate={reqDate}
+                  Name={item.name}
+                  Location={item.branchName}
+                  Supplier={item.supplierName}
+                  TargetDate={targetDeliveryDate}
+                  Status={item.prStatus}
+                  StatusID={item.prStatusID}
+                />
+              </div>
+            );
+          });
+
+          setlist1(resultsList);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.code === "ERR_NETWORK") {
+            alert(err.message);
+          } else {
+            alert(err.response.data);
+          }
         });
-
-        setlist1(resultsList);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.code === "ERR_NETWORK") {
-          alert(err.message);
-        } else {
-          alert(err.response.data);
-        }
-      });
     }
-    else{
+    else {
       setlist1(ogPRlist);
     };
   };
@@ -986,7 +986,7 @@ export default function PurchaseRequest() {
 
       console.log("i am working chill")
 
-      
+
     };
 
     // currently beacuse of e gives error because searchValue Changes to "on" => from checkbox e.target.value
