@@ -234,7 +234,7 @@ function AdHocRow(props) {
   return (
     <div>
       <div className="py-1">
-        <a href={baseURL + "/AdHoc/" + props.prID}>
+        <a href={baseURL + "/TrackOrder/AdHoc/" + props.prID}>
           <button className={styles.prButton}>
             <div className={styles.prRow}>
               <div className="pt-2 row text-start">
