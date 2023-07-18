@@ -137,7 +137,7 @@ function OrderRow(props) {
             {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}
             <div className=" col d-flex">
               <div className="col-sm-2 ms-5">
-                <p>#{props.poID}</p>
+                <p>#{poId}</p>
               </div>
               <div className="col-sm-3 ms-5">
                 <p>{props.date}</p>
@@ -268,9 +268,9 @@ function AdHocRow(props) {
                     <p>{props.Name}</p>
                   </div>
 
-                  <div className="col-sm">
+                  {/* <div className="col-sm">
                     <p>{props.TargetDate}</p>
-                  </div>
+                  </div> */}
 
                   <div className="col-sm">
                     <div className="row">
@@ -562,7 +562,7 @@ export default function TrackOrder() {
             <li className="list-group-item col-sm border-0">PR No.</li>
             <li className="list-group-item col-sm border-0">Date</li>
             <li className="list-group-item col-sm border-0">Name</li>
-            <li className="list-group-item col-sm border-0">Target Date</li>
+            {/* <li className="list-group-item col-sm border-0">Target Date</li> */}
             <li className="list-group-item col-sm border-0">Status</li>
             <li className="list-group-item col-sm border-0"></li>
           </ul>
