@@ -32,8 +32,8 @@ function isLocalhost() {
     }
 
     return URL;
-  }
-}
+  };
+};
 
 isLocalhost();
 
@@ -45,7 +45,7 @@ function DropdownOpt(props) {
       <option id={props.ID} value={props.Value} />
     </>
   );
-}
+};
 
 function ItemDropDown(props) {
   return (
@@ -57,7 +57,7 @@ function ItemDropDown(props) {
       />
     </>
   );
-}
+};
 
 function getSelectedOption(e) {
   const selectedValue = e.target.value;
@@ -74,7 +74,7 @@ function getSelectedOption(e) {
   } else {
     return [selectedValue, selectedID, selectedUnitPrice];
   }
-}
+};
 
 export async function getServerSideProps(context) {
   const host = context.req.headers.host;
@@ -86,10 +86,8 @@ export async function getServerSideProps(context) {
     backBaseURL.push("http://localhost:5000");
   } else {
     backBaseURL.push("https://abc-cooking-studio.azurewebsites.net");
-  }
+  };
 
-  // console.log(previousURL);
-  // console.log(`${backBaseURL}/Home`);
   const resObj = {};
 
   // check if previous URL was from homepage
@@ -97,14 +95,14 @@ export async function getServerSideProps(context) {
     resObj.fromHome = true;
   } else {
     resObj.fromHome = false;
-  }
+  };
 
   return {
     props: {
       from: resObj,
     },
   };
-}
+};
 
 export default function CreatePR({ from }) {
   const { data: session } = useSession();
@@ -129,7 +127,7 @@ export default function CreatePR({ from }) {
     // if show adhoc(from home page)
     if (from.fromHome === true) {
       setAdHoc(true);
-    }
+    };
 
     axios
       .all([
@@ -206,6 +204,7 @@ export default function CreatePR({ from }) {
         console.log(err);
         alert(err);
       });
+
   }, []);
 
   // add location input box
@@ -274,19 +273,19 @@ export default function CreatePR({ from }) {
     if (e.target.name == "ItemQty") {
       if (reg.test(e.target.value)) {
         data[index].ItemQty = e.target.value;
-      }
+      };
     } else {
       const [itemName, id, unitPrice] = getSelectedOption(e);
       data[index].ItemName = itemName;
       data[index].id = id;
       data[index].UnitPrice = unitPrice;
-    }
+    };
 
     // Calculate total unit price
     if (data[index].ItemQty !== "" && data[index].ItemName !== "") {
       let totalPrice = (data[index].ItemQty * data[index].UnitPrice).toFixed(2);
       data[index].TotalUnitPrice = totalPrice;
-    }
+    };
 
     SetItemLineList(data);
   };
@@ -373,7 +372,20 @@ export default function CreatePR({ from }) {
         remarks: Remark,
       })
       .then((response) => {
-        // console.log(response.data);
+        // get latest PR ID by userid
+        axios
+          .get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`)
+          .then((response) => {
+            // console.log(response);
+            const latestPRID = response.data[0].prID;
+            // console.log(latestPRID);
+
+            axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
+              {
+                prID: latestPRID
+              }
+            )
+          });
 
         alert(response.data);
 
