@@ -85,19 +85,6 @@ export default function CreateSupplier() {
     // 8-18 digits
     const bankAccountPattern = /^\d{8,18}$/;
 
-    // // get latest supplierID
-    // useEffect(() => {
-    //     axios.get(`${baseUrl}/api/supplier/supplierid`)
-    //         .then((res) => {
-    //             console.log(res.data.supplierID);
-    //             setSupplierID(res.data.supplierID);
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //             alert(err);
-    //         });
-    // }, []);
-
     // get dropdown options
     useEffect(() => {
         axios.all([
@@ -163,41 +150,39 @@ export default function CreateSupplier() {
         //------ form validation
         // email
         if (!formData.email) { // no input
-            errors.email = "Please enter a valid email address.";
-        } else if (!emailPattern.test(formData.email)) { // not matched with regex pattern
+            errors.email = "Email address is required";
+        } 
+        else if (!emailPattern.test(formData.email)) { // not matched with regex pattern
             errors.email = "Please enter your email address in the format yourname@example.com";
         }
 
         // phone number
         if (!formData.phoneNum) { // no input
-            errors.phoneNum = 'Phone number is required';
+            errors.phoneNum = "Phone number is required";
         } 
         else if (!phonePattern.test(formData.phoneNum)) { // not matched with regex pattern
-            errors.phoneNum = 'Invalid phone number format';
+            errors.phoneNum = "Please enter a valid phone number";
         }
 
         // office number
         if (!formData.officeNum) {
-            errors.officeNum = 'Office number is required';
+            errors.officeNum = "Office number is required";
         } 
         else if (!phonePattern.test(formData.officeNum)) {
-            errors.officeNum = 'Invalid office number format';
+            errors.officeNum = "Please enter a valid office number";
         }
 
         // web address
-        if (!formData.webAddress) {
-            errors.webAddress = 'Web address is required';
-        } 
-        else if (!webAddressPattern.test(formData.webAddress)) {
-            errors.webAddress = 'Invalid web address format';
+        if (!webAddressPattern.test(formData.webAddress)) {
+            errors.webAddress = "Please enter a valid web address";
         }
 
         // bank account number
         if (!formData.bankAccountNum) {
-            errors.bankAccountNum = 'Bank account number is required';
+            errors.bankAccountNum = "Bank account number is required";
         } 
         else if (!bankAccountPattern.test(formData.bankAccountNum)) {
-            errors.bankAccountNum = 'Invalid bank account number format';
+            errors.bankAccountNum = "Please enter a valid bank account number";
         }
         
         if (Object.keys(errors).length > 0) {
@@ -299,7 +284,7 @@ export default function CreateSupplier() {
                                 onChange={handleInput} 
                                 className={styles.textbox}
                                 pattern="[3689][0-9]{7}" 
-                                title="Please enter a valid SG phone number" 
+                                title="Please enter a valid phone number" 
                                 required 
                             />
                             <br></br>
@@ -316,7 +301,7 @@ export default function CreateSupplier() {
                                 className={styles.textbox} 
                                 placeholder="https://www.example.com" 
                                 pattern="^https?:\/\/.+$"
-                                title="EDIT LATER Please include http/https in your web address"
+                                title="Please enter a valid web address in the format http://www.example.com"
                             />
                             <br></br>
 
@@ -327,7 +312,7 @@ export default function CreateSupplier() {
                                 value={formData.bankAccName} 
                                 onChange={handleInput} 
                                 className={styles.textbox} 
-                                placeholder="Enter Bank Account Holder's Name" 
+                                placeholder="Bank account holder's name" 
                                 required 
                             />
                             <br></br>
@@ -366,7 +351,7 @@ export default function CreateSupplier() {
                                 onChange={handleInput} 
                                 className={styles.textbox} 
                                 pattern="[3689][0-9]{7}" 
-                                title="Not a valid SG phone number" 
+                                title="Please enter a valid phone number" 
                                 required 
                             />
                             <br></br>
@@ -378,6 +363,7 @@ export default function CreateSupplier() {
                                 value={formData.address} 
                                 onChange={handleInput} 
                                 className={styles.textbox} 
+                                title="Please enter a valid address in SG" 
                                 required 
                             />
                             <br></br>
@@ -390,6 +376,8 @@ export default function CreateSupplier() {
                                 value={formData.bankAccountNum} 
                                 onChange={handleInput} 
                                 className={styles.textbox}
+                                pattern="[0-9]{8,18}" 
+                                title="Please enter a valid bank account number"
                                 required 
                             />
                             <br></br>
