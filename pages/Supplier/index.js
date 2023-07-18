@@ -64,21 +64,25 @@ export default function Supplier({ suppliers }) {
         setWip(false);
     }
 
-    const supplierList = suppliers.map((supplier, index) => (
-        <a href={'/Supplier/' + supplier.supplierID}>
-            <button className={styles.cardLink}>
-                <div className={styles.listRow}>
-                    <div key={index} className={styles.listContent}>
-                        <p className={styles.listNo}>{supplier.supplierID}</p>
-                        <p className={styles.listSupplierName}>{supplier.supplierName}</p>
-                        <p className={styles.listContactPerson}>{supplier.contactPersonName}</p>
-                        <p className={styles.listContactNumber}>{supplier.phoneNum}</p>
-                        <p className={styles.listCategory}>{supplier.Category}</p> 
-                    </div>  
-                </div>
-            </button>  
-        </a>
-    ));
+    // search bar
+    const [searchInput, setSearchInput] = useState([]);
+    const [searchResults, setSearchResults] = useState(suppliers);
+
+    const handleSearchInput = (e) => {
+        setSearchInput(e.target.value);
+        searchResult(e.target.value);
+    };
+
+    // search by supplierName, category name, contact person name
+    const searchResult = (searchValue) => {
+        const findSupplier = suppliers.filter(
+            (result) =>
+                result.supplierName.toLowerCase().includes(searchValue.toLowerCase()) ||
+                result.Category.toLowerCase().includes(searchValue.toLowerCase()) ||
+                result.contactPersonName.toLowerCase().includes(searchValue.toLowerCase())
+        );
+        setSearchResults(findSupplier);
+    };
 
     return (
         <>
@@ -88,8 +92,8 @@ export default function Supplier({ suppliers }) {
                 <div>
                     <div className={styles.searchContainer}>
                         <form>
-                            <input type="text" placeholder="Search..." name="search" className={styles.searchBox}/>
-                            <button type="submit" className={styles.searchButton}><Image src={searchIcon} onClick={wipOpen}/></button>
+                            <input type="text" placeholder="Search..." name="search" className={styles.searchBox} value={searchInput} onChange={handleSearchInput}/>
+                            <button type="submit" className={styles.searchButton}><Image src={searchIcon}/></button>
                             <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={wipOpen}/></button>
                         </form>
                         {wip && <WIP Show={wip} />}
@@ -110,7 +114,21 @@ export default function Supplier({ suppliers }) {
             </div>
 
             <div>
-                {supplierList}
+                {searchResults.map((supplier, index) => (
+                    < a href={'/Supplier/' + supplier.supplierID}>
+                        <button className={styles.cardLink}>
+                            <div className={styles.listRow}>
+                                <div key={index} className={styles.listContent}>
+                                    <p className={styles.listNo}>{supplier.supplierID}</p>
+                                    <p className={styles.listSupplierName}>{supplier.supplierName}</p>
+                                    <p className={styles.listContactPerson}>{supplier.contactPersonName}</p>
+                                    <p className={styles.listContactNumber}>{supplier.phoneNum}</p>
+                                    <p className={styles.listCategory}>{supplier.Category}</p> 
+                                </div>  
+                            </div>
+                        </button>
+                    </a>
+                ))}            
             </div>
 
             <div>
