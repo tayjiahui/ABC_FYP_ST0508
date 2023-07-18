@@ -582,12 +582,12 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
         </div>
 
         <div className="col-sm d-flex">
-          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 shadow text-center" style={{ backgroundColor: '#486284' }}>
+          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
             <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
             {showInProg && <WIP Show={showInProg} />}
           </button>
 
-          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 shadow text-center" style={{ backgroundColor: '#486284' }}>
+          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
             <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
             {showInProg && <WIP Show={showInProg} />}
           </button>
