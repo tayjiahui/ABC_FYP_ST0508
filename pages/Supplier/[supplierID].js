@@ -300,7 +300,7 @@ export default function viewSupplier({ supplierDetails }) {
             </div>
 
             <div className="container">
-                <div className="row" style={{marginLeft: "20px"}}>
+                <div className="row ms-2">
                     <div className="col-6" style={{fontSize:"large"}}>
                             
                         <b>Supplier Name</b><br></br>
@@ -408,7 +408,7 @@ export default function viewSupplier({ supplierDetails }) {
                         <br></br>
                     </div>
 
-                    <div className="col-6" style={{fontSize:"large"}}>
+                    <div className="col-5" style={{fontSize:"large"}}>
 
                         <b>Contact Person</b><br></br>
                         {editSupplier === false &&
@@ -471,6 +471,7 @@ export default function viewSupplier({ supplierDetails }) {
                                 value={updatedFormData.bankAccountNum || formData.bankAccountNum} 
                                 onChange={handleInput} 
                                 className={styles.editInputs}
+                                pattern="[0-9]{8,18}"
                             />
                         }
                         <br></br>
@@ -496,9 +497,9 @@ export default function viewSupplier({ supplierDetails }) {
                     </div>
 
                     {editSupplier == true &&
-                        <div className={styles.updateButtons} >
-                            <button type="submit" className={styles.submitButton} onClick={handleConfirmUpdate}>Update</button>
+                        <div className="pt-5" >
                             <button type="button" className={styles.cancelButton2} onClick={handleCancelEdit}>Cancel</button>
+                            <button type="submit" className={styles.submitButton} onClick={handleConfirmUpdate}>Update</button>
                         </div>
                     }
             
