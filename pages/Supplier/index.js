@@ -86,12 +86,14 @@ export default function Supplier({ suppliers }) {
 
     return (
         <>
-            <div className={styles.titleRow}>
-                <h1 className={styles.title}>Supplier</h1>
+            <div className="row">
+                <div className="col-8 d-inline">
+                    <h1 className="">Supplier</h1>
+                </div>
 
-                <div>
-                    <div className={styles.searchContainer}>
-                        <form>
+                <div className="col-4 pb-2 d-inline">
+                    <div className="d-inline-flex py-4 ms-5">
+                        <form className="d-inline-flex" style={{marginInlineStart:"100px"}}>
                             <input type="text" placeholder="Search..." name="search" className={styles.searchBox} value={searchInput} onChange={handleSearchInput}/>
                             <button type="submit" className={styles.searchButton}><Image src={searchIcon}/></button>
                             <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={wipOpen}/></button>
@@ -101,34 +103,40 @@ export default function Supplier({ suppliers }) {
                 </div>
             </div>
 
-            <div>
-                <hr />
-                <ul className={styles.tableHeader}>
-                    <li className={styles.headerNo}>No.</li>
-                    <li className={styles.headerSupplierName}>Supplier</li>
-                    <li className={styles.headerContactPerson}>Contact Person</li>
-                    <li className={styles.headerContactNumber}>Contact Number</li>
-                    <li className={styles.headerCategory}>Category</li>
-                </ul>
-                <hr /> 
+            <div className="row py-4 border-top border-bottom mx-2 mb-3 px-4">
+                <div className="col-1 col-sm-1">No.</div>
+                <div className="col-3 col-sm-3" style={{textAlign: "left"}}>Supplier Name</div>
+                <div className="col-2 col-sm-2" style={{textAlign: "left"}}>Contact Person</div>
+                <div className="col-2 col-sm-2" style={{textAlign: "left"}}>Contact Number</div>
+                <div className="col-4 col-sm-4" style={{textAlign: "left"}}>Category</div>
             </div>
 
             <div>
                 {searchResults.map((supplier, index) => (
-                    < a href={'/Supplier/' + supplier.supplierID}>
-                        <button className={styles.cardLink}>
-                            <div className={styles.listRow}>
-                                <div key={index} className={styles.listContent}>
-                                    <p className={styles.listNo}>{supplier.supplierID}</p>
-                                    <p className={styles.listSupplierName}>{supplier.supplierName}</p>
-                                    <p className={styles.listContactPerson}>{supplier.contactPersonName}</p>
-                                    <p className={styles.listContactNumber}>{supplier.phoneNum}</p>
-                                    <p className={styles.listCategory}>{supplier.Category}</p> 
-                                </div>  
-                            </div>
-                        </button>
-                    </a>
-                ))}            
+                    <div className="row py-4 rounded-4 m-1 mb-2" style={{backgroundColor: "#C0D8F7", height: "85px"}}>
+                        <div className="row d-flex mx-4">
+                            <a href={'/Supplier/' + supplier.supplierID} className="col">
+                                <div className="col d-flex">
+                                    <div className="col-1 col-sm-1">
+                                        <p>{supplier.supplierID}</p>
+                                    </div>
+                                    <div className="col-3 col-sm-3">
+                                        <p style={{ textAlign: "left" }}>{supplier.supplierName}</p>
+                                    </div>
+                                    <div className="col-2 col-sm-2">
+                                        <p style={{ textAlign: "left" }}>{supplier.contactPersonName}</p>
+                                    </div>
+                                    <div className="col-2 col-sm-2">
+                                        <p style={{ textAlign: "left" }}>{supplier.phoneNum}</p>
+                                    </div>
+                                    <div className="col-4 col-sm-4">
+                                        <p style={{ textAlign: "left" }}>{supplier.Category}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                ))}   
             </div>
 
             <div>

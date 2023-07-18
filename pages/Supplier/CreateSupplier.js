@@ -43,9 +43,6 @@ const baseURL = URL[1];
 // create supplier form
 export default function CreateSupplier() {
     const router = useRouter();
-    
-    // initialise supplierID 
-    const [SupplierID, setSupplierID] = useState(''); 
 
     // dropdown options
     const [bankDropdownOptions, setbankDropdownOptions] = useState([]);
@@ -246,7 +243,7 @@ export default function CreateSupplier() {
 
             <div className="container">
                 <form onSubmit={handleSubmit}>
-                    <div className="row justify-content-center ms-5">
+                    <div className="row ms-3">
                         <div className="col-6">
                             <b>Supplier Name</b><br></br>
                             <input 
@@ -397,8 +394,10 @@ export default function CreateSupplier() {
                         </div>
                     </div>
 
-                    <button type="submit" className={styles.submitButton}>Create</button>
-
+                    <div className="pt-4">
+                        <button type="submit" className={styles.submitButton}>Create</button>
+                    </div>
+                    
                 </form>
             </div>
             

@@ -12,67 +12,39 @@
     display: inline;
 }
 
-/* column grid */
-.col1, .col2 {
-    float: left;
-    padding: 10px;
-    flex: 50%;
-}
-
-.col1 {
-    margin-left: 110px;
-}
-
-.row {
-    display: flex;
-    margin-bottom: 50px;
-}
-
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-.colTitle {
-    display: flex;
-    margin-bottom: 13px;
-    font-size: 18px;
-}
-
 .textbox {
     width: 70%;
+    height: 40px;
+    border-radius: 10px;
+    border-color: #93A2B7;
+    border-style: solid;
+    border-width: 2px;
     padding: 7px;
     margin-bottom: 25px;
-    border-color: #DDE1E6;
-    border-radius: 5px;
-    border-style: solid;
     font-family: "Plus Jakarta Sans";
-    font-size: 14px;
+    font-size: 14px;  
 }
 
 .multiSelectBox, .selectBox {
     width: 70%;
-    border-color: #DDE1E6;
-    border-radius: 10px;
+    height: 38px;
+    border-radius: 5px;
+    box-shadow: 0 0 0 1.5px #93A2B7;
     font-family: "Plus Jakarta Sans";
     font-size: 14px;
     margin-bottom: 25px;
 }
 
 .submitButton {
-    background-color: #486284;
-    border-color: #486284;
     color: white;
-    border-radius: 15px;
-    width: 100px;
-    float: right;
-    margin-bottom: 50px;
-    margin-right: 50px;
-    padding: 10px;
+    font-size: 18px;
     font-family: "Plus Jakarta Sans";
-    font-size: 15px;
-    border-style: solid;
+    width: 140px;
+    height: 40px;
+    background-color: #486284;
+    border: none;
+    border-radius: 15px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-left: 85%;
     cursor: pointer;
 }
