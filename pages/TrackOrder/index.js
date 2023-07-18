@@ -136,12 +136,6 @@ function OrderRow(props) {
           <a href={baseURL + '/TrackOrder/' + poId} className="col text-decoration-none text-black ps-3">
             {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}
             <div className=" col d-flex">
-              {/* <div className="row ms-4">
-                <p>{props.poID}</p>
-              </div> */}
-              <div className=" col-sm-1 ms-1">
-                <p>#{props.poID}</p>
-              </div>
               <div className="col-sm-2 ms-5">
                 <p>#{props.poID}</p>
               </div>
@@ -155,7 +149,6 @@ function OrderRow(props) {
                 <p>{props.Supplier}</p>
               </div>
             </div>
-            {/* </button> */}
           </a>
 
           <div className="col-sm-2 me-5">
@@ -208,11 +201,11 @@ function OrderRow(props) {
 // Each Ad Hoc Row
 function AdHocRow(props) {
   const statusID = props.StatusID;
+  const status = props.Status;
 
   const [showDescript, setShowDescript] = useState(false);
 
-  // in progress modal
-  const [showInProg, setInProg] = useState(false);
+  const [adhocStatus, setAdHocStatus] = useState();
 
   function circleTest(statusID) {
     if (statusID == 1) {
@@ -223,7 +216,7 @@ function AdHocRow(props) {
       return "/redRejectedCircle.svg";
     } else {
       return "/yellowPendingCircle.svg";
-    }
+    };
   };
 
   const circle = circleTest(statusID);
@@ -238,28 +231,10 @@ function AdHocRow(props) {
     setShowDescript(false);
   };
 
-  // open WIP Modal & Set timer to close
-  const WipModalOpen = async (e) => {
-    e.preventDefault();
-    setInProg(true);
-    timeFunc();
-  };
-
-  // timer
-  function timeFunc() {
-    // 2 seconds
-    setTimeout(closeWIPModal, 2000);
-  };
-
-  // close WIP Modal
-  function closeWIPModal() {
-    setInProg(false);
-  };
-
   return (
     <div>
       <div className="py-1">
-        <a>
+        <a href={baseURL + "/AdHoc/" + props.prID}>
           <button className={styles.prButton}>
             <div className={styles.prRow}>
               <div className="pt-2 row text-start">
@@ -300,7 +275,7 @@ function AdHocRow(props) {
                   <div className="col-sm">
                     <div className="row">
                       <div className="col-sm-1">
-                        <p className={styles.prTextStatus}>{props.Status}</p>
+                        <p className={styles.prTextStatus}>{status}</p>
                       </div>
                       <div className="ps-5 ms-4 col-sm-2">
                         <Icon item={circle} />
@@ -356,7 +331,6 @@ function AdHocRow(props) {
           </button>
         </a>
       </div>
-      {showInProg && <WIP Show={showInProg} />}
     </div>
   );
 };
@@ -381,7 +355,7 @@ export default function TrackOrder() {
   const [searchResults, setSearchResults] = useState([]);
 
   // adhoc view
-  const [showAdHoc, setShowAdHoc] = useState(true);
+  const [showAdHoc, setShowAdHoc] = useState(false);
   const [AdHocResults, setAdHocResults] = useState([<div>Loading...</div>]);
 
   // wip modal
@@ -444,8 +418,8 @@ export default function TrackOrder() {
       }
     })
       .then((response) => {
-        console.log(response);
-        console.log(response.data);
+        // console.log(response);
+        // console.log(response.data);
 
         const adHocResult = response.data;
 
@@ -477,7 +451,7 @@ export default function TrackOrder() {
         });
 
         setAdHocResults(adHocList);
-      })
+      });
   }, []);
 
   const handleSearch = async (e) => {
@@ -508,9 +482,7 @@ export default function TrackOrder() {
 
   // adhoc toggle
   const adHocView = async (e) => {
-    console.log(e.target.checked);
     setShowAdHoc(e.target.checked);
-    console.log(showAdHoc)
   };
 
   // wip modal
