@@ -1,8 +1,11 @@
 // this is the homepage
 // import Link from 'next/link';
+import { useSession } from "next-auth/react";
+
 import BarChart from '../components/barchart';
 import PrAmt from '../components/prAmt';
 import PoAmt from '../components/poAmt';
+import { useEffect } from "react";
 
 // Base urls
 const URL = [];
@@ -31,6 +34,15 @@ const baseUrl = URL[0];
 
 //----------------------function name has to be uppercase
 export default function Home() {
+    const { data: session} = useSession();
+
+    useEffect(() => {
+        // add user data to local storage
+        localStorage.setItem("ID", session?.userDetails.userID);
+        localStorage.setItem("roleID", session?.userDetails.role);
+        localStorage.setItem("Name", session?.userDetails.name);
+    },[])
+
 
     return (
         <div>
