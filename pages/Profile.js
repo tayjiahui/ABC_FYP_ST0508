@@ -31,6 +31,7 @@ isLocalhost();
 const baseUrl = URL[0];
 
 export default function Profile() {
+    const { data: session} = useSession();
     const router = useRouter();
 
     const [id, setUserID] = useState();
@@ -41,7 +42,8 @@ export default function Profile() {
 
     useEffect(() => {
         // set user id taken from localstorage
-        const userID = parseInt(localStorage.getItem("ID"), 10);
+        // const userID = parseInt(localStorage.getItem("ID"), 10);
+        const userID = session?.userDetails.userID;
         setUserID(userID);
 
         // set user role
