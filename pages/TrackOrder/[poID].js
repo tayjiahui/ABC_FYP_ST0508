@@ -593,7 +593,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
           </button>
         </div>
 
-        <div className="col-sm d-flex mt-2">
+        {/* <div className="col-sm d-flex mt-2">
           <div style={{ flex: 1 }}>
             <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
             <h7 className="col-sm ms-2">Add Invoice</h7>
@@ -603,7 +603,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
             <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
             <h7 className="col-sm ms-2">Add Delivery Order</h7>
           </div>
-        </div>
+        </div> */}
 
         {changeStatusPop && (
           <div className={styles.newStatusBox}>
