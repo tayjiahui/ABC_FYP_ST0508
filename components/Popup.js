@@ -36,7 +36,10 @@ const Popup = ({ event }) => {
   const [viewAccessId, setViewAccessId] = useState('');
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    
+    console.log("submitting status");
+    // event.preventDefault();
+    alert(`Sucessfully created new status: ${statusInput}`);
 
     const formData = {
       userID: userId,
@@ -64,8 +67,8 @@ const Popup = ({ event }) => {
   };
 
   return (
-    <div className={styles.popup}>
-      <h4>Add your new event here!</h4>
+    <div>
+      <h4 className="mb-4">Add your new event here!</h4>
       <form onSubmit={handleSubmit}>
         <input
           type="number"
@@ -98,6 +101,7 @@ const Popup = ({ event }) => {
           placeholder="enddate"
           required
         /><br></br>
+
         <input
           type="text"
           value={description}
@@ -105,7 +109,7 @@ const Popup = ({ event }) => {
           placeholder="description"
           required
         /><br></br>
-        <br></br>
+       
         <input
           type="number"
           value={viewAccessId}
