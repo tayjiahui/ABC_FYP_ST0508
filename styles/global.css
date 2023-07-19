@@ -88,6 +88,10 @@ ul {
     vertical-align: middle;
 }
 
+#username{
+    color: #6a758c;
+}
+
 /* Input Boxes */
 
 input[type="text"],
