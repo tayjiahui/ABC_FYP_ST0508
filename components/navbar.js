@@ -19,7 +19,8 @@ export default function NavBar(){
     const [userName, setUserName] = useState("");
 
     useEffect(() => {
-        const username = localStorage.getItem("Name");
+        // const username = localStorage.getItem("Name");
+        const username = session?.user?.name;
         setUserName(username);
     }, [])
 
@@ -55,14 +56,14 @@ export default function NavBar(){
                         </li>
                         </ul>
                     <ul className="navbar-right">
-                        <li id="profPicImage">
+                        <li id="profPicImage" className='py-1'>
                             <a href='/Profile'>
                                 <Image src={profPic} alt='Profile Picture' width={50} height={50}/>
                             </a>
                         </li>
-                        <li>
+                        <li className='py-3'>
                             {/* <h3 id="username">{session.user.name}</h3> */}
-                            <h3 id="username">{userName}</h3>
+                            <h5 id="username">{userName}</h5>
                         </li>
                     </ul>
                 </nav>
