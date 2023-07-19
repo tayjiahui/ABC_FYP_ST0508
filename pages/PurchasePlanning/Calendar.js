@@ -67,6 +67,7 @@ const Calendar = () => {
   const handleDeleteConfirmation = (confirmDelete, planID) => {
     if (confirmDelete) {
       deleteEvent(planID);
+      window.location.reload();
     }
     setShowDeleteConfirmation(false);
   };

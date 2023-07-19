@@ -11,6 +11,8 @@ const Popup = ({ event }) => {
   const [endDate, setEndDate] = useState('');
   const [description, setDescription] = useState('');
   const [viewAccessId, setViewAccessId] = useState('');
+  const [showFirstPopup, setShowFirstPopup] = useState(true);
+  const [showSecondPopup, setShowSecondPopup] = useState(false);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("ID");
@@ -19,10 +21,17 @@ const Popup = ({ event }) => {
     }
   }, [])
 
-  const handleSubmit = async (e) => {
-    
-   // event.preventDefault();
-    
+  const handleSubmit = async (event) => {
+
+    event.preventDefault();
+    // Handle any form submission logic here
+    setShowFirstPopup(false);
+    setShowSecondPopup(true); // Show the second pop-up after submission
+
+    setTimeout(function(){
+      window.location.reload();
+   }, 2000);
+
     const formData = {
       userID: userId,
       title: titleName,
@@ -35,7 +44,6 @@ const Popup = ({ event }) => {
     try {
       const response = await axios.post('http://localhost:3000/api/purchasePlan/purchasePlan', formData);
 
-
       if (response.status === 200) {
         console.log('Data inserted successfully!');
       } else {
@@ -45,54 +53,63 @@ const Popup = ({ event }) => {
       console.error('Error:', error);
     }
 
-
   };
 
   return (
     <div>
-      <h4 className="mb-4">Add your new event here!</h4>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={titleName}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="title"
-          required
-        /><br></br>
-        
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          placeholder="startdate"
-          required
-        /><br></br>
-        
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          placeholder="enddate"
-          required
-        /><br></br>
+      {showFirstPopup && (
+        <div>
+          <h4 className="mb-4">Add your new event here!</h4>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={titleName}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="title"
+              required
+            /><br></br>
 
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="description"
-          required
-        /><br></br>
-       
-        <input
-          type="number"
-          value={viewAccessId}
-          onChange={(e) => setViewAccessId(e.target.value)}
-          placeholder="viewAccessId"
-          required
-        /><br></br>
-        <button type="submit">Submit</button>
-      </form>
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              placeholder="startdate"
+              required
+            /><br></br>
+
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              placeholder="enddate"
+              required
+            /><br></br>
+
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="description"
+              required
+            /><br></br>
+
+            <input
+              type="number"
+              value={viewAccessId}
+              onChange={(e) => setViewAccessId(e.target.value)}
+              placeholder="viewAccessId"
+              required
+            /><br></br>
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+      )}
+
+      {showSecondPopup && (
+        <div className={styles.newStatusBox}>
+            <h5 className={styles.secondPopUp}> Purchase plan submitted successfully! </h5>
+        </div>
+      )}
 
       {/* <style jsx>{}</style> */}
     </div>
