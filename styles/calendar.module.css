@@ -74,10 +74,69 @@ h2 {
   text-align: center;
 } */
 
+/* create status pop */
+.newStatusBox {
+  width: 450px;
+  height: 560px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px;
+  /* display: block; */
+  border: 1px solid black;
+  z-index: 999;
+}
+
+.newStatus {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.newStatus input[type="text"] {
+  border-radius: 20px;
+  border-width: 1px;
+  padding: 5px;
+  width: 80%;
+}
+
+.newStatus input[type="number"] {
+  border-radius: 20px;
+  border-width: 1px;
+  padding: 5px;
+  width: 80%;
+}
+
+.newStatus input[type="date"] {
+  border-radius: 20px;
+  border-width: 1px;
+  padding: 5px;
+  width: 80%;
+}
+
+.newStatus button {
+  padding: 6px 20px 6px 20px;
+  border-radius: 15px;
+  border-width: 1px;
+  background-color: #486284;
+  color: white;
+}
+
+.newStatus form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .closemeStatus1 {
   background-color: transparent;
   border: none;
-  margin-left: 370px;
+  margin-left: 350px;
   margin-top: 5px;
   font-size: x-large;
   cursor: pointer;
