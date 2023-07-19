@@ -127,7 +127,42 @@ h2 {
   cursor: pointer;
 }
 
+.closemeStatus2 {
+  background-color: transparent;
+  border: none;
+  margin-left: 400px;
+  font-size: x-large;
+  cursor: pointer;
+}
+
+
 /* .fc { 
   max-width: 1100px;
   margin: 0 auto;
 } */
+
+.deleteConfirmationBox {
+  width: 550px;
+  height: 200px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px;
+  /* display: block; */
+  border: 1px solid black;
+  z-index: 999;
+  text-align: center;
+}
+
+.deleteConfirmation button {
+  padding: 6px 20px 6px 20px;
+  border-radius: 15px;
+  border-width: 1px;
+  background-color: #486284;
+  color: white;
+  margin-left: 20px;
+  margin-top: 30px;
+}

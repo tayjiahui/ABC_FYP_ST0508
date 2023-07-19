@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -6,11 +5,14 @@ import interactionPlugin from '@fullcalendar/interaction';
 import Popup from '../../components/Popup';
 import styles from '../../styles/calendar.module.css';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Calendar = () => {
-  const [showPopup, setShowPopup] = useState();
+  const [showPopup, setShowPopup] = useState(false);
   const [selectedRange, setSelectedRange] = useState(null);
   const [events, setEvents] = useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [deleteEventId, setDeleteEventId] = useState(false);
 
   const handleSelect = (arg) => {
     setSelectedRange(arg);
@@ -21,13 +23,14 @@ const Calendar = () => {
     setShowPopup(false);
     // setSelectedRange(null);
   };
+  
 
   const getEvents = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/purchasePlan/');
       if (response.status === 200) {
         const formattedEvents = response.data.map((event) => ({
-          id: event.userID,
+          id: event.planID,
           title: event.title,
           start: event.start_datetime,
           end: event.end_datetime,
@@ -47,7 +50,8 @@ const Calendar = () => {
       const response = await axios.delete(`http://localhost:3000/api/purchasePlan/purchasePlan/${planID}`);
       if (response.status === 200) {
         console.log('Event deleted successfully!');
-        getEvents(); // Fetch events again after deletion to update the calendar
+        // getEvents(); // Fetch events again after deletion to update the calendar
+        window.location.reload();
       } else {
         console.error('Error deleting event:', response.statusText);
       }
@@ -60,13 +64,11 @@ const Calendar = () => {
     getEvents();
   }, []);
 
-  const renderEventContent = (eventInfo) => {
-    return (
-      <>
-        <h6>{eventInfo.event.title}</h6>
-        <h8>{eventInfo.event.extendedProps.description}</h8>
-      </>
-    );
+  const handleDeleteConfirmation = (confirmDelete, planID) => {
+    if (confirmDelete) {
+      deleteEvent(planID);
+    }
+    setShowDeleteConfirmation(false);
   };
 
   return (
@@ -74,18 +76,14 @@ const Calendar = () => {
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        // dateClick={handleDateClick}
         selectable={true}
         displayEventTime={false}
         select={handleSelect}
         events={events}
-        eventContent={renderEventContent} // Custom event rendering function
         eventClick={(info) => {
-          if (window.confirm('Are you sure you want to delete this event?')) {
-            deleteEvent(info.event.id);
-          }
+          setShowDeleteConfirmation(true);
+          setDeleteEventId(info.event.id);
         }}
-
       />
 
       {showPopup && (
@@ -96,19 +94,18 @@ const Calendar = () => {
           </div>
         </div>
       )}
+
+      {showDeleteConfirmation && (
+        <div className={styles.deleteConfirmationBox}>
+          <h4>Are you sure you want to delete this event?</h4>
+          <div className="col-sm text-center mt-4" style={{flex: 1}}>
+            <button onClick={() => handleDeleteConfirmation(true, deleteEventId)} className="col-sm ms-3 mt-2 w-50 border border-1 p-2 rounded-3 text-white" style={{backgroundColor: '#486284'}}>Delete</button>
+            <button onClick={() => handleDeleteConfirmation(false)} className="col-sm ms-3 mt-3 w-50 border border-1 p-2 rounded-3 text-white" style={{backgroundColor: '#486284'}}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default Calendar;
-
-
-
-
-// sub for deployment build
-
-// export default function Index() {
-//     return (
-//         <div></div>
-//     );
-// };
