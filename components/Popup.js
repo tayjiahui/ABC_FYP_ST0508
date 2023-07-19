@@ -1,31 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from '../styles/calendar.module.css'
 
-// function isLocalhost() {
-//     if (typeof window !== 'undefined') {
-//         const hostname = window.location.hostname;
-//         console.log('hostname   ' + hostname);
-//         if (hostname == 'localhost') {
-//             URL.push('http://localhost:3000', 'http://localhost:5000');
-//             console.log(URL);
 
-//         }
-//         else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-//             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-//             console.log(URL);
-//         }
-
-//         return URL;
-//     }
-// }
-
-// isLocalhost();
-
-// const baseUrl = URL[0]
-
-// import React, { useState } from 'react';
-// import axios from 'axios';
 
 const Popup = ({ event }) => {
   const [userId, setUserID] = useState('');
@@ -35,12 +12,17 @@ const Popup = ({ event }) => {
   const [description, setDescription] = useState('');
   const [viewAccessId, setViewAccessId] = useState('');
 
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("ID");
+    if (storedUserId) {
+      setUserID(parseInt(storedUserId, 10))
+    }
+  }, [])
+
   const handleSubmit = async (e) => {
     
-    console.log("submitting status");
-    // event.preventDefault();
-    alert(`Sucessfully created new status: ${statusInput}`);
-
+   // event.preventDefault();
+    
     const formData = {
       userID: userId,
       title: titleName,
@@ -70,14 +52,6 @@ const Popup = ({ event }) => {
     <div>
       <h4 className="mb-4">Add your new event here!</h4>
       <form onSubmit={handleSubmit}>
-        <input
-          type="number"
-          value={userId}
-          onChange={(e) => setUserID(e.target.value)}
-          placeholder="userid"
-          required
-        /><br></br>
-      
         <input
           type="text"
           value={titleName}
