@@ -8,9 +8,8 @@ import styles from '../../styles/supplier.module.css';
 import searchIcon from '../../public/searchIcon.svg';
 import filterIcon from '../../public/filterIcon.svg';
 import plusIcon from '../../public/plusIcon.svg';
-
-// WIP component
-import WIP from "../../components/WIP";
+import xIcon from '../../public/xIcon.svg';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Base urls
 const URL = [];
@@ -47,22 +46,19 @@ const baseURL = URL[1];
 // main supplier page
 export default function Supplier({ suppliers }) {
 
-    // WIP modal for search bar
-    const [wip, setWip] = useState(false);
+    // get category names for search filter 
+    const [categoryOptions, setCategoryOptions] = useState([]);
 
-    const wipOpen = async (e) => {
-        e.preventDefault()
-        setWip(true);
-        timer();
-    }
-
-    function timer() {
-        setTimeout(closeWIP, 2000);
-    }
-
-    function closeWIP() {
-        setWip(false);
-    }
+    useEffect(() => {
+        axios.get(`${baseUrl}/api/supplier/category/all`,{})
+            .then((res) => {
+                const categories = res.data.map(filterOptions => {
+                    value: filterOptions.categoryID;
+                    label: filterOptions.categoryName;
+                });
+            setCategoryOptions(categories);
+            })
+    })
 
     // search bar
     const [searchInput, setSearchInput] = useState([]);
@@ -84,6 +80,52 @@ export default function Supplier({ suppliers }) {
         setSearchResults(findSupplier);
     };
 
+    // filter popup
+    const [filterPopup, setFilterPopup] = useState(false);
+
+    const handleClosePopup = () => {
+        setFilterPopup(false);
+    }
+
+    const handleOpenPopup = () => {
+        setFilterPopup(true);
+    }
+
+    // search filter by category type
+    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [filteredSuppliers, setFilteredSuppliers] = useState(suppliers);
+
+    // handle and update selected checkbox state
+    const handleCheckboxChange = (e) => {
+        const { value, checked } = e.target;
+
+        if (checked) {
+            setSelectedCategories((prevSelectedFilters) => [
+                ...prevSelectedFilters,
+                value,
+            ]);
+        } else {
+            setSelectedCategories((prevSelectedFilters) =>
+                prevSelectedFilters.filter((filter) => filter !== value)
+            );
+        }
+    };
+
+    // filter function
+    const filterSuppliers = () => {
+        if (selectedCategories.length === 0) {
+            setSelectedCategories(suppliers);
+        } else {
+            const filtered = suppliers.filter((supplier) =>
+                selectedCategories.includes(supplier.Category)
+            );
+            setSelectedCategories(filtered);
+        }
+    };
+
+    // show filtered results
+
+
     return (
         <>
             <div className="row">
@@ -93,12 +135,20 @@ export default function Supplier({ suppliers }) {
 
                 <div className="col-4 pb-2 d-inline">
                     <div className="d-inline-flex py-4 ms-5">
-                        <form className="d-inline-flex" style={{marginInlineStart:"100px"}}>
+                        <div className="d-inline-flex" style={{marginInlineStart:"100px"}}>
                             <input type="text" placeholder="Search..." name="search" className={styles.searchBox} value={searchInput} onChange={handleSearchInput}/>
-                            <button type="submit" className={styles.searchButton}><Image src={searchIcon}/></button>
-                            <button type="submit" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={wipOpen}/></button>
-                        </form>
-                        {/* {wip && <WIP Show={wip} />} */}
+                            <button type="button" className={styles.searchButton}><Image src={searchIcon} width={25} height={25}/></button>
+                        </div>
+
+                        <button type="button" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={handleOpenPopup}/></button>
+
+                        {/* popup box */}
+                        {filterPopup && (
+                            <>
+                    
+                            </>
+                        )}
+
                     </div>
                 </div>
             </div>
@@ -113,8 +163,8 @@ export default function Supplier({ suppliers }) {
 
             <div>
                 {searchResults.map((supplier, index) => (
-                    <div className="row py-4 rounded-4 m-1 mb-2" style={{backgroundColor: "#C0D8F7", height: "85px"}}>
-                        <div className="row d-flex mx-4">
+                    <div className="row py-4 rounded-4 m-1 mb-2" style={{backgroundColor: "#C0D8F7", height: "85px", cursor: "pointer"}}>
+                        <div className="row d-flex mx-4">   
                             <a href={'/Supplier/' + supplier.supplierID} className="col">
                                 <div className="col d-flex">
                                     <div className="col-1 col-sm-1">
@@ -137,6 +187,9 @@ export default function Supplier({ suppliers }) {
                         </div>
                     </div>
                 ))}   
+
+                {/* filter results */}
+
             </div>
 
             <div>
@@ -147,7 +200,6 @@ export default function Supplier({ suppliers }) {
                 </a>
             </div>
 
-            {wip && <WIP Show={wip} />}
         </>
     )
 }
