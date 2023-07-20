@@ -17,7 +17,7 @@ export default NextAuth({
         secret: String(process.env.JWT_SECRET),
     },
     session: {
-        jwt: true
+        strategy: "jwt"
     },
     theme: {
         colorScheme: "light"
@@ -26,11 +26,10 @@ export default NextAuth({
         async jwt({ token, user, account }) {
             if (user) {
                 token.id = user.id;
-            }
+            };
             if (account) {
                 token.accessToken = account.access_token;
-            }
-
+            };
             return token;
         },
         async session({ session, user, token }) {
@@ -59,15 +58,17 @@ export default NextAuth({
                     };
                 })
                 .catch((err) => {
-                    console.log(err, "EROROROR");
                     if (err.code === "ERR_NETWORK") {
                         console.log(err);
                     }
                     else if (err.response.status === 404) {
                         console.log(err.response.data);
+                        // ! Redirect somewhere
+                    }
+                    else{
+                        console.log(err, "EROROROR");
                     };
                 });
-
                 // console.log(session, "OUTISDE55555555555555555555")
 
             return session;
@@ -108,50 +109,49 @@ export default NextAuth({
                         })
                             .then((response) => {
                                 console.log("AUTH3 RESPONSE %%%%%%%%%", response.data);
-                                // console.log("AUTH3 RESPONSE %%%%%%%%%", response.data.value);
 
-                                axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
-                                    {
-                                        email: email
-                                    }
-                                )
-                                    .then((res) => {
-                                        // alert(`Login Successful!`);
-                                        // console.log(res.data);
-                                        console.log(res.data[0]);
+                                // axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
+                                //     {
+                                //         email: email
+                                //     }
+                                // )
+                                //     .then((res) => {
+                                //         // alert(`Login Successful!`);
+                                //         // console.log(res.data);
+                                //         console.log(res.data[0]);
 
-                                        const data = res.data[0];
-                                        // console.log(res);
+                                //         const data = res.data[0];
+                                //         // console.log(res);
 
-                                        session.userDetails = {
-                                            name: data.name,
-                                            email: email,
-                                            userID: data.userID,
-                                            role: data.roleID
-                                        };
+                                //         session.userDetails = {
+                                //             name: data.name,
+                                //             email: email,
+                                //             userID: data.userID,
+                                //             role: data.roleID
+                                //         };
 
-                                        console.log(session, "hkhcbdcsjidhdbvgchjiofkdewjkbdhv^^^^^^^^^^^^^^^^%#########################^^^^^^^^^^^^^^^^")
+                                //         console.log(session, "hkhcbdcsjidhdbvgchjiofkdewjkbdhv^^^^^^^^^^^^^^^^%#########################^^^^^^^^^^^^^^^^")
 
-                                        // add user data to local storage
-                                        localStorage.setItem("ID", data.userID);
-                                        localStorage.setItem("roleID", data.roleID);
-                                        localStorage.setItem("Name", data.name);
-                                    })
-                                    .catch((err) => {
-                                        console.log(err.response, "EROROROR");
-                                        // if (err.code === "ERR_NETWORK") {
-                                        //     alert(err);
-                                        // }
-                                        // else if (err.response.status === 404) {
-                                        //     alert(err.response.data);
-                                        // }
-                                    });
+                                //         // add user data to local storage
+                                //         localStorage.setItem("ID", data.userID);
+                                //         localStorage.setItem("roleID", data.roleID);
+                                //         localStorage.setItem("Name", data.name);
+                                //     })
+                                //     .catch((err) => {
+                                //         console.log(err, "EROROROR");
+                                //         // if (err.code === "ERR_NETWORK") {
+                                //         //     alert(err);
+                                //         // }
+                                //         // else if (err.response.status === 404) {
+                                //         //     alert(err.response.data);
+                                //         // }
+                                //     });
                             })
-                            .catch((err) => {
-                                console.log(err);
-                                console.log(err.response);
-                                console.log(err.code);
-                            })
+                            // .catch((err) => {
+                            //     console.log(err);
+                            //     console.log(err.response);
+                            //     console.log(err.code);
+                            // })
                     }
 
                     auth3();
@@ -164,7 +164,7 @@ export default NextAuth({
         signOut: async ({ session }) => {
             await axios.get(`${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout?redirect_uri=/`)
                 .then((response) => {
-                    console.log(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11111`)
+                    // console.log(`!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11111`)
                     console.log("LOgout res", response);
 
                     // router.push('/');

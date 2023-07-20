@@ -82,21 +82,16 @@ export default function Login() {
                 // localStorage.setItem("Email", data.email);
 
                 // signIn();
+                // signIn("keycloak", { callbackUrl: "/Home" }, { email: loginEmail });
+                console.log(loginEmail);
+                // update({ email: loginEmail })
                 signIn(null, { callbackUrl: "/Home" });
+                // signIn({ email: loginEmail })
+                console.log(session)
 
-                // auth2(session?.accessToken);
-                // console.log({ session, status, update });
-
-                // console.log("this is session ========= " + session?.accessToken);
 
                 // redirect to home page
                 // router.push('/Home');
-
-                // console.log("success")
-
-                // react sign in
-                // signIn();
-                // signIn({ callbackUrl: '/Home' });
 
             })
             .catch((err) => {
@@ -111,28 +106,45 @@ export default function Login() {
                 //     alert(err);
                 // }
             })
-    }
+    };
+
+    const login = () => {
+        signIn("keycloak", { callbackUrl: "/Home" });
+    };
 
     return (
+        // <div className={styles.page}>
+        //     <div className="container p-5 my-5 border rounded w-50" id={styles.card}>
+        //         <div className="p-3">
+        //             <h1 className='PageHeader'>Login</h1>
+        //         </div>
+
+        //         <form onSubmit={handleLogin}>
+        //             <div className="form-group p-4">
+        //                 <label for="loginEmail" className="form-label">Email</label> <br />
+        //                 <input type="email" id="loginEmail" className={styles.emailInput} onChange={handleEmailInput} required />
+        //             </div>
+
+        //             <div className="p-4">
+        //                 {/* <a href="/api/auth/signin"> */}
+        //                 <button type='submit' className={styles.loginButton}>Login</button>
+        //                 {/* </a> */}
+
+        //             </div>
+        //         </form>
+        //     </div>
+        // </div>
         <div className={styles.page}>
             <div className="container p-5 my-5 border rounded w-50" id={styles.card}>
                 <div className="p-3">
                     <h1 className='PageHeader'>Login</h1>
                 </div>
 
-                <form onSubmit={handleLogin}>
-                    <div className="form-group p-4">
-                        <label for="loginEmail" className="form-label">Email</label> <br />
-                        <input type="email" id="loginEmail" className={styles.emailInput} onChange={handleEmailInput} required />
-                    </div>
-
-                    <div className="p-4">
-                        {/* <a href="/api/auth/signin"> */}
-                        <button type='submit' className={styles.loginButton}>Login</button>
-                        {/* </a> */}
-
-                    </div>
-                </form>
+                <div>
+                    <button onClick={login}>
+                        Sign In
+                    </button>
+                </div>
             </div>
         </div>
     );
