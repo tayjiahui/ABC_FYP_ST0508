@@ -169,11 +169,6 @@ export default function CreateSupplier() {
             errors.officeNum = "Please enter a valid office number";
         }
 
-        // web address
-        if (!webAddressPattern.test(formData.webAddress)) {
-            errors.webAddress = "Please enter a valid web address";
-        }
-
         // bank account number
         if (!formData.bankAccountNum) {
             errors.bankAccountNum = "Bank account number is required";
