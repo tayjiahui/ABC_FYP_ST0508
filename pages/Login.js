@@ -76,16 +76,16 @@ export default function Login() {
                 // console.log(res);
 
                 // add user data to local storage
-                localStorage.setItem("ID", data.userID);
-                localStorage.setItem("roleID", data.roleID);
-                localStorage.setItem("Name", data.name);
+                // localStorage.setItem("ID", data.userID);
+                // localStorage.setItem("roleID", data.roleID);
+                // localStorage.setItem("Name", data.name);
                 // localStorage.setItem("Email", data.email);
 
                 // signIn();
                 // signIn("keycloak", { callbackUrl: "/Home" }, { email: loginEmail });
                 console.log(loginEmail);
                 // update({ email: loginEmail })
-                signIn(null, { callbackUrl: "/Home" });
+                signIn("keycloak", { callbackUrl: "/Home" });
                 // signIn({ email: loginEmail })
                 console.log(session)
 
@@ -100,6 +100,8 @@ export default function Login() {
                     alert(err);
                 }
                 else if (err.response.status === 404) {
+                    // TODO if acc 404 state to create account/redirect to create acc 
+                    // ! Take note: Catching users here may lead to users creating random email accounts
                     alert(err.response.data);
                 }
                 // else{
@@ -109,42 +111,40 @@ export default function Login() {
     };
 
     const login = () => {
-        signIn("keycloak", { callbackUrl: "/Home" });
+        // signIn("keycloak", { callbackUrl: "/Home" })
+        signIn("keycloak", { callbackUrl: "/Home" })
     };
 
     return (
-        // <div className={styles.page}>
-        //     <div className="container p-5 my-5 border rounded w-50" id={styles.card}>
-        //         <div className="p-3">
-        //             <h1 className='PageHeader'>Login</h1>
-        //         </div>
-
-        //         <form onSubmit={handleLogin}>
-        //             <div className="form-group p-4">
-        //                 <label for="loginEmail" className="form-label">Email</label> <br />
-        //                 <input type="email" id="loginEmail" className={styles.emailInput} onChange={handleEmailInput} required />
-        //             </div>
-
-        //             <div className="p-4">
-        //                 {/* <a href="/api/auth/signin"> */}
-        //                 <button type='submit' className={styles.loginButton}>Login</button>
-        //                 {/* </a> */}
-
-        //             </div>
-        //         </form>
-        //     </div>
-        // </div>
         <div className={styles.page}>
             <div className="container p-5 my-5 border rounded w-50" id={styles.card}>
                 <div className="p-3">
                     <h1 className='PageHeader'>Login</h1>
                 </div>
 
-                <div>
-                    <button onClick={login}>
+                <form onSubmit={handleLogin}>
+                    <div className="form-group p-4">
+                        <label for="loginEmail" className="form-label">Email</label> <br />
+                        <input type="email" id="loginEmail" className={styles.emailInput} onChange={handleEmailInput} required />
+                    </div>
+
+                    <div className="p-4">
+                        {/* <a href="/api/auth/signin"> */}
+                        <button type='submit' className={styles.loginButton}>Login</button>
+                        {/* </a> */}
+
+                    </div>
+                </form>
+
+                {/* <div className="p-3">
+                    <h1 className='PageHeader'>Welcome back!</h1>
+                </div>
+
+                <div className="px-3">
+                    <button onClick={login} className="btn btn-secondary">
                         Sign In
                     </button>
-                </div>
+                </div> */}
             </div>
         </div>
     );
