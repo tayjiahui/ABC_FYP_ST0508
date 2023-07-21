@@ -108,9 +108,12 @@ export default NextAuth({
 
                             isAuthenticated.SSO = true;
 
+                            const emailTemp = 'johnWatt@purchaser.com';
+
                             await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
                                 {
-                                    email: email
+                                    // ! CHANGE BACK TO SESSION EMAIL
+                                    email: emailTemp
                                 }
                             )
                                 .then((response) => {
@@ -179,11 +182,13 @@ export default NextAuth({
             };
 
             const sessionEmail = session?.user.email;
+            const tempEmail = 'johnWatt@purchaser.com';
             console.log("SESSION EMAIL", sessionEmail);
 
             await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
                 {
-                    email: sessionEmail
+                    // ! CHANGE BACK TO SESSION EMAIL
+                    email: tempEmail
                 }
             )
                 .then((res) => {
