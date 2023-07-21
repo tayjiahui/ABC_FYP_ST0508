@@ -28,7 +28,7 @@ export default NextAuth({
     // },
     callbacks: {
         async signIn({ user, account, profile }) {
-            console.log("`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            console.log("`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             // console.log("THIS IS USER", user);
             // console.log("THIS IS ACC", account);
             // console.log("THIS IS PROF", profile);
@@ -68,20 +68,18 @@ export default NextAuth({
                 SSO: false,
                 DB: false
             };
-            const session = {
-                name: user.name,
-                email: user.email
-            }
+
+            // to return session
+            const session = {};
 
             const email = user.email;
-            // const email = "ashley18182828@gmail.com"
             const accessToken1 = account.access_token;
 
-            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-            console.log(email)
-            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-            console.log(accessToken1)
-            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            console.log(email);
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            console.log(accessToken1);
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 
             // AUTH STEP 2 [SUCCESS]
             await axios.get(`http://sso.abc-cooking.studio/auth/realms/test-pos/broker/oidc/token`, {
@@ -103,68 +101,76 @@ export default NextAuth({
                             'Authorization': 'Bearer ' + accessToken2
                         }
                     })
-                        .then(async(response) => {
+                        .then(async (response) => {
                             // console.log("AUTH3 RESPONSE %%%%%%%%%", response.data);
 
                             isAuthenticated.SSO = true;
 
-                            const emailTemp = 'johnWatt@purchaser.com';
-
                             await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
                                 {
-                                    // ! CHANGE BACK TO SESSION EMAIL
-                                    email: emailTemp
+                                    email: email
                                 }
                             )
                                 .then((response) => {
                                     console.log("RES FROM DB", response.data)
                                     isAuthenticated.DB = true;
                                 })
-                                .catch((err) => {
+                                .catch(async (err) => {
                                     console.log(err, "EROROROR");
+                                    console.log(err.response);
                                     if (err.code === "ERR_NETWORK") {
                                         console.log(err);
-                                    }
-                                    else if(err){
-                                        console.log(err);
-                                    }
-                                    else if (err.response.status === 404) {
+                                    } else if (err.response.status === 404) {
                                         isAuthenticated.DB = false;
                                         console.log(err.response.data);
+                                        console.log("ISHJSDJBCKJD", user.name);
+                                        await axios.post(`http://localhost:3000/api/user/user`, {
+
+                                            roleID: 2,
+                                            name: user.name,
+                                            email: email
+
+                                        })
+                                            .then((response) => {
+                                                console.log(response);
+                                                isAuthenticated.DB = true;
+                                            })
+                                    } else if (err) {
+                                        console.log(err);
                                     }
+
                                 });
                         })
                 })
                 .catch((err) => {
                     console.log(err);
-
                     isAuthenticated.SSO = false;
                 })
             console.log("0000000000000000000000000000000000000000000000000000000")
             console.log("OUTSIDE", isAuthenticated)
 
             if (isAuthenticated.SSO === true && isAuthenticated.DB === true) {
-                console.log("redirect from backkkk")
+                console.log("redirect from backkkk");
                 // return '/Home';
                 return Promise.resolve({
-                    session, 
+                    session,
                     redirect: '/Home'
-                })
+                });
             }
             else if (isAuthenticated.DB === false) {
-                console.log("I AM WORKING DB FALSE")
+                console.log("I AM WORKING DB FALSE");
                 return Promise.resolve('/SignUp');
             }
             else if (isAuthenticated.SSO === false) {
-                console.log("I AM WORKING FALSE")
+                console.log("I AM WORKING FALSE");
                 return '/Unauthorised';
             }
-             else {
-                console.log(isAuthenticated)
-                console.log("SOMETHING IS WRONG")
-            }
+            else {
+                console.log(isAuthenticated);
+                console.log("SOMETHING IS WRONG");
+            };
         },
-        
+
         async jwt({ token, user, account }) {
             if (user) {
                 token.id = user.id;
@@ -182,17 +188,14 @@ export default NextAuth({
             };
 
             const sessionEmail = session?.user.email;
-            const tempEmail = 'johnWatt@purchaser.com';
-            console.log("SESSION EMAIL", sessionEmail);
+            console.log("session email", sessionEmail);
 
             await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
                 {
-                    // ! CHANGE BACK TO SESSION EMAIL
-                    email: tempEmail
+                    email: sessionEmail
                 }
             )
                 .then((res) => {
-                    // console.log("IN SESSION", res.data[0]);
                     const data = res.data[0];
 
                     session.userDetails = {
@@ -222,10 +225,7 @@ export default NextAuth({
     events: {
         // not running callback signIn running insaed
         signIn: async (session) => {
-            // console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            // console.log(session);
             console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            // console.log("this is the session fr", { session });
             console.log("this is the session fr", session?.account.access_token);
 
             const email = session?.user.email;
@@ -253,7 +253,6 @@ export default NextAuth({
                     })
                         .then((response) => {
                             console.log("AUTH3 RESPONSE %%%%%%%%%", response.data);
-                            return '/Home';
                             // axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
                             //     {
                             //         email: email
@@ -302,7 +301,6 @@ export default NextAuth({
                 })
                 .catch((err) => {
                     console.log(err);
-                    return '/Login';
                 })
         },
 
