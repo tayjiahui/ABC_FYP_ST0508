@@ -919,21 +919,20 @@ export default function PurchaseRequest() {
 
     // Purchaser View
     if (roleID === 2) {
-      axios
-        .all([
-          axios.get(`${baseUrl}/api/purchaseReq/${userID}`, {
-            headers: {
-              user: userID,
-              // 'authorization': 'Bearer ' + token
-            },
-          }),
-          axios.get(`${baseUrl}/api/purchaseReq/adhoc/${userID}`, {
-            headers: {
-              user: userID,
-              // 'authorization': 'Bearer ' + token
-            },
-          }),
-        ])
+      axios.all([
+        axios.get(`${baseUrl}/api/purchaseReq/${userID}`, {
+          headers: {
+            user: userID,
+            // 'authorization': 'Bearer ' + token
+          },
+        }),
+        axios.get(`${baseUrl}/api/purchaseReq/adhoc/${userID}`, {
+          headers: {
+            user: userID,
+            // 'authorization': 'Bearer ' + token
+          },
+        }),
+      ])
         .then(
           axios.spread((response1, response2) => {
             // console.log(response1);
@@ -1024,8 +1023,7 @@ export default function PurchaseRequest() {
       setViewType(true);
 
       // admin/approver
-      axios
-        .all([
+      axios.all([
           axios.get(`${baseUrl}/api/purchaseReq/PR/AH/all`, {
             headers: {
               // 'user': userID

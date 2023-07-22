@@ -129,8 +129,7 @@ export default function CreatePR({ from }) {
       setAdHoc(true);
     };
 
-    axios
-      .all([
+    axios.all([
         axios.get(`${baseUrl}/api/supplier/all`, {}),
         axios.get(`${baseUrl}/api/purchaseReq/branch/all`, {}),
         axios.get(`${baseUrl}/api/purchaseReq/paymentMode/all`, {}),

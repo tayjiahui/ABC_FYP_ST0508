@@ -61,6 +61,7 @@ export default function Login() {
             }
         )
             .then((res) => {
+                console.log(res.data[0])
 
                 const data = res.data[0];
                 // add user data to local storage
