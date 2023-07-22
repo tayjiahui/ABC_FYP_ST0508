@@ -7,9 +7,6 @@ import arrowIcon from '../../public/arrowIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 
-
-
-
 //component
 import WIP from "../../components/WIP";
 
@@ -39,16 +36,6 @@ isLocalhost();
 
 const baseUrl = URL[0];
 const frontendBaseUrl = URL[1]
-
-
-// const API_URL = (isLocalhost(window.location.hostname) !== true ? 'https://'+ window.location.hostname : 'http://localhost:3000');
-// const baseUrl = API_URL;
-// const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
-// const baseUrl = 'http://localhost:3000';
-// const baseURL = 'http://localhost:5000';
-
-
-
 
 export async function getServerSideProps(context) {
 
@@ -105,12 +92,15 @@ export async function getServerSideProps(context) {
 
 export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) {
   const router = useRouter()
-  const poID = router.query.poID
+  const poID = router.query.poID; //in db is prID
+  const [POID, setActualPOID] = useState();
+  const [id, setUserID] = useState();
   const [selectedStatus, setSelectedStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [fileDisplay, setFileDisplay] = useState(false);
   const [status, setStatus] = useState([]);
+  const [ogPaymentStatus, setOGPaymentStatus] = useState();
   const [selectedStatus2, setSelectedStatus2] = useState([]);
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([])
   const [paymentStatuses, setPaymentStatuses] = useState([])
@@ -122,6 +112,13 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const [selectedFile, setSelectedFile] = useState([]);
   const [PDF, setPDF] = useState([]);
   const [wip, setWip] = useState(false);
+
+  // get user id
+  useEffect(() => {
+    // set user id taken from localstorage
+    const userID = parseInt(localStorage.getItem("ID"), 10);
+    setUserID(userID);
+  }, [])
 
   //saving paymentstatus, need to get ID from status first. 
   const handlePaymentStatusChange = (event) => {
@@ -144,7 +141,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       .catch(err => {
         console.log(err);
       })
-  }
+  };
 
   const fetchRemarks = () => {
     axios.get(`${baseUrl}/api/purchaseOrder/remarks/${poID}`)
@@ -155,34 +152,33 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       .catch(err => {
         console.log(err)
       })
-  }
+  };
 
   //load remarks when page load
   useEffect(() => {
     fetchRemarks();
-  }, [])
+  }, []);
 
- 
   //wip 
   const wipOpen = async (e) => {
     e.preventDefault()
     setWip(true);
     timer()
-  }
+  };
 
   function timer() {
     setTimeout(closeWIP, 2000);
-  }
+  };
 
   function closeWIP() {
     setWip(false);
-  }
+  };
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0]
     console.log("file name", file)
     setSelectedFile(file)
-  }
+  };
 
   const handleUpload = async () => {
     if (selectedFile) {
@@ -200,15 +196,15 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         })
         .catch((err) => {
           console.log("error uploading receipt", err);
-        })
-    }
-  }
+        });
+    };
+  };
 
 
   const supplierDetails = supplierDetail[0];
-  const productDetails = productDetail
-  const remarksDetails = remarkDetail[0]
-  const requestDetails = remarkDetail[0].requestDate
+  const productDetails = productDetail;
+  const remarksDetails = remarkDetail[0];
+  const requestDetails = remarkDetail[0].requestDate;
 
   //product details 
 
@@ -217,7 +213,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   let subtotal = 0;
   productDetails.forEach((item) => {
     subtotal += parseFloat(item.totalUnitPrice);
-  })
+  });
 
   const gstPercent = remarkDetail[0].GST.gst;
 
@@ -225,29 +221,27 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const gst = subtotal * (gstPercent / 100);
 
   //total price 
-  let total = subtotal + gst
-
+  let total = subtotal + gst;
 
   const handleOpenReceipt = () => {
     setFileDisplay(true);
-  }
+  };
 
   const handleCloseReceipt = () => {
     setFileDisplay(false);
-  }
+  };
 
   const handleCloseStatusPop = () => {
     setNewStatusPop(false);
-  }
+  };
 
   const handleInputChange = (event) => {
     setStatusInput(event.target.value);
-  }
+  };
 
   const handleSubmit = (event) => {
     // event.preventDefault();
     alert(statusInput);
-
 
     axios.post(`${baseUrl}/api/paymentTrack/`, {
       paymentStatus: statusInput
@@ -260,8 +254,8 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       })
       .catch((err) => {
         console.log(err);
-      })
-  }
+      });
+  };
 
   // const handleNewStatus = () => {
   //   setStatusModal(true);
@@ -269,30 +263,30 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
   const handleCloseModal2 = () => {
     setShowModal2(false);
-  }
+  };
 
   const handleOpenModal2 = () => {
     setShowModal2(true);
-  }
+  };
 
   const handleConfirmUpload = () => {
     setShowModal(false);
     setShowModal2(true);
     setFileUpload(true);
-  }
+  };
 
   const handleCloseModal = () => {
     setShowModal(false);
-  }
+  };
 
   const handleOpenModal = () => {
     console.log(selectedStatus2.paymentStatus)
     setShowModal(true);
-  }
+  };
 
   const handleStatusChange = (e) => {
     setSelectedStatus(e.target.value);
-  }
+  };
 
   const handleStatusUpdateClose = () => {
     setUpdateStatusPop(false);
@@ -300,7 +294,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
   const handleRemarksUpateClose = () => {
     setUpdateRemarksPop(false);
-  }
+  };
 
   useEffect(() => {
     fetchPDFData();
@@ -322,17 +316,23 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       })
       .catch((err) => {
         console.log('Error fetching PDF:', err);
-        setPDF(null); 
+        setPDF(null);
       });
   };
 
-
   useEffect(() => {
-    //fetches all the statuses to populate the dropdown. 
-    axios.get(`${baseUrl}/api/paymentTrack/`)
-      .then(res => {
-        console.log(res.data);
-        setPaymentStatuses(res.data);
+    axios.all([
+      //fetches all the statuses to populate the dropdown. 
+      axios.get(`${baseUrl}/api/paymentTrack/`),
+
+      // get original payment status id
+      axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${poID}`)
+    ])
+      .then(axios.spread((response1, response2) => {
+
+        //fetches all the statuses to populate the dropdown. 
+        console.log(response1.data);
+        setPaymentStatuses(response1.data);
         //fetch po's payment status to preselect the dropdown. 
         axios.get(`${baseUrl}/api/purchaseOrder/${poID}`)
           .then(poRes => {
@@ -340,26 +340,51 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             console.log("po res ", poRes.data[0].Status)
           })
           .catch(poErr => console.log(poErr));
-      })
+
+        // set original payment status ID
+        const PTS = response2.data[0];
+        setActualPOID(PTS.poID);
+        setOGPaymentStatus(PTS.paymentStatusID);
+
+      }))
       .catch(err => console.log(err));
-  }, [])
+  }, [selectedPaymentStatus])
 
   const handleStatusChange2 = (event) => {
+    console.log("chnaged", event.target.value);
+
     setSelectedStatus2(event.target.value);
     const selectedValue = event.target.value;
 
     //fetching id from status  
     axios.get(`${baseUrl}/api/paymentTrack/status/${selectedValue}`)
       .then(res => {
-        console.log(res.data[0].PaymentStatusID);
+        // returns new status id
+        console.log("value", res.data[0].PaymentStatusID);
         const ID = (res.data[0].PaymentStatusID)
 
         //updating payment status in db
         axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
           paymentStatusID: ID
         })
-          .then(res => {
-            console.log('payment status updated sucessfully')
+          .then(async res => {
+            console.log('payment status updated sucessfully');
+
+            // create audit log
+            await axios.post(`${baseUrl}/api/auditTrail/`,
+              {
+                timestamp: moment().format(),
+                userID: id,
+                actionTypeID: 3,
+                itemId: POID,
+                newValue: ID,
+                oldValue: ogPaymentStatus
+              }
+            )
+              .then((response) => {
+                console.log(response.data);
+              })
+
             setUpdateStatusPop(true);
             setSelectedPaymentStatus(selectedValue);
           })
@@ -372,7 +397,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         console.log(err);
       })
 
-
     if (selectedValue === "+ Create New Status") {
       setNewStatusPop(true);
     }
@@ -380,9 +404,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       console.log('other options')
     }
   };
-
-
-
 
   return (
     <>
@@ -394,8 +415,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           Purchase Order #{poID}
         </h1>
       </div>
-
-
 
       <div className="containersupplier mt-5 m-auto col-11">
         <div className="row row-cols-4">
@@ -513,7 +532,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
           </div>
 
-
           <div className="container mt-3">
             <div className="row">
               <div className="col-12">
@@ -568,7 +586,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 <div className="col text-center">{gst.toFixed(2)}</div>
               </div>
 
-
               <hr className="col-4 offset-8 mt-4"></hr>
 
               <div className="row col-12 m-auto">
@@ -581,14 +598,12 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
               <br />
 
-
               <div className="containersupplier mt-5 col-11">
                 <h4>Remarks</h4> <br />
                 <p>{remarkDetail[0].remarks}</p>
               </div>
 
             </div>
-
 
             {/* payment */}
             <div className="mt-5 col-12">
@@ -602,7 +617,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                       ))}
                       <option value="+ Create New Status"> + Create New Status</option>
                     </select>
-
                   </div>
                 </div>
 
@@ -618,6 +632,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 </div>
               </div>
             </div>
+
             {/* 
             <div className="mt-5">
               <div className="col-md-6">
@@ -631,8 +646,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
             {wip && <WIP Show={wip} />}
 
-
-
             <div className="mt-5">
               {PDF ? (
                 <iframe src={`data:application/pdf;base64,${PDF}`} width="70%" height="500px" />
@@ -640,12 +653,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 <p>No receipt uploaded currently.</p>
               )}
             </div>
-
-
-
-
-
-
 
             <div className="row">
               <div className="col-md-12">
@@ -660,7 +667,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                       maxWidth: '2000px'
                     }}
                     value={remarks} //so user can see exising remarks.
-
                     onChange={handleRemarksChange}
                   />
                 </div>
@@ -676,19 +682,10 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
-
-
-
-
-
       <div>
-
-
-
 
         {showModal && (
           <div className="modal fade show d-block" style={{ display: 'block' }}>
@@ -712,7 +709,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                   </div>
                 </div>
                 <div className="modal-footer" style={{ borderTop: 'none' }}>
-
 
                   {selectedFile && (
                     <p className="selected-file">{selectedFile.name}</p>
@@ -738,7 +734,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
               <button className={styles.cancelBtn2} onClick={handleCloseModal2} >Cancel</button>
               <button className={styles.uploadBtn2} onClick={() => { handleConfirmUpload(); handleCloseModal2(); handleUpload(); }}>Upload</button>
             </div>
-
           </div>
         )}
 
@@ -760,7 +755,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 <input type="text" id="statusInput" value={statusInput} onChange={handleInputChange} /> <br />
                 <button type="submit" className={styles.createStatusBtn}> Create Status</button>
               </form>
-
             </div>
           </div>
         )}
@@ -812,10 +806,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             </div>
           </div>
         )}
-
       </div>
-
-
     </>
   )
 }
