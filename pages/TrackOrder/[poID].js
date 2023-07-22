@@ -129,7 +129,8 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const [GST, gstCal] = useState();
   const [Total, totalCal] = useState();
 
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [OGStatus, setOGStatus] = useState();
+  const [selectedStatus, setSelectedStatus] = useState();
   const [status, setStatus] = useState([]);
 
   const [changeStatusPop, setChangeStatusPop] = useState();
@@ -137,13 +138,12 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const [editQty, allowQtyEdit] = useState(false);
   const [ogQty, setOGQTY] = useState(QtyReceived);
   const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
-  const [showInProg, setInProg] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('');
-  // console.log("purchase status id", selectedValue);
-  // console.log("po id", poID);
 
   //validation for number received for line item
   const [validation, setValidation] = useState('');
+
+  // WIP Pop up
+  const [showInProg, setInProg] = useState(false);
 
   useEffect(() => {
     // set user id taken from localstorage
@@ -153,24 +153,34 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
   // runs only when QtyReceivedList is updated
   useEffect(() => {
-    axios.get(`${baseUrl}/api/purchaseReq/lineItem/${prID}`)
-      .then((response) => {
-        console.log("RESOSJCIDS", response);
-        console.log(response.data);
+    axios.all([
+      axios.get(`${baseUrl}/api/purchaseReq/lineItem/${prID}`),
+      axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${prID}`)
+    ])
+      .then(
+        axios.spread((response1, response2) => {
+          
+          // get original product lines
+          const PDL = response1.data;
+          const lines = [];
 
-        const results = response.data;
-        const lines = [];
+          PDL.forEach((item, index) => {
+            lines.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
+          });
 
-        results.forEach((item, index) => {
-          lines.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
-        });
+          setOGQTY(lines);
 
-        setOGQTY(lines);
-      })
+          // get original PO status
+          const POS = response2.data[0];
+          setOGStatus(POS.purchaseStatusID);
+
+        })
+      )
       .catch((err) => {
         console.log(err);
-        console.log(err.response)
-      })
+        console.log(err.response);
+        alert(err);
+      });
   }, [QtyReceivedList])
 
   // Onclick Save button for QtY received
@@ -229,8 +239,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       data[index].qtyReceived = "";
     } else {
       data[index].qtyReceived = parseInt(newQTY);
-
-      setValidation('');
       setQtyReceivedList(data);
     }
 
@@ -262,7 +270,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const PR = purOrderD[0];
 
   useEffect(() => {
-
     // Target Delivery Date formatting
     const newDateFormat = moment(PR.requestDate).format('DD/MM/YYYY');
     setTargetDate(newDateFormat);
@@ -334,17 +341,28 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
   }, []);
 
-  const handleStatusChange = (event) => {
+  const handleStatusChange = async (event) => {
     setSelectedStatus(event.target.value);
     const selectedValue = event.target.value;
-    // console.log(event.target);
-    // console.log("value", selectedValue);
 
-    axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+    await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
       purchaseStatusID: selectedValue,
     })
-      .then((res) => {
+      .then(async (res) => {
         console.log(res);
+        await axios.post(`${baseUrl}/api/auditTrail/`,
+          {
+            timestamp: moment().format(),
+            userID: id,
+            actionTypeID: 2,
+            itemId: poID,
+            newValue: selectedValue,
+            oldValue: OGStatus
+          }
+        )
+          .then((response) => {
+            // console.log(response.data);
+          })
       })
       .catch((err) => {
         console.log(err);
@@ -524,7 +542,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
               <div className={styles.newStatus}>
                 <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
                 <h5 className={styles.changedStatusText}> Status has been changed successfully </h5>
-
               </div>
             </div>
           )}
