@@ -45,27 +45,51 @@ const baseURL = URL[1];
 // each PO row
 function OrderRow(props) {
 
+  const [OGStatus, setOGStatus] = useState();
+  const [selectedStatus, setSelectedStatus] = useState();
   const [status, setStatus] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState("");
 
   const [newStatusPop, setNewStatusPop] = useState(false);
   const [statusInput, setStatusInput] = useState([]);
 
   const [changedStatusPop, setChangedStatusPop] = useState(false);
 
+  // PO ID FROM DATABASE
+  const poID = props.poID;
+
+  // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
+  const poId = props.prID;
+
+  useEffect(() => {
+    axios.all([
+      // gets po status dropdown
+      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`),
+      // get original status value
+      axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${poId}`)
+    ])
+      .then(axios.spread((response1, response2) => {
+        // get po status dropdown
+        setStatus(response1.data);
+
+        // get original status value
+        const POS = response2.data[0]
+        setOGStatus(POS.purchaseStatusID);
+      }))
+      .catch((err) => {
+        console.log(err);
+      })
+  }, [selectedStatus]);
+
   const handleCloseStatusPop = () => {
     setNewStatusPop(false);
     setChangedStatusPop(false);
-  }
+  };
 
   const handleInputChange = (event) => {
     setStatusInput(event.target.value);
-  }
+  };
 
   const handleSubmit = (event) => {
-
-    console.log("submitting status");
-    // event.preventDefault();
     alert(`Sucessfully created new status: ${statusInput}`);
 
     axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
@@ -74,58 +98,47 @@ function OrderRow(props) {
       .then(res => {
         alert(`sucessfully created new status ${statusInput}`)
         setNewStat(false)
-        console.log(res.data);
         setStatus((prevStatus) => [...prevStatus, res.data]);
         onSubmit(statusInput)
       })
       .catch((err) => {
         console.log(err);
       })
-  }
+  };
 
-  // console.log(statusInput)
-
-  useEffect(() => {
-    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
-      .then(res => {
-        // console.log(res.data)
-        setStatus(res.data);
-        setSelectedStatus(res.data[0]); //initial selected status
-      })
-      .catch(err => console.log(err));
-  }, []);
-
-  // PO ID FROM DATABASE
-  const poID = props.poID;
-
-  // PR ID FROM DATABASE BUT AS PO ID FOR FRONTEND
-  const poId = props.prID;
-
-  const handleStatusChange = (event) => {
+  const handleStatusChange = async(event) => {
     setSelectedStatus(event.target.value);
     const selectedValue = event.target.value;
-    console.log(event.target)
-    console.log("value", selectedValue)
 
     if (selectedValue === "+ Create New Status") {
       setNewStatusPop(true);
     }
-    // else if (selectedValue === "Preparing Order") {
-    //   setChangedStatusPop(true);
-    // }
     else {
-      console.log('other options')
-      axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
+      await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
         purchaseStatusID: selectedValue,
       })
-        .then((res) => {
-          console.log(res)
+        .then(async(res) => {
+          // console.log(res);
+          
+          // create audit log
+          await axios.post(`${baseUrl}/api/auditTrail/`,
+              {
+                timestamp: moment().format(),
+                userID: props.userID,
+                actionTypeID: 2,
+                itemId: poID,
+                newValue: selectedValue,
+                oldValue: OGStatus
+              }
+            )
+              .then((response) => {
+                // console.log(response.data);
+              })
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         })
       setChangedStatusPop(true);
-
     }
   };
 
@@ -350,6 +363,8 @@ function Icon(props) {
 
 export default function TrackOrder() {
 
+  const [id, setUserID] = useState();
+
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
   const [searchValue, setSearchValue] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -363,6 +378,10 @@ export default function TrackOrder() {
 
   // show all Track Order
   useEffect(() => {
+    // set user id taken from localstorage
+    const userID = parseInt(localStorage.getItem("ID"), 10);
+    setUserID(userID);
+
     axios.all([
       axios.get(`${baseUrl}/api/trackOrder`, {})
     ])
@@ -373,9 +392,6 @@ export default function TrackOrder() {
         const orderResult = response1.data;
         const trackOrderList = [];
 
-        console.log(orderResult);
-        console.log(orderResult[0].purchaseStatus)
-
         orderResult.forEach((item, index) => {
           // Time stamp formatting
           const reqDate = moment(orderResult[index].requestDate).format('DD/MM/YYYY');
@@ -383,6 +399,7 @@ export default function TrackOrder() {
           trackOrderList.push(
             <div key={index}>
               <OrderRow
+                userID={id}
                 poID={item.poID}
                 prID={item.prID}
                 date={reqDate}
@@ -463,7 +480,7 @@ export default function TrackOrder() {
       }
     )
       .then((response) => {
-        console.log(response.data)
+        // console.log(response.data)
         setSearchResults(response.data);
       })
       .catch((err) => {
