@@ -8,7 +8,7 @@ import plusIcon from '../../public/addLocationIcon.svg';
 import styles from '../../styles/trackOrderById.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
-import WIP from '../../components/WIP'
+import WIP from '../../components/WIP';
 
 //----------------------function name has to be uppercase
 
@@ -37,19 +37,6 @@ isLocalhost();
 const baseUrl = URL[0]
 
 function ItemLines(props) {
-  return (
-    <div>
-      <ul className="list-group list-group-horizontal text-center">
-        <li className="list-group-item col-sm-2 border-0">{props.ItemNo}</li>
-        <li className="list-group-item col-sm-2 px-2 border-0">{props.ItemName}</li>
-        <li className="list-group-item col-sm-2 border-0">{props.Qty}</li>
-        <li className="list-group-item col-sm-2 border-0">{props.UnitPrice}</li>
-        <li className="list-group-item col-sm-1 border-0">{props.TotalUnitPrice}</li>
-        <li className="list-group-item col-sm-2 border-0 ms-5"><input value={props.QtyReceived} disabled /></li>
-      </ul>
-    </div>
-  )
-
   return (
     <div>
       <ul className="list-group list-group-horizontal text-center">
@@ -94,6 +81,8 @@ export async function getServerSideProps(context) {
   // console.log(data1);
   // console.log(data2);
 
+  const poid = data1[0].poID;
+
   const gst = data3[0].GST;
 
   const qtyReceiveS = [];
@@ -105,17 +94,10 @@ export async function getServerSideProps(context) {
     }
   });
 
-
   // GET BASE QTY RECEIVED VALUES
   data2.forEach((item, index) => {
     qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
   });
-
-  // GET BASE QTY RECEIVED VALUES
-  data2.forEach((item, index) => {
-    qtyReceiveS.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
-  });
-
 
   return {
     props: {
@@ -124,18 +106,21 @@ export async function getServerSideProps(context) {
       productDeets: data2,
       gstDetails: gst,
       QtyReceived: qtyReceiveS,
-      poID
+      POID: poid
     }
   }
 }
 
 // main frontend page
-export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived }) {
+export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived, POID }) {
 
   const router = useRouter();
 
-  // const prID = router.query.prID;
-  const poID = router.query.poID;
+  const prID = router.query.poID;
+  const poID = POID;
+
+  const [id, setUserID] = useState();
+
   const [RequestDate, setTargetDate] = useState();
 
   const [ProductDetails, setList] = useState();
@@ -148,13 +133,11 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
   const [status, setStatus] = useState([]);
 
   const [changeStatusPop, setChangeStatusPop] = useState();
-  const [changeStatusPop2, setChangeStatusPop2] = useState();
-  const [amount, setAmount] = useState('');
 
   const [editQty, allowQtyEdit] = useState(false);
+  const [ogQty, setOGQTY] = useState(QtyReceived);
   const [QtyReceivedList, setQtyReceivedList] = useState(QtyReceived);
   const [showInProg, setInProg] = useState(false);
-  // const [checkRemark, setRemark] = useState();
   const [selectedValue, setSelectedValue] = useState('');
   // console.log("purchase status id", selectedValue);
   // console.log("po id", poID);
@@ -162,26 +145,71 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
   //validation for number received for line item
   const [validation, setValidation] = useState('');
 
+  useEffect(() => {
+    // set user id taken from localstorage
+    const userID = parseInt(localStorage.getItem("ID"), 10);
+    setUserID(userID);
+  }, [])
+
+  // runs only when QtyReceivedList is updated
+  useEffect(() => {
+    axios.get(`${baseUrl}/api/purchaseReq/lineItem/${prID}`)
+      .then((response) => {
+        console.log("RESOSJCIDS", response);
+        console.log(response.data);
+
+        const results = response.data;
+        const lines = [];
+
+        results.forEach((item, index) => {
+          lines.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
+        });
+
+        setOGQTY(lines);
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(err.response)
+      })
+  }, [QtyReceivedList])
 
   // Onclick Save button for QtY received
   const handleDontAllowQtyEdit = async (e) => {
     e.preventDefault();
 
     QtyReceivedList.forEach(async (item, index) => {
-      await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`,
-        {
-          "qtyReceived": item.qtyReceived
-        }
-      )
-        .then((response) => {
-          console.log(response);
-          allowQtyEdit(false);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+      const origQTY = ogQty[index];
+      const editQTY = QtyReceivedList[index];
 
+      if (editQTY.id === origQTY.id && editQTY.qtyReceived !== origQTY.qtyReceived) {
+        await axios.put(`${baseUrl}/api/purchaseReq/lineItem/${item.id}`,
+          {
+            "qtyReceived": item.qtyReceived
+          }
+        )
+          .then(async (response) => {
+            // console.log(response);
+            await axios.post(`${baseUrl}/api/auditTrail/`,
+              {
+                timestamp: moment().format(),
+                userID: id,
+                actionTypeID: 1,
+                itemId: origQTY.id,
+                newValue: editQTY.qtyReceived,
+                oldValue: origQTY.qtyReceived
+              }
+            )
+              .then((response) => {
+                // console.log(response.data);
+              })
+
+            allowQtyEdit(false);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
   };
 
   // Control Allow QTY Edit
@@ -195,37 +223,18 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     let qty = item.quantity;
 
     let data = [...QtyReceivedList];
-
-    data[index].qtyReceived = newQTY;
-
     // Perform validation
     if (newQTY > qty) {
-      setValidation("Invalid quantity.");
-      data[index].qtyReceived = "NIL";
+      setValidation("Exceeds Item Quantity!");
+      data[index].qtyReceived = "";
     } else {
+      data[index].qtyReceived = parseInt(newQTY);
+
       setValidation('');
       setQtyReceivedList(data);
     }
 
     //setQtyReceivedList(data);
-  };
-
-  const handleClick = async (e) => {
-    // const { value } = e.target;
-    // setSelectedValue(value);
-    e.preventDefault();
-
-    try {
-      // Send the selected option to the server using Axios PUT request
-      const response = await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
-        purchaseStatusID: selectedValue,
-      });
-      console.log(response.data); // Handle the response as needed
-
-    } catch (error) {
-      console.error(error);
-    }
-
   };
 
   // timer
@@ -249,63 +258,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     setValidation(false);
   };
 
-  const handleCloseStatusPop2 = () => {
-    setChangeStatusPop2(false);
-  };
-
-  const handleChange = (event) => {
-    // console.log(event.target.value);
-
-    setSelectedValue(event.target.value);
-    // localStorage.setItem('selectedValue', event.target.value);
-    const selectednewValue = event.target.value;
-    if (selectednewValue === "1" || "2" || "3" || "4" || "5") {
-      setChangeStatusPop(true)
-    }
-    else {
-      // console.log("other options")
-    }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    // if (amount == "") {
-    //     alert("Please put in an amount to update!")
-    // }
-    // else if (amount < 0) {
-    //     alert("Please put in a valid number!")
-    // }
-    // else if (isNaN(amount)) {
-    //     alert("Please put in a valid number!")
-    // } else {
-    await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/qty/${poID}`,
-      {
-        "qtyReceived": amount
-      }
-    )
-      .then((response) => {
-        alert(`Quantity has been changed!`);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  useEffect(() => {
-    const storedOption = localStorage.getItem('selectedValue');
-    if (storedOption) {
-      setSelectedValue(storedOption);
-    }
-
-    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
-      .then(res => {
-        // console.log(res.data)
-        setStatus(res.data);
-        setSelectedStatus(res.data[0]); //initial selected status
-      })
-      .catch(err => console.log(err));
-  }, []);
-
   // PR Details  
   const PR = purOrderD[0];
 
@@ -314,6 +266,15 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     // Target Delivery Date formatting
     const newDateFormat = moment(PR.requestDate).format('DD/MM/YYYY');
     setTargetDate(newDateFormat);
+
+    // get purchase status
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
+      .then(res => {
+        // console.log(res.data)
+        setStatus(res.data);
+        setSelectedStatus(res.data[0]); //initial selected status
+      })
+      .catch(err => console.log(err));
 
     // Product lines
     const itemLines = [];
@@ -379,11 +340,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
     // console.log(event.target);
     // console.log("value", selectedValue);
 
-    // else if (selectedValue === "Preparing Order") {
-    //   setChangedStatusPop(true);
-    // }
-
-    // console.log('other options')
     axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
       purchaseStatusID: selectedValue,
     })
@@ -614,20 +570,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived 
           </div>
         )}
       </div>
-
-      {changeStatusPop2 && (
-        <div className={styles.updateQty2} >
-          <div className={styles.updateQtyInfo} >
-            <p onClick={handleCloseStatusPop2} className={styles.closemeStatus1}>X</p>
-            <h5 className={styles.changedQty}>Please input the amount received!</h5>
-            <form onSubmit={handleSubmit}>
-              <input type="number" min={0} value={amount} onChange={(e) => setAmount(e.target.value)} id={styles.noRecInfo}></input><br></br>
-              <button type="submit" >Update Amount</button>
-            </form>
-
-          </div>
-        </div>
-      )}
 
       {validation && (
         <div className={styles.newStatusBox}>
