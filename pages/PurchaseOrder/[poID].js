@@ -7,6 +7,9 @@ import arrowIcon from '../../public/arrowIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment';
 
+
+
+
 //component
 import WIP from "../../components/WIP";
 
@@ -43,6 +46,7 @@ const frontendBaseUrl = URL[1]
 // const baseUrl = 'https://abc-cooking-studio-backend.azurewebsites.net';
 // const baseUrl = 'http://localhost:3000';
 // const baseURL = 'http://localhost:5000';
+
 
 
 
@@ -102,35 +106,21 @@ export async function getServerSideProps(context) {
 export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) {
   const router = useRouter()
   const poID = router.query.poID
-  // const [supplierName, setSupplierName] = useState([]);
-  // const [supplierInfo, setSupplierInfo] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
-  const [fileUpload, setFileUpload] = useState(false);
   const [fileDisplay, setFileDisplay] = useState(false);
-  // const [prID, setprID] = useState(false);
-  // const [supplierID, setsupplierID] = useState(false);
-  //statuses
   const [status, setStatus] = useState([]);
   const [selectedStatus2, setSelectedStatus2] = useState([]);
   const [selectedPaymentStatus, setSelectedPaymentStatus] = useState([])
   const [paymentStatuses, setPaymentStatuses] = useState([])
-  //create status
-  const [newStatusPop, setNewStatusPop] = useState(false); //status pop up
+  const [updateStatusPop, setUpdateStatusPop] = useState(false);
+  const [updateRemarksPop, setUpdateRemarksPop] = useState(false);
+  const [newStatusPop, setNewStatusPop] = useState(false);
   const [statusInput, setStatusInput] = useState([]);
-
-
-  //saving of page 
-  const [paymentStatusID, setPaymentStatusID] = useState("");
   const [remarks, setRemarks] = useState('');
-  const [newPaymentID, setNewPaymentID] = useState([]);
-
   const [selectedFile, setSelectedFile] = useState([]);
-
-  const [pdfFile, setPDFFile] = useState([]);
-  const [viewPdf, setViewPdf] = useState([]);
-
+  const [PDF, setPDF] = useState([]);
   const [wip, setWip] = useState(false);
 
   //saving paymentstatus, need to get ID from status first. 
@@ -149,6 +139,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     })
       .then(res => {
         console.log("succesfully updated remarks.")
+        setUpdateRemarksPop(true);
       })
       .catch(err => {
         console.log(err);
@@ -171,23 +162,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     fetchRemarks();
   }, [])
 
-  //saving the uploaded file onto webpage. 
-  // const fileType = ['application/pdf']
-
-
-  // const handleFileUpload = async (e) => {
-  //   const file = e.target.files[0];
-  //   const reader = new FileReader();
-
-  //   reader.onload = () => {
-  //     const blob = new Blob([reader.result], { tyle: file.type });
-  //     setSelectedFile(blob);
-  //   };
-
-  //   reader.readAsArrayBuffer(file);
-
-  // }
-
+ 
   //wip 
   const wipOpen = async (e) => {
     e.preventDefault()
@@ -204,25 +179,24 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   }
 
   const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const blob = new Blob([reader.result], { tyle: file.type });
-      setSelectedFile(blob);
-    };
-
-    reader.readAsArrayBuffer(file);
+    const file = e.target.files[0]
+    console.log("file name", file)
+    setSelectedFile(file)
   }
 
   const handleUpload = async () => {
     if (selectedFile) {
       const formData = new FormData();
-      formData.append('pdfData', selectedFile);
+      formData.append('file', selectedFile);
 
-      axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, formData)
+      axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, formData, {
+        headers: {
+          'Content-Type': "multipart/form-data"
+        }
+      })
         .then(() => {
           console.log('receipt uploaded..');
+          fetchPDFData();
         })
         .catch((err) => {
           console.log("error uploading receipt", err);
@@ -230,12 +204,12 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     }
   }
 
-  //end saving of page 
 
   const supplierDetails = supplierDetail[0];
   const productDetails = productDetail
   const remarksDetails = remarkDetail[0]
   const requestDetails = remarkDetail[0].requestDate
+
   //product details 
 
 
@@ -320,27 +294,38 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     setSelectedStatus(e.target.value);
   }
 
+  const handleStatusUpdateClose = () => {
+    setUpdateStatusPop(false);
+  };
 
-  // useEffect(() => {
-  //   axios.get(`${baseUrl}/api/paymentTrack/`)
-  //     .then(res => {
-  //       console.log(res.data)
-  //       setStatus(res.data);
-  //       // setSelectedStatus2(res.data[0]); //initiall selected status -> res.data[0] is pending.
-  //     })
-  //     .catch(err => console.log(err));
-  // }, []);
+  const handleRemarksUpateClose = () => {
+    setUpdateRemarksPop(false);
+  }
 
+  useEffect(() => {
+    fetchPDFData();
+  }, []);
 
-  // useEffect(() => {
-  //   axios.get(`${baseUrl}/api/purchaseOrder/${poID}`)
-  //   .then(res => {
-  //     console.log("Existing payment status",res.data.Status)
-  //     setSelectedPaymentStatus(res.data.Status);
+  const fetchPDFData = () => {
+    axios
+      .get(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, {
+        responseType: 'arraybuffer',
+      })
+      .then((res) => {
+        const base64Data = btoa(
+          new Uint8Array(res.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+        setPDF(base64Data);
+      })
+      .catch((err) => {
+        console.log('Error fetching PDF:', err);
+        setPDF(null); 
+      });
+  };
 
-  //   })
-  //   .catch(err => console.log(err));
-  // });
 
   useEffect(() => {
     //fetches all the statuses to populate the dropdown. 
@@ -351,8 +336,8 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         //fetch po's payment status to preselect the dropdown. 
         axios.get(`${baseUrl}/api/purchaseOrder/${poID}`)
           .then(poRes => {
-            console.log(poRes.data.Status);
-            setSelectedPaymentStatus(poRes.data.Status);
+            setSelectedPaymentStatus(poRes.data[0].Status);
+            console.log("po res ", poRes.data[0].Status)
           })
           .catch(poErr => console.log(poErr));
       })
@@ -363,9 +348,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     setSelectedStatus2(event.target.value);
     const selectedValue = event.target.value;
 
-    alert(selectedValue)
-
-    //fetching id from status 
+    //fetching id from status  
     axios.get(`${baseUrl}/api/paymentTrack/status/${selectedValue}`)
       .then(res => {
         console.log(res.data[0].PaymentStatusID);
@@ -377,6 +360,8 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         })
           .then(res => {
             console.log('payment status updated sucessfully')
+            setUpdateStatusPop(true);
+            setSelectedPaymentStatus(selectedValue);
           })
           .catch(err => {
             console.log(err);
@@ -387,6 +372,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         console.log(err);
       })
 
+
     if (selectedValue === "+ Create New Status") {
       setNewStatusPop(true);
     }
@@ -394,9 +380,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       console.log('other options')
     }
   };
-
-
-
 
 
 
@@ -468,7 +451,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
               <b>Bank Name</b>
             </div>
             <div>
-              <p>{supplierDetails.bankAccountNum}</p>
+              <p>{supplierDetails.bankNamee}</p>
             </div>
           </div>
           <div className="col">
@@ -635,14 +618,33 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 </div>
               </div>
             </div>
-
+            {/* 
             <div className="mt-5">
               <div className="col-md-6">
                 <button className={`btn ${selectedStatus2.paymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={wipOpen} disabled={selectedStatus2.paymentStatus === 'Pending'}>Upload Receipt</button>
               </div>
+            </div> */}
+
+            <div className="mt-4">
+              <button className={`btn ${selectedPaymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={handleOpenModal}>Upload Receipt</button>
             </div>
 
             {wip && <WIP Show={wip} />}
+
+
+
+            <div className="mt-5">
+              {PDF ? (
+                <iframe src={`data:application/pdf;base64,${PDF}`} width="70%" height="500px" />
+              ) : (
+                <p>No receipt uploaded currently.</p>
+              )}
+            </div>
+
+
+
+
+
 
 
             <div className="row">
@@ -683,14 +685,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
 
 
-      {fileUpload && (
-        <div className="mt-4">
-          <div className="col-md-2 offset-md-1" style={{ border: '1px dashed black', padding: '10px', borderRadius: '7px' }}>
-            <div className="text-center" onClick={handleOpenReceipt}>{selectedFile.name}</div>
-          </div>
-        </div>
-      )}
-
       <div>
 
 
@@ -726,7 +720,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                   )}
 
                   <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', marginRight: '10px' }} onClick={handleCloseModal}>Cancel</button>
-                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={() => { handleCloseModal(); handleOpenModal2(); handleUpload() }}>Upload</button>
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={() => { handleCloseModal(); handleOpenModal2(); }}>Upload</button>
                 </div>
               </div>
             </div>
@@ -742,7 +736,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
             <div className={styles.uploadButtons}>
               <button className={styles.cancelBtn2} onClick={handleCloseModal2} >Cancel</button>
-              <button className={styles.uploadBtn2} onClick={() => { handleConfirmUpload(); handleCloseModal2(); }}>Upload</button>
+              <button className={styles.uploadBtn2} onClick={() => { handleConfirmUpload(); handleCloseModal2(); handleUpload(); }}>Upload</button>
             </div>
 
           </div>
@@ -771,9 +765,53 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
         )}
 
+        {updateStatusPop && (
+          <div className="modal fade show d-block" style={{ display: 'block' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-body">
+                  <div className="d-flex flex-column align-items-center">
+                    <button type="button" className="closeXbtn" style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', background: 'transparent' }} onClick={handleStatusUpdateClose}>
+                      <span>&times;</span>
+                    </button> <br /> <br />
 
+                    <div>
+                      <h5>Status has been updated!</h5>
+                    </div>  <br />
 
+                  </div>
+                </div>
+                <div className="modal-footer" style={{ borderTop: 'none' }}>
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={handleStatusUpdateClose} >Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
+        {updateRemarksPop && (
+          <div className="modal fade show d-block" style={{ display: 'block' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-body">
+                  <div className="d-flex flex-column align-items-center">
+                    <button type="button" className="closeXbtn" style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', background: 'transparent' }} onClick={handleRemarksUpateClose}>
+                      <span>&times;</span>
+                    </button> <br /> <br />
+
+                    <div>
+                      <h5>Remarks has been updated!</h5>
+                    </div>  <br />
+
+                  </div>
+                </div>
+                <div className="modal-footer" style={{ borderTop: 'none' }}>
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={handleRemarksUpateClose} >Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
 
@@ -781,5 +819,3 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     </>
   )
 }
-
-//<button className={`btn ${selectedStatus2.paymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={handleOpenModal} disabled={selectedStatus2.paymentStatus === 'Pending'}>Upload Receipt</button>
