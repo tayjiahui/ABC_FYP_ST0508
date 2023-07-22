@@ -1,5 +1,6 @@
 // this is the homepage
 // import Link from 'next/link';
+
 import BarChart from '../components/barchart';
 import PrAmt from '../components/prAmt';
 import PoAmt from '../components/poAmt';
@@ -44,7 +45,6 @@ export default function Home() {
                 <div className="col-sm ms-2 square rounded p-3 text-center me-5 pt-4" style={{ backgroundColor: '#C0D8F7' }}>
                     <h5>Number of Purchase Orders as of date:</h5>
                     <h1 className="fw-bolder pt-2"><PoAmt /></h1>
-
                 </div>
             </div>
 

@@ -19,7 +19,7 @@ export default function App({
     }, []);
 
     const getContent = () => {
-        const noNavbar = [`/`, `/Login`];
+        const noNavbar = [`/`, `/Login`, `/Unathorised`, `/fakeLogin`];
 
         if(noNavbar.includes(appProps.router.pathname))
             return <Component {...pageProps} />;

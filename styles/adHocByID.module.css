@@ -1,0 +1,29 @@
+
+/* Header */
+.lineContainer {
+    height: 10px;
+    width: 90%;
+    margin-left: 40px;
+    border-bottom: 1.5px solid #000000;
+}
+
+.lineDivider {
+    position: absolute;
+    top: 50%;
+    bottom: 0;
+}
+
+/* Ad Hoc Details */
+
+/* PR Details */
+
+.viewRow {
+    content: "";
+    display: item;
+    clear: both;
+}
+
+.viewCol {
+    float: left;
+    width: 50%;
+}

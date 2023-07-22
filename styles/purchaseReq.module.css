@@ -115,7 +115,7 @@
     background-color: transparent;
 } */
 
-.prRow {
+.prRow,.ahRow {
     background-color: #C0D8F7;
     font-size: 16px;
     height: auto;
@@ -124,6 +124,10 @@
     text-align: center;
     object-fit: scale-down;
     transition: transform .5s;
+}
+
+.ahRow{
+    background-color: #DDE9F8;
 }
 
 .prRow:hover {
