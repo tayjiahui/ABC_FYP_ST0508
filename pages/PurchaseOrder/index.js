@@ -71,7 +71,8 @@ export default function TrackPayment({ purchaseOrder }) {
     const filteredPOs = purchaseOrder.filter(
       (po) =>
         po.supplierName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        po.Status.toLowerCase().includes(searchValue.toLowerCase())
+        po.Status.toLowerCase().includes(searchValue.toLowerCase()) ||
+        po.prID.toString().includes(searchValue)
     );
     setFilteredPurchaseOrders(filteredPOs);
   };

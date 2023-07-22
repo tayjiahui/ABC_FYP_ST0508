@@ -17,6 +17,7 @@
     border-radius: 10px;
     width: 250px;
     height: 20px;
+    padding: 13px;
 }
 
 .searchButton{
@@ -116,4 +117,10 @@
 .textLink {
     text-decoration: none;
     color: black;
+}
+
+
+
+.poListsMain .hover-box-shadow:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
