@@ -157,8 +157,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       axios.get(`${baseUrl}/api/purchaseReq/lineItem/${prID}`),
       axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${prID}`)
     ])
-      .then(
-        axios.spread((response1, response2) => {
+      .then(axios.spread((response1, response2) => {
           
           // get original product lines
           const PDL = response1.data;
@@ -181,7 +180,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         console.log(err.response);
         alert(err);
       });
-  }, [QtyReceivedList])
+  }, [QtyReceivedList, selectedStatus])
 
   // Onclick Save button for QtY received
   const handleDontAllowQtyEdit = async (e) => {
@@ -199,6 +198,8 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         )
           .then(async (response) => {
             // console.log(response);
+
+            // create audit log
             await axios.post(`${baseUrl}/api/auditTrail/`,
               {
                 timestamp: moment().format(),
@@ -349,7 +350,9 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       purchaseStatusID: selectedValue,
     })
       .then(async (res) => {
-        console.log(res);
+        // console.log(res);
+
+        // create audit log
         await axios.post(`${baseUrl}/api/auditTrail/`,
           {
             timestamp: moment().format(),
