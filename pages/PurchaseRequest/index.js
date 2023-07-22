@@ -54,13 +54,13 @@ const baseURL = URL[1];
 function circleTest(statusID) {
   if (statusID == 1) {
     return "/yellowPendingCircle.svg";
-  } else if (statusID == 2) {
+  } else if (statusID == 2 || statusID == 4) {
     return "/greenApprovedCircle.svg";
   } else if (statusID == 3) {
     return "/redRejectedCircle.svg";
   } else {
     return "/yellowPendingCircle.svg";
-  }
+  };
 };
 
 // Status icon for each PR row
@@ -80,28 +80,40 @@ function Icon(props) {
 function PRRow(props) {
   const statusID = props.StatusID;
 
+  const [isAdHoc, setIsAdHoc] = useState(false);
+
   const [showPL, setShowPL] = useState(false);
 
   const [plRows, setPLRows] = useState([]);
 
   const circle = circleTest(statusID);
 
+  useEffect(() => {
+    if (props.PTypeID === 2) {
+      setIsAdHoc(true);
+    };
+  }, []);
+
   const viewProductLines = async (e) => {
     e.preventDefault();
 
-    await axios
-      .get(`${baseUrl}/api/purchaseReq/lineItem/${props.prID}`)
-      .then((response) => {
-        const plResult = response.data;
-        setPLRows(plResult);
-        setShowPL(true);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err.code === "ERR_NETWORK") {
-          alert(err.message);
-        }
-      });
+    if (props.PTypeID === 2) {
+      setShowPL(true);
+    } else {
+      await axios
+        .get(`${baseUrl}/api/purchaseReq/lineItem/${props.prID}`)
+        .then((response) => {
+          const plResult = response.data;
+          setPLRows(plResult);
+          setShowPL(true);
+        })
+        .catch((err) => {
+          console.log(err);
+          if (err.code === "ERR_NETWORK") {
+            alert(err.message);
+          }
+        });
+    };
   };
 
   const closeViewProductLines = async (e) => {
@@ -198,218 +210,431 @@ function PRRow(props) {
                 </div>
               </div>
 
-              {showPL && (
-                <div className={styles.plRow}>
-                  <h5 className="ps-5 pt-3 text-start">
-                    <u>Product Lines</u>
-                  </h5>
+              {
+                isAdHoc === false && showPL && (
+                  <div className={styles.plRow}>
+                    <h5 className="ps-5 pt-3 text-start">
+                      <u>Product Lines</u>
+                    </h5>
 
-                  <div className="py-3">
-                    <div className="ps-4">
-                      <ul className="list-group list-group-horizontal text-center">
-                        <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                          Item No.
-                        </li>
-                        <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
-                          Item Name
-                        </li>
-                        <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                          Quantity
-                        </li>
-                        <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
-                        <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                          Unit Price
-                        </li>
-                        <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                          Total Unit Price
-                        </li>
-                      </ul>
-                    </div>
+                    <div className="py-3">
+                      <div className="ps-4">
+                        <ul className="list-group list-group-horizontal text-center">
+                          <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                            Item No.
+                          </li>
+                          <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                            Item Name
+                          </li>
+                          <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                            Quantity
+                          </li>
+                          <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
+                          <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                            Unit Price
+                          </li>
+                          <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                            Total Unit Price
+                          </li>
+                        </ul>
+                      </div>
 
-                    {plRows.map((item, index) => {
-                      return (
-                        <div key={index}>
-                          <div className="ps-4">
-                            <ul className="list-group list-group-horizontal">
-                              <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                                {index + 1}
-                              </li>
-                              <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
-                                {item.itemName}
-                              </li>
-                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                {item.quantity}
-                              </li>
-                              <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                                X
-                              </li>
-                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                ${item.unitPrice}
-                              </li>
-                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                ${item.totalUnitPrice}
-                              </li>
-                            </ul>
+                      {plRows.map((item, index) => {
+                        return (
+                          <div key={index}>
+                            <div className="ps-4">
+                              <ul className="list-group list-group-horizontal">
+                                <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                  {index + 1}
+                                </li>
+                                <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                  {item.itemName}
+                                </li>
+                                <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                  {item.quantity}
+                                </li>
+                                <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                  X
+                                </li>
+                                <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                  ${item.unitPrice}
+                                </li>
+                                <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                  ${item.totalUnitPrice}
+                                </li>
+                              </ul>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                )
+              }
+
+              {
+                isAdHoc === true && showPL && (
+                  <div className={styles.plRow}>
+                    <h5 className="ps-5 pt-3 text-start">
+                      <u>Description</u>
+                    </h5>
+
+                    <div className="py-2 ps-5 text-start">
+                      <p>{props.Description}</p>
+                    </div>
+                  </div>
+                )
+              }
             </div>
           )}
 
-          {props.RoleID === 1 && (
-            <div className={styles.prRow}>
-              <div className="pt-2 row">
-                <div className={styles.prTextRow}>
-                  <div className="px-4 mx-2 col-sm-1">
-                    {showPL === false && (
-                      <button
-                        onClick={viewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                    {showPL === true && (
-                      <button
-                        onClick={closeViewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                  </div>
+          {props.RoleID === 1 &&
+            <div>
+              {
+                isAdHoc === false &&
+                <div className={styles.prRow}>
+                  <div className="pt-2 row">
+                    <div className={styles.prTextRow}>
+                      <div className="px-4 mx-2 col-sm-1">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                      </div>
 
-                  <div className="col-sm-1">
-                    <p>{props.ReqDate}</p>
-                  </div>
-
-                  <div className="px-1 ms-4 col-sm-1">
-                    <p>{props.Name}</p>
-                  </div>
-
-                  <div className="px-3 col-sm-3">
-                    <p>{props.Location}</p>
-                  </div>
-
-                  <div className="col-sm-1">
-                    <p>{props.Supplier}</p>
-                  </div>
-
-                  <div className="px-0 mx-4 col-sm-1 text-center">
-                    <p>{props.TargetDate}</p>
-                  </div>
-
-                  <div className="px-5 col-sm-2">
-                    <div className="row">
                       <div className="col-sm-1">
-                        <p className={styles.prTextStatus}>{props.Status}</p>
+                        <p>{props.PType}</p>
                       </div>
-                      <div className="ps-5 ms-4 col-sm-2">
-                        <Icon item={circle} />
+
+                      <div className="col-sm-1">
+                        <p>{props.ReqDate}</p>
+                      </div>
+
+                      <div className="px-1 ms-4 col-sm-1">
+                        <p>{props.Name}</p>
+                      </div>
+
+                      <div className="px-3 col-sm-2">
+                        <p>{props.Location}</p>
+                      </div>
+
+                      <div className="col-sm-1 px-3">
+                        <p>{props.Supplier}</p>
+                      </div>
+
+                      <div className="px-0 mx-4 col-sm-1 text-center">
+                        <p>{props.TargetDate}</p>
+                      </div>
+
+                      <div className="px-5 col-sm-2">
+                        <div className="row">
+                          <div className="col-sm-1">
+                            <p className={styles.prTextStatus}>{props.Status}</p>
+                          </div>
+                          <div className="ps-5 ms-4 col-sm-2">
+                            <Icon item={circle} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-sm-1">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={eyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={closeEyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="col-sm-1">
-                    {showPL === false && (
-                      <button
-                        onClick={viewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={eyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                    {showPL === true && (
-                      <button
-                        onClick={closeViewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={closeEyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+                  {
+                    isAdHoc === false && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Product Lines</u>
+                        </h5>
 
-              {showPL && (
-                <div className={styles.plRow}>
-                  <h5 className="ps-5 pt-3 text-start">
-                    <u>Product Lines</u>
-                  </h5>
-
-                  <div className="py-3">
-                    <div className="ps-4">
-                      <ul className="list-group list-group-horizontal text-center">
-                        <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                          Item No.
-                        </li>
-                        <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
-                          Item Name
-                        </li>
-                        <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                          Quantity
-                        </li>
-                        <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
-                        <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                          Unit Price
-                        </li>
-                        <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                          Total Unit Price
-                        </li>
-                      </ul>
-                    </div>
-
-                    {plRows.map((item, index) => {
-                      return (
-                        <div key={index}>
+                        <div className="py-3">
                           <div className="ps-4">
-                            <ul className="list-group list-group-horizontal">
+                            <ul className="list-group list-group-horizontal text-center">
                               <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                                {index + 1}
+                                Item No.
                               </li>
                               <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
-                                {item.itemName}
+                                Item Name
                               </li>
                               <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                {item.quantity}
+                                Quantity
                               </li>
-                              <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                                X
+                              <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Unit Price
                               </li>
                               <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                ${item.unitPrice}
-                              </li>
-                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                ${item.totalUnitPrice}
+                                Total Unit Price
                               </li>
                             </ul>
                           </div>
+
+                          {plRows.map((item, index) => {
+                            return (
+                              <div key={index}>
+                                <div className="ps-4">
+                                  <ul className="list-group list-group-horizontal">
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      {index + 1}
+                                    </li>
+                                    <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                      {item.itemName}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      {item.quantity}
+                                    </li>
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      X
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.unitPrice}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.totalUnitPrice}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    )
+                  }
+
+                  {
+                    isAdHoc === true && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Description</u>
+                        </h5>
+
+                        <div className="py-2 ps-5 text-start">
+                          <p>{props.Description}</p>
+                        </div>
+                      </div>
+                    )
+                  }
                 </div>
-              )}
+              }
+
+              {
+                isAdHoc === true &&
+                <div className={styles.ahRow}>
+                  <div className="pt-2 row">
+                    <div className={styles.prTextRow}>
+                      <div className="px-4 mx-2 col-sm-1">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="col-sm-1">
+                        <p>{props.PType}</p>
+                      </div>
+
+                      <div className="col-sm-1">
+                        <p>{props.ReqDate}</p>
+                      </div>
+
+                      <div className="px-1 ms-4 col-sm-1">
+                        <p>{props.Name}</p>
+                      </div>
+
+                      <div className="px-3 col-sm-2">
+                        <p>{props.Location}</p>
+                      </div>
+
+                      <div className="col-sm-1 px-3">
+                        <p>{props.Supplier}</p>
+                      </div>
+
+                      <div className="px-0 mx-4 col-sm-1 text-center">
+                        <p>{props.TargetDate}</p>
+                      </div>
+
+                      <div className="px-5 col-sm-2">
+                        <div className="row">
+                          <div className="col-sm-1">
+                            <p className={styles.prTextStatus}>{props.Status}</p>
+                          </div>
+                          <div className="ps-5 ms-4 col-sm-2">
+                            <Icon item={circle} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-sm-1">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={eyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={closeEyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {
+                    isAdHoc === false && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Product Lines</u>
+                        </h5>
+
+                        <div className="py-3">
+                          <div className="ps-4">
+                            <ul className="list-group list-group-horizontal text-center">
+                              <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                Item No.
+                              </li>
+                              <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                Item Name
+                              </li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Quantity
+                              </li>
+                              <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Unit Price
+                              </li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Total Unit Price
+                              </li>
+                            </ul>
+                          </div>
+
+                          {plRows.map((item, index) => {
+                            return (
+                              <div key={index}>
+                                <div className="ps-4">
+                                  <ul className="list-group list-group-horizontal">
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      {index + 1}
+                                    </li>
+                                    <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                      {item.itemName}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      {item.quantity}
+                                    </li>
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      X
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.unitPrice}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.totalUnitPrice}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  {
+                    isAdHoc === true && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Description</u>
+                        </h5>
+
+                        <div className="py-2 ps-5 text-start">
+                          <p>{props.Description}</p>
+                        </div>
+                      </div>
+                    )
+                  }
+                </div>
+              }
             </div>
-          )}
+          }
         </button>
       </a>
     </div>
@@ -801,6 +1026,12 @@ export default function PurchaseRequest() {
       // admin/approver
       axios
         .all([
+          axios.get(`${baseUrl}/api/purchaseReq/PR/AH/all`, {
+            headers: {
+              // 'user': userID
+              // 'authorization': 'Bearer ' + token
+            }
+          }),
           axios.get(`${baseUrl}/api/purchaseReq/`, {
             headers: {
               // 'user': userID
@@ -815,70 +1046,61 @@ export default function PurchaseRequest() {
           }),
         ])
         .then(
-          axios.spread((response1, response2) => {
-            const prResult = response1.data;
-            const adHocResult = response2.data;
+          axios.spread((response1, response2, response3) => {
+            const allResult = response1.data;
+            const prResult = response2.data;
+            const adHocResult = response3.data;
 
-            // Show List of UPDATED PRs [multiple locations included]
-            const prList = [];
+            console.log("I AM ALL SORTED", allResult);
 
-            prResult.forEach((item, index) => {
+            const resultList = [];
+
+            allResult.forEach((item, index) => {
+              let PTID = item.purchaseTypeID;
+              let PT = item.purchaseType;
               // Time stamp formatting
-              const reqDate = moment(prResult[index].requestDate).format(
-                "D MMM YYYY"
-              );
-              const targetDeliveryDate = moment(
-                prResult[index].targetDeliveryDate
-              ).format("D MMM YYYY");
+              const reqDate = moment(item.requestDate).format("D MMM YYYY");
+              const targetDeliveryDate = moment(item.targetDeliveryDate).format("D MMM YYYY");
 
-              prList.push(
+              const extraData = {
+                Branch: 'N/A',
+                Supplier: 'N/A',
+                TargetD: 'N/A',
+                Descript: 'N/A'
+              };
+
+              if (PTID === 1) {
+                extraData.Branch = item.branchName;
+                extraData.Supplier = item.supplierName;
+                extraData.TargetD = targetDeliveryDate;
+                console.log("DELIVERY", extraData);
+              } else if (PTID === 2) {
+                extraData.Descript = item.remarks;
+                console.log("AHHHHH", extraData);
+              }
+
+              resultList.push(
                 <div key={index}>
                   <PRRow
                     RoleID={roleID}
+                    PTypeID={PTID}
+                    PType={PT}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
-                    Location={item.branchName}
-                    Supplier={item.supplierName}
-                    TargetDate={targetDeliveryDate}
+                    Location={extraData.Branch}
+                    Supplier={extraData.Supplier}
+                    TargetDate={extraData.TargetD}
                     Status={item.prStatus}
                     StatusID={item.prStatusID}
+                    Description={extraData.Descript}
                   />
                 </div>
               );
             });
 
-            setlist1(prList);
-
-            // Show List of Ad-hoc Purchases
-            const adHocList = [];
-
-            adHocResult.forEach((item, index) => {
-              // Time stamp formatting
-              const reqDate = moment(adHocResult[index].requestDate).format(
-                "D MMM YYYY"
-              );
-              const targetDeliveryDate = moment(
-                adHocResult[index].targetDeliveryDate
-              ).format("D MMM YYYY");
-
-              adHocList.push(
-                <div key={index}>
-                  <AdHocRow
-                    RoleID={roleID}
-                    prID={item.prID}
-                    ReqDate={reqDate}
-                    Name={item.name}
-                    TargetDate={targetDeliveryDate}
-                    Status={item.prStatus}
-                    StatusID={item.prStatusID}
-                    Description={item.remarks}
-                  />
-                </div>
-              );
-            });
-
-            setAdHocResults(adHocList);
+            setOGPRList(resultList);
+            setlist1(resultList);
           })
         )
         .catch((err) => {
@@ -1157,17 +1379,15 @@ export default function PurchaseRequest() {
 
             searchResult.forEach((item, index) => {
               // Time stamp formatting
-              const reqDate = moment(searchResult[index].requestDate).format(
-                "D MMM YYYY"
-              );
-              const targetDeliveryDate = moment(
-                searchResult[index].targetDeliveryDate
-              ).format("D MMM YYYY");
+              const reqDate = moment(searchResult[index].requestDate).format("D MMM YYYY");
+              const targetDeliveryDate = moment(searchResult[index].targetDeliveryDate).format("D MMM YYYY");
 
               resultsList.push(
                 <div key={index}>
                   <PRRow
                     RoleID={role}
+                    PTypeID={item.purchaseTypeID}
+                    PType={item.purchaseType}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
@@ -1260,7 +1480,7 @@ export default function PurchaseRequest() {
             }
           });
       }
-    }
+    };
   };
 
   // set value for search input
@@ -1268,6 +1488,11 @@ export default function PurchaseRequest() {
     e.preventDefault();
 
     setSearchValue(e.target.value);
+    console.log(e.target.value)
+
+    if (e.target.value === '') {
+      setlist1(ogPRlist);
+    }
 
     // handlePRSearch(e);
   };
@@ -1377,11 +1602,12 @@ export default function PurchaseRequest() {
               <li className="list-group-item col-sm-1 px-3 mx-2 border-0">
                 PR No.
               </li>
+              <li className="list-group-item col-sm-1 border-0">Type</li>
               <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
               <li className="list-group-item col-sm-1 px-1 ms-4 border-0">
                 Name
               </li>
-              <li className="list-group-item col-sm-3 px-3 border-0">
+              <li className="list-group-item col-sm-2 px-3 border-0">
                 Location
               </li>
               <li className="list-group-item col-sm-1 px-0 border-0">
