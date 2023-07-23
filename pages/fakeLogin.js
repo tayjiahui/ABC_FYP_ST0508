@@ -61,14 +61,16 @@ export default function Login() {
             }
         )
             .then((res) => {
-                console.log(res.data[0])
+                console.log(res.data)
 
-                const data = res.data[0];
+                const data = res.data;
+
                 // add user data to local storage
-                localStorage.setItem("ID", data.userID);
+                localStorage.setItem("ID", data.id);
                 localStorage.setItem("roleID", data.roleID);
-                localStorage.setItem("FName", data.name);
-                // localStorage.setItem("Email", data.email);
+                localStorage.setItem("role", data.role);
+                localStorage.setItem("FName", data.username);
+                localStorage.setItem("token", data.token);
 
                 console.log(loginEmail);
 
@@ -85,9 +87,9 @@ export default function Login() {
                     // ! Take note: Catching users here may lead to users creating random email accounts
                     alert(err.response.data);
                 }
-                // else{
-                //     alert(err);
-                // }
+                else{
+                    alert(err);
+                }
             })
     };
 
