@@ -109,6 +109,7 @@ export default function CreatePR({ from }) {
   const router = useRouter();
 
   const [id, setUserID] = useState();
+  const [Token, setToken] = useState();
 
   const [showAdHoc, setAdHoc] = useState(false);
 
@@ -124,17 +125,21 @@ export default function CreatePR({ from }) {
     const userID = parseInt(localStorage.getItem("ID"), 10);
     setUserID(userID);
 
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
+
     // if show adhoc(from home page)
     if (from.fromHome === true) {
       setAdHoc(true);
     };
 
     axios.all([
-        axios.get(`${baseUrl}/api/supplier/all`, {}),
-        axios.get(`${baseUrl}/api/purchaseReq/branch/all`, {}),
-        axios.get(`${baseUrl}/api/purchaseReq/paymentMode/all`, {}),
-        axios.get(`${baseUrl}/api/inventory/item/all`, {}),
-      ])
+      axios.get(`${baseUrl}/api/supplier/all`),
+      axios.get(`${baseUrl}/api/purchaseReq/branch/all`),
+      axios.get(`${baseUrl}/api/purchaseReq/paymentMode/all`),
+      axios.get(`${baseUrl}/api/inventory/item/all`),
+    ])
       .then(
         axios.spread((response1, response2, response3, response4) => {
           // console.log(response1.data[0]);
@@ -313,40 +318,66 @@ export default function CreatePR({ from }) {
   const createPR = async (e) => {
     e.preventDefault();
 
-    await axios
-      .post(`${baseUrl}/api/purchaseReq/`, {
+    await axios.post(`${baseUrl}/api/purchaseReq/`,
+      {
         purchaseTypeID: 1,
         targetDeliveryDate: dateReqV,
         userID: id,
         supplierID: supplierV.id,
         paymentModeID: PMV.id,
         remarks: Remark,
-      })
+      },
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+    )
       .then((response) => {
         // console.log(response);
         // console.log(ItemLineList);
 
-        axios
-          .get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`)
+        axios.get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`,
+          {
+            headers: {
+              user: id,
+              authorization: 'Bearer ' + Token
+            }
+          }
+        )
           .then((response) => {
             // console.log(response);
             const latestPRID = response.data[0].prID;
             // console.log(latestPRID);
 
             LocationsList.forEach((item, index) => {
-              axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`, {
-                prID: latestPRID,
-                branchID: item.id,
-              });
+              axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`,
+                {
+                  prID: latestPRID,
+                  branchID: item.id,
+                },
+                {
+                  headers: {
+                    authorization: 'Bearer ' + Token
+                  }
+                }
+              );
             });
 
             ItemLineList.forEach((item, index) => {
-              axios.post(`${baseUrl}/api/purchaseReq/lineItem`, {
-                prID: latestPRID,
-                itemID: item.id,
-                quantity: item.ItemQty,
-                totalUnitPrice: item.TotalUnitPrice,
-              });
+              axios.post(`${baseUrl}/api/purchaseReq/lineItem`,
+                {
+                  prID: latestPRID,
+                  itemID: item.id,
+                  quantity: item.ItemQty,
+                  totalUnitPrice: item.TotalUnitPrice,
+                },
+                {
+                  headers: {
+                    authorization: 'Bearer ' + Token
+                  }
+                }
+              );
             });
           });
 
@@ -365,15 +396,28 @@ export default function CreatePR({ from }) {
     e.preventDefault();
 
     await axios
-      .post(`${baseUrl}/api/purchaseReq/`, {
-        purchaseTypeID: 2,
-        userID: id,
-        remarks: Remark,
-      })
+      .post(`${baseUrl}/api/purchaseReq/`,
+        {
+          purchaseTypeID: 2,
+          userID: id,
+          remarks: Remark,
+        },
+        {
+          headers: {
+            authorization: 'Bearer ' + Token
+          }
+        }
+      )
       .then((response) => {
         // get latest PR ID by userid
-        axios
-          .get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`)
+        axios.get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`,
+          {
+            headers: {
+              user: id,
+              authorization: 'Bearer ' + Token
+            }
+          }
+        )
           .then((response) => {
             // console.log(response);
             const latestPRID = response.data[0].prID;
@@ -382,8 +426,13 @@ export default function CreatePR({ from }) {
             axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
               {
                 prID: latestPRID
+              },
+              {
+                headers: {
+                  authorization: 'Bearer ' + Token
+                }
               }
-            )
+            );
           });
 
         alert(response.data);

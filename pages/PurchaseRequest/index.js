@@ -881,6 +881,7 @@ function AdHocRow(props) {
 export default function PurchaseRequest() {
   const [id, setUserID] = useState();
   const [role, setRoleID] = useState();
+  const [Token, setToken] = useState();
 
   const [PRResults, setlist1] = useState([<div>Loading...</div>]);
   const [AdHocResults, setAdHocResults] = useState([<div>Loading...</div>]);
@@ -917,20 +918,24 @@ export default function PurchaseRequest() {
     const roleID = parseInt(localStorage.getItem("roleID"), 10);
     setRoleID(roleID);
 
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
+
     // Purchaser View
     if (roleID === 2) {
       axios.all([
         axios.get(`${baseUrl}/api/purchaseReq/${userID}`, {
           headers: {
             user: userID,
-            // 'authorization': 'Bearer ' + token
-          },
+            authorization: 'Bearer ' + token
+          }
         }),
         axios.get(`${baseUrl}/api/purchaseReq/adhoc/${userID}`, {
           headers: {
             user: userID,
-            // 'authorization': 'Bearer ' + token
-          },
+            authorization: 'Bearer ' + token
+          }
         }),
       ])
         .then(
@@ -1024,25 +1029,22 @@ export default function PurchaseRequest() {
 
       // admin/approver
       axios.all([
-          axios.get(`${baseUrl}/api/purchaseReq/PR/AH/all`, {
-            headers: {
-              // 'user': userID
-              // 'authorization': 'Bearer ' + token
-            }
-          }),
-          axios.get(`${baseUrl}/api/purchaseReq/`, {
-            headers: {
-              // 'user': userID
-              // 'authorization': 'Bearer ' + token
-            },
-          }),
-          axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
-            headers: {
-              // 'user': userID
-              // 'authorization': 'Bearer ' + token
-            },
-          }),
-        ])
+        axios.get(`${baseUrl}/api/purchaseReq/PR/AH/all`, {
+          headers: {
+            authorization: 'Bearer ' + token
+          }
+        }),
+        axios.get(`${baseUrl}/api/purchaseReq/`, {
+          headers: {
+            authorization: 'Bearer ' + token
+          }
+        }),
+        axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
+          headers: {
+            authorization: 'Bearer ' + token
+          }
+        }),
+      ])
         .then(
           axios.spread((response1, response2, response3) => {
             const allResult = response1.data;
@@ -1123,7 +1125,11 @@ export default function PurchaseRequest() {
     filterChecker(e);
 
     if (showAllPR === true) {
-      await axios.get(`${baseUrl}/api/purchaseReq/`)
+      await axios.get(`${baseUrl}/api/purchaseReq/`, {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      })
         .then((response) => {
           const allResult = response.data;
           const resultsList = [];
@@ -1219,21 +1225,28 @@ export default function PurchaseRequest() {
     if (role === 2) {
       if (showAdHoc === false) {
         await axios
-          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`, {
-            searchValue: searchValue,
-            ByUserID: !viewAllPR,
-            UserID: id,
-            PurchaseType: true,
-            PTID: 1,
-            ByUserName: byName,
-            ByReqDate: byReqDate,
-            ByTargetDate: byTargetDate,
-            ByBranchName: byBranchName,
-            BySupplierName: bySupplierName,
-            ByPaymentMode: byPaymentMode,
-            ByRemarks: false,
-            ByPRStatus: byPRStatus,
-          })
+          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`,
+            {
+              searchValue: searchValue,
+              ByUserID: !viewAllPR,
+              UserID: id,
+              PurchaseType: true,
+              PTID: 1,
+              ByUserName: byName,
+              ByReqDate: byReqDate,
+              ByTargetDate: byTargetDate,
+              ByBranchName: byBranchName,
+              BySupplierName: bySupplierName,
+              ByPaymentMode: byPaymentMode,
+              ByRemarks: false,
+              ByPRStatus: byPRStatus,
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
+            }
+          )
           .then((response) => {
             // console.log(searchValue);
             // console.log(response.data);
@@ -1289,21 +1302,28 @@ export default function PurchaseRequest() {
           });
       } else if (showAdHoc === true) {
         await axios
-          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`, {
-            searchValue: searchValue,
-            ByUserID: !viewAllPR,
-            UserID: id,
-            PurchaseType: true,
-            PTID: 2,
-            ByUserName: byName,
-            ByReqDate: byReqDate,
-            ByTargetDate: byTargetDate,
-            ByBranchName: false,
-            BySupplierName: false,
-            ByPaymentMode: false,
-            ByRemarks: byRemarks,
-            ByPRStatus: byPRStatus,
-          })
+          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`,
+            {
+              searchValue: searchValue,
+              ByUserID: !viewAllPR,
+              UserID: id,
+              PurchaseType: true,
+              PTID: 2,
+              ByUserName: byName,
+              ByReqDate: byReqDate,
+              ByTargetDate: byTargetDate,
+              ByBranchName: false,
+              BySupplierName: false,
+              ByPaymentMode: false,
+              ByRemarks: byRemarks,
+              ByPRStatus: byPRStatus,
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
+            }
+          )
           .then((response) => {
             const searchResult = response.data;
 
@@ -1353,21 +1373,28 @@ export default function PurchaseRequest() {
     else if (role === 1) {
       if (showAdHoc === false) {
         await axios
-          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`, {
-            searchValue: searchValue,
-            ByUserID: !viewAllPR,
-            UserID: id,
-            PurchaseType: true,
-            PTID: 1,
-            ByUserName: byName,
-            ByReqDate: byReqDate,
-            ByTargetDate: byTargetDate,
-            ByBranchName: byBranchName,
-            BySupplierName: bySupplierName,
-            ByPaymentMode: byPaymentMode,
-            ByRemarks: false,
-            ByPRStatus: byPRStatus,
-          })
+          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`,
+            {
+              searchValue: searchValue,
+              ByUserID: !viewAllPR,
+              UserID: id,
+              PurchaseType: true,
+              PTID: 1,
+              ByUserName: byName,
+              ByReqDate: byReqDate,
+              ByTargetDate: byTargetDate,
+              ByBranchName: byBranchName,
+              BySupplierName: bySupplierName,
+              ByPaymentMode: byPaymentMode,
+              ByRemarks: false,
+              ByPRStatus: byPRStatus,
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
+            }
+          )
           .then((response) => {
             // console.log(response.config.data);
             const searchResult = response.data;
@@ -1417,21 +1444,28 @@ export default function PurchaseRequest() {
           });
       } else if (showAdHoc === true) {
         await axios
-          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`, {
-            searchValue: searchValue,
-            ByUserID: !viewAllPR,
-            UserID: id,
-            PurchaseType: true,
-            PTID: 2,
-            ByUserName: byName,
-            ByReqDate: byReqDate,
-            ByTargetDate: byTargetDate,
-            ByBranchName: false,
-            BySupplierName: false,
-            ByPaymentMode: false,
-            ByRemarks: byRemarks,
-            ByPRStatus: byPRStatus,
-          })
+          .post(`${baseUrl}/api/purchaseReq/DynamicSearch`,
+            {
+              searchValue: searchValue,
+              ByUserID: !viewAllPR,
+              UserID: id,
+              PurchaseType: true,
+              PTID: 2,
+              ByUserName: byName,
+              ByReqDate: byReqDate,
+              ByTargetDate: byTargetDate,
+              ByBranchName: false,
+              BySupplierName: false,
+              ByPaymentMode: false,
+              ByRemarks: byRemarks,
+              ByPRStatus: byPRStatus,
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
+            }
+          )
           .then((response) => {
             const searchResult = response.data;
 
