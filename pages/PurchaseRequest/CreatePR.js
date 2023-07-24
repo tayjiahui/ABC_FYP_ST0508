@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
+// styles
 import styles from "../../styles/createPR.module.css";
+
+// components
+import AlertBox from "../../components/alert";
 
 // Image
 import arrowIcon from "../../public/arrowIcon.svg";
@@ -118,6 +122,10 @@ export default function CreatePR({ from }) {
   const [Locations, locationList] = useState();
   const [PaymentModes, pmList] = useState();
   const [Items, itemList] = useState();
+
+  // Alert Box
+  const [CreatedPRAlert, setCreatedPRAlert] = useState(false);
+  const [CreatedAdhocAlert, setCreatedAdhocAlert] = useState(false);
 
   // get drop down list
   useEffect(() => {
@@ -381,10 +389,12 @@ export default function CreatePR({ from }) {
             });
           });
 
-        alert(response.data);
+        setCreatedPRAlert(true);
+        // timer to reset to false
+        alertTimer();
 
-        // redirect
-        router.push("/PurchaseRequest");
+        // set timer before redirect
+        setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
       })
       .catch((err) => {
         console.log(err);
@@ -435,14 +445,28 @@ export default function CreatePR({ from }) {
             );
           });
 
-        alert(response.data);
+        setCreatedAdhocAlert(true);
+        // timer to reset to false
+        alertTimer();
 
-        // redirect
-        router.push("/PurchaseRequest");
+        // set timer before redirect
+        setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  // alert box timer
+  function alertTimer() {
+    // changes all alert useStates to false after 3s
+    setTimeout(alertFunc, 3000);
+  };
+
+  function alertFunc() {
+    // list of alerts useStates in your page
+    setCreatedPRAlert(false);
+    setCreatedAdhocAlert(false);
   };
 
   return (
@@ -859,6 +883,24 @@ export default function CreatePR({ from }) {
           </div>
         </form>
       )}
+
+      {
+        CreatedPRAlert &&
+        <AlertBox
+          Show={CreatedPRAlert}
+          Message={`Purchase Request Created!`}
+          Type={'success'}
+          Redirect={`/PurchaseRequest`} />
+      }
+
+      {
+        CreatedAdhocAlert &&
+        <AlertBox
+          Show={CreatedAdhocAlert}
+          Message={`Ad-Hoc Purchase Created!`}
+          Type={'success'}
+          Redirect={`/PurchaseRequest`} />
+      }
     </>
   );
 }

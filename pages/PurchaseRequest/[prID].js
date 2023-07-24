@@ -4,8 +4,12 @@ import Image from "next/image";
 import moment from "moment";
 import axios from "axios";
 
+// styles
 import styles from "../../styles/viewPR.module.css";
 import styles2 from "../../styles/createPR.module.css";
+
+// components
+import AlertBox from "../../components/alert";
 
 // Image
 import arrowIcon from "../../public/arrowIcon.svg";
@@ -15,7 +19,6 @@ import rejectedCircle from "../../public/redRejectedCircle.svg";
 import nextArrow from "../../public/rightArrowWhite.svg";
 import addLocIcon from "../../public/addLocationIcon.svg";
 import addIcon from "../../public/plusIcon.svg";
-import xIcon from "../../public/xIcon.svg";
 
 // Base urls
 const URL = [];
@@ -255,11 +258,17 @@ export default function ViewPR({
 
   // Reappeal
   const [Reappeal, allowReappeal] = useState(false);
+  const [NewPRID, setNewPRID] = useState();
   // dropdown lists states for Reappeal
   const [Suppliers, supplierList] = useState();
   const [Locations, locationList] = useState();
   const [PaymentModes, pmList] = useState();
   const [Items, itemList] = useState();
+
+  // Alert Box
+  const [ApprovedAlert, setApprAlert] = useState(false);
+  const [DeniedAlert, setDeniedAlert] = useState(false);
+  const [ReappealAlert, setReappealAlert] = useState(false);
 
   // PR Details
   const PR = prDetails[0];
@@ -441,109 +450,92 @@ export default function ViewPR({
     itemList(IList);
   }, []);
 
+  // alert box timer
+  function alertTimer() {
+    // changes all alert useStates to false after 3s
+    setTimeout(alertFunc, 3000);
+  };
+
+  function alertFunc() {
+    // list of alerts useStates in your page
+    setApprAlert(false);
+    setDeniedAlert(false);
+    setReappealAlert(false);
+  };
+
   const submitApproval = async (e) => {
     e.preventDefault();
 
-    if (ApprComment !== "") {
-      await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
-          {
-            comments: ApprComment,
-            prStatusID: 2,
-            apprUserID: id,
-          },
-          {
-            headers: {
-              authorization: 'Bearer ' + Token
-            }
-          }
-        )
-        .then((response) => {
-          alert(`Purchase Request #${prID} has been Approved!`);
-          router.push("/PurchaseRequest");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
-          {
-            prStatusID: 2,
-            apprUserID: id,
-          },
-          {
-            headers: {
-              authorization: 'Bearer ' + Token
-            }
-          }
-        )
-        .then((response) => {
-          alert(`Purchase Request #${prID} has been Approved!`);
-          router.push("/PurchaseRequest");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+      {
+        comments: ApprComment,
+        prStatusID: 2,
+        apprUserID: id,
+      },
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+    )
+      .then((response) => {
+
+        setApprAlert(true);
+        // timer to reset to false
+        alertTimer();
+
+        // set timer before redirect
+        setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
   };
 
   const submitDeny = async (e) => {
     e.preventDefault();
 
-    if (ApprComment !== "") {
-      await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
-          {
-            comments: ApprComment,
-            prStatusID: 3,
-            apprUserID: id,
-          },
-          {
-            headers: {
-              authorization: 'Bearer ' + Token
-            }
-          }
-        )
-        .then((response) => {
-          alert(`Purchase Request #${prID} has been Denied!`);
-          router.push("/PurchaseRequest");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
-          {
-            prStatusID: 3,
-            apprUserID: id,
-          },
-          {
-            headers: {
-              authorization: 'Bearer ' + Token
-            }
-          }
-        )
-        .then((response) => {
-          alert(`Purchase Request #${prID} has been Denied!`);
-          router.push("/PurchaseRequest");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
+      {
+        comments: ApprComment,
+        prStatusID: 3,
+        apprUserID: id,
+      },
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+    )
+      .then((response) => {
+
+        setDeniedAlert(true);
+        // timer to reset to false
+        alertTimer();
+
+        // set timer before redirect
+        setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
   };
 
   const convertToPO = async (e) => {
     // e.preventDefault();
 
     await axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
-        {
-          prID: prID,
-        },
-        {
-          headers: {
-            authorization: 'Bearer ' + Token
-          }
+      {
+        prID: prID,
+      },
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
         }
-      )
+      }
+    )
       .then((response) => {
         // console.log(response);
         alert(response.data);
@@ -562,15 +554,15 @@ export default function ViewPR({
     e.preventDefault();
 
     await axios.put(`${baseUrl}/api/purchaseReq/PR/ApprComment/${prID}`,
-        {
-          comments: viewApprComment,
-        },
-        {
-          headers: {
-            authorization: 'Bearer ' + Token
-          }
+      {
+        comments: viewApprComment,
+      },
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
         }
-      )
+      }
+    )
       .catch((err) => {
         console.log(err);
       });
@@ -583,15 +575,15 @@ export default function ViewPR({
     e.preventDefault();
 
     await axios.put(`${baseUrl}/api/purchaseReq/PR/ApprComment/${prID}`,
-        {
-          comments: viewApprComment,
-        },
-        {
-          headers: {
-            authorization: 'Bearer ' + Token
-          }
+      {
+        comments: viewApprComment,
+      },
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
         }
-      )
+      }
+    )
       .catch((err) => {
         console.log(err);
       });
@@ -730,6 +722,7 @@ export default function ViewPR({
           .then((response) => {
             // console.log(response);
             const latestPRID = response.data[0].prID;
+            setNewPRID(latestPRID);
             // console.log(latestPRID);
 
             LocationsList.forEach((item, index) => {
@@ -762,10 +755,13 @@ export default function ViewPR({
               );
             });
 
-            alert(`Reappealed Purchase Request #${latestPRID} Created!`);
+            setReappealAlert(true);
+            // timer to reset to false
+            alertTimer();
 
+            // set timer before redirect
+            setTimeout(() => { router.push(`/PurchaseRequest/${latestPRID}`) }, 3000);
             // redirect //!REDIRECTS TO NEW PAGE BUT SETTING IS ON REAPPEAL
-            router.push(`/PurchaseRequest/${latestPRID}`);
           });
       })
       .catch((err) => {
@@ -1496,6 +1492,34 @@ export default function ViewPR({
           </div>
         </div>
       )}
+
+      {
+        ApprovedAlert &&
+        <AlertBox
+          Show={ApprovedAlert}
+          Message={`Purchase Request #${prID} has been Approved!`}
+          Type={'success'}
+          Redirect={'/PurchaseRequest'} />
+      }
+
+      {
+        DeniedAlert &&
+        <AlertBox
+          Show={DeniedAlert}
+          Message={`Purchase Request #${prID} has been Denied!`}
+          Type={'warning'}
+          Redirect={'/PurchaseRequest'} />
+      }
+
+      {
+        ReappealAlert &&
+        <AlertBox
+          Show={ReappealAlert}
+          Message={`Reappealed Purchase Request #${NewPRID} Created!`}
+          Type={'success'}
+          Redirect={`/PurchaseRequest/${NewPRID}`} />
+      }
+
     </>
   );
 }
