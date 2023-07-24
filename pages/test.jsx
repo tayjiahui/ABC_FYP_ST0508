@@ -17,104 +17,34 @@ function getOptionId(e) {
   const returnArr = [selectedValue, selectedId];
 
   return returnArr;
-}
-
-// function AlertBox(props) {
-//   return (
-//     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-//   <div class="modal-dialog">
-//     <div class="modal-content">
-//       <div class="modal-header">
-//         <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-//         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-//       </div>
-//       <div class="modal-body">
-//         ...
-//       </div>
-//       <div class="modal-footer">
-//         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-//         <button type="button" class="btn btn-primary">Understood</button>
-//       </div>
-//     </div>
-//   </div>
-// </div>
-//   );
-// }
+};
 
 export default function YourComponent() {
   const [selectedOption, setSelectedOption] = useState({ value: "", id: "" });
 
-  // const [invoiceUrl, setInvoiceUrl] = useState(null);
-
-  const [showAlert1, setShowAlert1] = useState(false);
-  const [showAlert2, setShowAlert2] = useState(false);
-
-  const [modal, setModal] = useState();
-
-  useEffect(() => {
-    const modal = [];
-
-    modal.push(
-      <div>
-        <div>
-          <h1>I AM HERE</h1>
-          <AlertBox Show={showAlert1} Body={`HELOOO`} />
-        </div>
-      </div>
-    );
-    setModal(modal);
-  }, []);
-
-  // Your component code
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleInputChange = (e) => {
     const [value, id] = getOptionId(e);
     setSelectedOption({ value: value, id: id });
   };
 
-  const changeMe1 = () => {
-    console.log("BUTTON 1");
-    if (showAlert1 === false) {
-      console.log(true);
-      setShowAlert1(true);
-
-      // 3 seconds timer
-      myFunction();
+  const openAlertBox = () => {
+    if (showAlert === false) {
+      setShowAlert(true);
+      alertTimer();
     } else {
-      console.log(false);
-      setShowAlert1(false);
-    }
+      setShowAlert(false);
+    };
   };
 
-  const handleOpenModal = () => {
-    setShowAlert1(true);
-    myFunction();
-  };
-
-  const handleCloseModal = () => {
-    setShowAlert1(false);
-  };
-
-  const changeMe2 = () => {
-    console.log("BUTTON 2");
-    if (showAlert2 === false) {
-      console.log(true);
-      setShowAlert2(true);
-    } else {
-      console.log(false);
-      setShowAlert2(false);
-    }
-  };
-
-  function myFunction() {
+  function alertTimer() {
     setTimeout(alertFunc, 3000);
-  }
+  };
 
   function alertFunc() {
-    console.log("HELLO CAN YOU WORK PLS");
-    setShowAlert1(false);
-    console.log(showAlert1);
-  }
+    setShowAlert(false);
+  };
 
   return (
     <div>
@@ -136,85 +66,22 @@ export default function YourComponent() {
       <a href="http://localhost:8080/invoice">
         <button>CLICK ME</button>
       </a>
+
       <div className="py-5">
-        <button
-          onClick={changeMe1}
-          className="btn btn-success"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          click me for alert 1
-        </button>
+        <button className="btn btn-dark" onClick={openAlertBox}>OPEN ALERT</button>
       </div>
-
-      <div>
-        <button
-          onClick={changeMe2}
-          className="btn btn-secondary"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          click me for alert 2
-        </button>
-      </div>
-
-      {/* <AlertBox
-        showModal={showAlert1}
-        handleCloseModal={handleCloseModal}
-        title="My Modal Title"
-        content="This is the content of the modal"
-      /> */}
 
       {
-        showAlert1 &&
-        <div>
-          <h1>HXSHXDKJCHKD</h1>
-          <AlertBox
-            Show={showAlert1}
-            Body={`HELOOO`} />
-        </div>
+        setShowAlert &&
+        <AlertBox
+          Show={showAlert}
+          Message={`SUCCESS!`}
+          // Type refer to bootstrap alert type
+          // alert colour options refer to: https://www.geeksforgeeks.org/react-bootstrap-alerts-component/
+          // "success" => green[for success actions]
+          // "danger"  => red [for failed actions]
+          Type={`success`} />
       }
-
-      {/* <AlertBox 
-              Show={showAlert1}
-              Body={`HELOOO`}/> */}
-
-      {/* <div
-        className="modal fade"
-        id="exampleModal"
-        tabindex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="exampleModalLabel">
-                Modal title
-              </h1>
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">...</div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-primary">
-                Save changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
