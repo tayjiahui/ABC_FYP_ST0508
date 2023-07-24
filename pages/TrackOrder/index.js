@@ -106,7 +106,7 @@ function OrderRow(props) {
       })
   };
 
-  const handleStatusChange = async(event) => {
+  const handleStatusChange = async (event) => {
     setSelectedStatus(event.target.value);
     const selectedValue = event.target.value;
 
@@ -117,23 +117,23 @@ function OrderRow(props) {
       await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
         purchaseStatusID: selectedValue,
       })
-        .then(async(res) => {
+        .then(async (res) => {
           // console.log(res);
-          
+
           // create audit log
           await axios.post(`${baseUrl}/api/auditTrail/`,
-              {
-                timestamp: moment().format(),
-                userID: props.userID,
-                actionTypeID: 2,
-                itemId: poID,
-                newValue: selectedValue,
-                oldValue: OGStatus
-              }
-            )
-              .then((response) => {
-                // console.log(response.data);
-              })
+            {
+              timestamp: moment().format(),
+              userID: props.userID,
+              actionTypeID: 2,
+              itemId: poID,
+              newValue: selectedValue,
+              oldValue: OGStatus
+            }
+          )
+            .then((response) => {
+              // console.log(response.data);
+            })
         })
         .catch((err) => {
           console.log(err);
@@ -364,6 +364,7 @@ function Icon(props) {
 export default function TrackOrder() {
 
   const [id, setUserID] = useState();
+  const [Token, setToken] = useState();
 
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
   const [searchValue, setSearchValue] = useState("");
@@ -428,10 +429,13 @@ export default function TrackOrder() {
 
   // show all adhoc purchases
   useEffect(() => {
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
+
     axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
       headers: {
-        // 'user': userID
-        // 'authorization': 'Bearer ' + token
+        authorization: 'Bearer ' + token
       }
     })
       .then((response) => {
