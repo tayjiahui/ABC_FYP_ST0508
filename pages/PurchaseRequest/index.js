@@ -1051,8 +1051,6 @@ export default function PurchaseRequest() {
             const prResult = response2.data;
             const adHocResult = response3.data;
 
-            console.log("I AM ALL SORTED", allResult);
-
             const resultList = [];
 
             allResult.forEach((item, index) => {
@@ -1073,11 +1071,9 @@ export default function PurchaseRequest() {
                 extraData.Branch = item.branchName;
                 extraData.Supplier = item.supplierName;
                 extraData.TargetD = targetDeliveryDate;
-                console.log("DELIVERY", extraData);
               } else if (PTID === 2) {
                 extraData.Descript = item.remarks;
-                console.log("AHHHHH", extraData);
-              }
+              };
 
               resultList.push(
                 <div key={index}>
