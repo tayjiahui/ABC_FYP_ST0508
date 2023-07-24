@@ -22,10 +22,6 @@ export default NextAuth({
     theme: {
         colorScheme: "light"
     },
-    // pages: {
-    //     signIn: '/Home',
-    //     signOut: '/'
-    // },
     callbacks: {
         async signIn({ user, account, profile }) {
             console.log("`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -106,6 +102,7 @@ export default NextAuth({
 
                             isAuthenticated.SSO = true;
 
+                            // !edit base url
                             await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
                                 {
                                     email: email
@@ -124,6 +121,8 @@ export default NextAuth({
                                         isAuthenticated.DB = false;
                                         console.log(err.response.data);
                                         console.log("ISHJSDJBCKJD", user.name);
+                                        
+                                        // create new user automatically
                                         await axios.post(`http://localhost:3000/api/user/user`, {
 
                                             roleID: 2,
@@ -134,7 +133,7 @@ export default NextAuth({
                                             .then((response) => {
                                                 console.log(response);
                                                 isAuthenticated.DB = true;
-                                            })
+                                            });
                                     } else if (err) {
                                         console.log(err);
                                     }
