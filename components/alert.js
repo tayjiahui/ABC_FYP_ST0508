@@ -1,16 +1,13 @@
 // Alert Component
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSession } from "next-auth/react";
 import { Alert } from 'react-bootstrap';
 
 export default function AlertBox(props) {
-  console.log("componenet", props.Show);
+  console.log(props.Show);
 
   const [showSuccessAlert, setShowSusAlexbox] = useState(false);
-  const [showFailedAlert, setShowFailAlexbox] = useState(false);
 
-  console.log(showSuccessAlert, "hdhc");
+  console.log(showSuccessAlert);
 
   useEffect(() => {
     if (props.Show === true) {
