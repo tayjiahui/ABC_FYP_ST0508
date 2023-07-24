@@ -1,57 +1,50 @@
 // Alert Component
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSession } from "next-auth/react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { Alert } from 'react-bootstrap';
 
-export default function AlertBox(props){
-    // { showModal, handleCloseModal, Body, title, content }
-    // const [showAlert, setShowAlert] = useState(props.Show);
-    const [showAlert, setShowAlert] = useState(props.Show);
-    // console.log("ALERT");
-    // console.log(showAlert);
+export default function AlertBox(props) {
+  console.log("componenet", props.Show);
 
-    useEffect(() => {
-        require("bootstrap/dist/js/bootstrap.bundle.min.js");
-    }, []);
+  const [showSuccessAlert, setShowSusAlexbox] = useState(false);
+  const [showFailedAlert, setShowFailAlexbox] = useState(false);
 
-    return(
-        <>
-        {/* <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-            <Modal.Title>{title}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-            <p>{content}</p>
-        </Modal.Body>
-        <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseModal}>
-            Close
-            </Button>
-        </Modal.Footer>
-        </Modal> */}
-            {
-                showAlert === true &&
-                <div className="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div className="modal-dialog">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h1 className="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
-        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div className="modal-body">
-        ...
-      </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" className="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
-            }
+  console.log(showSuccessAlert, "hdhc");
 
-            
-        </>
-    )
-}
+  useEffect(() => {
+    if (props.Show === true) {
+      setShowSusAlexbox(true);
+      mySuccessFunction();
+    } else {
+      setShowSusAlexbox(false)
+    };
+  }, [props.Show])
+
+  // success message timer
+  function mySuccessFunction() {
+    setTimeout(successAlertFunc, 3000);
+  };
+
+  function successAlertFunc() {
+    setShowSusAlexbox(false);
+  };
+
+  return (
+    <>
+      <h1>i am working i think</h1>
+      {
+        showSuccessAlert &&
+        <div className='float-start position-absolute bottom-0'>
+          <div style={{ maxWidth: '600px' }}>
+            <Alert variant={props.Type} dismissible>
+              <Alert.Heading>
+                {props.Message}
+              </Alert.Heading>
+            </Alert>
+          </div>
+        </div>
+      }
+    </>
+  )
+};
