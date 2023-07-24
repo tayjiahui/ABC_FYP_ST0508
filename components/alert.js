@@ -26,25 +26,32 @@ export default function AlertBox(props) {
     setShowSusAlexbox(false);
   };
 
-  // only if have page redirection
-  const handleRedirect = () => {
+
+  const handleClose = () => {
     setShowSusAlexbox(false);
-    // router.push(props.Redirect)
-  }
+
+    // only if have page redirection
+    if (props.Redirect) {
+      router.push(props.Redirect);
+    };
+  };
 
   return (
     <>
       {
         showSuccessAlert &&
-        <div className='float-start position-absolute bottom-0'>
-          <div style={{ maxWidth: '600px' }}>
-            <Alert variant={props.Type} dismissible onClose={handleRedirect}>
-              <Alert.Heading>
-                {props.Message}
-              </Alert.Heading>
-            </Alert>
+        <div className='position-relative'>
+          <div className='float-start position-fixed bottom-0'>
+            <div style={{ maxWidth: '600px' }}>
+              <Alert variant={props.Type} dismissible onClose={handleClose}>
+                <Alert.Heading>
+                  {props.Message}
+                </Alert.Heading>
+              </Alert>
+            </div>
           </div>
         </div>
+
       }
     </>
   )
