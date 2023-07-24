@@ -29,7 +29,6 @@ export default function AlertBox(props) {
 
   return (
     <>
-      <h1>i am working i think</h1>
       {
         showSuccessAlert &&
         <div className='float-start position-absolute bottom-0'>
