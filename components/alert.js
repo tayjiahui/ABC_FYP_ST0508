@@ -1,13 +1,12 @@
 // Alert Component
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Alert } from 'react-bootstrap';
 
 export default function AlertBox(props) {
-  console.log(props.Show);
+  const router = useRouter();
 
   const [showSuccessAlert, setShowSusAlexbox] = useState(false);
-
-  console.log(showSuccessAlert);
 
   useEffect(() => {
     if (props.Show === true) {
@@ -27,13 +26,19 @@ export default function AlertBox(props) {
     setShowSusAlexbox(false);
   };
 
+  // only if have page redirection
+  const handleRedirect = () => {
+    setShowSusAlexbox(false);
+    // router.push(props.Redirect)
+  }
+
   return (
     <>
       {
         showSuccessAlert &&
         <div className='float-start position-absolute bottom-0'>
           <div style={{ maxWidth: '600px' }}>
-            <Alert variant={props.Type} dismissible>
+            <Alert variant={props.Type} dismissible onClose={handleRedirect}>
               <Alert.Heading>
                 {props.Message}
               </Alert.Heading>

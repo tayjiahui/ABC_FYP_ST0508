@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { useRouter } from 'next/router';
 
 import AlertBox from "../components/alert";
 
 export default function YourComponent() {
+    const router = useRouter();
 
     const [showAlert, setShowAlert] = useState(false);
 
     const openAlertBox = () => {
         setShowAlert(true);
         alertTimer();
+        // if there is page redirection after
+        // setTimeout(()=> {router.push('/PurchaseRequest')}, 5000)
     };
 
     function alertTimer() {
@@ -36,7 +40,8 @@ export default function YourComponent() {
                     // alert colour options refer to: https://www.geeksforgeeks.org/react-bootstrap-alerts-component/
                     // "success" => green[for success actions]
                     // "danger"  => red [for failed actions]
-                    Type={`success`} />
+                    Type={`success`}
+                    Redirect={`/PurchaseRequest`} />
             }
         </div>
     );
