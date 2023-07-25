@@ -145,6 +145,16 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   // WIP Pop up
   const [showInProg, setInProg] = useState(false);
 
+  //INVOICE
+  const [selectedFile, setSelectedFile] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+
+  //DO
+  const [selectedFileDO, setSelectedFileDO] = useState([]);
+  const [showModalDO, setShowModalDO] = useState(false);
+  const [showModal2DO, setShowModal2DO] = useState(false);
+
   useEffect(() => {
     // set user id taken from localstorage
     const userID = parseInt(localStorage.getItem("ID"), 10);
@@ -158,22 +168,22 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${prID}`)
     ])
       .then(axios.spread((response1, response2) => {
-          
-          // get original product lines
-          const PDL = response1.data;
-          const lines = [];
 
-          PDL.forEach((item, index) => {
-            lines.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
-          });
+        // get original product lines
+        const PDL = response1.data;
+        const lines = [];
 
-          setOGQTY(lines);
+        PDL.forEach((item, index) => {
+          lines.push({ qtyReceived: item.qtyReceived, id: item.lineItemID });
+        });
 
-          // get original PO status
-          const POS = response2.data[0];
-          setOGStatus(POS.purchaseStatusID);
+        setOGQTY(lines);
 
-        })
+        // get original PO status
+        const POS = response2.data[0];
+        setOGStatus(POS.purchaseStatusID);
+
+      })
       )
       .catch((err) => {
         console.log(err);
@@ -373,6 +383,101 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
     setChangeStatusPop(true);
   };
 
+  //invoice
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0]
+    setSelectedFile(file)
+  }
+
+  const handleUpload = async () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      axios.put(`${baseUrl}/api/trackOrder/documents/${poID}/invoice`, formData, {
+        headers: {
+          'Content-Type': "multipart/form-data"
+        }
+      })
+        .then(() => {
+          console.log('Invoice uploaded successfully!!');
+        })
+        .catch((err) => {
+          console.log("Error uploading Invoice", err);
+        })
+    }
+  }
+
+  //delivery order
+  const handleFileUploadDO = async (e) => {
+    const file = e.target.files[0]
+    setSelectedFileDO(file)
+  }
+
+  const handleUploadDO = async () => {
+    if (selectedFileDO) {
+      const formData = new FormData();
+      formData.append('file', selectedFileDO);
+
+      axios.put(`${baseUrl}/api/trackOrder/documents/${poID}/deliveryOrder`, formData, {
+        headers: {
+          'Content-Type': "multipart/form-data"
+        }
+      })
+        .then(() => {
+          console.log('Delivery Order uploaded successfully');
+        })
+        .catch((err) => {
+          console.log('Error uploading Delivery Order', err)
+        })
+    }
+  }
+
+  //invoice
+  const handleCloseModal = () => {
+    setShowModal(false);
+  }
+
+  const handleOpenModal2 = () => {
+    setShowModal2(true);
+  }
+
+  const handleCloseModal2 = () => {
+    setShowModal2(false);
+  }
+
+  const handleConfirmUpload = () => {
+    setShowModal(false);
+    setShowModal2(true);
+  }
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  }
+
+  //delivery order
+  const handleCloseModalDO = () => {
+    setShowModalDO(false);
+  }
+
+  const handleOpenModal2DO = () => {
+    setShowModal2DO(true);
+  }
+
+  const handleCloseModal2DO = () => {
+    setShowModal2DO(false);
+  }
+
+  const handleConfirmUploadDO = () => {
+    setShowModalDO(false);
+    setShowModal2DO(true);
+  }
+
+  const handleOpenModalDO = () => {
+    setShowModalDO(true);
+  }
+
+
   return (
     <div>
       <h1 className='firstHeaderTop'>
@@ -558,12 +663,12 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         </div>
 
         <div className="col-sm d-flex">
-          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
+          <button onClick={handleOpenModal} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
             <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
             {showInProg && <WIP Show={showInProg} />}
           </button>
 
-          <button onClick={handleOpenWip} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
+          <button onClick={handleOpenModalDO} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
             <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
             {showInProg && <WIP Show={showInProg} />}
           </button>
@@ -600,6 +705,127 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           </div>
         </div>
       )}
+
+      {/* INVOICE PDF */}
+      {showModal && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center">
+                  <h5 className="modal-title">Upload A File</h5>
+                  <button type="button" className="closeXbtn" onClick={handleCloseModal} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                  <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <input type="file" className="btn btn-custom-primary mt-3" style={{ display: 'none' }} onChange={(e) => { handleFileUpload(e); }} id="fileUpload" />
+
+                    <label htmlFor="fileUpload" className="btn btn-custom-primary mt-3" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', cursor: 'pointer' }}>
+                      Browse Computer
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer" style={{ borderTop: 'none' }}>
+
+
+                {selectedFile && (
+                  <p className="selected-file">{selectedFile.name}</p>
+
+                )}
+
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', marginRight: '10px' }} onClick={handleCloseModal}>Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={() => { handleCloseModal(); handleOpenModal2(); }}>Upload</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showModal2 && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <h2 className="modal-title">Confirm Upload ?</h2>
+                  <button type="button" className="close" onClick={handleCloseModal2} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                </div>
+              </div>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseModal2}>Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmUpload(); handleCloseModal2(); handleUpload(); }}>Upload</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+
+      {/* DO PDF */}
+
+      {showModalDO && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center">
+                  <h5 className="modal-title">Upload A File</h5>
+                  <button type="button" className="closeXbtn" onClick={handleCloseModalDO} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                  <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    {/* <p className="mb-3">Drag and drop file here</p>
+                      <p>or</p> */}
+                    <input type="file" className="btn btn-custom-primary mt-3" style={{ display: 'none' }} onChange={(e) => { handleFileUploadDO(e); }} id="fileUpload" />
+
+                    <label htmlFor="fileUpload" className="btn btn-custom-primary mt-3" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', cursor: 'pointer' }}>
+                      Browse Computer
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer" style={{ borderTop: 'none' }}>
+
+
+                {selectedFileDO && (
+                  <p className="selected-file">{selectedFileDO.name}</p>
+
+                )}
+
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', marginRight: '10px' }} onClick={handleCloseModalDO}>Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px' }} onClick={() => { handleCloseModalDO(); handleOpenModal2DO(); }}>Upload</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showModal2DO && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <h2 className="modal-title">Confirm Upload ?</h2>
+                  <button type="button" className="close" onClick={handleCloseModal2DO} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                </div>
+              </div>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseModal2DO}>Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmUploadDO(); handleCloseModal2DO(); handleUploadDO(); }}>Upload</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 };
