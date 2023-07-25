@@ -272,7 +272,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const handleConfirmUpload = () => {
     setShowModal(false);
     setShowModal2(true);
-    setFileUpload(true);
   };
 
   const handleCloseModal = () => {
@@ -404,6 +403,28 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       console.log('other options')
     }
   };
+
+
+  // useEffect(() => {
+  //   axios.get(`${baseUrl}/api/paymentTrack/supplier/suppliernames/all`)
+  //     .then(res => {
+  //       console.log("supplier names:", res.data)
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     })
+  // })
+
+  // useEffect(() => {
+  //   axios.get(`${baseUrl}/api/paymentTrack/`)
+  //     .then(res => {
+  //       console.log("status names:", res.data)
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //     })
+  // })
+
 
   return (
     <>
@@ -724,15 +745,23 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         )}
 
         {showModal2 && (
-          <div className={styles.modalcontainer2}>
-            <div className={styles.modalBox2}>
-              <h2 className={styles.uploadConfirm}> Confirm Upload ?</h2>
-              <button onClick={handleCloseModal2} className={styles.closeme2}>X</button>
-            </div>
-
-            <div className={styles.uploadButtons}>
-              <button className={styles.cancelBtn2} onClick={handleCloseModal2} >Cancel</button>
-              <button className={styles.uploadBtn2} onClick={() => { handleConfirmUpload(); handleCloseModal2(); handleUpload(); }}>Upload</button>
+          <div className="modal fade show d-block" style={{ display: 'block' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-body">
+                  <div className="d-flex flex-column align-items-center mt-2">
+                    <h2 className="modal-title">Confirm Upload ?</h2>
+                    <button type="button" className="close" onClick={handleCloseModal2} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                      <span aria-hidden="true">&times;</span>
+                    </button> <br />
+                  </div>
+                </div>
+                {/* Wrapping the buttons in a div with 'd-flex' and 'text-center' class */}
+                <div className="d-flex justify-content-center text-center mb-5">
+                  <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseModal2}>Cancel</button>
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmUpload(); handleCloseModal2(); handleUpload(); }}>Upload</button>
+                </div>
+              </div>
             </div>
           </div>
         )}
