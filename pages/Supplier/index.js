@@ -46,41 +46,71 @@ const baseURL = URL[1];
 // main supplier page
 export default function Supplier({ suppliers }) {
 
-    // get category names for search filter 
-    const [categoryOptions, setCategoryOptions] = useState([]);
+    /* COMBINED SEARCH BAR AND SEARCH FILTER RESULTS */
+    const [searchTerm, setSearchTerm] = useState('');
+    const [checkedOptions, setCheckedOptions] = useState([]);
+    const [filteredItems, setFilteredItems] = useState(suppliers);
+    const [category, setCategory] = useState([]);
 
+    // fetch category names for filter options
     useEffect(() => {
         axios.get(`${baseUrl}/api/supplier/category/all`,{})
             .then((res) => {
-                const categories = res.data.map(filterOptions => {
-                    value: filterOptions.categoryID;
-                    label: filterOptions.categoryName;
-                });
-            setCategoryOptions(categories);
+                setCategory(res.data);
             })
-    })
+            .catch((err) => {
+                console.error(err);
+            })
+    }, []);
 
-    // search bar
-    const [searchInput, setSearchInput] = useState([]);
-    const [searchResults, setSearchResults] = useState(suppliers);
+    // update filtered items when searchterm or checkedOptions change
+    useEffect(() => {
+        filterItems(searchTerm, checkedOptions);
+    }, [searchTerm, checkedOptions]);
 
-    const handleSearchInput = (e) => {
-        setSearchInput(e.target.value);
-        searchResult(e.target.value);
+    // inputs change handler
+    const handleInputChange = (event) => {
+        setSearchTerm(event.target.value);
+        filterItems(event.target.value, checkedOptions);
     };
 
-    // search by supplierName, category name, contact person name
-    const searchResult = (searchValue) => {
-        const findSupplier = suppliers.filter(
-            (result) =>
-                result.supplierName.toLowerCase().includes(searchValue.toLowerCase()) ||
-                result.Category.toLowerCase().includes(searchValue.toLowerCase()) ||
-                result.contactPersonName.toLowerCase().includes(searchValue.toLowerCase())
-        );
-        setSearchResults(findSupplier);
+    // checkbox value change handler
+    const handleCheckboxChange = (event) => {
+        const { value, checked } = event.target;
+
+        const updatedChecked = checked
+            ?[...checkedOptions, value]
+            :checkedOptions.filter((option) => option !== value);
+
+        setCheckedOptions(updatedChecked);
+        filterItems(searchTerm, checkedOptions);
     };
 
-    // filter popup
+    const filterItems = (term, selectedOptions) => {
+        const filtered = suppliers.filter((item) => {
+            const hasMatch = item.Category.toLowerCase().includes(term.toLowerCase()) ||
+                            item.supplierName.toLowerCase().includes(term.toLowerCase()) ||
+                            item.contactPersonName.toLowerCase().includes(term.toLowerCase());
+
+            if (selectedOptions.length === 0) {
+                return hasMatch;
+            } else {
+                return (
+                    hasMatch &&
+                    selectedOptions.every((selectedOptions) =>
+                        item.Category.includes(selectedOptions)
+                    )
+                    
+                    // item.Category &&
+                    // item.Category.some((categoryName) => selectedOptions.includes(categoryName))
+                );
+            }
+        });
+
+        setFilteredItems(filtered);
+    };
+
+    // filter popup box
     const [filterPopup, setFilterPopup] = useState(false);
 
     const handleClosePopup = () => {
@@ -90,41 +120,6 @@ export default function Supplier({ suppliers }) {
     const handleOpenPopup = () => {
         setFilterPopup(true);
     }
-
-    // search filter by category type
-    const [selectedCategories, setSelectedCategories] = useState([]);
-    const [filteredSuppliers, setFilteredSuppliers] = useState(suppliers);
-
-    // handle and update selected checkbox state
-    const handleCheckboxChange = (e) => {
-        const { value, checked } = e.target;
-
-        if (checked) {
-            setSelectedCategories((prevSelectedFilters) => [
-                ...prevSelectedFilters,
-                value,
-            ]);
-        } else {
-            setSelectedCategories((prevSelectedFilters) =>
-                prevSelectedFilters.filter((filter) => filter !== value)
-            );
-        }
-    };
-
-    // filter function
-    const filterSuppliers = () => {
-        if (selectedCategories.length === 0) {
-            setSelectedCategories(suppliers);
-        } else {
-            const filtered = suppliers.filter((supplier) =>
-                selectedCategories.includes(supplier.Category)
-            );
-            setSelectedCategories(filtered);
-        }
-    };
-
-    // show filtered results
-
 
     return (
         <>
@@ -136,19 +131,54 @@ export default function Supplier({ suppliers }) {
                 <div className="col-4 pb-2 d-inline">
                     <div className="d-inline-flex py-4 ms-5">
                         <div className="d-inline-flex" style={{marginInlineStart:"100px"}}>
-                            <input type="text" placeholder="Search..." name="search" className={styles.searchBox} value={searchInput} onChange={handleSearchInput}/>
+                            <input type="text" placeholder="Search..." name="search" className={styles.searchBox} value={searchTerm} onChange={handleInputChange}/>
                             <button type="button" className={styles.searchButton}><Image src={searchIcon} width={25} height={25}/></button>
                         </div>
 
                         <button type="button" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={handleOpenPopup}/></button>
 
-                        {/* popup box */}
+                        {/* filter popup */}
                         {filterPopup && (
-                            <>
-                    
-                            </>
-                        )}
+                            <div className={styles.filterPopup}>
+                                <div className={styles.popupContent}>
+                                    <div className="row pt-1">
+                                        <div className="col-sm-1"></div>
+                                        <div className="col-sm-10">
+                                            <h2>Search Filters</h2>
+                                        </div>
 
+                                        <div className="col-sm-1 pt-1">
+                                            <button className={styles.closePopUpButton} onClick={handleClosePopup}>
+                                                <Image src={xIcon} width={35} height={35} alt="Cancel" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="container p-3">
+                                        <div className="row">
+                                            <label>Search By ...</label>
+                                        </div>
+
+                                        <div className="row row-cols-2 mt-3">
+                                            <div className="col">
+                                                {/* checkboxes */}
+                                                {category.map((checkbox) => (
+                                                    <label key={checkbox.categoryID}>
+                                                        <input
+                                                            type="checkbox"
+                                                            value={checkbox.categoryName}
+                                                            onChange={handleCheckboxChange}
+                                                            checked={checkedOptions.includes(checkbox.categoryName)}
+                                                        />
+                                                        {checkbox.categoryName}
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -162,11 +192,11 @@ export default function Supplier({ suppliers }) {
             </div>
 
             <div>
-                {searchResults.map((supplier, index) => (
+                {filteredItems.map((supplier) => (
                     <div className="row py-4 rounded-4 m-1 mb-2" style={{backgroundColor: "#C0D8F7", height: "85px", cursor: "pointer"}}>
                         <div className="row d-flex mx-4">   
                             <a href={'/Supplier/' + supplier.supplierID} className="col">
-                                <div className="col d-flex">
+                                <div key={supplier.supplierID} className="col d-flex">
                                     <div className="col-1 col-sm-1">
                                         <p>{supplier.supplierID}</p>
                                     </div>
@@ -186,10 +216,7 @@ export default function Supplier({ suppliers }) {
                             </a>
                         </div>
                     </div>
-                ))}   
-
-                {/* filter results */}
-
+                ))}
             </div>
 
             <div>
@@ -199,7 +226,6 @@ export default function Supplier({ suppliers }) {
                     </button>
                 </a>
             </div>
-
         </>
     )
 }
