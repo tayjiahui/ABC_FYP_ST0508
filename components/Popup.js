@@ -2,6 +2,32 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from '../styles/calendar.module.css'
 
+// Base urls
+const URL = [];
+
+function isLocalhost() {
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    console.log('hostname   ' + hostname);
+    if (hostname == 'localhost') {
+      URL.push('http://localhost:3000', 'http://localhost:5000');
+      console.log(URL);
+
+    }
+    else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+      URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+      console.log(URL);
+    };
+
+    return URL;
+  };
+};
+
+isLocalhost();
+
+const baseUrl = URL[0];
+const baseURL = URL[1];
+
 
 
 const Popup = ({ event }) => {
@@ -42,7 +68,7 @@ const Popup = ({ event }) => {
     };
 
     try {
-      const response = await axios.post('http://localhost:3000/api/purchasePlan/purchasePlan', formData);
+      const response = await axios.post(`${baseUrl}/api/purchasePlan/purchasePlan`, formData);
 
       if (response.status === 200) {
         console.log('Data inserted successfully!');
@@ -85,13 +111,13 @@ const Popup = ({ event }) => {
               required
             /><br></br>
 
-            <input
+            <textarea
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="description"
               required
-            /><br></br>
+            ></textarea><br></br>
 
             <input
               type="number"
