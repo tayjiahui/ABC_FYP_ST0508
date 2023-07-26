@@ -41,7 +41,7 @@ export default function AlertBox(props) {
       {
         showSuccessAlert &&
         <div className='position-relative'>
-          <div className='float-start position-fixed bottom-0'>
+          <div className=' top-0 end-0 position-fixed p-5 mt-5'>
             <div style={{ maxWidth: '600px' }}>
               <Alert variant={props.Type} dismissible onClose={handleClose}>
                 <Alert.Heading>
