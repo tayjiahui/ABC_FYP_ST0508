@@ -15,6 +15,7 @@ import eyeCon from "../../public/eyeCon.svg";
 import closeEyeCon from "../../public/closeEyeCon.svg";
 
 import WIP from '../../components/WIP'
+import AlertBox from "../../components/alert";
 
 // Base urls
 const URL = [];
@@ -53,6 +54,8 @@ function OrderRow(props) {
   const [statusInput, setStatusInput] = useState([]);
 
   const [changedStatusPop, setChangedStatusPop] = useState(false);
+  const [CreatedAlert, setCreatedAlert] = useState(false);
+  const [Token, setToken] = useState();
 
   // PO ID FROM DATABASE
   const poID = props.poID;
@@ -61,6 +64,10 @@ function OrderRow(props) {
   const poId = props.prID;
 
   useEffect(() => {
+    // set user token 
+    const token = localStorage.getItem('token');
+    setToken(token);
+
     axios.all([
       // gets po status dropdown
       axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`),
@@ -85,21 +92,39 @@ function OrderRow(props) {
     setChangedStatusPop(false);
   };
 
+  function alertTimer() {
+    // changes all alert useStates to false after 3s
+    setTimeout(alertFunc, 3000);
+  };
+
+  function alertFunc() {
+    // list of alerts useStates in your page
+    setCreatedAlert(false);
+  };
+
   const handleInputChange = (event) => {
     setStatusInput(event.target.value);
   };
 
   const handleSubmit = (event) => {
-    alert(`Sucessfully created new status: ${statusInput}`);
+    // alert(`Sucessfully created new status: ${statusInput}`);
+    setCreatedAlert(true)
 
     axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
       purchaseStatus: statusInput
-    })
+    },
+    {
+      headers: {
+        authorization: 'Bearer ' + Token
+      }
+    }
+    )
       .then(res => {
-        alert(`sucessfully created new status ${statusInput}`)
+        // alert(`sucessfully created new status ${statusInput}`)
         setNewStat(false)
         setStatus((prevStatus) => [...prevStatus, res.data]);
         onSubmit(statusInput)
+        setCreatedAlert(true)
       })
       .catch((err) => {
         console.log(err);
@@ -206,6 +231,15 @@ function OrderRow(props) {
           </div>
         </div>
       )}
+
+      {
+        CreatedAlert &&
+        <AlertBox
+          Show={CreatedAlert}
+          Message={`Sucessfully created new status!`}
+          Type={'success'}
+          Redirect={'/TrackOrder'} />
+      }
     </div>
 
   )
@@ -383,8 +417,15 @@ export default function TrackOrder() {
     const userID = parseInt(localStorage.getItem("ID"), 10);
     setUserID(userID);
 
+    const token = localStorage.getItem("token");
+    setToken(token);
+
     axios.all([
-      axios.get(`${baseUrl}/api/trackOrder`, {})
+      axios.get(`${baseUrl}/api/trackOrder`, {
+        headers: {
+          authorization: 'Bearer ' + token
+        }
+      })
     ])
       .then(axios.spread((response1) => {
         // console.log(response1.data);
