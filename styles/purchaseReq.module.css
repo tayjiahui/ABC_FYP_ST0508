@@ -127,10 +127,11 @@
 }
 
 .ahRow{
-    background-color: #DDE9F8;
+    /* background-color: #DDE9F8; */
+    background-color: #98b4d7;
 }
 
-.prRow:hover {
+.prRow:hover,.ahRow:hover {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     /* transform: scale(1.05); */
 }
