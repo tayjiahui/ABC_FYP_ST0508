@@ -11,6 +11,8 @@ import styles from '../../styles/createSupplier.module.css'
 import arrowIcon from '../../public/arrowIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import AlertBox from "../../components/alert";
+
 // Base urls
 const URL = [];
 
@@ -197,14 +199,15 @@ export default function CreateSupplier() {
 
             console.log(submitData);
 
-            await axios.post(`${baseUrl}/api/supplier/`, submitData)
+            await axios.post(`${baseUrl}/api/supplier/`, submitData
+            )
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
 
                 axios.get(`${baseUrl}/api/supplier/supplierid`)
                 .then((res) => {
                     const supplierId = res.data[0].supplierID;
-                    console.log(supplierId);
+                    //console.log(supplierId);
 
                     axios.post(`${baseUrl}/api/supplier/suppliersCategory`, {
                         fkSupplier_id: supplierId,
@@ -212,16 +215,32 @@ export default function CreateSupplier() {
                     });
                 })
 
-                alert(res.data);
+                setSupplierCreated(true);
+                
+                alertTimer();
+                setTimeout(() => { router.push("/Supplier") }, 3000);
+
+                // alert(res.data);
                 
                 // redirect back to main page
-                router.push('/Supplier'); 
+                // router.push('/Supplier'); 
             })
             .catch((err) => {
                 console.log(err);
                 alert(err);
             });    
         }
+    };
+
+    // alert box
+    const [supplierCreated, setSupplierCreated] = useState(false);
+
+    function alertTimer() {
+        setTimeout(alertFunc, 3000);
+    };
+    
+    function alertFunc() {
+        setSupplierCreated(false);
     };
 
     return (
@@ -396,6 +415,14 @@ export default function CreateSupplier() {
                 </form>
             </div>
             
+            {supplierCreated &&
+                <AlertBox
+                    Show={supplierCreated}
+                    Message={`Supplier ${supplierName} has been Created!`}
+                    Type={'success'}
+                    Redirect={`/Supplier`} 
+                />
+            }
         </>
     );
 }
