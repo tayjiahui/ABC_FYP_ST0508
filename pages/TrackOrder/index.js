@@ -223,7 +223,7 @@ function AdHocRow(props) {
   function circleTest(statusID) {
     if (statusID == 1) {
       return "/yellowPendingCircle.svg";
-    } else if (statusID == 2) {
+    } else if (statusID == 2 || statusID == 4) {
       return "/greenApprovedCircle.svg";
     } else if (statusID == 3) {
       return "/redRejectedCircle.svg";
