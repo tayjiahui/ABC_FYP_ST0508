@@ -59,7 +59,7 @@
 
 /* delete popup box */
 .popupContainer {
-    width: 480px;
+    width: 450px;
     height: 270px;
     position: fixed;
     top: 50%;
@@ -90,8 +90,8 @@
 .closeButton2 {
     background-color: transparent;
     border: none;
-    margin-left: 415px;
-    margin-top: -85px;
+    margin-left: 390px;
+    margin-top: -95px;
     font-size: xx-large;
     cursor: pointer;
 }
@@ -105,11 +105,12 @@
 .cancelButton1, .deleteButton {
     cursor: pointer;
     color: white;
-    border-radius: 20px;
-    border-width: 1px;
-    padding: 10px 25px;
+    border-radius: 15px;
+    border: none;
+    padding: 5px 20px;
     margin-left: 15px;
     font-size: 20pt;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .cancelButton1 {
