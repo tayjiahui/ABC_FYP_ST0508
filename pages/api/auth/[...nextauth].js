@@ -189,19 +189,20 @@ export default NextAuth({
             const sessionEmail = session?.user.email;
             console.log("session email", sessionEmail);
 
-            await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
+            await axios.post(`http://localhost:3000/api/user/login`,
                 {
                     email: sessionEmail
                 }
             )
                 .then((res) => {
-                    const data = res.data[0];
+                    const data = res.data;
 
                     session.userDetails = {
                         name: data.name,
                         email: data.email,
-                        userID: data.userID,
-                        role: data.roleID
+                        userID: data.id,
+                        role: data.roleID,
+                        token: data.token
                     };
                 })
                 .catch((err) => {

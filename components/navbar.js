@@ -21,7 +21,6 @@ export default function NavBar() {
     useEffect(() => {
         if (status === 'authenticated' && session) {
             const userD = session.userDetails
-            // console.log(userD);
             // TODO validate if userD is Null
 
             // add to localStorage
@@ -29,11 +28,13 @@ export default function NavBar() {
             localStorage.setItem("roleID", userD.role);
             localStorage.setItem("Name", userD.name);
             localStorage.setItem("FName", session.user.name);
+            localStorage.setItem("token", userD.token)
         };
 
         const username = localStorage.getItem("FName");
         setUserName(username);
 
+        // !status may be undefined not caught
     }, [status, session])
 
     return (

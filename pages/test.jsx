@@ -63,11 +63,26 @@ export default function YourComponent() {
       <p>Selected Value: {selectedOption.value}</p>
       <p>Selected ID: {selectedOption.id}</p>
 
-      <a href="http://localhost:8080/invoice">
-        <button>CLICK ME</button>
-      </a>
+      <div className="py-3">
+        <a href="http://localhost:8080/invoice">
+          <button className="btn btn-danger">CLICK ME FOR PDF</button>
+        </a>
+      </div>
 
-      <div className="py-5">
+      <div className="py-3">
+        <a href="http://localhost:8080/excel">
+          <button className="btn btn-success">CLICK ME FOR EXCEL</button>
+        </a>
+      </div>
+
+      <div className="py-3">
+        <a href="http://localhost:8080/csv">
+          <button className="btn btn-warning">CLICK ME FOR CSV</button>
+        </a>
+      </div>
+
+
+      <div className="py-3">
         <button className="btn btn-dark" onClick={openAlertBox}>OPEN ALERT</button>
       </div>
 

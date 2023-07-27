@@ -78,7 +78,7 @@ export async function getServerSideProps(context) {
   const data2 = await productD.json();
   const data3 = await PRDetails.json();
 
-  // console.log(data1);
+  console.log(data1);
   // console.log(data2);
 
   const poid = data1[0].poID;
