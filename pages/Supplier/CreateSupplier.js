@@ -10,7 +10,6 @@ import Image from "next/image";
 import styles from '../../styles/createSupplier.module.css'
 import arrowIcon from '../../public/arrowIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import AlertBox from "../../components/alert";
 
 // Base urls
@@ -45,6 +44,28 @@ const baseURL = URL[1];
 // create supplier form
 export default function CreateSupplier() {
     const router = useRouter();
+
+    // set user token
+    const [Token, setToken] = useState();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        setToken(token);
+    }, []);
+
+    // alert box
+    const [createdSuccessAlert, setCreatedSuccessAlert] = useState(false);
+    const [createdErrorAlert, setCreatedErrorAlert] = useState(false);
+
+    // alert box timer
+    function alertTimer() {
+        setTimeout(alertFunc, 3000);
+    };
+
+    function alertFunc() {
+        setCreatedSuccessAlert(false);
+        setCreatedErrorAlert(false);
+    };
 
     // dropdown options
     const [bankDropdownOptions, setbankDropdownOptions] = useState([]);
@@ -199,12 +220,21 @@ export default function CreateSupplier() {
 
             console.log(submitData);
 
-            await axios.post(`${baseUrl}/api/supplier/`, submitData
-            )
+            await axios.post(`${baseUrl}/api/supplier/`, submitData,
+            {
+                headers: {
+                    authorization: 'Bearer ' + Token
+                }
+            })
             .then((res) => {
                 // console.log(res.data);
 
-                axios.get(`${baseUrl}/api/supplier/supplierid`)
+                axios.get(`${baseUrl}/api/supplier/supplierid`,
+                {
+                    headers: {
+                        authorization: 'Bearer ' + Token
+                    }
+                })
                 .then((res) => {
                     const supplierId = res.data[0].supplierID;
                     //console.log(supplierId);
@@ -212,35 +242,29 @@ export default function CreateSupplier() {
                     axios.post(`${baseUrl}/api/supplier/suppliersCategory`, {
                         fkSupplier_id: supplierId,
                         categoryIDs: selectedCategories.map((option) => option.value).join(',')
-                    });
+                    })
                 })
-
-                setSupplierCreated(true);
+                setCreatedSuccessAlert(true);
                 
+                // timer to reset to false
                 alertTimer();
-                setTimeout(() => { router.push("/Supplier") }, 3000);
 
-                // alert(res.data);
-                
+                // timer before redirect
+                setTimeout(() => {router.push('/Supplier')}, 3000);
+
                 // redirect back to main page
                 // router.push('/Supplier'); 
             })
             .catch((err) => {
                 console.log(err);
-                alert(err);
+
+                setCreatedErrorAlert(true);
+                // alert(err);
+
+                // timer to reset to false
+                alertTimer();
             });    
         }
-    };
-
-    // alert box
-    const [supplierCreated, setSupplierCreated] = useState(false);
-
-    function alertTimer() {
-        setTimeout(alertFunc, 3000);
-    };
-    
-    function alertFunc() {
-        setSupplierCreated(false);
     };
 
     return (
@@ -415,12 +439,20 @@ export default function CreateSupplier() {
                 </form>
             </div>
             
-            {supplierCreated &&
+            {createdSuccessAlert &&
                 <AlertBox
-                    Show={supplierCreated}
-                    Message={`Supplier ${supplierName} has been Created!`}
-                    Type={'success'}
+                    Show={createdSuccessAlert}
+                    Message={`Supplier is Succesfully Created!`}
+                    Type={"success"}
                     Redirect={`/Supplier`} 
+                />
+            }
+
+            {createdErrorAlert &&
+                <AlertBox
+                    Show={createdErrorAlert}
+                    Message={`Failed to Create Supplier`}
+                    Type={"danger"}
                 />
             }
         </>
