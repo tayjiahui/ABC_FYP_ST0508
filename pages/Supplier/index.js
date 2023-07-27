@@ -88,21 +88,21 @@ export default function Supplier({ suppliers }) {
 
     const filterItems = (term, selectedOptions) => {
         const filtered = suppliers.filter((item) => {
+            // search value checking
             const hasMatch = item.Category.toLowerCase().includes(term.toLowerCase()) ||
                             item.supplierName.toLowerCase().includes(term.toLowerCase()) ||
                             item.contactPersonName.toLowerCase().includes(term.toLowerCase());
 
-            if (selectedOptions.length === 0) {
-                return hasMatch;
-            } else {
+            if (selectedOptions.length === 0) { // no checkbox checked
+                return hasMatch; 
+            } 
+            else { // checkbox checked
                 return (
                     hasMatch &&
+                    // checked options checking with existing suppliers category
                     selectedOptions.every((selectedOptions) =>
                         item.Category.includes(selectedOptions)
                     )
-                    
-                    // item.Category &&
-                    // item.Category.some((categoryName) => selectedOptions.includes(categoryName))
                 );
             }
         });
@@ -162,16 +162,21 @@ export default function Supplier({ suppliers }) {
                                         <div className="row row-cols-2 mt-3">
                                             <div className="col">
                                                 {/* checkboxes */}
-                                                {category.map((checkbox) => (
-                                                    <label key={checkbox.categoryID}>
-                                                        <input
-                                                            type="checkbox"
-                                                            value={checkbox.categoryName}
-                                                            onChange={handleCheckboxChange}
-                                                            checked={checkedOptions.includes(checkbox.categoryName)}
-                                                        />
-                                                        {checkbox.categoryName}
-                                                    </label>
+                                                {category.map((option) => (
+                                                    <div key={option.categoryID} className={styles.checkboxItem}>
+                                                        <label>
+                                                            <span className="me-2">
+                                                                <input
+                                                                    id={option.categoryID}
+                                                                    type="checkbox"
+                                                                    value={option.categoryName}
+                                                                    onChange={handleCheckboxChange}
+                                                                    checked={checkedOptions.includes(option.categoryName)}
+                                                                /> 
+                                                            </span>
+                                                            {option.categoryName}
+                                                        </label>  
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
