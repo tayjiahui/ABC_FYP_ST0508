@@ -13,9 +13,6 @@ import AlertBox from "../../components/alert";
 
 // Image
 import arrowIcon from "../../public/arrowIcon.svg";
-import pendingCircle from "../../public/yellowPendingCircle.svg";
-import approvedCircle from "../../public/greenApprovedCircle.svg";
-import rejectedCircle from "../../public/redRejectedCircle.svg";
 import nextArrow from "../../public/rightArrowWhite.svg";
 import addLocIcon from "../../public/addLocationIcon.svg";
 import addIcon from "../../public/plusIcon.svg";

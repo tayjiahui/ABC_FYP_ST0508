@@ -12,13 +12,6 @@ import WIP from '../../../components/WIP';
 
 // Image
 import arrowIcon from "../../../public/arrowIcon.svg";
-import pendingCircle from "../../../public/yellowPendingCircle.svg";
-import approvedCircle from "../../../public/greenApprovedCircle.svg";
-import rejectedCircle from "../../../public/redRejectedCircle.svg";
-import nextArrow from "../../../public/rightArrowWhite.svg";
-import addLocIcon from "../../../public/addLocationIcon.svg";
-import addIcon from "../../../public/plusIcon.svg";
-import xIcon from "../../../public/xIcon.svg";
 
 // Base urls
 const URL = [];
@@ -58,15 +51,11 @@ export async function getServerSideProps(context) {
 
     const { params } = context;
     const { poID } = params;
-    console.log(params);
-    console.log(poID);
 
     // Normal View PR by ID page
     const getAdHocDetails = await fetch(`${backBaseURL}/api/purchaseReq/adhoc/viewBy/${poID}`);
 
     const adHocDetails = await getAdHocDetails.json();
-
-    console.log(adHocDetails);
 
     return {
         props: {
@@ -81,7 +70,6 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
     // Dates
     const [ReqDate, setReqDate] = useState();
-    const [TargetDeliveryDate, setTargetDate] = useState();
 
     const [showInProg, setInProg] = useState(false);
 
@@ -91,18 +79,13 @@ export default function ViewAdHoc({ AdHocDetails }) {
     const [showModal2, setShowModal2] = useState(false);
     const [PDF, setPDF] = useState([]);
 
-
-    console.log("1dcsvfsv", AdHocDetails[0]);
-
     const AH = AdHocDetails[0];
     const poID = AdHocDetails[0].prID;
 
     useEffect(() => {
-
         // Requested Date formatting
         const newReqDateFormat = moment(AH.requestedDate).format("DD MMM YYYY");
         setReqDate(newReqDateFormat);
-
     }, []);
 
 
@@ -150,9 +133,9 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
     //uploading invoice
     const handleFileUpload = async (e) => {
-        const file = e.target.files[0]
-        setSelectedFile(file)
-    }
+        const file = e.target.files[0];
+        setSelectedFile(file);
+    };
 
     const handleUpload = async () => {
         if (selectedFile) {
@@ -171,30 +154,29 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 .catch((err) => {
                     console.log("Error uploading Invoice", err);
                 })
-        }
-    }
+        };
+    };
 
     const handleCloseModal = () => {
         setShowModal(false);
-    }
+    };
 
     const handleOpenModal2 = () => {
         setShowModal2(true);
-    }
+    };
 
     const handleCloseModal2 = () => {
         setShowModal2(false);
-    }
+    };
 
     const handleConfirmUpload = () => {
         setShowModal(false);
         setShowModal2(true);
-    }
+    };
 
     const handleOpenModal = () => {
         setShowModal(true);
-    }
-
+    };
 
     return (
         <div>
