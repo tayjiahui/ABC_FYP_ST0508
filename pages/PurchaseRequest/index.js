@@ -1792,7 +1792,7 @@ export default function PurchaseRequest() {
         </div>
       </div>
 
-      <div className={styles.prData}>
+      <div className="overflow-scroll w-100 h-75 position-absolute">
         {PRResults}
       </div>
 
