@@ -78,9 +78,9 @@
     padding: 0 30px 0 30px;
 }
 
-/* .prData{
-    padding-top: 150px;
-} */
+.prData{
+    height: 80%;
+}
 
 .tableNo {
     margin-left: 20px;
