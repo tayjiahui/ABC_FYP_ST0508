@@ -120,6 +120,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const poID = POID;
 
   const [id, setUserID] = useState();
+  const [Token, setToken] = useState();
 
   const [RequestDate, setTargetDate] = useState();
 
@@ -159,6 +160,10 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
     // set user id taken from localstorage
     const userID = parseInt(localStorage.getItem("ID"), 10);
     setUserID(userID);
+
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
   }, [])
 
   // runs only when QtyReceivedList is updated
@@ -218,6 +223,11 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
                 itemId: origQTY.id,
                 newValue: editQTY.qtyReceived,
                 oldValue: origQTY.qtyReceived
+              },
+              {
+                headers: {
+                  authorization: 'Bearer ' + Token
+                }
               }
             )
               .then((response) => {
@@ -371,6 +381,11 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             itemId: poID,
             newValue: selectedValue,
             oldValue: OGStatus
+          },
+          {
+            headers: {
+              authorization: 'Bearer ' + Token
+            }
           }
         )
           .then((response) => {
