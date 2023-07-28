@@ -378,6 +378,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 itemId: POID,
                 newValue: ID,
                 oldValue: ogPaymentStatus
+              },
+              {
+                headers: {
+                  authorization: 'Bearer ' + Token
+                }
               }
             )
               .then((response) => {
