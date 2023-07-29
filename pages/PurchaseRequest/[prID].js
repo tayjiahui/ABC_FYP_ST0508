@@ -16,6 +16,7 @@ import arrowIcon from "../../public/arrowIcon.svg";
 import nextArrow from "../../public/rightArrowWhite.svg";
 import addLocIcon from "../../public/addLocationIcon.svg";
 import addIcon from "../../public/plusIcon.svg";
+import xIcon from "../../public/xIcon.svg";
 
 // Base urls
 const URL = [];
