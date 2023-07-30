@@ -1,5 +1,5 @@
 // this is the homepage
-// import Link from 'next/link';
+import { useSession } from "next-auth/react";
 
 import BarChart from '../components/barchart';
 import PrAmt from '../components/prAmt';
@@ -21,7 +21,6 @@ function isLocalhost (){
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
             console.log(URL);
         };
-
         return URL;
     };
 };
@@ -32,12 +31,12 @@ const baseUrl = URL[0];
 
 //----------------------function name has to be uppercase
 export default function Home() {
+    const { data: session, status } = useSession();
 
     return (
         <div>
             <h1 className="ms-5 mb-5">Dashboard</h1>
             <div className="d-flex">
-
                 <div className="col-sm square rounded p-3 text-center ms-5 pt-4" style={{ backgroundColor: '#C0D8F7' }}>
                     <h5>Number of Purchase Request as of date:</h5>
                     <h1 className="fw-bolder pt-2"><PrAmt /></h1>
