@@ -34,8 +34,7 @@ function isLocalhost() {
         "https://abc-cooking-studio.azurewebsites.net"
       );
       console.log(URL);
-    }
-
+    };
     return URL;
   };
 };
@@ -266,6 +265,7 @@ export default function ViewPR({
   // Alert Box
   const [ApprovedAlert, setApprAlert] = useState(false);
   const [DeniedAlert, setDeniedAlert] = useState(false);
+  const [ConvertPRAlert, setConvertPRAlert] = useState(false);
   const [ReappealAlert, setReappealAlert] = useState(false);
 
   // PR Details
@@ -458,6 +458,7 @@ export default function ViewPR({
     // list of alerts useStates in your page
     setApprAlert(false);
     setDeniedAlert(false);
+    setConvertPRAlert(false);
     setReappealAlert(false);
   };
 
@@ -527,6 +528,7 @@ export default function ViewPR({
     await axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
       {
         prID: prID,
+        totalPrice: Total
       },
       {
         headers: {
@@ -536,10 +538,13 @@ export default function ViewPR({
     )
       .then((response) => {
         // console.log(response);
-        alert(response.data);
 
-        // redirect to track PO
-        router.push(`/TrackOrder/${prID}`);
+        setConvertPRAlert(true);
+        // timer to reset to false
+        alertTimer();
+
+        // set timer before redirect  // redirect to PO
+        setTimeout(() => { router.push(`/TrackOrder/${prID}`) }, 3000);
       })
       .catch((err) => {
         console.log(err);
@@ -1507,6 +1512,15 @@ export default function ViewPR({
           Message={`Purchase Request #${prID} has been Denied!`}
           Type={'warning'}
           Redirect={'/PurchaseRequest'} />
+      }
+
+      {
+        ConvertPRAlert &&
+        <AlertBox
+          Show={ConvertPRAlert}
+          Message={`Purchase Order #${prID} Created!`}
+          Type={'success'}
+          Redirect={`/TrackOrder/${prID}`} />
       }
 
       {
