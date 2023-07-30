@@ -18,7 +18,13 @@ export default function NavBar() {
 
     console.log({session})
 
+    // insert data into localStorage
     useEffect(() => {
+        // ? after removing development login
+        // if(!session){
+        //     router.push('/login');
+        // };
+
         if (status === 'authenticated' && session) {
             const userD = session.userDetails
             // TODO validate if userD is Null
@@ -35,7 +41,7 @@ export default function NavBar() {
         setUserName(username);
 
         // !status may be undefined not caught
-    }, [status, session])
+    }, [status, session]);
 
     return (
         <div>
@@ -53,7 +59,7 @@ export default function NavBar() {
                             </a>
                         </li>
                         <li>
-                            <Link className={router.pathname == "/" ? "active" : ""} href="/Home">Home</Link>
+                            <Link className={router.pathname == "/Home" ? "active" : ""} href="/Home">Home</Link>
                         </li>
                         <li>
                             <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
