@@ -6,13 +6,15 @@ import { SessionProvider } from "next-auth/react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/global.css";
 
-import NavBar from "../components/navbar.js"
+// components
+import NavBar from "../components/navbar";
+import AdminNavBar from "../components/adminNavBar";
 
 export default function App({
-    Component, 
-    pageProps: { session, ...pageProps}, 
+    Component,
+    pageProps: { session, ...pageProps },
     ...appProps
-}){
+}) {
 
     useEffect(() => {
         require("bootstrap/dist/js/bootstrap.bundle.min.js");
@@ -21,20 +23,31 @@ export default function App({
     const getContent = () => {
         const noNavbar = [`/`, `/Login`, `/Unathorised`, `/fakeLogin`];
 
-        if(noNavbar.includes(appProps.router.pathname))
+        if (noNavbar.includes(appProps.router.pathname)) {
             return <Component {...pageProps} />;
+        };
         
+        // admin page navbar
+        if (appProps.router.pathname.includes('/Admin')) {
+            return (
+                <>
+                    <AdminNavBar />
+                    <Component {...pageProps} />
+                </>
+            );
+        };
+
         return (
             <>
-                <NavBar/>
+                <NavBar />
                 <Component {...pageProps} />
             </>
         );
     };
 
-    return(
+    return (
         <SessionProvider session={session}>
-           {getContent()}
+            {getContent()}
         </SessionProvider>
     )
 }
