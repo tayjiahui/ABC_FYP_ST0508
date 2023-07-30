@@ -1,26 +1,29 @@
 // login page
+import { useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
+import { useRouter } from 'next/router';
 
 import styles from '../styles/login.module.css';
 
 export default function Login() {
+    const router = useRouter();
     const { data: session, status, update } = useSession();
     console.log({ session, status, update });
 
-    // from session
-    // {
-    //     user: {
-    //       name: string,
-    //       email: string,
-    //       image: uri
-    //     },
-    //     accessToken: string,
-    //     expires: "YYYY-MM-DDTHH:mm:ss.SSSZ"
-    //   }
+    useEffect(() => {
+        if(!session){
+            router.push('/Login');
+        }
+        else if(session.userDetails.role === 5){
+            router.push('/Admin/Home');
+        } else {
+            router.push('/Home');
+        };
+    }, [session])
 
     const login = () => {
         // signIn("keycloak", { callbackUrl: "/Home" })
-        signIn("keycloak", { callbackUrl: "/Home" })
+        signIn("keycloak");
     };
 
     return (
