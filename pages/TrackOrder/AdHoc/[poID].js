@@ -9,16 +9,12 @@ import styles from '../../../styles/adHocByID.module.css';
 
 // components
 import WIP from '../../../components/WIP';
+import AlertBox from "../../../components/alert";
 
 // Image
 import arrowIcon from "../../../public/arrowIcon.svg";
-import pendingCircle from "../../../public/yellowPendingCircle.svg";
-import approvedCircle from "../../../public/greenApprovedCircle.svg";
-import rejectedCircle from "../../../public/redRejectedCircle.svg";
-import nextArrow from "../../../public/rightArrowWhite.svg";
-import addLocIcon from "../../../public/addLocationIcon.svg";
-import addIcon from "../../../public/plusIcon.svg";
-import xIcon from "../../../public/xIcon.svg";
+import editIcon from "../../../public/penIcon.svg";
+import cancelEditIcon from "../../../public/cancelPenIcon.svg";
 
 // Base urls
 const URL = [];
@@ -43,10 +39,9 @@ isLocalhost();
 
 const baseUrl = URL[0];
 
-
 export async function getServerSideProps(context) {
     const host = context.req.headers.host;
-    console.log(host);
+    // console.log(host);
 
     const backBaseURL = [];
 
@@ -58,15 +53,11 @@ export async function getServerSideProps(context) {
 
     const { params } = context;
     const { poID } = params;
-    console.log(params);
-    console.log(poID);
 
     // Normal View PR by ID page
     const getAdHocDetails = await fetch(`${backBaseURL}/api/purchaseReq/adhoc/viewBy/${poID}`);
 
     const adHocDetails = await getAdHocDetails.json();
-
-    console.log(adHocDetails);
 
     return {
         props: {
@@ -78,10 +69,11 @@ export async function getServerSideProps(context) {
 };
 
 export default function ViewAdHoc({ AdHocDetails }) {
-
     // Dates
     const [ReqDate, setReqDate] = useState();
-    const [TargetDeliveryDate, setTargetDate] = useState();
+    const [haveTotalPrice, setHaveTotalPrice] = useState(false);
+    const [adHocPrice, setAdHocPrice] = useState();
+    const [editTotal, setEditTotal] = useState(false);
 
     const [showInProg, setInProg] = useState(false);
 
@@ -91,20 +83,75 @@ export default function ViewAdHoc({ AdHocDetails }) {
     const [showModal2, setShowModal2] = useState(false);
     const [PDF, setPDF] = useState([]);
 
-
-    console.log("1dcsvfsv", AdHocDetails[0]);
+    // Alerts
+    const [updateTPAlert, setTPAlert] = useState(false);
 
     const AH = AdHocDetails[0];
     const poID = AdHocDetails[0].prID;
 
     useEffect(() => {
-
         // Requested Date formatting
         const newReqDateFormat = moment(AH.requestedDate).format("DD MMM YYYY");
         setReqDate(newReqDateFormat);
 
+        // set if totalPrice is not 0.00
+        if (AH.totalPrice > 0) {
+            setHaveTotalPrice(true);
+            setAdHocPrice(AH.totalPrice);
+        } else {
+            setEditTotal(true);
+        };
     }, []);
 
+    // edit total price toggle
+    const totalPriceEdit = async () => {
+        setHaveTotalPrice(true);
+
+        // converts decimal to 2 d.p.
+        const totalPriceValue = parseFloat(adHocPrice).toFixed(2);
+        setAdHocPrice(totalPriceValue);
+
+        if (editTotal === false) {
+            setEditTotal(true);
+        };
+
+        if (editTotal === true) {
+            setEditTotal(false);
+            // ! OTHER STUFF FOR UPDATE
+            await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/totalPrice/${poID}`,
+                {
+                    totalPrice: totalPriceValue
+                }
+            )
+                .then((response) => {
+                    console.log(response);
+
+                    setTPAlert(true);
+                    alertTimer();
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        };
+    };
+
+    const handleTotalChange = async (e) => {
+        const inputValue = e.target.value;
+
+        // does not allow input value to be alphabets
+        setAdHocPrice(inputValue.replace(/[^0-9.]/g, ''));
+    };
+
+    // alert box timer
+    function alertTimer() {
+        // changes all alert useStates to false after 3s
+        setTimeout(alertFunc, 3000);
+    };
+
+    function alertFunc() {
+        // list of alerts useStates in your page
+        setTPAlert(false);
+    };
 
     // WIP Modal
     // timer
@@ -150,9 +197,9 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
     //uploading invoice
     const handleFileUpload = async (e) => {
-        const file = e.target.files[0]
-        setSelectedFile(file)
-    }
+        const file = e.target.files[0];
+        setSelectedFile(file);
+    };
 
     const handleUpload = async () => {
         if (selectedFile) {
@@ -171,30 +218,29 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 .catch((err) => {
                     console.log("Error uploading Invoice", err);
                 })
-        }
-    }
+        };
+    };
 
     const handleCloseModal = () => {
         setShowModal(false);
-    }
+    };
 
     const handleOpenModal2 = () => {
         setShowModal2(true);
-    }
+    };
 
     const handleCloseModal2 = () => {
         setShowModal2(false);
-    }
+    };
 
     const handleConfirmUpload = () => {
         setShowModal(false);
         setShowModal2(true);
-    }
+    };
 
     const handleOpenModal = () => {
         setShowModal(true);
-    }
-
+    };
 
     return (
         <div>
@@ -227,6 +273,37 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 <div className="py-4">
                     <h4>Description</h4>
                     <p>{AH.remarks}</p>
+                </div>
+
+                <div className="py-4">
+                    <div className="d-flex">
+                        <h4>Total Purchase Price</h4>
+                        <div className="px-3">
+                            <button onClick={totalPriceEdit} className="btn p-0">
+                                {
+                                    editTotal === false &&
+                                    <Image src={editIcon} width={23} height={23} alt="Edit Pen Icon" />
+                                }
+                                {
+                                    editTotal === true &&
+                                    <Image src={cancelEditIcon} width={23} height={23} alt="Canceled Edit Pen Icon" />
+                                }
+                            </button>
+                        </div>
+                    </div>
+
+                    {
+                        haveTotalPrice === true && editTotal === false &&
+                        <p>${adHocPrice}</p>
+                    }
+
+                    {
+                        editTotal &&
+                        <div>
+                            $<input type="text" value={adHocPrice} onChange={(e) => handleTotalChange(e)} placeholder="0.00" className="px-2" />
+                        </div>
+                    }
+
                 </div>
             </div>
 
@@ -307,6 +384,17 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     </div>
                 </div>
             )}
+
+
+            {/* {Alerts} */}
+            {
+                updateTPAlert &&
+                <AlertBox
+                    Show={updateTPAlert}
+                    Message={`Total Purchase Price Updated!`}
+                    Type={'success'}
+                    Redirect={``} />
+            }
         </div>
     );
 };

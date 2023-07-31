@@ -10,7 +10,7 @@ import logo from "../public/client_logo.png";
 import profPic from "../public/prof_pic.png";
 
 
-export default function NavBar() {
+export default function AdminNavBar() {
     const { data: session, status } = useSession();
     const router = useRouter();
 
@@ -59,19 +59,10 @@ export default function NavBar() {
                             </a>
                         </li>
                         <li>
-                            <Link className={router.pathname == "/Home" ? "active" : ""} href="/Home">Home</Link>
+                            <Link className={router.pathname == "/Admin/Home" ? "active" : ""} href="/Admin/Home">Home</Link>
                         </li>
                         <li>
-                            <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
-                        </li>
-                        <li>
-                            <Link className={router.pathname == "/TrackOrder" ? "active" : ""} href="/TrackOrder">Track Order</Link>
-                        </li>
-                        <li>
-                            <Link className={router.pathname == "/TrackPayment" ? "active" : ""} href="/PurchaseOrder">Track Payment</Link>
-                        </li>
-                        <li>
-                            <Link className={router.pathname == "/Supplier" ? "active" : ""} href="/Supplier">Supplier</Link>
+                            <Link className={router.pathname == "/Admin/Users" ? "active" : ""} href="/Admin/Users">Users</Link>
                         </li>
                     </ul>
                     <ul className="navbar-right">
@@ -81,7 +72,6 @@ export default function NavBar() {
                             </a>
                         </li>
                         <li className='py-3'>
-                            {/* <h3 id="username">{session.user.name}</h3> */}
                             <h5 id="username">{userName}</h5>
                         </li>
                     </ul>

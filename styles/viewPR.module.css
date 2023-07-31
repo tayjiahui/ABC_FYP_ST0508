@@ -131,6 +131,18 @@
     background-color: #486284;
 }
 
+.ackButton {
+    background-color: #486284;
+    color: white;
+    font-size: 15px;
+    font-family: "Plus Jakarta Sans";
+    width: 200px;
+    height: 40px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
 .denyButton,
 .approveButton,
 .createPOButton,

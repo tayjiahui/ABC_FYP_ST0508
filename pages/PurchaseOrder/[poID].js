@@ -95,6 +95,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const poID = router.query.poID; //in db is prID
   const [POID, setActualPOID] = useState();
   const [id, setUserID] = useState();
+  const [Token, setToken] = useState();
   const [selectedStatus, setSelectedStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
@@ -118,6 +119,10 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
     // set user id taken from localstorage
     const userID = parseInt(localStorage.getItem("ID"), 10);
     setUserID(userID);
+
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
   }, [])
 
   //saving paymentstatus, need to get ID from status first. 
@@ -378,6 +383,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
                 itemId: POID,
                 newValue: ID,
                 oldValue: ogPaymentStatus
+              },
+              {
+                headers: {
+                  authorization: 'Bearer ' + Token
+                }
               }
             )
               .then((response) => {

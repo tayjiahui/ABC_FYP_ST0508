@@ -130,12 +130,13 @@ function PRRow(props) {
 
   return (
     <div className="py-1">
-      <a href={baseURL + "/PurchaseRequest/" + props.prID}>
-        <button className={styles.prButton}>
-          {props.RoleID === 2 &&
-            <div>
-              {
-                isAdHoc === false &&
+      {/* PURCHASER */}
+      {props.RoleID === 2 &&
+        <div>
+          {
+            isAdHoc === false &&
+            <a href={baseURL + "/PurchaseRequest/" + props.prID}>
+              <button className={styles.prButton}>
                 <div className={styles.prRow}>
                   {/* <h1>dadf</h1> */}
                   <div className="pt-2 row">
@@ -303,10 +304,14 @@ function PRRow(props) {
 
 
                 </div>
-              }
+              </button>
+            </a>
+          }
 
-              {
-                isAdHoc === true &&
+          {
+            isAdHoc === true &&
+            <a href={baseURL + "/PurchaseRequest/AdHoc/" + props.prID}>
+              <button className={styles.prButton}>
                 <div className={styles.ahRow}>
                   <div className="pt-2 row">
                     <div className={styles.prTextRow}>
@@ -472,14 +477,19 @@ function PRRow(props) {
                   }
 
                 </div>
-              }
-            </div>
+              </button>
+            </a>
           }
+        </div>
+      }
 
-          {props.RoleID === 1 &&
-            <div>
-              {
-                isAdHoc === false &&
+      {/* APPROVERS */}
+      {props.RoleID === 1 &&
+        <div>
+          {
+            isAdHoc === false &&
+            <a href={baseURL + "/PurchaseRequest/" + props.prID}>
+              <button className={styles.prButton}>
                 <div className={styles.prRow}>
                   <div className="pt-2 row">
                     <div className={styles.prTextRow}>
@@ -648,10 +658,14 @@ function PRRow(props) {
                     )
                   }
                 </div>
-              }
+              </button>
+            </a>
+          }
 
-              {
-                isAdHoc === true &&
+          {
+            isAdHoc === true &&
+            <a href={baseURL + "/PurchaseRequest/AdHoc/" + props.prID}>
+              <button className={styles.prButton}>
                 <div className={styles.ahRow}>
                   <div className="pt-2 row">
                     <div className={styles.prTextRow}>
@@ -820,11 +834,11 @@ function PRRow(props) {
                     )
                   }
                 </div>
-              }
-            </div>
+              </button>
+            </a>
           }
-        </button>
-      </a>
+        </div>
+      }
     </div>
   );
 };
