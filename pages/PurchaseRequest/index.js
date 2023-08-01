@@ -87,6 +87,8 @@ function Icon(props) {
 function PRRow(props) {
   const statusID = props.StatusID;
 
+  const [ROLE, setROLE] =useState(props.RoleID);
+
   const [isAdHoc, setIsAdHoc] = useState(false);
 
   const [showPL, setShowPL] = useState(false);
@@ -96,6 +98,10 @@ function PRRow(props) {
   const circle = circleTest(statusID);
 
   useEffect(() => {
+    if(props.RoleID === 3){
+      setROLE(1);
+    };
+
     if (props.PTypeID === 2) {
       setIsAdHoc(true);
     };
@@ -131,7 +137,7 @@ function PRRow(props) {
   return (
     <div className="py-1">
       {/* PURCHASER */}
-      {props.RoleID === 2 &&
+      {ROLE === 2 &&
         <div>
           {
             isAdHoc === false &&
@@ -484,7 +490,7 @@ function PRRow(props) {
       }
 
       {/* APPROVERS */}
-      {props.RoleID === 1 &&
+      {ROLE === 1 &&
         <div>
           {
             isAdHoc === false &&
@@ -1107,9 +1113,6 @@ export default function PurchaseRequest() {
   const [byRemarks, setByRemarks] = useState(true);
   const [byPRStatus, setByPRStatus] = useState(true);
 
-  // in progress modal
-  const [showInProg, setInProg] = useState(false);
-
   // show all PR
   useEffect(() => {
     // set user id taken from localstorage
@@ -1118,7 +1121,12 @@ export default function PurchaseRequest() {
 
     // set user role
     const roleID = parseInt(localStorage.getItem("roleID"), 10);
-    setRoleID(roleID);
+    // filter out approver roles & finance to be under approvers
+    if (roleID === 3) {
+      setRoleID(1);
+    } else {
+      setRoleID(roleID);
+    };
 
     // set user token
     const token = localStorage.getItem("token");
@@ -1210,7 +1218,7 @@ export default function PurchaseRequest() {
         });
     }
     // Approver View
-    else if (roleID === 1) {
+    else if (roleID === 1 || roleID === 3) {
       // setting default filter view
       setViewType(true);
 
