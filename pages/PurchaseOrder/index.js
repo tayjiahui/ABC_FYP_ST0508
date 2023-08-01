@@ -113,7 +113,7 @@ export default function TrackPayment({ purchaseOrder }) {
           <Link key={index} href={baseURL + '/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark"  >
             <div className={`row py-4 border-bottom mb-2 ${styles['hover-box-shadow']}`} style={{ backgroundColor: '#C0D8F7', borderRadius: '15px', height: '85px'}}>
               <div className="col">#{po.prID}</div>
-              <div className="col">{moment(po.requestDate).format('DD MMM YYYY')}</div>
+              <div className="col">{moment(po.requestDate).format('D MMM YYYY')}</div>
               <div className="col">${Number(po.Price).toFixed(2)}</div>
               <div className="col">{po.paymentMode}</div>
               <div className="col">{po.supplierName}</div>

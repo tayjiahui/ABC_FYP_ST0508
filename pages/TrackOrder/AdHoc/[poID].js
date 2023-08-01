@@ -91,7 +91,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
     useEffect(() => {
         // Requested Date formatting
-        const newReqDateFormat = moment(AH.requestedDate).format("DD MMM YYYY");
+        const newReqDateFormat = moment(AH.requestedDate).format("D MMM YYYY");
         setReqDate(newReqDateFormat);
 
         // set if totalPrice is not 0.00

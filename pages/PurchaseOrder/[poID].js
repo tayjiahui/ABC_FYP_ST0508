@@ -547,7 +547,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             <div className="row">
               <div className="col-3">
                 <b>Date of Request:</b> <br />
-                {moment(remarkDetail[0].requestDate).format('DD MMM YYYY')}
+                {moment(remarkDetail[0].requestDate).format('D MMM YYYY')}
               </div>
               <div className="col-3">
                 <b>Name of Purchaser:</b> <br />

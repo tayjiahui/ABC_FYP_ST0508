@@ -108,7 +108,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
         };
 
         // Requested Date formatting
-        const newReqDateFormat = moment(AH.requestedDate).format("DD MMM YYYY");
+        const newReqDateFormat = moment(AH.requestedDate).format("D MMM YYYY");
         setReqDate(newReqDateFormat);
 
         // Test for status Circle
