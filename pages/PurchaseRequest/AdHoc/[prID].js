@@ -143,7 +143,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
         await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
             {
                 comments: ApprComment,
-                prStatusID: 2,
+                prStatusID: 4,
                 apprUserID: id,
             },
             {
