@@ -51,7 +51,6 @@ export default function AlertBox(props) {
             </div>
           </div>
         </div>
-
       }
     </>
   )
