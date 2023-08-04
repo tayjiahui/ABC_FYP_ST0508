@@ -24,13 +24,11 @@ function isLocalhost() {
         if (hostname == 'localhost') {
             URL.push('http://localhost:3000', 'http://localhost:5000');
             console.log(URL);
-
         }
         else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
             URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
             console.log(URL);
         };
-
         return URL;
     };
 };
@@ -213,7 +211,7 @@ export default function AuditLogs() {
             <div className="overflow-scroll w-100 h-75 position-absolute">
                 {
                     AuditLogsList.map((item, index) => {
-                        return <div>
+                        return <div key={index}>
                             <AuditRow
                                 AuditLogData={item}
                             />
