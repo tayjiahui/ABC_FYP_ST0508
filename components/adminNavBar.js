@@ -64,6 +64,12 @@ export default function AdminNavBar() {
                         <li>
                             <Link className={router.pathname == "/Admin/Users" ? "active" : ""} href="/Admin/Users">Users</Link>
                         </li>
+                        <li>
+                            <Link className={router.pathname == "/Admin/Transactions" ? "active" : ""} href="/Admin/Transactions">Transactions</Link>
+                        </li>
+                        <li>
+                            <Link className={router.pathname == "/Admin/AuditLogs" ? "active" : ""} href="/Admin/AuditLogs">Audit Logs</Link>
+                        </li>
                     </ul>
                     <ul className="navbar-right">
                         <li id="profPicImage" className='py-1'>
