@@ -73,7 +73,7 @@ export default function AdminNavBar() {
                     </ul>
                     <ul className="navbar-right">
                         <li id="profPicImage" className='py-1'>
-                            <a href='/Profile'>
+                            <a href='/Admin/Profile'>
                                 <Image src={profPic} alt='Profile Picture' width={50} height={50} />
                             </a>
                         </li>
