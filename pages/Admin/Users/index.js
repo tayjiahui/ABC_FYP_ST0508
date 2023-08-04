@@ -39,7 +39,7 @@ isLocalhost();
 
 const baseUrl = URL[0];
 
-// Each PR Row
+// Each User Row
 function UserRow(props) {
     // const statusID = props.StatusID;
     const [Token, setToken] = useState();
@@ -255,8 +255,8 @@ export default function Users() {
             })
             .catch((err) => {
                 console.log(err);
-            })
-    }, [])
+            });
+    }, []);
 
     return (
         <div>
