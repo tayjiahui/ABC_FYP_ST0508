@@ -150,7 +150,8 @@ export default function viewSupplier({ supplierDetails }) {
         phoneNum: supplierDetail.phoneNum,
         address: supplierDetail.address,
         bankID: supplierDetail.bankID,
-        bankAccountNum: supplierDetail.bankAccountNum
+        bankAccountNum: supplierDetail.bankAccountNum,
+        MOQ: supplierDetail.MOQ
     });
 
     // update form states
@@ -470,9 +471,6 @@ export default function viewSupplier({ supplierDetails }) {
                             />
                         }
                         <br></br>
-                    </div>
-
-                    <div className="col-5" style={{fontSize:"large"}}>
 
                         <b>Contact Person</b><br></br>
                         {editSupplier === false &&
@@ -489,6 +487,11 @@ export default function viewSupplier({ supplierDetails }) {
                             />
                         }
                         <br></br>
+                    </div>
+
+                    <div className="col-5" style={{ fontSize: "large" }}>
+
+
 
                         <b>Phone Number</b><br></br>
                         {editSupplier === false &&
@@ -557,6 +560,38 @@ export default function viewSupplier({ supplierDetails }) {
                             />
                         }
                         <br></br>
+
+                        <b>Minimum Order Quantity</b><br></br>
+                        {editSupplier === false &&
+                            <p>${supplierDetail.MOQ}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input
+                                type="text"
+                                name="MOQ"
+                                value={updatedFormData.MOQ || formData.MOQ}
+                                onChange={handleInput}
+                                className={styles.editInputs}
+                                pattern="[0-9]+" 
+                            />
+                        }
+                        <br></br>
+
+                        <b>Delivery Time Line</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.deliveryTimeLine} Days</p>
+                        }
+                        {editSupplier === true &&
+                            <input
+                                type="text"
+                                name="deliveryTimeLine"
+                                value={updatedFormData.deliveryTimeLine || formData.deliveryTimeLine}
+                                onChange={handleInput}
+                                className={styles.editInputs}
+                                pattern="[0-9]+"
+                            />
+                        }
 
                     </div>
 
