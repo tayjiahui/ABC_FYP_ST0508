@@ -197,7 +197,7 @@ function UserRow(props) {
                         <div className="row pt-1">
                             <div className="col-sm-1"></div>
                             <div className="col-sm-10">
-                                <h2 className={styles.newStatusText}>Search Filters</h2>
+                                <h2 className={styles.newStatusText}>Create New Role</h2>
                             </div>
 
                             <div className="col-sm-1">
