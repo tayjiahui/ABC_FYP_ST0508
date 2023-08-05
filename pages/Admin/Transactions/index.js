@@ -12,7 +12,7 @@ import styles from "../../../styles/auditLog.module.css";
 import AlertBox from "../../../components/alert";
 
 // Images 
-import leftArrowIcon from "../../../public/leftArrow.svg"
+import xIcon from "../../../public/xIcon.svg";
 
 // Base urls
 const URL = [];
@@ -192,6 +192,16 @@ export default function Transactions() {
 
     const [Token, setToken] = useState();
 
+    // Transaction Report Pop Up
+    const [ReportPopUp, setReportPopUp] = useState(false);
+
+    // Generate Transaction Report
+    const [CustomForm, setCustomForm] = useState(false);
+    const [StartDate, setStartDate] = useState();
+    const [EndDate, setEndDate] = useState();
+    const [ExcelFile, setExcelFile] = useState(true);
+    const [CSVFile, setCSVFile] = useState(false);
+
     const [TransactionsList, setTransactionsList] = useState([<div>Loading...</div>]);
 
     useEffect(() => {
@@ -229,6 +239,33 @@ export default function Transactions() {
 
     }, []);
 
+    // check if date inputs are filled
+    useEffect(() => {
+        if (StartDate && EndDate) {
+            setCustomForm(true);
+        } else {
+            setCustomForm(false);
+        };
+    }, [StartDate, EndDate]);
+
+    const handleReportForm = () => {
+        setReportPopUp(true);
+    };
+
+    const handleReportPopUpClose = () => {
+        setReportPopUp(false);
+    };
+
+    const handlFileType = async (e) => {
+        if (e.target.value === 'Excel') {
+            setExcelFile(true);
+            setCSVFile(false);
+        } else {
+            setExcelFile(false);
+            setCSVFile(true);
+        };
+    };
+
     return (
         <div>
             <div className="px-5">
@@ -236,7 +273,7 @@ export default function Transactions() {
             </div>
 
             <div className="px-5 pt-3">
-                <button className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
+                <button onClick={handleReportForm} className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
                     <div className="px-2">Get Report</div>
                 </button>
             </div>
@@ -259,6 +296,74 @@ export default function Transactions() {
             <div className="overflow-scroll w-100 h-75 position-absolute">
                 {TransactionsList}
             </div>
+
+            {
+                ReportPopUp &&
+                <div className={styles.newStatusBox}>
+                    <div className={styles.newStatus}>
+                        <div className="row pt-1">
+                            <div className="col-sm-1"></div>
+                            <div className="col-sm-10">
+                                <h2 className={styles.newStatusText}>Custom Report</h2>
+                            </div>
+
+                            <div className="col-sm-1">
+                                <button onClick={handleReportPopUpClose} className="btn">
+                                    <Image src={xIcon} width={35} height={35} alt="Cancel" />
+                                </button>
+                            </div>
+                        </div>
+                        <form className="ps-4 py-3">
+                            <div className="py-3">
+                                <label className="pe-2">Start Date:</label>
+                                <input type="date" onChange={e => setStartDate(e.target.value)} className="px-1 rounded border-1" required />
+                            </div>
+
+                            <div className="py-3">
+                                <label className="pe-2">End Date:</label>
+                                <input type="date" onChange={e => setEndDate(e.target.value)} className="px-1 rounded border-1" required />
+                            </div>
+
+                            <div className="py-3">
+                                <label className="pe-2">File Type:</label>
+                                <select onChange={handlFileType} className="px-5 rounded" required >
+                                    <option selected="selected">Excel</option>
+                                    <option>CSV</option>
+                                </select>
+                            </div>
+
+                            <div className="pb-2 pt-4">
+                                {
+                                    CustomForm ? (
+                                        <>
+                                            {
+                                                ExcelFile && (
+                                                    <a href={baseUrl + `/api/xlsx/excel/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
+                                                        <button type="button" className="btn btn-dark">
+                                                            Generate Report
+                                                        </button>
+                                                    </a>
+                                                )}
+                                            {
+                                                CSVFile &&
+                                                <a href={baseUrl + `/api/xlsx/csv/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
+                                                    <button type="button" className="btn btn-dark">
+                                                        Generate Report
+                                                    </button>
+                                                </a>
+                                            }
+                                        </>
+                                    ) : (
+                                        <button type="submit" className="btn btn-dark">
+                                            Generate Report
+                                        </button>
+                                    )
+                                }
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            }
         </div>
     );
 };
