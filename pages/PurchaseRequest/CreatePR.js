@@ -127,6 +127,9 @@ export default function CreatePR({ from }) {
   const [CreatedPRAlert, setCreatedPRAlert] = useState(false);
   const [CreatedAdhocAlert, setCreatedAdhocAlert] = useState(false);
 
+  //final price for moq
+  const [finalPrice, setFinalPrice] = useState(0);
+
   // get drop down list
   useEffect(() => {
     // set user id
@@ -307,6 +310,7 @@ export default function CreatePR({ from }) {
   const [supplierV, setSupplier] = useState({ value: "", id: "" });
   const [PMV, setPM] = useState({ value: "", id: "" });
   const [Remark, setRemark] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSupplierInput = (e) => {
     const [value, id] = getSelectedOption(e);
@@ -325,6 +329,25 @@ export default function CreatePR({ from }) {
   // axios to create PR
   const createPR = async (e) => {
     e.preventDefault();
+
+    console.log("supplier id: ", supplierV.id);
+
+    let totalPrice = 0;
+    ItemLineList.forEach((item) => {
+      totalPrice += parseFloat(item.TotalUnitPrice || 0);
+    });
+
+    setFinalPrice(totalPrice);
+
+    try {
+      const response = await axios.get(`${baseUrl}/api/supplier/supplierPurchaseInfo/${supplierV.id}`);
+      const supplierInfo = response.data[0];
+      const supplierMOQ = parseFloat(supplierInfo.MOQ);
+
+      console.log('fetched moq:', supplierMOQ);
+      console.log("Final Price: ", totalPrice);
+
+      if (supplierMOQ === null || totalPrice >= supplierMOQ) {
 
     await axios.post(`${baseUrl}/api/purchaseReq/`,
       {
@@ -393,12 +416,22 @@ export default function CreatePR({ from }) {
         // timer to reset to false
         alertTimer();
 
-        // set timer before redirect
-        setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+            // set timer before redirect
+            setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+
+      } else {
+        const remainingAmount = (supplierMOQ - totalPrice).toFixed(2);
+        setErrorMsg(`${supplierV.value} has a minimum order quanity of $${supplierMOQ},\n please add $${remainingAmount} more to purchase from ${supplierV.value}`)
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   // axios to create Ad Hoc
@@ -835,6 +868,9 @@ export default function CreatePR({ from }) {
                   })}
                 </div>
               </div>
+
+              {errorMsg && <p className="mt-3" style={{ color: 'red' }}>{errorMsg}</p>}
+
             </div>
           </div>
 
