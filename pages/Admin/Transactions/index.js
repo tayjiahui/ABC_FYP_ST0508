@@ -308,7 +308,7 @@ export default function Transactions() {
                             </div>
 
                             <div className="col-sm-1">
-                                <button onClick={handleReportPopUpClose} className="btn">
+                                <button onClick={handleReportPopUpClose} className="btn px-2">
                                     <Image src={xIcon} width={35} height={35} alt="Cancel" />
                                 </button>
                             </div>
