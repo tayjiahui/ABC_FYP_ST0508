@@ -339,7 +339,7 @@ export default function Transactions() {
                                             {
                                                 ExcelFile && (
                                                     <a href={baseUrl + `/api/xlsx/excel/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
-                                                        <button type="button" className="btn btn-dark">
+                                                        <button type="button" className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
                                                             Generate Report
                                                         </button>
                                                     </a>
@@ -347,14 +347,14 @@ export default function Transactions() {
                                             {
                                                 CSVFile &&
                                                 <a href={baseUrl + `/api/xlsx/csv/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
-                                                    <button type="button" className="btn btn-dark">
+                                                    <button type="button"  className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
                                                         Generate Report
                                                     </button>
                                                 </a>
                                             }
                                         </>
                                     ) : (
-                                        <button type="submit" className="btn btn-dark">
+                                        <button type="submit"  className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
                                             Generate Report
                                         </button>
                                     )
