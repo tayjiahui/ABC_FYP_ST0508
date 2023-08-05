@@ -69,9 +69,14 @@ export async function getServerSideProps(context) {
 };
 
 export default function ViewAdHoc({ AdHocDetails }) {
+
+    const [id, setUserID] = useState();
+    const [Token, setToken] = useState();
+
     // Dates
     const [ReqDate, setReqDate] = useState();
     const [haveTotalPrice, setHaveTotalPrice] = useState(false);
+    const [OGAdHocPrice, setOGAdHocPrice] = useState();
     const [adHocPrice, setAdHocPrice] = useState();
     const [editTotal, setEditTotal] = useState(false);
 
@@ -90,6 +95,14 @@ export default function ViewAdHoc({ AdHocDetails }) {
     const poID = AdHocDetails[0].prID;
 
     useEffect(() => {
+        // set user id taken from localstorage
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
+
+        // set user token
+        const token = localStorage.getItem("token");
+        setToken(token);
+
         // Requested Date formatting
         const newReqDateFormat = moment(AH.requestedDate).format("D MMM YYYY");
         setReqDate(newReqDateFormat);
@@ -102,6 +115,18 @@ export default function ViewAdHoc({ AdHocDetails }) {
             setEditTotal(true);
         };
     }, []);
+
+    useEffect(() => {
+        axios.get(`${baseUrl}/api/purchaseReq/adhoc/viewBy/${poID}`)
+            .then((response) => {
+                // get og total
+                const AHD = response.data[0];
+                setOGAdHocPrice(AHD.totalPrice);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }, [editTotal, adHocPrice])
 
     // edit total price toggle
     const totalPriceEdit = async () => {
@@ -117,17 +142,42 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
         if (editTotal === true) {
             setEditTotal(false);
-            // ! OTHER STUFF FOR UPDATE
+            
             await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/totalPrice/${poID}`,
                 {
                     totalPrice: totalPriceValue
+                },
+                {
+                    headers: {
+                        authorization: 'Bearer ' + Token
+                    }
                 }
             )
-                .then((response) => {
-                    console.log(response);
+                .then(async(response) => {
+                    // console.log(response);
 
                     setTPAlert(true);
                     alertTimer();
+
+                    // audit log
+                    await axios.post(`${baseUrl}/api/auditTrail/`,
+                        {
+                            timestamp: moment().format(),
+                            userID: id,
+                            actionTypeID: 4,
+                            itemId: poID,
+                            newValue: adHocPrice,
+                            oldValue: OGAdHocPrice
+                        },
+                        {
+                          headers: {
+                            authorization: 'Bearer ' + Token
+                          }
+                        }
+                    )
+                        .then((response) => {
+                            // console.log(response.data);
+                        })
                 })
                 .catch((err) => {
                     console.log(err);
