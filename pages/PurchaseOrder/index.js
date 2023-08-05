@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from 'next/link'
 import styles from "../../styles/trackPayment.module.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import Image from 'next/image';
 import searchBtn from '../../public/searchIcon.svg';
 import filterIcon from "../../public/filterIcon.svg";

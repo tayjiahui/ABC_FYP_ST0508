@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Image from "next/image";
-import moment from "moment/moment";
+import moment from 'moment-timezone';
 
 import { useEffect, useState } from "react";
 
@@ -55,7 +55,6 @@ function AuditRow(props) {
         // timestamp re formatting
         setALDate(moment(auditLog.timestamp).format('D MMM YYYY'));
         setALTime(moment(auditLog.timestamp).format('h:mm:ss A'));
-
     }, []);
 
     const handleMoreClick = () => {

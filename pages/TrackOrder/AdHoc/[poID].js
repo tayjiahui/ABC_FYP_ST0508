@@ -142,7 +142,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
         if (editTotal === true) {
             setEditTotal(false);
-            
+
             await axios.put(`${baseUrl}/api/trackOrder/purchaseOrder/totalPrice/${poID}`,
                 {
                     totalPrice: totalPriceValue
@@ -162,7 +162,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     // audit log
                     await axios.post(`${baseUrl}/api/auditTrail/`,
                         {
-                            timestamp: moment().format(),
+                            timestamp: moment().tz('Asia/Singapore').format(),
                             userID: id,
                             actionTypeID: 4,
                             itemId: poID,

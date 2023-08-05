@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Image from "next/image";
-import moment from "moment/moment";
+import moment from 'moment-timezone';
 
 import { useEffect, useState } from "react";
 

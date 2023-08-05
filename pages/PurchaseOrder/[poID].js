@@ -5,7 +5,7 @@ import Image from "next/image"
 import styles from '../../styles/viewPO.module.css';
 import arrowIcon from '../../public/arrowIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 //component
 import WIP from "../../components/WIP";
@@ -377,7 +377,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             // create audit log
             await axios.post(`${baseUrl}/api/auditTrail/`,
               {
-                timestamp: moment().format(),
+                timestamp: moment().tz('Asia/Singapore').format(),
                 userID: id,
                 actionTypeID: 3,
                 itemId: POID,

@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Image from "next/image";
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { useEffect, useState } from "react";
 
@@ -158,7 +158,7 @@ function UserRow(props) {
                     // audit log
                     await axios.post(`${baseUrl}/api/auditTrail/`,
                         {
-                            timestamp: moment().format(),
+                            timestamp: moment().tz('Asia/Singapore').format(),
                             userID: id,
                             actionTypeID: 5,
                             itemId: props.UserID,

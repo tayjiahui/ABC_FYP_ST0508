@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
@@ -148,7 +148,7 @@ function OrderRow(props) {
           // create audit log
           await axios.post(`${baseUrl}/api/auditTrail/`,
             {
-              timestamp: moment().format(),
+              timestamp: moment().tz('Asia/Singapore').format(),
               userID: props.userID,
               actionTypeID: 2,
               itemId: poID,

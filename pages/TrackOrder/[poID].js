@@ -7,7 +7,7 @@ import plusIcon from '../../public/addLocationIcon.svg';
 // import greenCircle from '../../public/greenApprovedCircle.svg'
 import styles from '../../styles/trackOrderById.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import WIP from '../../components/WIP';
 
 //----------------------function name has to be uppercase
@@ -217,7 +217,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             // create audit log
             await axios.post(`${baseUrl}/api/auditTrail/`,
               {
-                timestamp: moment().format(),
+                timestamp: moment().tz('Asia/Singapore').format(),
                 userID: id,
                 actionTypeID: 1,
                 itemId: origQTY.id,
@@ -375,7 +375,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         // create audit log
         await axios.post(`${baseUrl}/api/auditTrail/`,
           {
-            timestamp: moment().format(),
+            timestamp: moment().tz('Asia/Singapore').format(),
             userID: id,
             actionTypeID: 2,
             itemId: poID,
