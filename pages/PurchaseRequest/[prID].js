@@ -18,6 +18,8 @@ import addLocIcon from "../../public/addLocationIcon.svg";
 import addIcon from "../../public/plusIcon.svg";
 import xIcon from "../../public/xIcon.svg";
 
+const timezone = 'Asia/Singapore';
+
 // Base urls
 const URL = [];
 
@@ -543,7 +545,7 @@ export default function ViewPR({
           // audit log
           await axios.post(`${baseUrl}/api/auditTrail/`,
             {
-              timestamp: moment().tz('Asia/Singapore').format(),
+              timestamp: moment().tz(timezone).format(),
               userID: id,
               actionTypeID: 6,
               itemId: prID,

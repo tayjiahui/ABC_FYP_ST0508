@@ -12,6 +12,8 @@ import moment from 'moment-timezone';
 import WIP from "../../components/WIP";
 import AlertBox from "../../components/alert";
 
+const timezone = 'Asia/Singapore';
+
 // Base urls
 const URL = [];
 
@@ -430,7 +432,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             // create audit log
             await axios.post(`${baseUrl}/api/auditTrail/`,
               {
-                timestamp: moment().tz('Asia/Singapore').format(),
+                timestamp: moment().tz(timezone).format(),
                 userID: id,
                 actionTypeID: 3,
                 itemId: POID,
