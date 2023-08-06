@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import moment from "moment";
+import moment from 'moment-timezone';
 import axios from "axios";
 
 // styles
@@ -536,15 +536,38 @@ export default function ViewPR({
         }
       }
     )
-      .then((response) => {
-        // console.log(response);
+      .then(async (response) => {
+        try {
+          const newPO = await axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${prID}`);
 
-        setConvertPRAlert(true);
-        // timer to reset to false
-        alertTimer();
-
-        // set timer before redirect  // redirect to PO
-        setTimeout(() => { router.push(`/TrackOrder/${prID}`) }, 3000);
+          // audit log
+          await axios.post(`${baseUrl}/api/auditTrail/`,
+            {
+              timestamp: moment().tz('Asia/Singapore').format(),
+              userID: id,
+              actionTypeID: 6,
+              itemId: prID,
+              newValue: newPO.data[0].poID,
+              oldValue: 0
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
+            }
+          )
+            .then((response) => {
+              // console.log(response.data);
+              setConvertPRAlert(true);
+              // timer to reset to false
+              alertTimer();
+              // set timer before redirect  // redirect to PO
+              setTimeout(() => { router.push(`/TrackOrder/${prID}`) }, 3000);
+            })
+        } catch (err) {
+          console.log(err);
+          alert(err.response.data);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -620,8 +643,6 @@ export default function ViewPR({
   // add item line inputs // currently only max 5 items
   const [ItemLineList, SetItemLineList] = useState(PLItemData);
   const addItemLine = () => {
-    // max 5 items
-    // if(ItemLineList.length < 5){
     SetItemLineList([
       ...ItemLineList,
       {
@@ -633,7 +654,6 @@ export default function ViewPR({
         TotalUnitPrice: "",
       },
     ]);
-    // };
   };
 
   const removeItemLine = (index) => {
@@ -965,7 +985,6 @@ export default function ViewPR({
                     <div className="py-3 w-70">
                       <div className={styles.apprCommentsBox}>
                         <div className="p-4">
-                          {/* <p>{PR.apprRemarks}</p> */}
                           <textarea
                             value={viewApprComment}
                             onChange={(e) => setViewApprComment(e.target.value)}
@@ -993,9 +1012,6 @@ export default function ViewPR({
                               onClick={convertToPO}
                               className={styles.createPOButton}
                             >
-                              {/* <div className="ms-5 me-2 ps-2">
-                                                                            Next<Image src={nextArrow} width={25} height={25} alt="Next Arrow" className="ms-5"/>
-                                                                        </div> */}
                               <div className="px-5">
                                 Convert To Purchase Order
                                 <Image
@@ -1073,7 +1089,6 @@ export default function ViewPR({
                   <Image src={arrowIcon} id={styles.arrow} alt="Back" />
                 </a>
                 Reappeal Purchase Request #{prID}
-                {/* <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/> */}
               </h1>
             </div>
           </div>
@@ -1420,12 +1435,12 @@ export default function ViewPR({
               {/* <div className="col-sm"></div> */}
               <div className="col-sm-9">
                 {/* <div className={styles2.submit}>
-                                        <button type="button" onClick={handleRefresh} className={styles2.resetReappealButton}>
-                                            <div className="px-5">
-                                                Reset Reappeal Form
-                                            </div>
-                                        </button>
-                                    </div> */}
+                  <button type="button" onClick={handleRefresh} className={styles2.resetReappealButton}>
+                    <div className="px-5">
+                      Reset Reappeal Form
+                    </div>
+                  </button>
+                </div> */}
               </div>
               <div className="col-sm py-5">
                 <div className={styles2.reappeal}>
