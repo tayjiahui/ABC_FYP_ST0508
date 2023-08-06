@@ -28,6 +28,12 @@ export default function AdminNavBar() {
         if (status === 'authenticated' && session) {
             const userD = session.userDetails
             // TODO validate if userD is Null
+            // console.log(userD);
+
+            // removes non-admin users
+            if(userD.role !== 5){
+                router.push('/Unauthorised');
+            };
 
             // add to localStorage
             localStorage.setItem("ID", userD.userID);
@@ -69,6 +75,9 @@ export default function AdminNavBar() {
                         </li>
                         <li>
                             <Link className={router.pathname == "/Admin/AuditLogs" ? "active" : ""} href="/Admin/AuditLogs">Audit Logs</Link>
+                        </li>
+                        <li>
+                            <Link className={router.pathname == "/Admin/Configurations" ? "active" : ""} href="/Admin/Configurations">Configurations</Link>
                         </li>
                     </ul>
                     <ul className="navbar-right">
