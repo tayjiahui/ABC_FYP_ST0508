@@ -13,6 +13,9 @@ import AlertBox from "../../../components/alert";
 
 // Images 
 import xIcon from "../../../public/xIcon.svg";
+import DownloadIcon from "../../../public/downloadWhite.svg";
+
+const timezone = 'Asia/Singapore';
 
 // Base urls
 const URL = [];
@@ -38,6 +41,13 @@ function isLocalhost() {
 isLocalhost();
 
 const baseUrl = URL[0];
+
+function getDates(PresetTime) {
+    const startDate = moment.tz(timezone).startOf(PresetTime).format();
+    const endDate = moment.tz(timezone).endOf(PresetTime).format();
+
+    return { Start: startDate, End: endDate };
+};
 
 // Each Transaction Row
 function TransactionRow(props) {
@@ -196,11 +206,19 @@ export default function Transactions() {
     const [ReportPopUp, setReportPopUp] = useState(false);
 
     // Generate Transaction Report
+    const [Form, setForm] = useState(false);
     const [CustomForm, setCustomForm] = useState(false);
     const [StartDate, setStartDate] = useState();
     const [EndDate, setEndDate] = useState();
+    const [PresetStartDate, setPresetStartDate] = useState();
+    const [PresetEndDate, setPresetEndDate] = useState();
     const [ExcelFile, setExcelFile] = useState(true);
     const [CSVFile, setCSVFile] = useState(false);
+
+    // Preset Dates
+    const [ThisWeek, setWeek] = useState();
+    const [ThisMonth, setMonth] = useState();
+    const [ThisYear, setYear] = useState();
 
     const [TransactionsList, setTransactionsList] = useState([<div>Loading...</div>]);
 
@@ -208,6 +226,15 @@ export default function Transactions() {
         // set user token
         const token = localStorage.getItem("token");
         setToken(token);
+
+        const Week = getDates('Week');
+
+        setWeek(getDates('Week'));
+        setMonth(getDates('Month'));
+        setYear(getDates('Year'));
+
+        setPresetStartDate(Week.Start);
+        setPresetEndDate(Week.End);
 
         axios.get(`${baseUrl}/api/auditTrail/Transactions`,
             {
@@ -217,7 +244,6 @@ export default function Transactions() {
             }
         )
             .then((response) => {
-                console.log(response.data);
                 const transactionsResults = response.data;
                 const resultList = [];
 
@@ -242,9 +268,9 @@ export default function Transactions() {
     // check if date inputs are filled
     useEffect(() => {
         if (StartDate && EndDate) {
-            setCustomForm(true);
+            setForm(true);
         } else {
-            setCustomForm(false);
+            setForm(false);
         };
     }, [StartDate, EndDate]);
 
@@ -254,6 +280,29 @@ export default function Transactions() {
 
     const handleReportPopUpClose = () => {
         setReportPopUp(false);
+    };
+
+    const handleCustom = () => {
+        if (CustomForm === false) {
+            setCustomForm(true);
+        } else {
+            setCustomForm(false);
+        };
+    };
+
+    const handlePresetDates = async (e) => {
+        const selected = e.target.value;
+
+        if (selected === 'This Week') {
+            setPresetStartDate(ThisWeek.Start);
+            setPresetEndDate(ThisWeek.End);
+        } else if (selected === 'This Month') {
+            setPresetStartDate(ThisMonth.Start);
+            setPresetEndDate(ThisMonth.End);
+        } else if (selected === 'This Year') {
+            setPresetStartDate(ThisYear.Start);
+            setPresetEndDate(ThisYear.End);
+        };
     };
 
     const handlFileType = async (e) => {
@@ -272,10 +321,17 @@ export default function Transactions() {
                 <h1>Transactions</h1>
             </div>
 
-            <div className="px-5 pt-3">
-                <button onClick={handleReportForm} className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
-                    <div className="px-2">Get Report</div>
-                </button>
+            <div className="d-flex">
+                <div className="ps-5 pt-3">
+                    <button onClick={handleReportForm} className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
+                        <div className="px-2">Get Report</div>
+                    </button>
+                </div>
+                <div className="ps-5 pt-3">
+                    <button onClick={handleReportForm} className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
+                        <div className="px-2">GST</div>
+                    </button>
+                </div>
             </div>
 
             <div>
@@ -314,49 +370,127 @@ export default function Transactions() {
                             </div>
                         </div>
                         <form className="ps-4 py-3">
-                            <div className="py-3">
-                                <label className="pe-2">Start Date:</label>
-                                <input type="date" onChange={e => setStartDate(e.target.value)} className="px-1 rounded border-1" required />
-                            </div>
+                            {
+                                CustomForm ? (
+                                    <>
+                                        <div className="pt-3">
+                                            <label className="pe-2">Start Date:</label>
+                                            <input type="date" onChange={e => setStartDate(e.target.value)} className="px-1 rounded border-1" required />
+                                        </div>
 
-                            <div className="py-3">
-                                <label className="pe-2">End Date:</label>
-                                <input type="date" onChange={e => setEndDate(e.target.value)} className="px-1 rounded border-1" required />
-                            </div>
+                                        <div className="pt-3">
+                                            <label className="pe-2">End Date:</label>
+                                            <input type="date" onChange={e => setEndDate(e.target.value)} className="px-1 rounded border-1" required />
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className="pt-3">
+                                            <label className="pe-2">Date Range:</label>
+                                            <select className="px-4 rounded" onChange={handlePresetDates} required>
+                                                <option selected>This Week</option>
+                                                <option>This Month</option>
+                                                <option>This Year</option>
+                                            </select>
+                                        </div>
+                                    </>
+                                )
+                            }
 
                             <div className="py-3">
                                 <label className="pe-2">File Type:</label>
-                                <select onChange={handlFileType} className="px-5 rounded" required >
-                                    <option selected="selected">Excel</option>
+                                <select onChange={handlFileType} className="px-5 rounded" required>
+                                    <option selected>Excel</option>
                                     <option>CSV</option>
                                 </select>
+
+                                <div className="pt-3 px-5 mx-2">
+                                    {
+                                        CustomForm ? (
+                                            <a className={styles.seeMoreLink}>
+                                                <button type="button" onClick={handleCustom} className="btn px-0">
+                                                    <u>Back to Preset</u>
+                                                </button>
+                                            </a>
+                                        ) : (
+                                            <a className={styles.seeMoreLink}>
+                                                <button type="button" onClick={handleCustom} className="btn px-0">
+                                                    <u>Custom Dates</u>
+                                                </button>
+                                            </a>
+                                        )
+                                    }
+                                </div>
+
                             </div>
 
-                            <div className="pb-2 pt-4">
+                            <div className="pb-2 pt-1">
                                 {
                                     CustomForm ? (
                                         <>
                                             {
+                                                Form ? (
+                                                    <>
+                                                        <>
+                                                            {
+                                                                ExcelFile && (
+                                                                    <a href={baseUrl + `/api/xlsx/excel/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
+                                                                        <button type="button" className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
+                                                                            <div className="d-flex px-3 py-1">
+                                                                                <div className="pe-2">Generate Report</div>
+                                                                                <Image src={DownloadIcon} width={25} height={25} alt="download icon" />
+                                                                            </div>
+                                                                        </button>
+                                                                    </a>
+                                                                )}
+                                                            {
+                                                                CSVFile &&
+                                                                <a href={baseUrl + `/api/xlsx/csv/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
+                                                                    <button type="button" className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
+                                                                        <div className="d-flex px-3 py-1">
+                                                                            <div className="pe-2">Generate Report</div>
+                                                                            <Image src={DownloadIcon} width={25} height={25} alt="download icon" />
+                                                                        </div>
+                                                                    </button>
+                                                                </a>
+                                                            }
+                                                        </>
+                                                    </>
+                                                ) : (
+                                                    <button type="submit" className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
+                                                        <div className="d-flex px-3 py-1">
+                                                            <div className="pe-2">Generate Report</div>
+                                                            <Image src={DownloadIcon} width={25} height={25} alt="download icon" />
+                                                        </div>
+                                                    </button>
+                                                )
+                                            }
+                                        </>
+                                    ) : (
+                                        <>
+                                            {
                                                 ExcelFile && (
-                                                    <a href={baseUrl + `/api/xlsx/excel/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
+                                                    <a href={baseUrl + `/api/xlsx/excel/Date?startDate=` + PresetStartDate + `&endDate=` + PresetEndDate}>
                                                         <button type="button" className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
-                                                            Generate Report
+                                                            <div className="d-flex px-3 py-1">
+                                                                <div className="pe-2">Generate Report</div>
+                                                                <Image src={DownloadIcon} width={25} height={25} alt="download icon" />
+                                                            </div>
                                                         </button>
                                                     </a>
                                                 )}
                                             {
                                                 CSVFile &&
-                                                <a href={baseUrl + `/api/xlsx/csv/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
-                                                    <button type="button"  className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
-                                                        Generate Report
+                                                <a href={baseUrl + `/api/xlsx/csv/Date?startDate=` + PresetStartDate + `&endDate=` + PresetEndDate}>
+                                                    <button type="button" className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
+                                                        <div className="d-flex px-3 py-1">
+                                                            <div className="pe-2">Generate Report</div>
+                                                            <Image src={DownloadIcon} width={25} height={25} alt="download icon" />
+                                                        </div>
                                                     </button>
                                                 </a>
                                             }
                                         </>
-                                    ) : (
-                                        <button type="submit"  className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
-                                            Generate Report
-                                        </button>
                                     )
                                 }
                             </div>
