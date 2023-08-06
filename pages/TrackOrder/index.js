@@ -17,6 +17,8 @@ import closeEyeCon from "../../public/closeEyeCon.svg";
 import WIP from '../../components/WIP'
 import AlertBox from "../../components/alert";
 
+const timezone = 'Asia/Singapore';
+
 // Base urls
 const URL = [];
 
@@ -148,7 +150,7 @@ function OrderRow(props) {
           // create audit log
           await axios.post(`${baseUrl}/api/auditTrail/`,
             {
-              timestamp: moment().tz('Asia/Singapore').format(),
+              timestamp: moment().tz(timezone).format(),
               userID: props.userID,
               actionTypeID: 2,
               itemId: poID,

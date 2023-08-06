@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import moment from "moment";
+import moment from 'moment-timezone';
 import axios from "axios";
 
 // styles
@@ -15,6 +15,8 @@ import AlertBox from "../../../components/alert";
 import arrowIcon from "../../../public/arrowIcon.svg";
 import editIcon from "../../../public/penIcon.svg";
 import cancelEditIcon from "../../../public/cancelPenIcon.svg";
+
+const timezone = 'Asia/Singapore';
 
 // Base urls
 const URL = [];
@@ -162,7 +164,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     // audit log
                     await axios.post(`${baseUrl}/api/auditTrail/`,
                         {
-                            timestamp: moment().tz('Asia/Singapore').format(),
+                            timestamp: moment().tz(timezone).format(),
                             userID: id,
                             actionTypeID: 4,
                             itemId: poID,

@@ -14,6 +14,8 @@ import AlertBox from "../../../components/alert";
 // Images
 import xIcon from "../../../public/xIcon.svg";
 
+const timezone = 'Asia/Singapore';
+
 // Base urls
 const URL = [];
 
@@ -157,7 +159,7 @@ function UserRow(props) {
                     // audit log
                     await axios.post(`${baseUrl}/api/auditTrail/`,
                         {
-                            timestamp: moment().tz('Asia/Singapore').format(),
+                            timestamp: moment().tz(timezone).format(),
                             userID: id,
                             actionTypeID: 5,
                             itemId: props.UserID,

@@ -10,7 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment-timezone';
 import WIP from '../../components/WIP';
 
-//----------------------function name has to be uppercase
+const timezone = 'Asia/Singapore';
 
 const URL = [];
 
@@ -217,7 +217,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             // create audit log
             await axios.post(`${baseUrl}/api/auditTrail/`,
               {
-                timestamp: moment().tz('Asia/Singapore').format(),
+                timestamp: moment().tz(timezone).format(),
                 userID: id,
                 actionTypeID: 1,
                 itemId: origQTY.id,
@@ -375,7 +375,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         // create audit log
         await axios.post(`${baseUrl}/api/auditTrail/`,
           {
-            timestamp: moment().tz('Asia/Singapore').format(),
+            timestamp: moment().tz(timezone).format(),
             userID: id,
             actionTypeID: 2,
             itemId: poID,

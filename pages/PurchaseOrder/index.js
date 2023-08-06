@@ -115,8 +115,8 @@ export default function TrackPayment({ purchaseOrder }) {
 
       <div className="overflow-scroll px-2 w-100 h-75 position-absolute">
         {filteredPurchaseOrders.map((po, index) => (
-          <div className="pt-1">
-            <div key={index} className={styles.poListsMain}>
+          <div key={index} className="pt-1">
+            <div className={styles.poListsMain}>
               <a href={baseURL + '/PurchaseOrder/' + po.prID}>
                 <button className={styles.prButton}>
                   <div className={`row px-1 py-3 text-start ${styles['hover-box-shadow']}`} style={{ backgroundColor: '#C0D8F7', borderRadius: '10px', width: '100%', height: 'auto' }}>
