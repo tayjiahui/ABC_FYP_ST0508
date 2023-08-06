@@ -55,7 +55,7 @@ export default function AdminNavBar() {
                 <nav className="header-nav">
                     <ul className="navbar-left">
                         <li id="logoImage">
-                            <a href='/Home'>
+                            <a href='/Admin/Home'>
                                 <Image
                                     src={logo}
                                     width={100}
