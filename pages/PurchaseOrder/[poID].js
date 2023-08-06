@@ -6,7 +6,7 @@ import styles from '../../styles/viewPO.module.css';
 import arrowIcon from '../../public/arrowIcon.svg';
 import deleteIcon from '../../public/trashBinIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 //component
 import WIP from "../../components/WIP";
@@ -430,7 +430,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             // create audit log
             await axios.post(`${baseUrl}/api/auditTrail/`,
               {
-                timestamp: moment().format(),
+                timestamp: moment().tz('Asia/Singapore').format(),
                 userID: id,
                 actionTypeID: 3,
                 itemId: POID,
@@ -618,7 +618,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             <div className="row">
               <div className="col-3">
                 <b>Date of Request:</b> <br />
-                {moment(remarkDetail[0].requestDate).format('DD MMM YYYY')}
+                {moment(remarkDetail[0].requestDate).format('D MMM YYYY')}
               </div>
               <div className="col-3">
                 <b>Name of Purchaser:</b> <br />

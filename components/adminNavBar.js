@@ -28,6 +28,12 @@ export default function AdminNavBar() {
         if (status === 'authenticated' && session) {
             const userD = session.userDetails
             // TODO validate if userD is Null
+            // console.log(userD);
+
+            // removes non-admin users
+            if(userD.role !== 5){
+                router.push('/Unauthorised');
+            };
 
             // add to localStorage
             localStorage.setItem("ID", userD.userID);
@@ -49,7 +55,7 @@ export default function AdminNavBar() {
                 <nav className="header-nav">
                     <ul className="navbar-left">
                         <li id="logoImage">
-                            <a href='/Home'>
+                            <a href='/Admin/Home'>
                                 <Image
                                     src={logo}
                                     width={100}
@@ -64,10 +70,19 @@ export default function AdminNavBar() {
                         <li>
                             <Link className={router.pathname == "/Admin/Users" ? "active" : ""} href="/Admin/Users">Users</Link>
                         </li>
+                        <li>
+                            <Link className={router.pathname == "/Admin/Transactions" ? "active" : ""} href="/Admin/Transactions">Transactions</Link>
+                        </li>
+                        <li>
+                            <Link className={router.pathname == "/Admin/AuditLogs" ? "active" : ""} href="/Admin/AuditLogs">Audit Logs</Link>
+                        </li>
+                        <li>
+                            <Link className={router.pathname == "/Admin/Configurations" ? "active" : ""} href="/Admin/Configurations">Configurations</Link>
+                        </li>
                     </ul>
                     <ul className="navbar-right">
                         <li id="profPicImage" className='py-1'>
-                            <a href='/Profile'>
+                            <a href='/Admin/Profile'>
                                 <Image src={profPic} alt='Profile Picture' width={50} height={50} />
                             </a>
                         </li>

@@ -1,11 +1,11 @@
 import React from "react";
 import axios from "axios";
 import Image from "next/image";
+import moment from 'moment-timezone';
 
 import { useEffect, useState } from "react";
 
 // Style Sheet
-// import styles from "../../../styles/purchaseReq.module.css";
 import styles from "../../../styles/adminUsers.module.css";
 
 // components
@@ -39,12 +39,15 @@ isLocalhost();
 
 const baseUrl = URL[0];
 
-// Each PR Row
+// Each User Row
 function UserRow(props) {
     // const statusID = props.StatusID;
+
+    const [id, setUserID] = useState();
     const [Token, setToken] = useState();
 
     const [RolesList, setRoleList] = useState([]);
+    const [OGRole, setOGRole] = useState();
     const [selectedRole, setSelectRole] = useState();
 
     const [CreateNewRolePop, setCreateNewRolePop] = useState(false);
@@ -54,24 +57,36 @@ function UserRow(props) {
     const [UpdateRoleALert, setUpdateRoleALert] = useState(false);
 
     useEffect(() => {
+        // set user id taken from localstorage
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
+
         // set user token
         const token = localStorage.getItem("token");
         setToken(token);
 
-        axios.get(`${baseUrl}/api/user/role/all`,
-            {
-                headers: {
-                    authorization: 'Bearer ' + token
+        axios.all([
+            axios.get(`${baseUrl}/api/user/role/all`,
+                {
+                    headers: {
+                        authorization: 'Bearer ' + token
+                    }
                 }
-            }
-        )
-            .then((response) => {
-                setRoleList(response.data);
-            })
+            ),
+            axios.get(`${baseUrl}/api/user/${props.UserID}/role`)
+        ])
+            .then(axios.spread((response1, response2) => {
+                // get role dropdown
+                setRoleList(response1.data);
+
+                // get og role
+                const USER = response2.data[0];
+                setOGRole(USER.roleID);
+            }))
             .catch((err) => {
                 console.log(err);
-            })
-    }, [selectedRole]);
+            });
+    }, [RolesList, selectedRole]);
 
     const handleCreatePopUpClose = () => {
         setCreateNewRolePop(false);
@@ -135,9 +150,24 @@ function UserRow(props) {
                     }
                 }
             )
-                .then((response) => {
+                .then(async(response) => {
                     setUpdateRoleALert(true);
                     alertTimer();
+
+                    // audit log
+                    await axios.post(`${baseUrl}/api/auditTrail/`,
+                        {
+                            timestamp: moment().tz('Asia/Singapore').format(),
+                            userID: id,
+                            actionTypeID: 5,
+                            itemId: props.UserID,
+                            newValue: selectedRole,
+                            oldValue: OGRole
+                        }
+                    )
+                        .then((response) => {
+                            // console.log(response.data);
+                        })
                 })
                 .catch((err) => {
                     console.log(err);
@@ -197,7 +227,7 @@ function UserRow(props) {
                         <div className="row pt-1">
                             <div className="col-sm-1"></div>
                             <div className="col-sm-10">
-                                <h2 className={styles.newStatusText}>Search Filters</h2>
+                                <h2 className={styles.newStatusText}>Create New Role</h2>
                             </div>
 
                             <div className="col-sm-1">
@@ -255,8 +285,8 @@ export default function Users() {
             })
             .catch((err) => {
                 console.log(err);
-            })
-    }, [])
+            });
+    }, []);
 
     return (
         <div>

@@ -108,7 +108,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
         };
 
         // Requested Date formatting
-        const newReqDateFormat = moment(AH.requestedDate).format("DD MMM YYYY");
+        const newReqDateFormat = moment(AH.requestedDate).format("D MMM YYYY");
         setReqDate(newReqDateFormat);
 
         // Test for status Circle
@@ -143,7 +143,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
         await axios.put(`${baseUrl}/api/purchaseReq/PR/${prID}`,
             {
                 comments: ApprComment,
-                prStatusID: 2,
+                prStatusID: 4,
                 apprUserID: id,
             },
             {

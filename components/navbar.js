@@ -15,8 +15,9 @@ export default function NavBar() {
     const router = useRouter();
 
     const [userName, setUserName] = useState("");
+    const [allowView, setAllowView] = useState(false);
 
-    console.log({session})
+    console.log({ session })
 
     // insert data into localStorage
     useEffect(() => {
@@ -37,8 +38,15 @@ export default function NavBar() {
             localStorage.setItem("token", userD.token)
         };
 
+        // set user name
         const username = localStorage.getItem("FName");
         setUserName(username);
+
+        // set user role
+        const roleID = parseInt(localStorage.getItem("roleID"), 10);
+        if (roleID !== 4) {
+            setAllowView(true);
+        };
 
         // !status may be undefined not caught
     }, [status, session]);
@@ -61,9 +69,14 @@ export default function NavBar() {
                         <li>
                             <Link className={router.pathname == "/Home" ? "active" : ""} href="/Home">Home</Link>
                         </li>
-                        <li>
-                            <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
-                        </li>
+
+                        {
+                            allowView &&
+                            <li>
+                                <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
+                            </li>
+                        }
+
                         <li>
                             <Link className={router.pathname == "/TrackOrder" ? "active" : ""} href="/TrackOrder">Track Order</Link>
                         </li>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import Image from "next/image";
-import { useState, useEffect } from "react"; 
+import { useState, useEffect } from "react";
 
 // styles & icons
 import styles from '../../styles/supplier.module.css';
@@ -35,9 +35,6 @@ function isLocalhost() {
 
 isLocalhost();
 
-console.log("url[0]: "+URL[0]);
-console.log("url[1]: "+URL[1]);
-
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
@@ -54,7 +51,7 @@ export default function Supplier({ suppliers }) {
 
     // fetch category names for filter options
     useEffect(() => {
-        axios.get(`${baseUrl}/api/supplier/category/all`,{})
+        axios.get(`${baseUrl}/api/supplier/category/all`, {})
             .then((res) => {
                 setCategory(res.data);
             })
@@ -79,8 +76,8 @@ export default function Supplier({ suppliers }) {
         const { value, checked } = event.target;
 
         const updatedChecked = checked
-            ?[...checkedOptions, value]
-            :checkedOptions.filter((option) => option !== value);
+            ? [...checkedOptions, value]
+            : checkedOptions.filter((option) => option !== value);
 
         setCheckedOptions(updatedChecked);
         filterItems(searchTerm, checkedOptions);
@@ -90,12 +87,12 @@ export default function Supplier({ suppliers }) {
         const filtered = suppliers.filter((item) => {
             // search value checking
             const hasMatch = item.Category.toLowerCase().includes(term.toLowerCase()) ||
-                            item.supplierName.toLowerCase().includes(term.toLowerCase()) ||
-                            item.contactPersonName.toLowerCase().includes(term.toLowerCase());
+                item.supplierName.toLowerCase().includes(term.toLowerCase()) ||
+                item.contactPersonName.toLowerCase().includes(term.toLowerCase());
 
             if (selectedOptions.length === 0) { // no checkbox checked
-                return hasMatch; 
-            } 
+                return hasMatch;
+            }
             else { // checkbox checked
                 return (
                     hasMatch &&
@@ -123,102 +120,55 @@ export default function Supplier({ suppliers }) {
 
     return (
         <>
-            <div className="row">
-                <div className="col-8 d-inline">
-                    <h1 className="">Supplier</h1>
-                </div>
+            <h1>Supplier</h1>
 
-                <div className="col-4 pb-2 d-inline">
-                    <div className="d-inline-flex py-4 ms-5">
-                        <div className="d-inline-flex" style={{marginInlineStart:"100px"}}>
-                            <input type="text" placeholder="Search..." name="search" className={styles.searchBox} value={searchTerm} onChange={handleInputChange}/>
-                            <button type="button" className={styles.searchButton}><Image src={searchIcon} width={25} height={25}/></button>
-                        </div>
-
-                        <button type="button" className={styles.searchButton}><Image src={filterIcon} width={20} onClick={handleOpenPopup}/></button>
-
-                        {/* filter popup */}
-                        {filterPopup && (
-                            <div className={styles.filterPopup}>
-                                <div className={styles.popupContent}>
-                                    <div className="row pt-1">
-                                        <div className="col-sm-1"></div>
-                                        <div className="col-sm-10">
-                                            <h2>Search Filters</h2>
-                                        </div>
-
-                                        <div className="col-sm-1 pt-1">
-                                            <button className={styles.closePopUpButton} onClick={handleClosePopup}>
-                                                <Image src={xIcon} width={35} height={35} alt="Cancel" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="container p-3">
-                                        <div className="row">
-                                            <label>Search By ...</label>
-                                        </div>
-
-                                        <div className="row row-cols-2 mt-3">
-                                            <div className="col">
-                                                {/* checkboxes */}
-                                                {category.map((option) => (
-                                                    <div key={option.categoryID} className={styles.checkboxItem}>
-                                                        <label>
-                                                            <span className="me-2">
-                                                                <input
-                                                                    id={option.categoryID}
-                                                                    type="checkbox"
-                                                                    value={option.categoryName}
-                                                                    onChange={handleCheckboxChange}
-                                                                    checked={checkedOptions.includes(option.categoryName)}
-                                                                /> 
-                                                            </span>
-                                                            {option.categoryName}
-                                                        </label>  
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+            <div className="pb-5">
+                <div className={styles.rightFloater}>
+                    <div className="d-inline-flex" style={{ marginInlineStart: "100px" }}>
+                        <input type="text" placeholder="  Search..." name="search" className={styles.searchBox} value={searchTerm} onChange={handleInputChange} />
+                        <button type="button" className={styles.searchButton}>
+                            <Image src={searchIcon} width={25} height={25} />
+                        </button>
+                        <button type="button" className={styles.searchButton}>
+                            <Image src={filterIcon} width={25} height={25} onClick={handleOpenPopup} />
+                        </button>
                     </div>
                 </div>
             </div>
 
             <div className="row py-4 border-top border-bottom mx-2 mb-3 px-4">
                 <div className="col-1 col-sm-1">No.</div>
-                <div className="col-3 col-sm-3" style={{textAlign: "left"}}>Supplier Name</div>
-                <div className="col-2 col-sm-2" style={{textAlign: "left"}}>Contact Person</div>
-                <div className="col-2 col-sm-2" style={{textAlign: "left"}}>Contact Number</div>
-                <div className="col-4 col-sm-4" style={{textAlign: "left"}}>Category</div>
+                <div className="col-3 col-sm-3" style={{ textAlign: "left" }}>Supplier Name</div>
+                <div className="col-2 col-sm-2" style={{ textAlign: "left" }}>Contact Person</div>
+                <div className="col-2 col-sm-2" style={{ textAlign: "left" }}>Contact Number</div>
+                <div className="col-4 col-sm-4" style={{ textAlign: "left" }}>Category</div>
             </div>
 
-            <div>
+            <div className="overflow-scroll w-100 h-75 position-absolute">
                 {filteredItems.map((supplier) => (
-                    <div className="row py-4 rounded-4 m-1 mb-2" style={{backgroundColor: "#C0D8F7", height: "85px", cursor: "pointer"}}>
-                        <div className="row d-flex mx-4">   
-                            <a href={'/Supplier/' + supplier.supplierID} className="col">
-                                <div key={supplier.supplierID} className="col d-flex">
-                                    <div className="col-1 col-sm-1">
-                                        <p>{supplier.supplierID}</p>
+                    <div className="pt-1">
+                        <div className="py-1" style={{ backgroundColor: "#C0D8F7", cursor: "pointer", borderRadius: '10px' }}>
+                            <div className="d-flex pt-1">
+                                <a href={'/Supplier/' + supplier.supplierID} className="col">
+                                    <div key={supplier.supplierID} className="col d-flex ps-5">
+                                        <div className="col-1 col-sm-1">
+                                            <p>{supplier.supplierID}</p>
+                                        </div>
+                                        <div className="col-3 col-sm-3">
+                                            <p style={{ textAlign: "left" }}>{supplier.supplierName}</p>
+                                        </div>
+                                        <div className="col-2 col-sm-2">
+                                            <p style={{ textAlign: "left" }}>{supplier.contactPersonName}</p>
+                                        </div>
+                                        <div className="col-2 col-sm-2">
+                                            <p style={{ textAlign: "left" }}>{supplier.phoneNum}</p>
+                                        </div>
+                                        <div className="col-4 col-sm-4">
+                                            <p style={{ textAlign: "left" }}>{supplier.Category}</p>
+                                        </div>
                                     </div>
-                                    <div className="col-3 col-sm-3">
-                                        <p style={{ textAlign: "left" }}>{supplier.supplierName}</p>
-                                    </div>
-                                    <div className="col-2 col-sm-2">
-                                        <p style={{ textAlign: "left" }}>{supplier.contactPersonName}</p>
-                                    </div>
-                                    <div className="col-2 col-sm-2">
-                                        <p style={{ textAlign: "left" }}>{supplier.phoneNum}</p>
-                                    </div>
-                                    <div className="col-4 col-sm-4">
-                                        <p style={{ textAlign: "left" }}>{supplier.Category}</p>
-                                    </div>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -227,10 +177,58 @@ export default function Supplier({ suppliers }) {
             <div>
                 <a href={'/Supplier/CreateSupplier'}>
                     <button className={styles.createButton}>
-                        <Image src={plusIcon} alt="Create Button" width={40} height={40}/>
+                        <Image src={plusIcon} alt="Create Button" width={40} height={40} />
                     </button>
                 </a>
             </div>
+
+            {/* filter popup */}
+            {filterPopup && (
+                <div className={styles.filterPopup}>
+                    <div className={styles.popupContent}>
+                        <div className="row pt-1">
+                            <div className="col-sm-1"></div>
+                            <div className="col-sm-10">
+                                <h2>Search Filters</h2>
+                            </div>
+
+                            <div className="col-sm-1 pt-1">
+                                <button className={styles.closePopUpButton} onClick={handleClosePopup}>
+                                    <Image src={xIcon} width={35} height={35} alt="Cancel" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="container p-3">
+                            <div className="row">
+                                <label>Search By ...</label>
+                            </div>
+
+                            <div className="row row-cols-2 mt-3">
+                                <div className="col">
+                                    {/* checkboxes */}
+                                    {category.map((option) => (
+                                        <div key={option.categoryID} className={styles.checkboxItem}>
+                                            <label>
+                                                <span className="me-2">
+                                                    <input
+                                                        id={option.categoryID}
+                                                        type="checkbox"
+                                                        value={option.categoryName}
+                                                        onChange={handleCheckboxChange}
+                                                        checked={checkedOptions.includes(option.categoryName)}
+                                                    />
+                                                </span>
+                                                {option.categoryName}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
@@ -239,7 +237,7 @@ export async function getServerSideProps(context) {
     const host = context.req.headers.host;
     const backBaseURL = [];
 
-    if(host == 'localhost:5000') {
+    if (host == 'localhost:5000') {
         backBaseURL.push('http://localhost:3000');
     }
     else {

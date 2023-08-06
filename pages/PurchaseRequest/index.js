@@ -87,6 +87,8 @@ function Icon(props) {
 function PRRow(props) {
   const statusID = props.StatusID;
 
+  const [ROLE, setROLE] = useState(props.RoleID);
+
   const [isAdHoc, setIsAdHoc] = useState(false);
 
   const [showPL, setShowPL] = useState(false);
@@ -96,6 +98,10 @@ function PRRow(props) {
   const circle = circleTest(statusID);
 
   useEffect(() => {
+    if (props.RoleID === 3) {
+      setROLE(1);
+    };
+
     if (props.PTypeID === 2) {
       setIsAdHoc(true);
     };
@@ -129,16 +135,15 @@ function PRRow(props) {
   };
 
   return (
-    <div className="py-1">
+    <div className="pt-1">
       {/* PURCHASER */}
-      {props.RoleID === 2 &&
+      {ROLE === 2 &&
         <div>
           {
             isAdHoc === false &&
             <a href={baseURL + "/PurchaseRequest/" + props.prID}>
               <button className={styles.prButton}>
                 <div className={styles.prRow}>
-                  {/* <h1>dadf</h1> */}
                   <div className="pt-2 row">
                     <div className={styles.prTextRow}>
                       <div className="px-4 ms-3 col-sm-1">
@@ -484,7 +489,7 @@ function PRRow(props) {
       }
 
       {/* APPROVERS */}
-      {props.RoleID === 1 &&
+      {ROLE === 1 &&
         <div>
           {
             isAdHoc === false &&
@@ -1107,9 +1112,6 @@ export default function PurchaseRequest() {
   const [byRemarks, setByRemarks] = useState(true);
   const [byPRStatus, setByPRStatus] = useState(true);
 
-  // in progress modal
-  const [showInProg, setInProg] = useState(false);
-
   // show all PR
   useEffect(() => {
     // set user id taken from localstorage
@@ -1118,7 +1120,12 @@ export default function PurchaseRequest() {
 
     // set user role
     const roleID = parseInt(localStorage.getItem("roleID"), 10);
-    setRoleID(roleID);
+    // filter out approver roles & finance to be under approvers
+    if (roleID === 3) {
+      setRoleID(1);
+    } else {
+      setRoleID(roleID);
+    };
 
     // set user token
     const token = localStorage.getItem("token");
@@ -1210,7 +1217,7 @@ export default function PurchaseRequest() {
         });
     }
     // Approver View
-    else if (roleID === 1) {
+    else if (roleID === 1 || roleID === 3) {
       // setting default filter view
       setViewType(true);
 
@@ -1722,7 +1729,6 @@ export default function PurchaseRequest() {
 
       <div className="pb-5">
         <div className={styles.rightFloater}>
-
           {
             role === 2 &&
             <div className="px-3 pb-4">
@@ -1744,26 +1750,17 @@ export default function PurchaseRequest() {
             </div>
           }
 
-          <div className={styles.searchContainer}>
+          <div>
             <form onSubmit={handlePRSearch}>
-              <input
-                type="text"
-                placeholder="  Search.."
-                value={searchValue}
-                onChange={(e) => { PRSearch(e) }}
-                name="search"
-                className={styles.searchBox}
-              />
-              <button type="submit" className={styles.searchButton}>
-                <Image src={searchIcon} width={25} alt="Search" />
-              </button>
-              <button
-                type="button"
-                onClick={handleFilterPopUp}
-                className={styles.searchButton}
-              >
-                <Image src={filterIcon} width={25} alt="Filter" />
-              </button>
+              <div className="d-inline-flex">
+                <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => { PRSearch(e) }} name="search" className={styles.searchBox} />
+                <button type="submit" className={styles.searchButton}>
+                  <Image src={searchIcon} width={25} alt="Search" />
+                </button>
+                <button type="button" onClick={handleFilterPopUp} className={styles.searchButton}>
+                  <Image src={filterIcon} width={25} alt="Filter" />
+                </button>
+              </div>
             </form>
           </div>
         </div>

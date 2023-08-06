@@ -20,13 +20,6 @@
 } */
 
 /* Search Box */
-.searchContainer {
-    float: right;
-    display: flex;
-    flex-wrap: wrap;
-    text-align: left;
-}
-
 .searchBox {
     width: 70%;
     border-radius: 20px;
