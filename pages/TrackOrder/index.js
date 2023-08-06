@@ -113,11 +113,11 @@ function OrderRow(props) {
     axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
       purchaseStatus: statusInput
     },
-    {
-      headers: {
-        authorization: 'Bearer ' + Token
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
       }
-    }
     )
       .then(res => {
         // alert(`sucessfully created new status ${statusInput}`)
@@ -168,9 +168,9 @@ function OrderRow(props) {
   };
 
   return (
-    <div>
-      <div className="row w-4 h-4 py-4 rounded-4 mb-3 m-2" style={{ backgroundColor: '#C0D8F7' }}>
-        <div className="row d-flex">
+    <div className='pt-2'>
+      <div className="py-1" style={{ backgroundColor: '#C0D8F7', borderRadius: '10px' }}>
+        <div className="row pt-1 d-flex">
           <a href={baseURL + '/TrackOrder/' + poId} className="col text-decoration-none text-black ps-3">
             {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}
             <div className=" col d-flex">
@@ -280,7 +280,7 @@ function AdHocRow(props) {
 
   return (
     <div>
-      <div className="py-1">
+      <div className="pt-1">
         <a href={baseURL + "/TrackOrder/AdHoc/" + props.prID}>
           <button className={styles.prButton}>
             <div className={styles.prRow}>
@@ -314,10 +314,6 @@ function AdHocRow(props) {
                   <div className="col-sm">
                     <p>{props.Name}</p>
                   </div>
-
-                  {/* <div className="col-sm">
-                    <p>{props.TargetDate}</p>
-                  </div> */}
 
                   <div className="col-sm">
                     <div className="row">
@@ -591,9 +587,11 @@ export default function TrackOrder() {
           <div className={styles.searchContainer}>
             {/* <form onSubmit={handleSearch}> */}
             <form>
-              <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox} />
-              <button onClick={handleOpenWip} type="submit" className={styles.searchButton}><Image src={searchIcon} width={25} alt='Search' /></button>
-              <button onClick={handleOpenWip} type="button" className={styles.searchButton}><Image src={filterIcon} width={25} alt='Filter' /></button>
+              <div className="d-inline-flex">
+                <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox} />
+                <button onClick={handleOpenWip} type="submit" className={styles.searchButton}><Image src={searchIcon} width={25} alt='Search' /></button>
+                <button onClick={handleOpenWip} type="button" className={styles.searchButton}><Image src={filterIcon} width={25} alt='Filter' /></button>
+              </div>
             </form>
             <ul>
               {searchResults.map((result) => (
@@ -633,7 +631,7 @@ export default function TrackOrder() {
         <hr />
       </div>
 
-      <div className="col-sm-12">
+      <div className="overflow-scroll w-100 h-75 position-absolute">
         {
           showAdHoc === false &&
           <div>{TrackOrderResults}</div>
@@ -643,7 +641,6 @@ export default function TrackOrder() {
           showAdHoc === true &&
           <div>{AdHocResults}</div>
         }
-
       </div>
 
       {showInProg && <WIP Show={showInProg} />}

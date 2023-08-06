@@ -87,7 +87,7 @@ function Icon(props) {
 function PRRow(props) {
   const statusID = props.StatusID;
 
-  const [ROLE, setROLE] =useState(props.RoleID);
+  const [ROLE, setROLE] = useState(props.RoleID);
 
   const [isAdHoc, setIsAdHoc] = useState(false);
 
@@ -98,7 +98,7 @@ function PRRow(props) {
   const circle = circleTest(statusID);
 
   useEffect(() => {
-    if(props.RoleID === 3){
+    if (props.RoleID === 3) {
       setROLE(1);
     };
 
@@ -135,7 +135,7 @@ function PRRow(props) {
   };
 
   return (
-    <div className="py-1">
+    <div className="pt-1">
       {/* PURCHASER */}
       {ROLE === 2 &&
         <div>
@@ -144,7 +144,6 @@ function PRRow(props) {
             <a href={baseURL + "/PurchaseRequest/" + props.prID}>
               <button className={styles.prButton}>
                 <div className={styles.prRow}>
-                  {/* <h1>dadf</h1> */}
                   <div className="pt-2 row">
                     <div className={styles.prTextRow}>
                       <div className="px-4 ms-3 col-sm-1">
@@ -1730,7 +1729,6 @@ export default function PurchaseRequest() {
 
       <div className="pb-5">
         <div className={styles.rightFloater}>
-
           {
             role === 2 &&
             <div className="px-3 pb-4">
@@ -1752,26 +1750,17 @@ export default function PurchaseRequest() {
             </div>
           }
 
-          <div className={styles.searchContainer}>
+          <div>
             <form onSubmit={handlePRSearch}>
-              <input
-                type="text"
-                placeholder="  Search.."
-                value={searchValue}
-                onChange={(e) => { PRSearch(e) }}
-                name="search"
-                className={styles.searchBox}
-              />
-              <button type="submit" className={styles.searchButton}>
-                <Image src={searchIcon} width={25} alt="Search" />
-              </button>
-              <button
-                type="button"
-                onClick={handleFilterPopUp}
-                className={styles.searchButton}
-              >
-                <Image src={filterIcon} width={25} alt="Filter" />
-              </button>
+              <div className="d-inline-flex">
+                <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => { PRSearch(e) }} name="search" className={styles.searchBox} />
+                <button type="submit" className={styles.searchButton}>
+                  <Image src={searchIcon} width={25} alt="Search" />
+                </button>
+                <button type="button" onClick={handleFilterPopUp} className={styles.searchButton}>
+                  <Image src={filterIcon} width={25} alt="Filter" />
+                </button>
+              </div>
             </form>
           </div>
         </div>

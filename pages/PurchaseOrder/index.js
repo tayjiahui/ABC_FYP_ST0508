@@ -78,28 +78,33 @@ export default function TrackPayment({ purchaseOrder }) {
   };
 
   return (
-    <div className="container-fluid px-3">
-      <div className="d-flex align-items-center justify-content-between">
-        <h1 className="m-0">Payment Tracking</h1>
-        <div className="d-flex">
-          <input
-            type="text"
-            placeholder="Search..."
-            className={styles.searchText}
-            value={searchInput}
-            onChange={handleSearchInputChange}
-          />
-          <button type="submit" className={styles.searchButton}>
-            <Image src={searchBtn} className="me-2" />
-            <Image src={filterIcon} onClick={wipOpen} />
-          </button>
+    <div>
+      <h1>Payment Tracking</h1>
 
-          {wip && <WIP Show={wip} />}
+      <div className="pb-5">
+        <div className={styles.rightFloater}>
+          <div className="d-inline-flex">
+            <input
+              type="text"
+              placeholder="  Search..."
+              className={styles.searchText}
+              value={searchInput}
+              onChange={handleSearchInputChange}
+            />
+            <button type="submit" className={styles.searchButton}>
+              <Image src={searchBtn} width={25}/>
+            </button>
 
+            <button type="button" className={styles.searchButton}>
+              <Image src={filterIcon} width={25} onClick={wipOpen}/>
+            </button>
+
+            {wip && <WIP Show={wip} />}
+          </div>
         </div>
       </div>
 
-      <div className="row py-4 border-top border-bottom mt-4 mb-4">
+      <div className="row px-2 py-4 border-top border-bottom mb-3">
         <div className="col">PO No.</div>
         <div className="col">Created</div>
         <div className="col">Price</div>
@@ -108,18 +113,25 @@ export default function TrackPayment({ purchaseOrder }) {
         <div className="col">Status</div>
       </div>
 
-      <div className={styles.poListsMain}>
+      <div className="overflow-scroll px-2 w-100 h-75 position-absolute">
         {filteredPurchaseOrders.map((po, index) => (
-          <Link key={index} href={baseURL + '/PurchaseOrder/' + po.prID} className="text-decoration-none text-dark"  >
-            <div className={`row py-4 border-bottom mb-2 ${styles['hover-box-shadow']}`} style={{ backgroundColor: '#C0D8F7', borderRadius: '15px', height: '85px'}}>
-              <div className="col">#{po.prID}</div>
-              <div className="col">{moment(po.requestDate).format('D MMM YYYY')}</div>
-              <div className="col">${Number(po.Price).toFixed(2)}</div>
-              <div className="col">{po.paymentMode}</div>
-              <div className="col">{po.supplierName}</div>
-              <div className="col">{po.Status}</div>
+          <div className="pt-1">
+            <div key={index} className={styles.poListsMain}>
+              <a href={baseURL + '/PurchaseOrder/' + po.prID}>
+                <button className={styles.prButton}>
+                  <div className={`row px-1 py-3 text-start ${styles['hover-box-shadow']}`} style={{ backgroundColor: '#C0D8F7', borderRadius: '10px', width: '100%', height: 'auto' }}>
+                    <div className="col">#{po.prID}</div>
+                    <div className="col">{moment(po.requestDate).format('D MMM YYYY')}</div>
+                    <div className="col">${Number(po.Price).toFixed(2)}</div>
+                    <div className="col">{po.paymentMode}</div>
+                    <div className="col">{po.supplierName}</div>
+                    <div className="col">{po.Status}</div>
+                  </div>
+                </button>
+              </a>
             </div>
-          </Link>
+          </div>
+
         ))}
       </div>
     </div>
