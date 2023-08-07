@@ -104,10 +104,10 @@ const Calendar = () => {
 
   const renderEventContent = (eventInfo) => {
     return (
-      <>
-        <p className="ms-2 me-3 fw-bold">{eventInfo.event.title}</p>
-        <p>{eventInfo.event.extendedProps.description}</p>
-      </>
+      <div className={styles.impt}>
+        <p className="ms-2 me-3 fw-bold fs-5">{eventInfo.event.title}</p>
+        <p className={styles.des}>{eventInfo.event.extendedProps.description}</p>
+      </div>
     );
   };
 

@@ -178,3 +178,15 @@ h2 {
   margin-left: 20px;
   margin-top: 30px;
 }
+
+.impt {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  word-break: break-word;
+}
+
+.des {
+  overflow: hidden;
+  white-space: pre-wrap;
+  margin-left: 5px;
+}
