@@ -97,8 +97,6 @@ export default function ViewAdHoc({ AdHocDetails }) {
     const AH = AdHocDetails[0];
     const poID = AdHocDetails[0].prID;
 
-    const [Token, setToken] = useState();
-    const [id, setUserID] = useState();
 
      // get user id
     useEffect(() => {
