@@ -269,6 +269,7 @@ export default function ViewPR({
   const [DeniedAlert, setDeniedAlert] = useState(false);
   const [ConvertPRAlert, setConvertPRAlert] = useState(false);
   const [ReappealAlert, setReappealAlert] = useState(false);
+  const [PDFDownloadAlert, setPDFDownloadAlert] = useState(false);
 
   // PR Details
   const PR = prDetails[0];
@@ -462,6 +463,7 @@ export default function ViewPR({
     setDeniedAlert(false);
     setConvertPRAlert(false);
     setReappealAlert(false);
+    setPDFDownloadAlert(false);
   };
 
   const submitApproval = async (e) => {
@@ -575,6 +577,15 @@ export default function ViewPR({
         console.log(err);
         alert(err.response.data);
       });
+  };
+
+  const handleDownloadPop = (e) => {
+    const DownloadAlert = () => {
+      setPDFDownloadAlert(true);
+      alertTimer();
+    };
+
+    setTimeout(DownloadAlert, 2000);
   };
 
   // enable reappeal form
@@ -1048,7 +1059,7 @@ export default function ViewPR({
 
                         <div className="pt-2">
                           <a href={baseUrl + `/api/pdf/PurchaseOrder/` + prID}>
-                            <button className={styles.downloadPOButton}>
+                            <button onClick={handleDownloadPop} className={styles.downloadPOButton}>
                               <div className="px-5">
                                 Download Purchase Order
                               </div>
@@ -1547,6 +1558,15 @@ export default function ViewPR({
           Message={`Reappealed Purchase Request #${NewPRID} Created!`}
           Type={'success'}
           Redirect={`/PurchaseRequest/${NewPRID}`} />
+      }
+
+      {
+        PDFDownloadAlert &&
+        <AlertBox
+          Show={PDFDownloadAlert}
+          Message={`PDF Downloaded!`}
+          Type={'success'}
+          Redirect={``} />
       }
 
     </>
