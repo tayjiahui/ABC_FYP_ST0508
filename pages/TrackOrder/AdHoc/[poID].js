@@ -92,9 +92,26 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
     // Alerts
     const [updateTPAlert, setTPAlert] = useState(false);
+    const [uploadedReceiptAlert, setUploadedReceiptAlert] = useState(false);
 
     const AH = AdHocDetails[0];
     const poID = AdHocDetails[0].prID;
+
+    const [Token, setToken] = useState();
+    const [id, setUserID] = useState();
+
+     // get user id
+    useEffect(() => {
+    // set user id taken from localstorage
+    const userID = parseInt(localStorage.getItem("ID"), 10);
+    setUserID(userID);
+
+    //set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
+
+    }, [])
+
 
     useEffect(() => {
         // set user id taken from localstorage
@@ -203,6 +220,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
     function alertFunc() {
         // list of alerts useStates in your page
         setTPAlert(false);
+        setUploadedReceiptAlert(false);
     };
 
     // WIP Modal
@@ -247,6 +265,23 @@ export default function ViewAdHoc({ AdHocDetails }) {
             });
     };
 
+    const handleOpenPDFInNewTab = () => {
+        if (PDF) {
+            const byteCharacters = atob(PDF);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const pdfBlob = new Blob([byteArray], { type: 'application/pdf' });
+
+            const pdfUrl = window.URL.createObjectURL(pdfBlob);
+            const newTab = window.open();
+            newTab.document.write('<iframe src="' + pdfUrl + '" width="100%" height="100%"></iframe>');
+            newTab.document.close();
+        }
+    };
+
     //uploading invoice
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
@@ -260,11 +295,15 @@ export default function ViewAdHoc({ AdHocDetails }) {
 
             axios.put(`${baseUrl}/api/trackOrder/documents/${poID}/invoice`, formData, {
                 headers: {
-                    'Content-Type': "multipart/form-data"
+                    'Content-Type': "multipart/form-data",
+                    user: id,
+                    authorization: 'Bearer ' + Token
                 }
             })
                 .then(() => {
                     console.log('Invoice uploaded successfully!!');
+                    setUploadedReceiptAlert(true);
+                    alertTimer()
                     fetchPDFData();
                 })
                 .catch((err) => {
@@ -365,7 +404,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     <hr className={styles.lineDivider}></hr>
                 </div>
 
-                <div className="ps-3 pt-3 pb-5">
+                <div className="ps-3 pt-3 pb-2">
                     <button onClick={handleOpenModal} className="rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
                         <h4 className="col-sm text-white pt-2">Upload Receipt</h4><br></br>
                         {showInProg && <WIP Show={showInProg} />}
@@ -373,23 +412,30 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 </div>
             </div>
 
-            <div className="mt-4 ms-5">
+            <div className="ps-3 pt-3 pb-5">
                 {PDF ? (
-                    <iframe src={`data:application/pdf;base64,${PDF}`} width="70%" height="500px" />
+                    <>
+                        <button className="rounded-4 w-50 ms-4 pt-3 me-1 border-0 shadow text-center col-sm text-white pt-2" style={{ backgroundColor: '#486284' }} onClick={handleOpenPDFInNewTab} >
+                            <h4 className="col-sm text-white pt-2">View Receipt</h4><br/>
+                        </button>
+                    </>
                 ) : (
-                    <p>No Invoice uploaded currently.</p>
+                    <p className="ms-4">No receipt uploaded currently.</p>
                 )}
             </div>
+
+
+
 
             {/* INVOICE PDF */}
             {showModal && (
                 <div className="modal fade show d-block" style={{ display: 'block' }}>
                     <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content">
+                        <div className="modal-content" style={{border: '1px solid black'}}>
                             <div className="modal-body">
                                 <div className="d-flex flex-column align-items-center">
                                     <h5 className="modal-title">Upload A File</h5>
-                                    <button type="button" className="closeXbtn" onClick={handleCloseModal} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5' }}>
+                                    <button type="button" className="closeXbtn" onClick={handleCloseModal} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', background: 'transparent' }}>
                                         <span aria-hidden="true">&times;</span>
                                     </button> <br />
                                     <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -447,6 +493,14 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     Type={'success'}
                     Redirect={``} />
             }
+
+            {uploadedReceiptAlert &&
+                <AlertBox
+                    Show={uploadedReceiptAlert}
+                    Message={`Receipt Uploaded!`}
+                    Type={'success'} />
+            }
+
         </div>
     );
 };
