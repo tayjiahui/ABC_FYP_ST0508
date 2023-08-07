@@ -4,11 +4,15 @@ import axios from "axios";
 import Image from "next/image"
 import styles from '../../styles/viewPO.module.css';
 import arrowIcon from '../../public/arrowIcon.svg';
+import deleteIcon from '../../public/trashBinIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 //component
 import WIP from "../../components/WIP";
+import AlertBox from "../../components/alert";
+
+const timezone = 'Asia/Singapore';
 
 // Base urls
 const URL = [];
@@ -109,15 +113,26 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const [newStatusPop, setNewStatusPop] = useState(false);
   const [statusInput, setStatusInput] = useState([]);
   const [remarks, setRemarks] = useState('');
+  //pdf
   const [selectedFile, setSelectedFile] = useState([]);
   const [PDF, setPDF] = useState([]);
   const [wip, setWip] = useState(false);
+  //alert box
+  const [createdStatusAlert, setCreatedStatusAlert] = useState(false);
+  const [uploadedReceiptAlert, setUploadedReceiptAlert] = useState(false);
+
+  const [Token, setToken] = useState();
 
   // get user id
   useEffect(() => {
     // set user id taken from localstorage
     const userID = parseInt(localStorage.getItem("ID"), 10);
     setUserID(userID);
+
+    //set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
+
   }, [])
 
   //saving paymentstatus, need to get ID from status first. 
@@ -187,11 +202,15 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
       axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/receipt`, formData, {
         headers: {
-          'Content-Type': "multipart/form-data"
+          'Content-Type': "multipart/form-data",
+          user: id,
+          authorization: 'Bearer ' + Token
         }
       })
         .then(() => {
           console.log('receipt uploaded..');
+          setUploadedReceiptAlert(true);
+          alertTimer();
           fetchPDFData();
         })
         .catch((err) => {
@@ -240,22 +259,41 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   };
 
   const handleSubmit = (event) => {
-    // event.preventDefault();
-    alert(statusInput);
+    event.preventDefault();
+    // alert(statusInput);
 
     axios.post(`${baseUrl}/api/paymentTrack/`, {
       paymentStatus: statusInput
+    }, {
+      headers: {
+        authorization: 'Bearer ' + Token
+      }
     })
       .then(res => {
-        alert(`sucessfully created new status ${statusInput}`)
-        setNewStat(false)
+        // alert(`sucessfully created new status ${statusInput}`)
+        setNewStatusPop(false)
         setStatus((prevStatus) => [...prevStatus, res.data]);
-        onSubmit(statusInput)
+        // onSubmit(statusInput)
+
+        setCreatedStatusAlert(true);
+        alertTimer();
+
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  //timer for the alert components
+  function alertTimer() {
+    setTimeout(alertClose, 3000);
+  }
+
+  function alertClose() {
+    setCreatedStatusAlert(false);
+    setUploadedReceiptAlert(false);
+    window.location.reload();
+  }
 
   // const handleNewStatus = () => {
   //   setStatusModal(true);
@@ -319,6 +357,23 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
       });
   };
 
+  const handleOpenPDFInNewTab = () => {
+    if (PDF) {
+      const byteCharacters = atob(PDF);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const pdfBlob = new Blob([byteArray], { type: 'application/pdf' });
+
+      const pdfUrl = window.URL.createObjectURL(pdfBlob);
+      const newTab = window.open();
+      newTab.document.write('<iframe src="' + pdfUrl + '" width="100%" height="100%"></iframe>');
+      newTab.document.close();
+    }
+  };
+
   useEffect(() => {
     axios.all([
       //fetches all the statuses to populate the dropdown. 
@@ -365,6 +420,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         //updating payment status in db
         axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
           paymentStatusID: ID
+        }, {
+          headers: {
+            user: id,
+            authorization: 'Bearer ' + Token
+          }
         })
           .then(async res => {
             console.log('payment status updated sucessfully');
@@ -372,12 +432,17 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             // create audit log
             await axios.post(`${baseUrl}/api/auditTrail/`,
               {
-                timestamp: moment().format(),
+                timestamp: moment().tz(timezone).format(),
                 userID: id,
                 actionTypeID: 3,
                 itemId: POID,
                 newValue: ID,
                 oldValue: ogPaymentStatus
+              },
+              {
+                headers: {
+                  authorization: 'Bearer ' + Token
+                }
               }
             )
               .then((response) => {
@@ -425,6 +490,24 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   //     })
   // })
 
+  // DELETE RECEIPT
+  // const handleReceiptDelete = () => {
+  //   axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/remove`, {
+  //     ptReceipt: null
+  //   },{
+  //     headers: {
+  //       user: id,
+  //       authorization: 'Bearer ' + Token
+  //     }
+  //   })
+  //   .then(res => {
+  //     console.log('Receipt Deleted');
+  //     window.location.reload();
+  //   })
+  //   .catch(err => {
+  //     console.log('Error deleting Receipt', err);
+  //   })
+  // };
 
   return (
     <>
@@ -537,7 +620,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             <div className="row">
               <div className="col-3">
                 <b>Date of Request:</b> <br />
-                {moment(remarkDetail[0].requestDate).format('DD MMM YYYY')}
+                {moment(remarkDetail[0].requestDate).format('D MMM YYYY')}
               </div>
               <div className="col-3">
                 <b>Name of Purchaser:</b> <br />
@@ -666,10 +749,24 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             </div>
 
             {wip && <WIP Show={wip} />}
-
+            {/* 
             <div className="mt-5">
               {PDF ? (
-                <iframe src={`data:application/pdf;base64,${PDF}`} width="70%" height="500px" />
+                <iframe src={`data:application/pdf;base64,${PDF}`} width="100%" height="500px" />
+              ) : (
+                <p>No receipt uploaded currently.</p>
+              )}
+            </div> */}
+
+            <div className="mt-4">
+              {PDF ? (
+                <>
+                  <p>Receipt Uploaded : </p>
+                  <div className={styles.receiptContainer}>
+                    <button className={styles.openReceipt} onClick={handleOpenPDFInNewTab}>View Receipt</button>
+                    {/* <Image src={deleteIcon} alt="Delete Receipt" className={styles.deleteIcon} onClick={handleReceiptDelete}/> */}
+                  </div>
+                </>
               ) : (
                 <p>No receipt uploaded currently.</p>
               )}
@@ -835,6 +932,22 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
             </div>
           </div>
         )}
+
+        {createdStatusAlert &&
+          <AlertBox
+            Show={createdStatusAlert}
+            Message={`New Payment Status Created!`}
+            Type={'success'}
+            Redirect={`/PurchaseOrder/${poID}`} />
+        }
+
+        {uploadedReceiptAlert &&
+          <AlertBox
+            Show={uploadedReceiptAlert}
+            Message={`Receipt Uploaded!`}
+            Type={'success'} />
+        }
+
       </div>
     </>
   )

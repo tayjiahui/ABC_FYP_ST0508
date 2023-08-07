@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import moment from "moment";
+import moment from 'moment-timezone';
 import axios from "axios";
 
 // styles
@@ -13,12 +13,12 @@ import AlertBox from "../../components/alert";
 
 // Image
 import arrowIcon from "../../public/arrowIcon.svg";
-import pendingCircle from "../../public/yellowPendingCircle.svg";
-import approvedCircle from "../../public/greenApprovedCircle.svg";
-import rejectedCircle from "../../public/redRejectedCircle.svg";
 import nextArrow from "../../public/rightArrowWhite.svg";
 import addLocIcon from "../../public/addLocationIcon.svg";
 import addIcon from "../../public/plusIcon.svg";
+import xIcon from "../../public/xIcon.svg";
+
+const timezone = 'Asia/Singapore';
 
 // Base urls
 const URL = [];
@@ -36,8 +36,7 @@ function isLocalhost() {
         "https://abc-cooking-studio.azurewebsites.net"
       );
       console.log(URL);
-    }
-
+    };
     return URL;
   };
 };
@@ -268,7 +267,9 @@ export default function ViewPR({
   // Alert Box
   const [ApprovedAlert, setApprAlert] = useState(false);
   const [DeniedAlert, setDeniedAlert] = useState(false);
+  const [ConvertPRAlert, setConvertPRAlert] = useState(false);
   const [ReappealAlert, setReappealAlert] = useState(false);
+  const [PDFDownloadAlert, setPDFDownloadAlert] = useState(false);
 
   // PR Details
   const PR = prDetails[0];
@@ -460,7 +461,9 @@ export default function ViewPR({
     // list of alerts useStates in your page
     setApprAlert(false);
     setDeniedAlert(false);
+    setConvertPRAlert(false);
     setReappealAlert(false);
+    setPDFDownloadAlert(false);
   };
 
   const submitApproval = async (e) => {
@@ -529,6 +532,7 @@ export default function ViewPR({
     await axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
       {
         prID: prID,
+        totalPrice: Total
       },
       {
         headers: {
@@ -536,17 +540,52 @@ export default function ViewPR({
         }
       }
     )
-      .then((response) => {
-        // console.log(response);
-        alert(response.data);
+      .then(async (response) => {
+        try {
+          const newPO = await axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${prID}`);
 
-        // redirect to track PO
-        router.push(`/TrackOrder/${prID}`);
+          // audit log
+          await axios.post(`${baseUrl}/api/auditTrail/`,
+            {
+              timestamp: moment().tz(timezone).format(),
+              userID: id,
+              actionTypeID: 6,
+              itemId: prID,
+              newValue: newPO.data[0].poID,
+              oldValue: 0
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
+            }
+          )
+            .then((response) => {
+              // console.log(response.data);
+              setConvertPRAlert(true);
+              // timer to reset to false
+              alertTimer();
+              // set timer before redirect  // redirect to PO
+              setTimeout(() => { router.push(`/TrackOrder/${prID}`) }, 3000);
+            })
+        } catch (err) {
+          console.log(err);
+          alert(err.response.data);
+        }
       })
       .catch((err) => {
         console.log(err);
         alert(err.response.data);
       });
+  };
+
+  const handleDownloadPop = (e) => {
+    const DownloadAlert = () => {
+      setPDFDownloadAlert(true);
+      alertTimer();
+    };
+
+    setTimeout(DownloadAlert, 2000);
   };
 
   // enable reappeal form
@@ -617,8 +656,6 @@ export default function ViewPR({
   // add item line inputs // currently only max 5 items
   const [ItemLineList, SetItemLineList] = useState(PLItemData);
   const addItemLine = () => {
-    // max 5 items
-    // if(ItemLineList.length < 5){
     SetItemLineList([
       ...ItemLineList,
       {
@@ -630,7 +667,6 @@ export default function ViewPR({
         TotalUnitPrice: "",
       },
     ]);
-    // };
   };
 
   const removeItemLine = (index) => {
@@ -962,7 +998,6 @@ export default function ViewPR({
                     <div className="py-3 w-70">
                       <div className={styles.apprCommentsBox}>
                         <div className="p-4">
-                          {/* <p>{PR.apprRemarks}</p> */}
                           <textarea
                             value={viewApprComment}
                             onChange={(e) => setViewApprComment(e.target.value)}
@@ -990,9 +1025,6 @@ export default function ViewPR({
                               onClick={convertToPO}
                               className={styles.createPOButton}
                             >
-                              {/* <div className="ms-5 me-2 ps-2">
-                                                                            Next<Image src={nextArrow} width={25} height={25} alt="Next Arrow" className="ms-5"/>
-                                                                        </div> */}
                               <div className="px-5">
                                 Convert To Purchase Order
                                 <Image
@@ -1027,7 +1059,7 @@ export default function ViewPR({
 
                         <div className="pt-2">
                           <a href={baseUrl + `/api/pdf/PurchaseOrder/` + prID}>
-                            <button className={styles.downloadPOButton}>
+                            <button onClick={handleDownloadPop} className={styles.downloadPOButton}>
                               <div className="px-5">
                                 Download Purchase Order
                               </div>
@@ -1070,7 +1102,6 @@ export default function ViewPR({
                   <Image src={arrowIcon} id={styles.arrow} alt="Back" />
                 </a>
                 Reappeal Purchase Request #{prID}
-                {/* <Image src={Circle} alt="PR Status" width={25} height={25} className={styles.statusCircle}/> */}
               </h1>
             </div>
           </div>
@@ -1417,12 +1448,12 @@ export default function ViewPR({
               {/* <div className="col-sm"></div> */}
               <div className="col-sm-9">
                 {/* <div className={styles2.submit}>
-                                        <button type="button" onClick={handleRefresh} className={styles2.resetReappealButton}>
-                                            <div className="px-5">
-                                                Reset Reappeal Form
-                                            </div>
-                                        </button>
-                                    </div> */}
+                  <button type="button" onClick={handleRefresh} className={styles2.resetReappealButton}>
+                    <div className="px-5">
+                      Reset Reappeal Form
+                    </div>
+                  </button>
+                </div> */}
               </div>
               <div className="col-sm py-5">
                 <div className={styles2.reappeal}>
@@ -1512,12 +1543,30 @@ export default function ViewPR({
       }
 
       {
+        ConvertPRAlert &&
+        <AlertBox
+          Show={ConvertPRAlert}
+          Message={`Purchase Order #${prID} Created!`}
+          Type={'success'}
+          Redirect={`/TrackOrder/${prID}`} />
+      }
+
+      {
         ReappealAlert &&
         <AlertBox
           Show={ReappealAlert}
           Message={`Reappealed Purchase Request #${NewPRID} Created!`}
           Type={'success'}
           Redirect={`/PurchaseRequest/${NewPRID}`} />
+      }
+
+      {
+        PDFDownloadAlert &&
+        <AlertBox
+          Show={PDFDownloadAlert}
+          Message={`PDF Downloaded!`}
+          Type={'success'}
+          Redirect={``} />
       }
 
     </>

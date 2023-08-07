@@ -9,6 +9,8 @@ import styles from "../../styles/viewSupplier.module.css";
 import arrowIcon from "../../public/arrowIcon.svg";
 import editIcon from "../../public/penIcon.svg";
 import deleteIcon from "../../public/trashBinIcon.svg";
+import xIcon from '../../public/xIcon.svg';
+import AlertBox from "../../components/alert";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Base urls
@@ -56,8 +58,7 @@ export async function getServerSideProps(context) {
     const supplierInfoResponse = await fetch(`${backBaseURL}/api/supplier/${supplierID}`);
     const supplierInfoResults = await supplierInfoResponse.json();
     // console.log("supplier info: " + supplierInfoResults);
-    
-                     
+         
     return {
         props: {
             host,
@@ -69,13 +70,37 @@ export async function getServerSideProps(context) {
 
 // view supplier page
 export default function viewSupplier({ supplierDetails }) {
-
-    const router = useRouter()
+    const router = useRouter();
     const supplierID = router.query.supplierID;
-    
     const supplierDetail = supplierDetails[0];
-    //console.log("ID from url: "+ supplierID);
-    // console.log(supplierDetail);
+
+    const [Token, setToken] = useState();
+
+    useEffect(() => {
+        // set user token
+        const token = localStorage.getItem("token");
+        setToken(token);
+    }, []);
+
+    // alert box
+    const [updatedSuccessAlert, setUpdatedSuccessAlert] = useState(false);
+    const [updatedErrorAlert, setUpdatedErrorAlert] = useState(false);
+    const [deletedSuccessAlert, setDeletedSuccessAlert] = useState(false);
+    const [deletedErrorAlert, setDeletedErrorAlert] = useState(false);
+    const [selectAlert, setSelectAlert] = useState(false);
+
+    // alert box timer
+    function alertTimer() {
+        setTimeout(alertFunc, 3000);
+    };
+
+    function alertFunc() {
+        setUpdatedSuccessAlert(false);
+        setUpdatedErrorAlert(false);
+        setDeletedSuccessAlert(false);
+        setDeletedErrorAlert(false);
+        setSelectAlert(false);
+    };
 
     // dropdown options
     const [bankDropdownOptions, setbankDropdownOptions] = useState([]);
@@ -125,7 +150,8 @@ export default function viewSupplier({ supplierDetails }) {
         phoneNum: supplierDetail.phoneNum,
         address: supplierDetail.address,
         bankID: supplierDetail.bankID,
-        bankAccountNum: supplierDetail.bankAccountNum
+        bankAccountNum: supplierDetail.bankAccountNum,
+        MOQ: supplierDetail.MOQ
     });
 
     // update form states
@@ -178,29 +204,48 @@ export default function viewSupplier({ supplierDetails }) {
     const handleConfirmDelete = async(e) => {
         e.preventDefault();
 
-        await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`)
+        await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`,{},
+        {
+            headers: {
+                authorization: 'Bearer ' + Token
+            }
+        })
             .then((res1) => {
                 console.log(res1.data);
-                alert(res1.data);
+                // alert(res1.data);
 
-                axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`)
-                    .then((res2) => {
-                        console.log(res2.data);
-                        // alert(res2.data);
-                    })
+                axios.put(`${baseUrl}/api/supplier/delete/category/${supplierID}`, {},
+                {
+                    headers: {
+                        authorization: 'Bearer ' + Token
+                    }
+                })
+                .then((res2) => {
+                    console.log(res2.data);
+                })
 
-                // refresh page to show updates
-                router.push('/Supplier');
+                setDeletedSuccessAlert(true);
+
+                // timer to reset to false
+                alertTimer();
+
+                // timer before redirect
+                setTimeout(() => {router.push('/Supplier')}, 3000);
+
             })
             .catch((err) => {
                 console.log(err);
-                alert(err);
+
+                setDeletedErrorAlert(true);
+                // alert(err);
+
+                alertTimer();
             });
         
         setDeleteSupplierPop(false);
 
         // redirect to supplier main page
-        router.push('/Supplier');
+        // router.push('/Supplier');
     }
 
     // text edit for update
@@ -238,33 +283,50 @@ export default function viewSupplier({ supplierDetails }) {
 
         // check for category inputs
         if (selectedCategories.length === 0) {
-            alert("Please select at least one option for Category");
+            // alert("Please select at least one option for Category");
+            setSelectAlert(true);
+            alertTimer();
         } 
         else {
             // send form data using axios PUT
-            await axios.put(`${baseUrl}/api/supplier/${supplierID}`, updatedValues)
+            await axios.put(`${baseUrl}/api/supplier/${supplierID}`, updatedValues,
+            {
+                headers: {
+                    authorization: 'Bearer ' + Token
+                }
+            })
             .then((res1) => {
                 console.log(res1.data);
-                alert(res1.data);
+                // alert(res1.data);
 
                 axios.put(`${baseUrl}/api/supplier/suppliersCategory/${supplierID}`, {
                     categoryIDs: selectedCategories.map((option) => option.value).join(',')
+                },
+                {
+                    headers: {
+                        authorization: 'Bearer ' + Token
+                    }
                 })
                 .then((res2) => {
                     console.log(res2.data);
-                    // alert(res2.data);
                 })
 
-                // refresh page to show updates
-                router.push('/Supplier');
+                setUpdatedSuccessAlert(true);
+
+                // timer to reset to false
+                alertTimer();
+
+                // timer before redirect
+                setTimeout(() => {router.push('/Supplier')}, 3000);
 
             })
             .catch((err) => {
                 console.log(err);
-                alert(err);
+                setUpdatedErrorAlert(true);
+                alertTimer();
             });
         }
-    }
+    };
 
     return (
         <>
@@ -288,7 +350,10 @@ export default function viewSupplier({ supplierDetails }) {
                             <div className={styles.popupContainer}>
                                 <div className={styles.popupBox}>
                                     <h2 className={styles.confirmDeleteText}> Confirm Delete?</h2>
-                                    <button onClick={handleClosePopup} className={styles.closeButton2}>X</button>
+                                    <button onClick={handleClosePopup} className={styles.closeButton2}>
+                                        <Image src={xIcon} width={35} height={35} alt="Cancel" />
+                                    </button>
+                                
                                 </div>
                                 <div className={styles.deleteButtons}>
                                     <button className={styles.deleteButton} onClick={handleConfirmDelete}>Delete</button>
@@ -406,9 +471,6 @@ export default function viewSupplier({ supplierDetails }) {
                             />
                         }
                         <br></br>
-                    </div>
-
-                    <div className="col-5" style={{fontSize:"large"}}>
 
                         <b>Contact Person</b><br></br>
                         {editSupplier === false &&
@@ -425,6 +487,11 @@ export default function viewSupplier({ supplierDetails }) {
                             />
                         }
                         <br></br>
+                    </div>
+
+                    <div className="col-5" style={{ fontSize: "large" }}>
+
+
 
                         <b>Phone Number</b><br></br>
                         {editSupplier === false &&
@@ -494,6 +561,38 @@ export default function viewSupplier({ supplierDetails }) {
                         }
                         <br></br>
 
+                        <b>Minimum Order Quantity</b><br></br>
+                        {editSupplier === false &&
+                            <p>${supplierDetail.MOQ}</p>
+                        }
+
+                        {editSupplier === true &&
+                            <input
+                                type="text"
+                                name="MOQ"
+                                value={updatedFormData.MOQ || formData.MOQ}
+                                onChange={handleInput}
+                                className={styles.editInputs}
+                                pattern="[0-9]+" 
+                            />
+                        }
+                        <br></br>
+
+                        <b>Delivery Time Line</b><br></br>
+                        {editSupplier === false &&
+                            <p>{supplierDetail.deliveryTimeLine} Days</p>
+                        }
+                        {editSupplier === true &&
+                            <input
+                                type="text"
+                                name="deliveryTimeLine"
+                                value={updatedFormData.deliveryTimeLine || formData.deliveryTimeLine}
+                                onChange={handleInput}
+                                className={styles.editInputs}
+                                pattern="[0-9]+"
+                            />
+                        }
+
                     </div>
 
                     {editSupplier == true &&
@@ -504,8 +603,49 @@ export default function viewSupplier({ supplierDetails }) {
                     }
             
                 </div>
-
             </div>
+
+            {updatedSuccessAlert &&
+                <AlertBox
+                    Show={updatedSuccessAlert}
+                    Message={`Supplier Successfully Updated!`}
+                    Type={"success"}
+                    Redirect={`/Supplier`} 
+                />
+            }
+
+            {updatedErrorAlert &&
+                <AlertBox
+                    Show={updatedErrorAlert}
+                    Message={`Failed to Update Supplier`}
+                    Type={"danger"}
+                />
+            }
+
+            {deletedSuccessAlert &&
+                <AlertBox
+                    Show={deletedSuccessAlert}
+                    Message={`Supplier Successfully Deleted!`}
+                    Type={"success"}
+                    Redirect={`/Supplier`} 
+                />
+            }
+
+            {deletedErrorAlert &&
+                <AlertBox
+                    Show={deletedErrorAlert}
+                    Message={`Failed to Delete Supplier`}
+                    Type={"danger"}
+                />
+            }
+
+            {selectAlert &&
+                <AlertBox
+                    Show={selectAlert}
+                    Message={`Please select at least one Category`}
+                    Type={"danger"}
+                />
+            }
         </>
     );
 }

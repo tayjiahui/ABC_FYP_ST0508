@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import moment from "moment";
+import moment from 'moment-timezone';
 
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -50,6 +50,13 @@ isLocalhost();
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
+// result sorting system
+function dynamicSort(property) {
+  return function (a, b) {
+    return (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+  };
+};
+
 // check for row status for status indicator
 function circleTest(statusID) {
   if (statusID == 1) {
@@ -80,6 +87,8 @@ function Icon(props) {
 function PRRow(props) {
   const statusID = props.StatusID;
 
+  const [ROLE, setROLE] = useState(props.RoleID);
+
   const [isAdHoc, setIsAdHoc] = useState(false);
 
   const [showPL, setShowPL] = useState(false);
@@ -89,6 +98,10 @@ function PRRow(props) {
   const circle = circleTest(statusID);
 
   useEffect(() => {
+    if (props.RoleID === 3) {
+      setROLE(1);
+    };
+
     if (props.PTypeID === 2) {
       setIsAdHoc(true);
     };
@@ -122,176 +135,366 @@ function PRRow(props) {
   };
 
   return (
-    <div className="py-1">
-      <a href={baseURL + "/PurchaseRequest/" + props.prID}>
-        <button className={styles.prButton}>
-          {props.RoleID === 2 && (
-            <div className={styles.prRow}>
-              <div className="pt-2 row">
-                <div className={styles.prTextRow}>
-                  <div className="px-4 ms-3 col-sm-1">
-                    {showPL === false && (
-                      <button
-                        onClick={viewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                    {showPL === true && (
-                      <button
-                        onClick={closeViewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <p>#{props.prID}</p>
-                      </button>
-                    )}
-                  </div>
+    <div className="pt-1">
+      {/* PURCHASER */}
+      {ROLE === 2 &&
+        <div>
+          {
+            isAdHoc === false &&
+            <a href={baseURL + "/PurchaseRequest/" + props.prID}>
+              <button className={styles.prButton}>
+                <div className={styles.prRow}>
+                  <div className="pt-2 row">
+                    <div className={styles.prTextRow}>
+                      <div className="px-4 ms-3 col-sm-1">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                      </div>
 
-                  <div className="px-1 col-sm-1">
-                    <p>{props.ReqDate}</p>
-                  </div>
+                      <div className="mx-2 col-sm-1">
+                        <p>{props.PType}</p>
+                      </div>
 
-                  <div className="px-4 mx-4 col-sm-3">
-                    <p>{props.Location}</p>
-                  </div>
+                      <div className="mx-3 col-sm-1">
+                        <p>{props.ReqDate}</p>
+                      </div>
 
-                  <div className="px-1 col-sm-2">
-                    <p>{props.Supplier}</p>
-                  </div>
+                      <div className="mx-3 col-sm-2">
+                        <p>{props.Location}</p>
+                      </div>
 
-                  <div className="px-1 col-sm-1">
-                    <p>{props.TargetDate}</p>
-                  </div>
+                      <div className="px-3 col-sm-2">
+                        <p>{props.Supplier}</p>
+                      </div>
 
-                  <div className="px-5 mx-3 col-sm-2">
-                    <div className="row">
                       <div className="col-sm-1">
-                        <p className={styles.prTextStatus}>{props.Status}</p>
-                      </div>
-                      <div className="ps-5 ms-4 col-sm-2">
-                        <Icon item={circle} />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="col-sm-1 px-0">
-                    {showPL === false && (
-                      <button
-                        onClick={viewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={eyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                    {showPL === true && (
-                      <button
-                        onClick={closeViewProductLines}
-                        type="button"
-                        className={styles.viewIconButton}
-                      >
-                        <Image
-                          src={closeEyeCon}
-                          width={30}
-                          height={30}
-                          alt="Eye Icon"
-                        />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {
-                isAdHoc === false && showPL && (
-                  <div className={styles.plRow}>
-                    <h5 className="ps-5 pt-3 text-start">
-                      <u>Product Lines</u>
-                    </h5>
-
-                    <div className="py-3">
-                      <div className="ps-4">
-                        <ul className="list-group list-group-horizontal text-center">
-                          <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                            Item No.
-                          </li>
-                          <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
-                            Item Name
-                          </li>
-                          <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                            Quantity
-                          </li>
-                          <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
-                          <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                            Unit Price
-                          </li>
-                          <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                            Total Unit Price
-                          </li>
-                        </ul>
+                        <p>{props.TargetDate}</p>
                       </div>
 
-                      {plRows.map((item, index) => {
-                        return (
-                          <div key={index}>
-                            <div className="ps-4">
-                              <ul className="list-group list-group-horizontal">
-                                <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                                  {index + 1}
-                                </li>
-                                <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
-                                  {item.itemName}
-                                </li>
-                                <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                  {item.quantity}
-                                </li>
-                                <li className="list-group-item col-sm-1 border-0 bg-transparent">
-                                  X
-                                </li>
-                                <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                  ${item.unitPrice}
-                                </li>
-                                <li className="list-group-item col-sm-2 border-0 bg-transparent">
-                                  ${item.totalUnitPrice}
-                                </li>
-                              </ul>
-                            </div>
+                      <div className="px-5 col-sm-2">
+                        <div className="row">
+                          <div className="col-sm-1">
+                            <p className={styles.prTextStatus}>{props.Status}</p>
                           </div>
-                        );
-                      })}
+                          <div className="ps-5 ms-4 col-sm-2">
+                            <Icon item={circle} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-sm-1 px-0">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={eyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={closeEyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                )
-              }
 
-              {
-                isAdHoc === true && showPL && (
-                  <div className={styles.plRow}>
-                    <h5 className="ps-5 pt-3 text-start">
-                      <u>Description</u>
-                    </h5>
+                  {
+                    isAdHoc === false && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Product Lines</u>
+                        </h5>
 
-                    <div className="py-2 ps-5 text-start">
-                      <p>{props.Description}</p>
+                        <div className="py-3">
+                          <div className="ps-4">
+                            <ul className="list-group list-group-horizontal text-center">
+                              <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                Item No.
+                              </li>
+                              <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                Item Name
+                              </li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Quantity
+                              </li>
+                              <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Unit Price
+                              </li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Total Unit Price
+                              </li>
+                            </ul>
+                          </div>
+
+                          {plRows.map((item, index) => {
+                            return (
+                              <div key={index}>
+                                <div className="ps-4">
+                                  <ul className="list-group list-group-horizontal">
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      {index + 1}
+                                    </li>
+                                    <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                      {item.itemName}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      {item.quantity}
+                                    </li>
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      X
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.unitPrice}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.totalUnitPrice}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  {
+                    isAdHoc === true && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Description</u>
+                        </h5>
+
+                        <div className="py-2 ps-5 text-start">
+                          <p>{props.Description}</p>
+                        </div>
+                      </div>
+                    )
+                  }
+
+
+                </div>
+              </button>
+            </a>
+          }
+
+          {
+            isAdHoc === true &&
+            <a href={baseURL + "/PurchaseRequest/AdHoc/" + props.prID}>
+              <button className={styles.prButton}>
+                <div className={styles.ahRow}>
+                  <div className="pt-2 row">
+                    <div className={styles.prTextRow}>
+                      <div className="px-4 ms-3 col-sm-1">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <p>#{props.prID}</p>
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="mx-2 col-sm-1">
+                        <p>{props.PType}</p>
+                      </div>
+
+                      <div className="mx-3 col-sm-1">
+                        <p>{props.ReqDate}</p>
+                      </div>
+
+                      <div className="mx-3 col-sm-2">
+                        <p>{props.Location}</p>
+                      </div>
+
+                      <div className="px-3 col-sm-2">
+                        <p>{props.Supplier}</p>
+                      </div>
+
+                      <div className="col-sm-1">
+                        <p>{props.TargetDate}</p>
+                      </div>
+
+                      <div className="px-5 col-sm-2">
+                        <div className="row">
+                          <div className="col-sm-1">
+                            <p className={styles.prTextStatus}>{props.Status}</p>
+                          </div>
+                          <div className="ps-5 ms-4 col-sm-2">
+                            <Icon item={circle} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-sm-1 px-0">
+                        {showPL === false && (
+                          <button
+                            onClick={viewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={eyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
+                        {showPL === true && (
+                          <button
+                            onClick={closeViewProductLines}
+                            type="button"
+                            className={styles.viewIconButton}
+                          >
+                            <Image
+                              src={closeEyeCon}
+                              width={30}
+                              height={30}
+                              alt="Eye Icon"
+                            />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                )
-              }
-            </div>
-          )}
 
-          {props.RoleID === 1 &&
-            <div>
-              {
-                isAdHoc === false &&
+                  {
+                    isAdHoc === false && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Product Lines</u>
+                        </h5>
+
+                        <div className="py-3">
+                          <div className="ps-4">
+                            <ul className="list-group list-group-horizontal text-center">
+                              <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                Item No.
+                              </li>
+                              <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                Item Name
+                              </li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Quantity
+                              </li>
+                              <li className="list-group-item col-sm-1 border-0 bg-transparent"></li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Unit Price
+                              </li>
+                              <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                Total Unit Price
+                              </li>
+                            </ul>
+                          </div>
+
+                          {plRows.map((item, index) => {
+                            return (
+                              <div key={index}>
+                                <div className="ps-4">
+                                  <ul className="list-group list-group-horizontal">
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      {index + 1}
+                                    </li>
+                                    <li className="list-group-item col-sm-3 border-0 bg-transparent text-start">
+                                      {item.itemName}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      {item.quantity}
+                                    </li>
+                                    <li className="list-group-item col-sm-1 border-0 bg-transparent">
+                                      X
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.unitPrice}
+                                    </li>
+                                    <li className="list-group-item col-sm-2 border-0 bg-transparent">
+                                      ${item.totalUnitPrice}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )
+                  }
+
+                  {
+                    isAdHoc === true && showPL && (
+                      <div className={styles.plRow}>
+                        <h5 className="ps-5 pt-3 text-start">
+                          <u>Description</u>
+                        </h5>
+
+                        <div className="py-2 ps-5 text-start">
+                          <p>{props.Description}</p>
+                        </div>
+                      </div>
+                    )
+                  }
+
+                </div>
+              </button>
+            </a>
+          }
+        </div>
+      }
+
+      {/* APPROVERS */}
+      {ROLE === 1 &&
+        <div>
+          {
+            isAdHoc === false &&
+            <a href={baseURL + "/PurchaseRequest/" + props.prID}>
+              <button className={styles.prButton}>
                 <div className={styles.prRow}>
                   <div className="pt-2 row">
                     <div className={styles.prTextRow}>
@@ -460,10 +663,14 @@ function PRRow(props) {
                     )
                   }
                 </div>
-              }
+              </button>
+            </a>
+          }
 
-              {
-                isAdHoc === true &&
+          {
+            isAdHoc === true &&
+            <a href={baseURL + "/PurchaseRequest/AdHoc/" + props.prID}>
+              <button className={styles.prButton}>
                 <div className={styles.ahRow}>
                   <div className="pt-2 row">
                     <div className={styles.prTextRow}>
@@ -632,11 +839,11 @@ function PRRow(props) {
                     )
                   }
                 </div>
-              }
-            </div>
+              </button>
+            </a>
           }
-        </button>
-      </a>
+        </div>
+      }
     </div>
   );
 };
@@ -905,9 +1112,6 @@ export default function PurchaseRequest() {
   const [byRemarks, setByRemarks] = useState(true);
   const [byPRStatus, setByPRStatus] = useState(true);
 
-  // in progress modal
-  const [showInProg, setInProg] = useState(false);
-
   // show all PR
   useEffect(() => {
     // set user id taken from localstorage
@@ -916,7 +1120,12 @@ export default function PurchaseRequest() {
 
     // set user role
     const roleID = parseInt(localStorage.getItem("roleID"), 10);
-    setRoleID(roleID);
+    // filter out approver roles & finance to be under approvers
+    if (roleID === 3) {
+      setRoleID(1);
+    } else {
+      setRoleID(roleID);
+    };
 
     // set user token
     const token = localStorage.getItem("token");
@@ -940,75 +1149,60 @@ export default function PurchaseRequest() {
       ])
         .then(
           axios.spread((response1, response2) => {
-            // console.log(response1);
-            // console.log(response2.data);
-
             const prResult = response1.data;
             const adHocResult = response2.data;
 
-            // console.log(adHocResult);
+            // JOINING RESULT ARRAYS
+            const allResults = prResult.concat(adHocResult);
+            const sortedResults = allResults.sort((a, b) => b.prID - a.prID);
 
-            // Show List of UPDATED PRs [multiple locations included]
-            const prList = [];
+            const resultsList = [];
 
-            prResult.forEach((item, index) => {
+            sortedResults.forEach((item, index) => {
+              let PTID = item.purchaseTypeID;
+              let PT = item.purchaseType;
+
               // Time stamp formatting
-              const reqDate = moment(prResult[index].requestDate).format(
-                "D MMM YYYY"
-              );
-              const targetDeliveryDate = moment(
-                prResult[index].targetDeliveryDate
-              ).format("D MMM YYYY");
+              const reqDate = moment(item.requestDate).format("D MMM YYYY");
+              const targetDeliveryDate = moment(item.targetDeliveryDate).format("D MMM YYYY");
 
-              prList.push(
+              const extraData = {
+                Branch: 'N/A',
+                Supplier: 'N/A',
+                TargetD: 'N/A',
+                Descript: 'N/A'
+              };
+
+              if (PTID === 1) {
+                extraData.Branch = item.branchName;
+                extraData.Supplier = item.supplierName;
+                extraData.TargetD = targetDeliveryDate;
+              } else if (PTID === 2) {
+                extraData.Descript = item.remarks;
+              };
+
+              resultsList.push(
                 <div key={index}>
                   <PRRow
                     RoleID={roleID}
+                    PTypeID={PTID}
+                    PType={PT}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
-                    Location={item.branchName}
-                    Supplier={item.supplierName}
-                    TargetDate={targetDeliveryDate}
+                    Location={extraData.Branch}
+                    Supplier={extraData.Supplier}
+                    TargetDate={extraData.TargetD}
                     Status={item.prStatus}
                     StatusID={item.prStatusID}
+                    Description={extraData.Descript}
                   />
                 </div>
               );
             });
 
-            setOGPRList(prList);
-            setlist1(prList);
-
-            // Show List of Ad-hoc Purchases
-            const adHocList = [];
-
-            adHocResult.forEach((item, index) => {
-              // Time stamp formatting
-              const reqDate = moment(adHocResult[index].requestDate).format(
-                "D MMM YYYY"
-              );
-              const targetDeliveryDate = moment(
-                adHocResult[index].targetDeliveryDate
-              ).format("D MMM YYYY");
-
-              adHocList.push(
-                <div key={index}>
-                  <AdHocRow
-                    RoleID={roleID}
-                    prID={item.prID}
-                    ReqDate={reqDate}
-                    Name={item.name}
-                    TargetDate={targetDeliveryDate}
-                    Status={item.prStatus}
-                    StatusID={item.prStatusID}
-                    Description={item.remarks}
-                  />
-                </div>
-              );
-            });
-
-            setAdHocResults(adHocList);
+            setOGPRList(resultsList);
+            setlist1(resultsList);
           })
         )
         .catch((err) => {
@@ -1019,11 +1213,11 @@ export default function PurchaseRequest() {
             alert(err.response.data);
           } else {
             alert(err.code);
-          }
+          };
         });
     }
     // Approver View
-    else if (roleID === 1) {
+    else if (roleID === 1 || roleID === 3) {
       // setting default filter view
       setViewType(true);
 
@@ -1033,29 +1227,19 @@ export default function PurchaseRequest() {
           headers: {
             authorization: 'Bearer ' + token
           }
-        }),
-        axios.get(`${baseUrl}/api/purchaseReq/`, {
-          headers: {
-            authorization: 'Bearer ' + token
-          }
-        }),
-        axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
-          headers: {
-            authorization: 'Bearer ' + token
-          }
-        }),
+        })
       ])
         .then(
-          axios.spread((response1, response2, response3) => {
-            const allResult = response1.data;
-            const prResult = response2.data;
-            const adHocResult = response3.data;
+          axios.spread((response1) => {
+            // sorts data before showing
+            const allResult = response1.data.sort(dynamicSort('prID')).sort(dynamicSort('prStatusID'));
 
             const resultList = [];
 
             allResult.forEach((item, index) => {
               let PTID = item.purchaseTypeID;
               let PT = item.purchaseType;
+
               // Time stamp formatting
               const reqDate = moment(item.requestDate).format("D MMM YYYY");
               const targetDeliveryDate = moment(item.targetDeliveryDate).format("D MMM YYYY");
@@ -1108,11 +1292,6 @@ export default function PurchaseRequest() {
     };
   }, []);
 
-  // adhoc toggle
-  const adHocView = async (e) => {
-    setShowAdHoc(e.target.checked);
-  };
-
   // View ALL Toggle
   const ViewAllToggle = async (e) => {
     const showAllPR = e.target.checked;
@@ -1121,36 +1300,55 @@ export default function PurchaseRequest() {
     filterChecker(e);
 
     if (showAllPR === true) {
-      await axios.get(`${baseUrl}/api/purchaseReq/`, {
+      await axios.get(`${baseUrl}/api/purchaseReq/PR/AH/all`, {
         headers: {
           authorization: 'Bearer ' + Token
         }
       })
         .then((response) => {
-          const allResult = response.data;
+          const allResult = response.data.sort((a, b) => b.prID - a.prID);
           const resultsList = [];
 
           allResult.forEach((item, index) => {
+            let PTID = item.purchaseTypeID;
+            let PT = item.purchaseType;
+
+            console.log(PT)
+
             // Time stamp formatting
-            const reqDate = moment(allResult[index].requestDate).format(
-              "D MMM YYYY"
-            );
-            const targetDeliveryDate = moment(
-              allResult[index].targetDeliveryDate
-            ).format("D MMM YYYY");
+            const reqDate = moment(item.requestDate).format("D MMM YYYY");
+            const targetDeliveryDate = moment(item.targetDeliveryDate).format("D MMM YYYY");
+
+            const extraData = {
+              Branch: 'N/A',
+              Supplier: 'N/A',
+              TargetD: 'N/A',
+              Descript: 'N/A'
+            };
+
+            if (PTID === 1) {
+              extraData.Branch = item.branchName;
+              extraData.Supplier = item.supplierName;
+              extraData.TargetD = targetDeliveryDate;
+            } else if (PTID === 2) {
+              extraData.Descript = item.remarks;
+            };
 
             resultsList.push(
               <div key={index}>
                 <PRRow
                   RoleID={role}
+                  PTypeID={PTID}
+                  PType={PT}
                   prID={item.prID}
                   ReqDate={reqDate}
                   Name={item.name}
-                  Location={item.branchName}
-                  Supplier={item.supplierName}
-                  TargetDate={targetDeliveryDate}
+                  Location={extraData.Branch}
+                  Supplier={extraData.Supplier}
+                  TargetDate={extraData.TargetD}
                   Status={item.prStatus}
                   StatusID={item.prStatusID}
+                  Description={extraData.Descript}
                 />
               </div>
             );
@@ -1531,26 +1729,6 @@ export default function PurchaseRequest() {
 
       <div className="pb-5">
         <div className={styles.rightFloater}>
-
-          <div className="px-3 pb-4">
-            <div className={styles.toggle}>
-              <div className="px-3 pt-1">
-                <h5>Ad-Hoc</h5>
-              </div>
-
-              <label className={styles.switch}>
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    adHocView(e);
-                  }}
-                  checked={showAdHoc}
-                />
-                <span className={styles.slider}></span>
-              </label>
-            </div>
-          </div>
-
           {
             role === 2 &&
             <div className="px-3 pb-4">
@@ -1572,26 +1750,17 @@ export default function PurchaseRequest() {
             </div>
           }
 
-          <div className={styles.searchContainer}>
+          <div>
             <form onSubmit={handlePRSearch}>
-              <input
-                type="text"
-                placeholder="  Search.."
-                value={searchValue}
-                onChange={(e) => { PRSearch(e) }}
-                name="search"
-                className={styles.searchBox}
-              />
-              <button type="submit" className={styles.searchButton}>
-                <Image src={searchIcon} width={25} alt="Search" />
-              </button>
-              <button
-                type="button"
-                onClick={handleFilterPopUp}
-                className={styles.searchButton}
-              >
-                <Image src={filterIcon} width={25} alt="Filter" />
-              </button>
+              <div className="d-inline-flex">
+                <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => { PRSearch(e) }} name="search" className={styles.searchBox} />
+                <button type="submit" className={styles.searchButton}>
+                  <Image src={searchIcon} width={25} alt="Search" />
+                </button>
+                <button type="button" onClick={handleFilterPopUp} className={styles.searchButton}>
+                  <Image src={filterIcon} width={25} alt="Filter" />
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -1605,83 +1774,27 @@ export default function PurchaseRequest() {
 
           {role === 2 && showAdHoc === false && (
             <ul className="list-group list-group-horizontal">
-              <li className="list-group-item col-sm-1 px-4 ms-3 border-0">
-                PR No.
-              </li>
-              <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
-              <li className="list-group-item col-sm-3 px-4 mx-4 border-0">
-                Location
-              </li>
-              <li className="list-group-item col-sm-2 px-1 border-0">
-                Supplier
-              </li>
-              <li className="list-group-item col-sm-1 px-1 border-0">
-                Target Date
-              </li>
-              <li className="list-group-item col-sm-2 px-5 mx-3 border-0">
-                Status
-              </li>
-              <li className="list-group-item col-sm-1 border-0"></li>
+              <li className="list-group-item col-sm-1 px-4 ms-3 border-0">PR No.</li>
+              <li className="list-group-item col-sm-1 mx-2 border-0">Type</li>
+              <li className="list-group-item col-sm-1 mx-3 border-0">Date</li>
+              <li className="list-group-item col-sm-2 mx-3 border-0">Location</li>
+              <li className="list-group-item col-sm-2 px-3 border-0">Supplier</li>
+              <li className="list-group-item col-sm-1 ps-0 border-0">Target Date</li>
+              <li className="list-group-item col-sm-2 px-5 border-0">Status</li>
+              <li className="list-group-item col-sm-1 px-0 border-0"></li>
             </ul>
           )}
 
           {role === 1 && showAdHoc === false && (
             <ul className="list-group list-group-horizontal">
-              <li className="list-group-item col-sm-1 px-3 mx-2 border-0">
-                PR No.
-              </li>
+              <li className="list-group-item col-sm-1 px-3 mx-2 border-0">PR No.</li>
               <li className="list-group-item col-sm-1 border-0">Type</li>
               <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
-              <li className="list-group-item col-sm-1 px-1 ms-4 border-0">
-                Name
-              </li>
-              <li className="list-group-item col-sm-2 px-3 border-0">
-                Location
-              </li>
-              <li className="list-group-item col-sm-1 px-0 border-0">
-                Supplier
-              </li>
-              <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">
-                Target Date
-              </li>
-              <li className="list-group-item col-sm-2 px-5 mx-2 border-0">
-                Status
-              </li>
-              <li className="list-group-item col-sm-1 border-0"></li>
-            </ul>
-          )}
-
-          {role === 2 && showAdHoc === true && (
-            <ul className="list-group list-group-horizontal px-3">
-              <li className="list-group-item col-sm border-0">
-                PR No.
-              </li>
-              <li className="list-group-item col-sm border-0">Date</li>
-              <li className="list-group-item col-sm border-0">
-                Target Date
-              </li>
-              <li className="list-group-item col-sm border-0">
-                Status
-              </li>
-              <li className="list-group-item col-sm border-0 w-25"></li>
-            </ul>
-          )}
-
-          {role === 1 && showAdHoc === true && (
-            <ul className="list-group list-group-horizontal">
-              <li className="list-group-item col-sm-1 px-3 mx-2 border-0">
-                PR No.
-              </li>
-              <li className="list-group-item col-sm-1 px-1 border-0">Date</li>
-              <li className="list-group-item col-sm-1 px-1 ms-4 border-0">
-                Name
-              </li>
-              <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">
-                Target Date
-              </li>
-              <li className="list-group-item col-sm-2 px-5 mx-2 border-0">
-                Status
-              </li>
+              <li className="list-group-item col-sm-1 px-1 ms-4 border-0">Name</li>
+              <li className="list-group-item col-sm-2 px-3 border-0">Location</li>
+              <li className="list-group-item col-sm-1 px-0 border-0">Supplier</li>
+              <li className="list-group-item col-sm-1 px-1 mx-4 border-0 text-center">Target Date</li>
+              <li className="list-group-item col-sm-2 px-5 mx-2 border-0">Status</li>
               <li className="list-group-item col-sm-1 border-0"></li>
             </ul>
           )}
@@ -1690,10 +1803,8 @@ export default function PurchaseRequest() {
         </div>
       </div>
 
-      <div className={styles.prData}>
-        {showAdHoc === false && <div>{PRResults}</div>}
-
-        {showAdHoc === true && <div>{AdHocResults}</div>}
+      <div className="overflow-scroll w-100 h-75 position-absolute">
+        {PRResults}
       </div>
 
       <div>
@@ -1853,8 +1964,6 @@ export default function PurchaseRequest() {
           </div>
         </div>
       )}
-
-      {showInProg === false && <WIP Show={showInProg} />}
     </>
   );
 };

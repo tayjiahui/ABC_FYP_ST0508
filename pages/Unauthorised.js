@@ -29,21 +29,24 @@ isLocalhost();
 
 const baseUrl = URL[0];
 
-export default function Profile() {
-    const { data: session} = useSession();
+export default function Unauthorised() {
+    const { data: session } = useSession();
     const router = useRouter();
 
     return (
-        <div className="p-3">
-            <h1>401! Unathorised Access!</h1>
-            <div>
-                <h3>Access is denied: Invalid Credentials!</h3>
-                <a href="/Login">
-                    <button className="btn btn-secondary">
-                        Go Back to Login
-                    </button>
-                </a>
-                
+        <div className="p-5">
+            <div className="p-5 card w-50 border-0">
+                <h1><div>401!</div>Unauthorised Access</h1>
+                <div className="pt-4">
+                    <h4><div>Access is denied: Invalid Credentials!</div></h4>
+                    <div className="pt-4">
+                        <a href="/Login">
+                            <button className="btn btn-dark">
+                                Back to Login
+                            </button>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     );

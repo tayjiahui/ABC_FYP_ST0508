@@ -23,9 +23,8 @@
 
 /* Search Box */
 .searchBox {
-    height: 30px;
-    width: 200px;
-    border-radius: 15px;
+    width: 70%;
+    border-radius: 20px;
     border-color: #93A2B7;
     border-style: solid;
     border-width: 1.5px;
@@ -35,6 +34,90 @@
     border-style: none;
     background-color: transparent;
     vertical-align: middle;
+}
+
+.rightFloater {
+    float: right;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: left;
+}
+
+/* Filter Popup */
+.filterPopup {
+    width: 450px;
+    height: 300px;
+    position: fixed;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    display: block;
+    border: 1px solid black;
+}
+
+.popupContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.closePopUpButton {
+    background-color: transparent;
+    border: none;
+}
+
+/* Filter Checkboxes */
+.checkboxItem {
+    font-size: 16px;
+    color: #777777;
+    display: flex;
+    align-items: center;
+}
+
+.checkboxItem input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #93A2B7;
+    border-radius: 4px;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+}
+
+.checkboxItem input[type="checkbox"]:checked {
+    background-color: #C0D8F7;
+}
+
+.checkboxItem:hover input[type="checkbox"] {
+    border-color: #033575;
+}
+
+.checkboxItem input[type="checkbox"]::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: 2px solid white;
+    border-top: none;
+    border-right: none;
+    transform: rotate(45deg) scaleX(-1);
+    opacity: 0; /* hide tick by default */
+}
+
+.checkboxItem input[type="checkbox"]:checked::before {
+    opacity: 1;
 }
 
 /* Create Supplier Button */
