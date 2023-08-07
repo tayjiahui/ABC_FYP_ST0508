@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import Image from 'next/image';
 import arrowIcon from '../../public/arrowIcon.svg';
 import plusIcon from '../../public/addLocationIcon.svg';
-// import greenCircle from '../../public/greenApprovedCircle.svg'
 import styles from '../../styles/trackOrderById.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment-timezone';
 import WIP from '../../components/WIP';
+import AlertBox from "../../components/alert";
 
 const timezone = 'Asia/Singapore';
 
@@ -156,6 +156,13 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const [showModalDO, setShowModalDO] = useState(false);
   const [showModal2DO, setShowModal2DO] = useState(false);
 
+  // Alerts
+  const [EditQtyAlert, setEditQtyAlert] = useState(false);
+  const [UpdatePStatus, setUpdatePStatus] = useState(false);
+
+  // PR Details  
+  const PR = purOrderD[0];
+
   useEffect(() => {
     // set user id taken from localstorage
     const userID = parseInt(localStorage.getItem("ID"), 10);
@@ -164,7 +171,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
     // set user token
     const token = localStorage.getItem("token");
     setToken(token);
-  }, [])
+  }, []);
 
   // runs only when QtyReceivedList is updated
   useEffect(() => {
@@ -232,7 +239,10 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             )
               .then((response) => {
                 // console.log(response.data);
-              })
+
+                setEditQtyAlert(true);
+                alertTimer();
+              });
 
             allowQtyEdit(false);
           })
@@ -286,9 +296,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
     setChangeStatusPop(false);
     setValidation(false);
   };
-
-  // PR Details  
-  const PR = purOrderD[0];
 
   useEffect(() => {
     // Target Delivery Date formatting
@@ -390,19 +397,21 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         )
           .then((response) => {
             // console.log(response.data);
+
+            setUpdatePStatus(true);
+            alertTimer();
           })
       })
       .catch((err) => {
         console.log(err);
       });
-    setChangeStatusPop(true);
   };
 
   //invoice
   const handleFileUpload = async (e) => {
     const file = e.target.files[0]
     setSelectedFile(file)
-  }
+  };
 
   const handleUpload = async () => {
     if (selectedFile) {
@@ -421,13 +430,13 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           console.log("Error uploading Invoice", err);
         })
     }
-  }
+  };
 
   //delivery order
   const handleFileUploadDO = async (e) => {
     const file = e.target.files[0]
     setSelectedFileDO(file)
-  }
+  };
 
   const handleUploadDO = async () => {
     if (selectedFileDO) {
@@ -446,52 +455,63 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           console.log('Error uploading Delivery Order', err)
         })
     }
-  }
+  };
 
   //invoice
   const handleCloseModal = () => {
     setShowModal(false);
-  }
+  };
 
   const handleOpenModal2 = () => {
     setShowModal2(true);
-  }
+  };
 
   const handleCloseModal2 = () => {
     setShowModal2(false);
-  }
+  };
 
   const handleConfirmUpload = () => {
     setShowModal(false);
     setShowModal2(true);
-  }
+  };
 
   const handleOpenModal = () => {
     setShowModal(true);
-  }
+  };
 
   //delivery order
   const handleCloseModalDO = () => {
     setShowModalDO(false);
-  }
+  };
 
   const handleOpenModal2DO = () => {
     setShowModal2DO(true);
-  }
+  };
 
   const handleCloseModal2DO = () => {
     setShowModal2DO(false);
-  }
+  };
 
   const handleConfirmUploadDO = () => {
     setShowModalDO(false);
     setShowModal2DO(true);
-  }
+  };
 
   const handleOpenModalDO = () => {
     setShowModalDO(true);
-  }
+  };
 
+  // alert box timer
+  function alertTimer() {
+    // changes all alert useStates to false after 3s
+    setTimeout(alertFunc, 3000);
+  };
+
+  function alertFunc() {
+    // list of alerts useStates in your page
+    setEditQtyAlert(false);
+    setUpdatePStatus(false);
+  };
 
   return (
     <div>
@@ -689,18 +709,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           </button>
         </div>
 
-        {/* <div className="col-sm d-flex mt-2">
-          <div style={{ flex: 1 }}>
-            <Image src={plusIcon} className="col-sm img-responsive ms-5" alt="plus" />
-            <h7 className="col-sm ms-2">Add Invoice</h7>
-          </div>
-
-          <div style={{ flex: 1 }}>
-            <Image src={plusIcon} className="col-sm img-responsive" alt="plus" />
-            <h7 className="col-sm ms-2">Add Delivery Order</h7>
-          </div>
-        </div> */}
-
         {changeStatusPop && (
           <div className={styles.newStatusBox}>
             <div className={styles.newStatus}>
@@ -840,6 +848,25 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
         </div>
       )}
+
+      {/* Alerts */}
+      {
+        EditQtyAlert &&
+        <AlertBox
+          Show={EditQtyAlert}
+          Message={`Quantity Updated!`}
+          Type={'success'}
+          Redirect={``} />
+      }
+
+      {
+        UpdatePStatus &&
+        <AlertBox
+          Show={UpdatePStatus}
+          Message={`Purchase Status Updated!`}
+          Type={'success'}
+          Redirect={``} />
+      }
 
     </div>
   );
