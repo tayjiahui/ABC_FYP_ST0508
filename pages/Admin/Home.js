@@ -10,6 +10,9 @@ import { useEffect, useState } from "react";
 // Styles
 import styles from "../../styles/adminHome.module.css"
 
+// components
+import AlertBox from "../../components/alert";
+
 // Images 
 import peopleIcon from "../../public/peoplesIcon.svg";
 import reportIcon from "../../public/reportIcon.svg";
@@ -56,7 +59,7 @@ export default function Home() {
 	const router = useRouter();
 
 	const [Token, setToken] = useState();
-	
+
 	// Generate Transaction Report
 	const [Form, setForm] = useState(false);
 	const [CustomForm, setCustomForm] = useState(false);
@@ -71,6 +74,9 @@ export default function Home() {
 
 	// Transaction
 	const [TransactionCount, setTransactionCount] = useState(0);
+
+	// Alert Box
+	const [TRDownloadAlert, setTRDownloadAlert] = useState();
 
 	// check if date inputs are filled
 	useEffect(() => {
@@ -153,6 +159,15 @@ export default function Home() {
 			})
 	};
 
+	const handleTRDownloadAlert = () => {
+		const TRDownloadAlert = () => {
+			setTRDownloadAlert(true);
+			alertTimer();
+		};
+
+		setTimeout(TRDownloadAlert, 1000);
+	};
+
 	function whatDateType(selectedValue) {
 		const dates = [];
 
@@ -165,6 +180,17 @@ export default function Home() {
 		};
 
 		return dates;
+	};
+
+	// alert box timer
+	function alertTimer() {
+		// changes all alert useStates to false after 3s
+		setTimeout(alertFunc, 3000);
+	};
+
+	function alertFunc() {
+		// list of alerts useStates in your page
+		setTRDownloadAlert(false);
 	};
 
 	return (
@@ -180,19 +206,19 @@ export default function Home() {
 
 						<div className="row py-4">
 							<div className="col-sm">
-								<button className="btn shadow-sm bg-white w-100" onClick={()=>{router.push('/Admin/Users')}}>
+								<button className="btn shadow-sm bg-white w-100" onClick={() => { router.push('/Admin/Users') }}>
 									<Image src={peopleIcon} alt="Users Icon" />
 									<div>Users</div>
 								</button>
 							</div>
 							<div className="col-sm">
 								<button className="btn shadow-sm bg-white w-100">
-									<Image src={reportIcon} alt="Transactions Icon" onClick={()=>{router.push('/Admin/Transactions')}}/>
+									<Image src={reportIcon} alt="Transactions Icon" onClick={() => { router.push('/Admin/Transactions') }} />
 									<div>Transactions</div>
 								</button>
 							</div>
 							<div className="col-sm">
-								<button className="btn shadow-sm bg-white w-100" onClick={()=>{router.push('/Admin/AuditLogs')}}>
+								<button className="btn shadow-sm bg-white w-100" onClick={() => { router.push('/Admin/AuditLogs') }}>
 									<Image src={AuditIcon} alt="AuditLog Icon" />
 									<div>Audit Logs</div>
 								</button>
@@ -271,14 +297,14 @@ export default function Home() {
 															<>
 																<div className="pt-2">
 																	<a href={baseUrl + `/api/xlsx/excel/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
-																		<button type="button" className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
+																		<button type="button" onClick={handleTRDownloadAlert} className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
 																			Generate Excel Report
 																		</button>
 																	</a>
 																</div>
 																<div className="pt-2">
 																	<a href={baseUrl + `/api/xlsx/csv/Date?startDate=` + StartDate + `&endDate=` + EndDate}>
-																		<button type="button" className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
+																		<button type="button" onClick={handleTRDownloadAlert} className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
 																			Generate CSV Report
 																		</button>
 																	</a>
@@ -304,14 +330,14 @@ export default function Home() {
 												<>
 													<div className="pt-2">
 														<a href={baseUrl + `/api/xlsx/excel/Date?startDate=` + PresetStartDate + `&endDate=` + PresetEndDate}>
-															<button type="button" className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
+															<button type="button" onClick={handleTRDownloadAlert} className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
 																Generate Excel Report
 															</button>
 														</a>
 													</div>
 													<div className="pt-2">
 														<a href={baseUrl + `/api/xlsx/csv/Date?startDate=` + PresetStartDate + `&endDate=` + PresetEndDate}>
-															<button type="button" className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
+															<button type="button" onClick={handleTRDownloadAlert} className="btn btn-dark w-100" style={{ backgroundColor: '#486284' }}>
 																Generate CSV Report
 															</button>
 														</a>
@@ -348,7 +374,16 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
-			</div >
+			</div>
+
+			{
+				TRDownloadAlert &&
+				<AlertBox
+					Show={TRDownloadAlert}
+					Message={`Transaction Report Downloaded!`}
+					Type={'success'}
+					Redirect={``} />
+			}
 		</div >
 	);
 };
