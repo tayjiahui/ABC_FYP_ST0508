@@ -292,7 +292,7 @@ export default function Users() {
 
     return (
         <div>
-            <div className="px-5">
+            <div className="px-2">
                 <h1>Users</h1>
             </div>
             <div>
