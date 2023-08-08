@@ -239,7 +239,6 @@ export default function Home() {
 
 							<form>
 								<div className="row">
-
 									<div className="col">
 										<div className="pt-4">
 											{
