@@ -339,23 +339,18 @@ export default function Transactions() {
 
   return (
     <div>
-      <div className="px-5">
+      <div className="px-2">
         <h1>Transactions</h1>
       </div>
 
       <div className="d-flex">
-        <div className="ps-5 pt-3">
+        <div className="ps-2 pt-3">
           <button onClick={handleReportForm} className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
             <div className="px-2">Get Report</div>
           </button>
         </div>
-        <div className="ps-5 pt-3">
-          <button onClick={handleReportForm} className="btn btn-secondary" style={{ backgroundColor: '#486284' }}>
-            <div className="px-2">GST</div>
-          </button>
-        </div>
       </div>
-
+      
       <div>
         <div className="pt-1">
           <hr />
