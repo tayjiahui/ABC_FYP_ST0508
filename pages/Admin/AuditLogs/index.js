@@ -188,7 +188,7 @@ export default function AuditLogs() {
 
     return (
         <div>
-            <div className="px-5">
+            <div className="px-2">
                 <h1>Audit Logs</h1>
             </div>
 

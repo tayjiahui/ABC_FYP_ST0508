@@ -6,14 +6,14 @@ import moment from 'moment-timezone';
 import { useEffect, useState } from "react";
 
 // Style Sheet
-import styles from "../../../styles/auditLog.module.css";
+import styles from "../../styles/auditLog.module.css";
 
 // components
-import AlertBox from "../../../components/alert";
+import AlertBox from "../../components/alert";
 
 // Images 
-import xIcon from "../../../public/xIcon.svg";
-import DownloadIcon from "../../../public/downloadWhite.svg";
+import xIcon from "../../public/xIcon.svg";
+import DownloadIcon from "../../public/downloadWhite.svg";
 
 const timezone = 'Asia/Singapore';
 
@@ -350,7 +350,7 @@ export default function Transactions() {
           </button>
         </div>
       </div>
-      
+
       <div>
         <div className="pt-1">
           <hr />
