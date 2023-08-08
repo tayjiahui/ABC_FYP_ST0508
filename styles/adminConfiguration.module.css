@@ -1,0 +1,18 @@
+/* this is indv PR css */
+@charset "utf-8";
+
+/* Fonts */
+@font-face {
+    font-family: "Plus Jakarta Sans";
+    src: url('../public/fonts/Plus_Jakarta_Sans/PlusJakartaSans-Regular.ttf');
+}
+
+
+.seeMoreLink{
+    cursor: pointer;
+}
+
+.seeMoreLink:hover{
+    color: dodgerblue;
+    text-decoration: underline;
+}
