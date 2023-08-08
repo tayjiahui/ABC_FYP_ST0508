@@ -15,7 +15,8 @@ export default function NavBar() {
     const router = useRouter();
 
     const [userName, setUserName] = useState("");
-    const [allowView, setAllowView] = useState(false);
+    const [allowPRView, setAllowPRView] = useState(false);
+    const [allowTransactionView, setAllowTransactionView] = useState(false);
 
     console.log({ session })
 
@@ -45,7 +46,11 @@ export default function NavBar() {
         // set user role
         const roleID = parseInt(localStorage.getItem("roleID"), 10);
         if (roleID !== 4) {
-            setAllowView(true);
+            setAllowPRView(true);
+        };
+        
+        if(roleID === 1 || roleID === 3) {
+            setAllowTransactionView(true);
         };
 
         // !status may be undefined not caught
@@ -71,7 +76,7 @@ export default function NavBar() {
                         </li>
 
                         {
-                            allowView &&
+                            allowPRView &&
                             <li>
                                 <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
                             </li>
@@ -86,6 +91,12 @@ export default function NavBar() {
                         <li>
                             <Link className={router.pathname == "/Supplier" ? "active" : ""} href="/Supplier">Supplier</Link>
                         </li>
+                        {
+                            allowTransactionView &&
+                            <li>
+                                <Link className={router.pathname == "/Transactions" ? "active" : ""} href="/Transactions">Transactions</Link>
+                            </li>
+                        }
                     </ul>
                     <ul className="navbar-right">
                         <li id="profPicImage" className='py-1'>
