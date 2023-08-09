@@ -529,6 +529,10 @@ export default function ViewPR({
   const convertToPO = async (e) => {
     // e.preventDefault();
 
+    const supplierInfo = await axios.get(`${baseUrl}/api/supplier/supplierPurchaseInfo/${supplierV.id}`);
+    const deliveryTimeLine = supplierInfo.data[0].deliveryTimeLine;
+    console.log('supplier time line',deliveryTimeLine)
+
     await axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
       {
         prID: prID,
@@ -560,13 +564,45 @@ export default function ViewPR({
               }
             }
           )
-            .then((response) => {
-              // console.log(response.data);
-              setConvertPRAlert(true);
-              // timer to reset to false
-              alertTimer();
-              // set timer before redirect  // redirect to PO
-              setTimeout(() => { router.push(`/TrackOrder/${prID}`) }, 3000);
+            .then(async (response) => {
+              console.log(response.data); //this returns 'audit log created!'
+
+              const timeStampResponse = await axios.get(`${baseUrl}/api/auditTrail/timestamp/${prID}`);
+              const storedTimeStamp = timeStampResponse.data[0].timestamp;
+
+
+              if (deliveryTimeLine) {
+
+              const deliveryDate = moment(storedTimeStamp).add(deliveryTimeLine, 'days');
+              const finalDeliveryDate = deliveryDate.tz(timezone).format();
+
+              
+              await axios.put(`${baseUrl}/api/trackOrder/purchaseDetails/DeliveryTime/${prID}`, {
+                deliveryDate: finalDeliveryDate
+              }, {
+                headers: {
+                  authorization: 'Bearer ' + Token
+                }
+              })
+              .then(response => {
+                console.log(response.data)
+
+                setConvertPRAlert(true);
+                // timer to reset to false
+                alertTimer();
+                // set timer before redirect  // redirect to PO
+                setTimeout(() => { router.push(`/TrackOrder/${prID}`) }, 3000);
+              })
+              
+              } else {
+                console.log('supplier does not have a deliveryTimeLine specified');
+              }
+
+              // setConvertPRAlert(true);
+              // // timer to reset to false
+              // alertTimer();
+              // // set timer before redirect  // redirect to PO
+              // setTimeout(() => { router.push(`/TrackOrder/${prID}`) }, 3000);
             })
         } catch (err) {
           console.log(err);
