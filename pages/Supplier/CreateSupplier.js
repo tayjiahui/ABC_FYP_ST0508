@@ -86,7 +86,9 @@ export default function CreateSupplier() {
         phoneNum: '',
         address: '',
         // bankID: null,
-        bankAccountNum: ''
+        bankAccountNum: '',
+        MOQ: '',
+        deliveryTimeLine: '',
     });
 
     // error messages in form validation
@@ -104,6 +106,12 @@ export default function CreateSupplier() {
 
     // 8-18 digits
     const bankAccountPattern = /^\d{8,18}$/;
+
+    // MOQ digits 
+    const moqPattern = /^\d+$/;
+
+    //delivery time line digits
+    const dtlPattern = /^\d+$/;
 
     // get dropdown options
     useEffect(() => {
@@ -199,7 +207,21 @@ export default function CreateSupplier() {
         else if (!bankAccountPattern.test(formData.bankAccountNum)) {
             errors.bankAccountNum = "Please enter a valid bank account number";
         }
-        
+
+        //MOQ
+        if (formData.MOQ !== null && formData.MOQ !== '') {
+            if (!moqPattern.test(formData.MOQ)) {
+                errors.MOQ = "Please enter a valid amount.";
+            }
+        }
+
+        //deliveryTimeLine
+        if (formData.deliveryTimeLine !== null && formData.deliveryTimeLine !== '') {
+            if (!dtlPattern.test(formData.deliveryTimeLine)) {
+                errors.MOQ = "Please enter a valid amount.";
+            }
+        }
+
         if (Object.keys(errors).length > 0) {
             setErrors(errors);
         } 
@@ -215,7 +237,9 @@ export default function CreateSupplier() {
                 phoneNum: formData.phoneNum,
                 address: formData.address,
                 bankAccountNum: formData.bankAccountNum,
-                bankID: selectedBank ? selectedBank.value: null,
+                MOQ: formData.MOQ,
+                deliveryTimeLine: formData.deliveryTimeLine,
+                bankID: selectedBank ? selectedBank.value : null,
             };
 
             console.log(submitData);
@@ -363,19 +387,21 @@ export default function CreateSupplier() {
                                 placeholder="What do you sell?"
                                 noOptionsMessage={() => "Category does not exist."}
                             />
-                        </div>
-                    
-                        <div className="col-6">
+
                             <b>Contact Person</b><br></br>
-                            <input 
-                                type="text" 
-                                name="contactPersonName" 
-                                value={formData.contactPersonName} 
-                                onChange={handleInput} 
-                                className={styles.textbox} 
-                                required 
+                            <input
+                                type="text"
+                                name="contactPersonName"
+                                value={formData.contactPersonName}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                required
                             />
                             <br></br>
+                        </div>
+
+                        <div className="col-6">
+
 
                             <b>Phone Number</b> {errors.phoneNum && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.phoneNum}</small></span>}
                             <br></br>
@@ -428,6 +454,36 @@ export default function CreateSupplier() {
                                 noOptionsMessage={() => "Bank does not exist."}
                                 required
                             />
+
+                            <b>Minimum Order Quantity </b>
+                            <span className="text-secondary"><small> (if any)</small></span>
+                            <br></br>
+                            <input
+                                type="text"
+                                name="MOQ"
+                                value={formData.MOQ}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                placeholder="eg. 500"
+                                pattern="[0-9]+"
+                                title="Please enter a valid number for MOQ"
+                            />
+                            <br></br>
+
+                            <b>Delivery Time line</b>
+                            <span className="text-secondary"><small> (days)</small></span>
+                            <br></br>
+                            <input
+                                type="text"
+                                name="deliveryTimeLine"
+                                value={formData.deliveryTimeLine}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                
+                                pattern="[0-9]+"
+                                title="Please enter a valid number for delivery timeline"
+                            />
+                            <br></br>
 
                         </div>
                     </div>
