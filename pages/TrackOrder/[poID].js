@@ -74,6 +74,9 @@ export async function getServerSideProps(context) {
   const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
   const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
 
+  const deliveryInfoResponse = await fetch(`${backBaseURL}/api/trackOrder/purchaseDetails/DeliveryTime/${poID}`);
+  const deliveryInfo = await deliveryInfoResponse.json();
+
   const data1 = await poD.json();
   const data2 = await productD.json();
   const data3 = await PRDetails.json();
@@ -106,13 +109,14 @@ export async function getServerSideProps(context) {
       productDeets: data2,
       gstDetails: gst,
       QtyReceived: qtyReceiveS,
-      POID: poid
+      POID: poid,
+      deliveryDetail: deliveryInfo
     }
   }
 }
 
 // main frontend page
-export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived, POID }) {
+export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived, POID, deliveryDetail }) {
 
   const router = useRouter();
 
@@ -162,6 +166,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
   // PR Details  
   const PR = purOrderD[0];
+  const deliveryDetails = deliveryDetail;
 
   useEffect(() => {
     // set user id taken from localstorage
@@ -299,7 +304,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
   useEffect(() => {
     // Target Delivery Date formatting
-    const newDateFormat = moment(PR.requestDate).format('DD/MM/YYYY');
+    const newDateFormat = moment(PR.requestDate).format('DD MMM YYYY');
     setTargetDate(newDateFormat);
 
     // get purchase status
@@ -521,41 +526,45 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         </a>Purchase Order #{PR.prID}
       </h1>
 
-      <div>
+      <div className='ms-5 mt-5'>
 
         <h3 className="col-sm ms-5">Purchase Order Details</h3>
 
-        <div className={styles.lineContainer}>
-          <hr className={styles.lineDivider}></hr>
+        <hr className="col-11 ms-5"></hr>
+
+        <div className="row">
+          <div className="col-sm">
+            <h5 className="ms-5 mt-3">Date Request</h5>
+            <h7 className="ms-5 pb-0">{RequestDate}</h7>
+          </div>
+          {deliveryDetail[0].DeliveryDate !== null && (
+            <div className={`${styles.nameCol} col-sm`}>
+              <h5 className="mt-4 mb-0">Delivery Date</h5>
+              <h7 className="mt-0">{moment(deliveryDetail[0].DeliveryDate).format('D MMM YYYY')}</h7>
+            </div>
+          )}
         </div>
 
-        <h5 className="col-sm ms-5 mt-3">Date Request</h5>
-        <h7 className="col-sm ms-5 pb-0">{RequestDate}</h7><br></br>
-
-        <div className="d-flex">
-          <div className={styles.nameCol}>
-            <h5 className="col-sm mt-4 ms-5 mb-0">Name</h5>
-            <h7 className="col-sm mt-0 ms-5">{PR.name}</h7>
+        <div className="row">
+          <div className={`${styles.nameCol} col-sm`}>
+            <h5 className="mt-4 mb-0 ms-5">Name</h5>
+            <h7 className="mt-0 ms-5">{PR.name}</h7>
           </div>
-
-          <div className={styles.supCol}>
-            <h5 className="col-sm mt-4 mb-0">Supplier</h5>
-            <h7 className="col-sm mt-0">{PR.supplierName}</h7>
+          <div className={`${styles.nameCol} col-sm`}>
+            <h5 className="mt-4 mb-0">Supplier</h5>
+            <h7 className="mt-0">{PR.supplierName}</h7>
           </div>
+        </div>
 
-        </div><br></br>
-
-        <div className="d-flex">
-          <div className={styles.locCol}>
-            <h5 className="col-sm mt-4 ms-5 mb-0">Location</h5>
-            <h7 className="col-sm mt-4 ms-5">{PR.branchName}</h7><br></br>
-          </div><br></br>
-
-          <div className={styles.payCol}>
-            <h5 className="col-sm mt-4 mb-0">Payment Mode</h5>
-            <h7 className="col-sm mt-0">{PR.paymentMode}</h7>
+        <div className="row">
+          <div className={`${styles.locCol} col-sm`}>
+            <h5 className="mt-4 mb-0 ms-5">Location</h5>
+            <h7 className="mt-4 ms-5">{PR.branchName}</h7>
           </div>
-
+          <div className={`${styles.payCol} col-sm`}>
+            <h5 className="mt-4 mb-0">Payment Mode</h5>
+            <h7 className="mt-0">{PR.paymentMode}</h7>
+          </div>
         </div>
 
         <div>
@@ -571,40 +580,38 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             }
           </div>
 
-          <div className={styles.lineContainer}>
-            <hr className={styles.lineDivider}></hr>
-          </div>
+          <hr className="col-11 ms-5"></hr>
 
           <div>
             <ul className="col-sm list-group list-group-horizontal text-center">
-              <li className="col-sm list-group-item col-sm-2 border-0">Item No.</li>
-              <li className="col-sm list-group-item col-sm-1 ms-1 me-1 border-0">Description</li>
-              <li className="col-sm list-group-item col-sm-3 ms-5 border-0">Quantity</li>
-              <li className="col-sm list-group-item col-sm-1 border-0">Unit Price</li>
-              <li className="col-sm list-group-item col-sm-2 border-0">Total Unit Price</li>
-              <li className="col-sm list-group-item col-sm-2 border-0">No. Received</li>
+              <li className="list-group-item col-sm-2 border-0">Item No.</li>
+              <li className="list-group-item col-sm-2 px-2 border-0">Description</li>
+              <li className="list-group-item col-sm-2 border-0">Quantity</li>
+              <li className="list-group-item col-sm-2 border-0">Unit Price</li>
+              <li className="list-group-item col-sm-2 border-0">Total Unit Price</li>
+              <li className="list-group-item col-sm-2 border-0">No. Received</li>
             </ul>
           </div>
 
-          <div className={styles.lineContainer}>
-            <hr className={styles.lineDivider}></hr>
-          </div>
+          <hr className="col-11 ms-5"></hr>
 
-          {
-            editQty === false &&
+          {editQty === false &&
             productDeets.map((item, index) => {
-              return <div key={index}>
-                <ul className="list-group list-group-horizontal text-center">
-                  <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
-                  <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
-                  <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
-                  <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
-                  <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
-                  <li className="list-group-item col-sm-2 border-0 ms-5"><input value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index, e, item)} disabled /></li>
-                </ul>
-              </div>
-            })
-          }
+              return (
+                <div key={index}>
+                  <ul className="list-group list-group-horizontal text-center">
+                    <li className="list-group-item col-sm-2 border-0">{index + 1}</li>
+                    <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
+                    <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
+                    <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
+                    <li className="list-group-item col-sm-2 border-0">{item.totalUnitPrice}</li>
+                    <li className="list-group-item col-sm-2 border-0 ms-2">
+                      <input className={styles.inputVal} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index, e, item)} disabled />
+                    </li>
+                  </ul>
+                </div>
+              );
+            })}
 
           {
             editQty === true &&
@@ -615,16 +622,14 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
                   <li className="list-group-item col-sm-2 px-2 border-0">{item.itemName}</li>
                   <li className="list-group-item col-sm-2 border-0">{item.quantity}</li>
                   <li className="list-group-item col-sm-2 border-0">{item.unitPrice}</li>
-                  <li className="list-group-item col-sm-1 border-0">{item.totalUnitPrice}</li>
-                  <li className="list-group-item col-sm-2 border-0 ms-5"><input type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index, e, item)} id={QtyReceivedList[index].id} onkeyup="if(value<0) value=0;" required /></li>
+                  <li className="list-group-item col-sm-2 border-0">{item.totalUnitPrice}</li>
+                  <li className="list-group-item col-sm-2 border-0 ms-1"><input className={styles.inputVal} type='number' min={0} max={item.quantity} value={QtyReceivedList[index].qtyReceived} onChange={(e) => handleQtyChange(index, e, item)} id={QtyReceivedList[index].id} onkeyup="if(value<0) value=0;" required /></li>
                 </ul>
               </div>
             })
           }
 
-          <div className={styles.lineContainer}>
-            <hr className={styles.lineDivider}></hr>
-          </div>
+          <hr className="col-11 ms-5"></hr>
 
         </div>
 
@@ -639,9 +644,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             <p className="col-sm ms-4 fs-4">${GST}</p>
           </div>
 
-          <div className={styles.lineContainer2}>
-            <hr className={styles.lineDivider2}></hr>
-          </div>
+          <hr className="col-2"></hr>
 
           <div className="col-sm d-flex mt-2">
             <h2 className="col-sm me-2">Total</h2>
@@ -657,9 +660,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         <br></br>
         <h3 className="col-sm ms-5">Purchase & Payment Status</h3>
 
-        <div className={styles.lineContainer}>
-          <hr className={styles.lineDivider}></hr>
-        </div>
+        <hr className="col-11 ms-5"></hr>
 
         <div className="col-sm d-flex">
           <div className="col-sm ms-5 fs-4 mt-4 p-2" style={{ flex: 1 }}>
@@ -693,9 +694,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         <br></br>
 
         <h3 className="col-sm ms-5">Upload Invoice & Delivery Orders</h3>
-        <div className={styles.lineContainer}>
-          <hr className={styles.lineDivider}></hr>
-        </div>
+        <hr className="col-11 ms-5"></hr>
 
         <div className="col-sm d-flex">
           <button onClick={handleOpenModal} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
