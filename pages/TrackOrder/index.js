@@ -171,7 +171,7 @@ function OrderRow(props) {
 
   return (
     <div className='pt-2'>
-      <div className="py-1" style={{ backgroundColor: '#C0D8F7', borderRadius: '10px' }}>
+      <div className={`py-1 ${styles['hover-box-shadow']}`} style={{ backgroundColor: '#C0D8F7', borderRadius: '10px' }}>
         <div className="row pt-1 d-flex">
           <a href={baseURL + '/TrackOrder/' + poId} className="col text-decoration-none text-black ps-3">
             {/* <button className="border-0" style={{ backgroundColor: 'transparent' }}> */}

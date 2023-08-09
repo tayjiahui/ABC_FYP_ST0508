@@ -146,8 +146,8 @@ export default function Supplier({ suppliers }) {
 
             <div className="overflow-scroll w-100 h-75 position-absolute">
                 {filteredItems.map((supplier) => (
-                    <div className="pt-1">
-                        <div className="py-1" style={{ backgroundColor: "#C0D8F7", cursor: "pointer", borderRadius: '10px' }}>
+                    <div className="pt-1 mb-1">
+                        <div className={`py-1 ${styles['hover-box-shadow']}`} style={{ backgroundColor: "#C0D8F7", cursor: "pointer", borderRadius: '10px' }}>
                             <div className="d-flex pt-1">
                                 <a href={'/Supplier/' + supplier.supplierID} className="col">
                                     <div key={supplier.supplierID} className="col d-flex ps-5">
