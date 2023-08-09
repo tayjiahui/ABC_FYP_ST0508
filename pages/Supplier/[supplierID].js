@@ -151,7 +151,8 @@ export default function viewSupplier({ supplierDetails }) {
         address: supplierDetail.address,
         bankID: supplierDetail.bankID,
         bankAccountNum: supplierDetail.bankAccountNum,
-        MOQ: supplierDetail.MOQ
+        MOQ: supplierDetail.MOQ,
+        deliveryTimeLine: supplierDetail.deliveryTimeLine
     });
 
     // update form states
@@ -165,7 +166,9 @@ export default function viewSupplier({ supplierDetails }) {
         phoneNum: '',
         address: '', 
         bankID: null,
-        bankAccountNum: ''
+        bankAccountNum: '',
+        MOQ: '',
+        deliveryTimeLine: ''
     })
 
     // handle update form input changes
@@ -277,8 +280,9 @@ export default function viewSupplier({ supplierDetails }) {
             address: updatedFormData.address || formData.address,
             bankAccountNum: updatedFormData.bankAccountNum || formData.bankAccountNum,
             bankID: selectedBank ? selectedBank.value: formData.bankID,
+            MOQ: updatedFormData.MOQ || formData.MOQ,
+            deliveryTimeLine: updatedFormData.deliveryTimeLine || formData.deliveryTimeLine
         };
-
         console.log(updatedValues);
 
         // check for category inputs
@@ -573,7 +577,7 @@ export default function viewSupplier({ supplierDetails }) {
                                 value={updatedFormData.MOQ || formData.MOQ}
                                 onChange={handleInput}
                                 className={styles.editInputs}
-                                pattern="[0-9]+" 
+                                pattern="^[0-9]+$" 
                             />
                         }
                         <br></br>
@@ -589,7 +593,7 @@ export default function viewSupplier({ supplierDetails }) {
                                 value={updatedFormData.deliveryTimeLine || formData.deliveryTimeLine}
                                 onChange={handleInput}
                                 className={styles.editInputs}
-                                pattern="[0-9]+"
+                                pattern="^[0-9]+$"
                             />
                         }
 
