@@ -78,7 +78,9 @@ export async function getServerSideProps(context) {
   const remarksInfoResponse = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
   const remarksInfo = await remarksInfoResponse.json();
 
-  //purchase order details 
+  //delivery details 
+  const deliveryInfoResponse = await fetch(`${backBaseURL}/api/trackOrder/purchaseDetails/DeliveryTime/${poID}`);
+  const deliveryInfo = await deliveryInfoResponse.json();
 
 
   // console.log(response2);
@@ -89,12 +91,13 @@ export async function getServerSideProps(context) {
       supplierDetail: supplierInfo,
       productDetail: productInfo,
       remarkDetail: remarksInfo,
+      deliveryDetail: deliveryInfo,
     }
   }
 
 }
 
-export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) {
+export default function ViewPO({ supplierDetail, productDetail, remarkDetail, deliveryDetail }) {
   const router = useRouter()
   const poID = router.query.poID; //in db is prID
   const [POID, setActualPOID] = useState();
@@ -224,7 +227,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
   const productDetails = productDetail;
   const remarksDetails = remarkDetail[0];
   const requestDetails = remarkDetail[0].requestDate;
-
+  const deliveryDetails = deliveryDetail;
   //product details 
 
 
@@ -528,7 +531,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Supplier Name</b>
+              <h4>Supplier Name</h4>
             </div>
             <div>
               <p>{supplierDetails.supplierName}</p>
@@ -536,7 +539,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Contact Person</b>
+              <h4>Contact Person</h4>
             </div>
             <div>
               <p>{supplierDetails.contactPersonName}</p>
@@ -544,7 +547,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Phone Number</b>
+              <h4>Phone Number</h4>
             </div>
             <div>
               <p>{supplierDetails.phoneNum}</p>
@@ -552,7 +555,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Email</b>
+              <h4>Email</h4>
             </div>
             <div>
               <p>{supplierDetails.email}</p>
@@ -563,7 +566,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
         <div className="row row-cols-4 mb-0">
           <div className="col">
             <div>
-              <b>Category</b>
+              <h4>Category</h4>
             </div>
             <div>
               <p>{supplierDetails.categoryName}</p>
@@ -571,7 +574,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Bank Name</b>
+              <h4>Bank Name</h4>
             </div>
             <div>
               <p>{supplierDetails.bankNamee}</p>
@@ -579,7 +582,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Bank Account Number</b>
+              <h4>Bank Account Number</h4>
             </div>
             <div>
               <p>{supplierDetails.bankAccountNum}</p>
@@ -587,7 +590,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Office Number</b>
+              <h4>Office Number</h4>
             </div>
             <div>
               <p>{supplierDetails.officeNum}</p>
@@ -596,7 +599,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
           </div>
           <div className="col">
             <div>
-              <b>Address</b>
+              <h4>Address</h4>
             </div>
             <div>
               <p>{supplierDetails.address}</p>
@@ -619,17 +622,23 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail }) 
 
             <div className="row">
               <div className="col-3">
-                <b>Date of Request:</b> <br />
+                <h4>Date of Request:</h4> <br />
                 {moment(remarkDetail[0].requestDate).format('D MMM YYYY')}
               </div>
               <div className="col-3">
-                <b>Name of Purchaser:</b> <br />
+                <h4>Name of Purchaser:</h4> <br />
                 {remarkDetail[0].name}
               </div>
               <div className="col-3">
-                <b>Location: </b> <br />
+                <h4>Location: </h4> <br />
                 {remarkDetail[0].branchName}
               </div>
+              {deliveryDetail[0].DeliveryDate !== null && (
+                <div className="col-3">
+                  <h4>Delivery Date: </h4> <br />
+                  {moment(deliveryDetail[0].DeliveryDate).format('D MMM YYYY')}
+                </div>
+              )}
             </div>
 
             <hr className="mt-4"></hr>
