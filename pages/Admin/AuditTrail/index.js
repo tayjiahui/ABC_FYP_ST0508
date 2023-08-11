@@ -189,7 +189,7 @@ export default function AuditLogs() {
     return (
         <div>
             <div className="px-2">
-                <h1>Audit Logs</h1>
+                <h1>Audit Trail</h1>
             </div>
 
             <div>

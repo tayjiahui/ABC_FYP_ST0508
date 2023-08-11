@@ -218,9 +218,9 @@ export default function Home() {
 								</button>
 							</div>
 							<div className="col-sm">
-								<button className="btn shadow-sm bg-white w-100" onClick={() => { router.push('/Admin/AuditLogs') }}>
-									<Image src={AuditIcon} alt="AuditLog Icon" />
-									<div>Audit Logs</div>
+								<button className="btn shadow-sm bg-white w-100" onClick={() => { router.push('/Admin/AuditTrail') }}>
+									<Image src={AuditIcon} alt="AuditTrail Icon" />
+									<div>Audit Trail</div>
 								</button>
 							</div>
 						</div>
