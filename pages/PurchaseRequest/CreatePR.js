@@ -340,7 +340,11 @@ export default function CreatePR({ from }) {
     setFinalPrice(totalPrice);
 
     try {
-      const response = await axios.get(`${baseUrl}/api/supplier/supplierPurchaseInfo/${supplierV.id}`);
+      const response = await axios.get(`${baseUrl}/api/supplier/supplierPurchaseInfo/${supplierV.id}`, {
+        headers : {
+          authorization: 'Bearer ' + Token
+        }
+      });
       const supplierInfo = response.data[0];
       const supplierMOQ = parseFloat(supplierInfo.MOQ);
 
