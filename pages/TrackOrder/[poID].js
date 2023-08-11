@@ -655,7 +655,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         </div>
 
         <br></br>
-        <h3 className="col-sm ms-5">Purchase & Payment Status</h3>
+        <h3 className="col-sm ms-5">Purchase Status</h3>
 
         <div className={styles.lineContainer}>
           <hr className={styles.lineDivider}></hr>

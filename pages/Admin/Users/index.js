@@ -244,7 +244,7 @@ function UserRow(props) {
                                 <input type="text" id="statusInput" value={newRole} onChange={(e) => setNewRole(e.target.value)} /> <br />
                             </div>
                             <div>
-                                <button type="submit" className={styles.createStatusBtn}> Create Status</button>
+                                <button type="submit" className={styles.createStatusBtn}> Create Role</button>
                             </div>
                         </form>
                     </div>

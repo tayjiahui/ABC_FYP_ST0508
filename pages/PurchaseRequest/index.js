@@ -31,16 +31,16 @@ function isLocalhost() {
     const hostname = window.location.hostname;
     console.log("hostname   " + hostname);
     if (hostname == "localhost") {
-      URL.push("http://localhost:3000", "http://localhost:5000");
-      console.log(URL);
+      URL.push(
+        "http://localhost:3000", 
+        "http://localhost:5000"
+      );
     } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
       URL.push(
         "https://abc-cooking-studio-backend.azurewebsites.net",
         "https://abc-cooking-studio.azurewebsites.net"
       );
-      console.log(URL);
     }
-
     return URL;
   }
 };
@@ -98,14 +98,16 @@ function PRRow(props) {
   const circle = circleTest(statusID);
 
   useEffect(() => {
+    console.log("i am running")
     if (props.RoleID === 3) {
       setROLE(1);
     };
 
     if (props.PTypeID === 2) {
+      console.log("i am in")
       setIsAdHoc(true);
     };
-  }, []);
+  }, [props]);
 
   const viewProductLines = async (e) => {
     e.preventDefault();
@@ -1413,8 +1415,6 @@ export default function PurchaseRequest() {
   const handlePRSearch = async (e) => {
     e.preventDefault();
 
-    // setSearchValue(e.target.value);
-
     // purchaser
     if (role === 2) {
       if (showAdHoc === false) {
@@ -1464,6 +1464,8 @@ export default function PurchaseRequest() {
                 <div key={index}>
                   <PRRow
                     RoleID={role}
+                    PTypeID={item.purchaseTypeID}
+                    PType={item.purchaseType}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
@@ -1536,6 +1538,8 @@ export default function PurchaseRequest() {
                 <div key={index}>
                   <AdHocRow
                     RoleID={role}
+                    PTypeID={item.purchaseTypeID}
+                    PType={item.purchaseType}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
@@ -1679,6 +1683,8 @@ export default function PurchaseRequest() {
                 <div key={index}>
                   <AdHocRow
                     RoleID={role}
+                    PTypeID={item.purchaseTypeID}
+                    PType={item.purchaseType}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
@@ -1714,11 +1720,10 @@ export default function PurchaseRequest() {
     e.preventDefault();
 
     setSearchValue(e.target.value);
-    console.log(e.target.value)
 
     if (e.target.value === '') {
       setlist1(ogPRlist);
-    }
+    };
 
     // handlePRSearch(e);
   };
