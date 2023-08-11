@@ -36,9 +36,19 @@ const Popup = ({ event }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [description, setDescription] = useState('');
-  const [viewAccessId, setViewAccessId] = useState('');
+  const [viewAccess, setViewAccess] = useState('');
+  // const [viewAccessID, setViewAccessID] = useState([]);
   const [showFirstPopup, setShowFirstPopup] = useState(true);
   const [showSecondPopup, setShowSecondPopup] = useState(false);
+  const [Token, setToken] = useState();
+  const [viewAccessOptions, setViewAccessOptions] = useState([]);
+
+  useEffect(() => {
+
+    // set user token 
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("ID");
@@ -47,6 +57,23 @@ const Popup = ({ event }) => {
     }
   }, [])
 
+  useEffect(() => {
+    //fetch view access options 
+    axios.get(`${baseUrl}/api/purchasePlan/viewAccess`, {
+      headers: {
+        authorization: 'Bearer ' + Token,
+      },
+    })
+      .then(res => {
+        setViewAccessOptions(res.data); //store in statea
+      })
+      .catch(err => {
+        console.log('error fetching options: ', err);
+      })
+  })
+
+
+
   const handleSubmit = async (event) => {
 
     event.preventDefault();
@@ -54,30 +81,58 @@ const Popup = ({ event }) => {
     setShowFirstPopup(false);
     setShowSecondPopup(true); // Show the second pop-up after submission
 
-    setTimeout(function(){
+    console.log('selected view access: ',viewAccess)
+
+    axios.get(`${baseUrl}/api/purchasePlan/access/${viewAccess}`, {
+      headers: {
+        authorization: 'Bearer ' + Token,
+      },
+    })
+    .then(res => {
+      console.log('View Access ID: ',res.data[0].viewAccessID);
+      const viewAccessID = res.data[0].viewAccessID
+      
+      axios.post(`${baseUrl}/api/purchasePlan/purchasePlan`, {
+        userID: userId,
+        title: titleName,
+        start_datetime: startDate,
+        end_datetime: endDate,
+        description: description,
+        viewAccessID: viewAccessID
+      })
+      .then(res => {
+        console.log('data inserted!');
+      })
+      .catch(err => {
+        console.log('data insert error!')
+      })
+  
+    })
+
+    setTimeout(function () {
       window.location.reload();
-   }, 2000);
+    }, 2000);
 
-    const formData = {
-      userID: userId,
-      title: titleName,
-      start_datetime: startDate,
-      end_datetime: endDate,
-      description: description,
-      viewAccessID: viewAccessId
-    };
+    // const formData = {
+    //   userID: userId,
+    //   title: titleName,
+    //   start_datetime: startDate,
+    //   end_datetime: endDate,
+    //   description: description,
+    //   viewAccessID: viewAccessID
+    // };
 
-    try {
-      const response = await axios.post(`${baseUrl}/api/purchasePlan/purchasePlan`, formData);
+    // try {
+    //   const response = await axios.post(`${baseUrl}/api/purchasePlan/purchasePlan`, formData);
 
-      if (response.status === 200) {
-        console.log('Data inserted successfully!');
-      } else {
-        console.error('Error inserting data!');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    //   if (response.status === 200) {
+    //     console.log('Data inserted successfully!');
+    //   } else {
+    //     console.error('Error inserting data!');
+    //   }
+    // } catch (error) {
+    //   console.error('Error:', error);
+    // }
 
   };
 
@@ -119,13 +174,23 @@ const Popup = ({ event }) => {
               required
             ></textarea><br></br>
 
-            <input
-              type="number"
-              value={viewAccessId}
-              onChange={(e) => setViewAccessId(e.target.value)}
-              placeholder="viewAccessId"
+            <label htmlFor="viewAccess">Select View Access:</label>
+            <select
+              id="viewAccess"
+              value={viewAccess}
+              onChange={(e) => setViewAccess(e.target.value)}
               required
-            /><br></br>
+              className={styles.viewAccessSelect}
+            >
+              <option value="">Select View</option>
+              {viewAccessOptions.map(option => (
+                <option key={option.viewAccess} value={option.viewAccess}>
+                  {option.viewAccess}
+                </option>
+              ))}
+            </select>
+            <br />
+
             <button type="submit">Submit</button>
           </form>
         </div>
@@ -133,7 +198,7 @@ const Popup = ({ event }) => {
 
       {showSecondPopup && (
         <div className={styles.newStatusBox}>
-            <h5 className={styles.secondPopUp}> Purchase plan submitted successfully! </h5>
+          <h5 className={styles.secondPopUp}> Purchase plan submitted successfully! </h5>
         </div>
       )}
 

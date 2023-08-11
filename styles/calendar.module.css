@@ -190,3 +190,10 @@ h2 {
   white-space: pre-wrap;
   margin-left: 5px;
 }
+
+.viewAccessSelect {
+  padding: 5px;
+  width: 80%;
+  border-radius: 20px;
+  border-width: 1px;
+}
