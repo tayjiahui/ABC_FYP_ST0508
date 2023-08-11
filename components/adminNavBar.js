@@ -74,7 +74,7 @@ export default function AdminNavBar() {
                             <Link className={router.pathname == "/Admin/Transactions" ? "active" : ""} href="/Admin/Transactions">Transactions</Link>
                         </li>
                         <li>
-                            <Link className={router.pathname == "/Admin/AuditLogs" ? "active" : ""} href="/Admin/AuditLogs">Audit Logs</Link>
+                            <Link className={router.pathname == "/Admin/AuditTrail" ? "active" : ""} href="/Admin/AuditTrail">Audit Trail</Link>
                         </li>
                         <li>
                             <Link className={router.pathname == "/Admin/Configurations" ? "active" : ""} href="/Admin/Configurations">Configurations</Link>
