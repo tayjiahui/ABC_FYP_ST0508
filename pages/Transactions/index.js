@@ -222,7 +222,7 @@ export default function Transactions() {
   const [TransactionsList, setTransactionsList] = useState([<div>Loading...</div>]);
 
   // Alert Box
-  const [TRDownloadAlert, setTRDownloadAlert] = useState();
+  const [TRDownloadAlert, setTRDownloadAlert] = useState(false);
 
   useEffect(() => {
     // set user token
