@@ -279,6 +279,101 @@ function GSTPageView() {
 };
 
 function PaymentModePageView() {
+  const [Token, setToken] = useState();
+
+  const [NewPM, setNewPM] = useState();
+  const [PaymentModes, setPaymentModes] = useState([]);
+  const [PaymentModesID, setPaymentModesID] = useState([]);
+
+  const [showCreatePM, setShowCreatePM] = useState(false);
+
+  // Alert Box
+  const [CreatePMAlert, setCreatePMAlert] = useState(false);
+  const [DeletePMAlert, setDeletePMAlert] = useState(false);
+
+  useEffect(() => {
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
+
+    axios.get(`${baseUrl}/api/purchaseReq/paymentMode/all`)
+      .then((response) => {
+        setPaymentModes(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  }, [CreatePMAlert, DeletePMAlert]);
+
+  const handleCreatePMPop = async () => {
+    if (showCreatePM === false) {
+      setShowCreatePM(true);
+    } else {
+      setShowCreatePM(false);
+    };
+  };
+
+  const CreatePaymentMode = async (e) => {
+    e.preventDefault();
+    console.log(NewPM);
+
+    axios.post(`${baseUrl}/api/purchaseReq/paymentMode`,
+      {
+        paymentMode: NewPM
+      },
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+    )
+      .then((response) => {
+        console.log(response.data);
+
+        setCreatePMAlert(true);
+        alertTimer();
+
+        // close pop up
+        setShowCreatePM(false);
+        // reset value
+        setNewPM();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const deletePM = async (e) => {
+    const pmID = e.target.id;
+
+    axios.delete(`${baseUrl}/api/purchaseReq/paymentMode/${pmID}`,
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+    )
+      .then((response) => {
+        setDeletePMAlert(true);
+        alertTimer();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  // alert box timer
+  function alertTimer() {
+    // changes all alert useStates to false after 3s
+    setTimeout(alertFunc, 3000);
+  };
+
+  function alertFunc() {
+    // list of alerts useStates in your page
+    setCreatePMAlert(false);
+    setDeletePMAlert(false);
+  };
 
   return (
     <>
@@ -286,26 +381,79 @@ function PaymentModePageView() {
         <h2>Payment Mode</h2>
       </div>
 
-      {/* <div className="px-4">
-                <div className="d-flex">
-                    <label><b>Current GST(%):</b></label>
-                    <p className="ps-3">8%</p>
-                </div>
+      <div className="px-4">
+        <button onClick={handleCreatePMPop} className="btn btn-secondary rounded" style={{ backgroundColor: '#486284' }}>
+          Add Payment Mode
+        </button>
 
-                <div className="pb-3">
-                    <a className={styles.seeMoreLink}>
-                        <button type="button" className="btn px-0">
-                            <u>View GST% History</u>
-                        </button>
-                    </a>
-                </div>
+        <div className="d-flex pt-4">
+          <label><b>Manage Payment Modes</b></label>
+        </div>
 
-                <div className="pt-3">
-                    <button className="btn btn-secondary rounded" style={{ backgroundColor: '#486284' }}>
-                        Update GST
-                    </button>
-                </div>
-            </div> */}
+        <div className="pb-3 mt-4">
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
+            {PaymentModes.map((item, index) => (
+              <li key={index} className="d-flex align-items-center">
+                <span>{item.paymentMode}</span>
+                {['Bank Transfer'].includes(item.paymentMode) ? null : (
+                  <button className="btn btn-link btn-sm" onClick={deletePM} style={{ textDecoration: 'none', color: 'black', lineHeight: '1' }}>
+                    <span aria-label="Delete" id={item.paymentModeID} style={{ fontSize: '20px', verticalAlign: 'middle' }}>&times;</span>
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {
+        showCreatePM &&
+        <div className={styles.newStatusBox}>
+          <div className={styles.newStatus}>
+            <div className="row pt-1">
+              <div className="col-sm-10 text-center pt-2">
+                <h3 className={styles.newStatusText}>Create Payment Mode</h3>
+              </div>
+
+              <div className="col-sm-1">
+                <button onClick={handleCreatePMPop} className="btn px-2">
+                  <Image src={xIcon} width={35} height={35} alt="Cancel" />
+                </button>
+              </div>
+            </div>
+            <form className="ps-4 py-3" onSubmit={CreatePaymentMode}>
+              <div className="pt-3">
+                <label className="pe-2">New Payment Mode:</label> <br />
+                <input type="text" onChange={(e) => setNewPM(e.target.value)} className="rounded border-1 py-0" required />
+              </div>
+
+              <div className="p-5">
+                <button type="submit" className="btn btn-secondary rounded" style={{ backgroundColor: '#486284' }}>
+                  Create Payment Mode
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+
+      {
+        CreatePMAlert &&
+        <AlertBox
+          Show={CreatePMAlert}
+          Message={`Payment Mode Created!`}
+          Type={'success'}
+          Redirect={``} />
+      }
+
+      {
+        DeletePMAlert &&
+        <AlertBox
+          Show={DeletePMAlert}
+          Message={`Payment Mode Deleted!`}
+          Type={'success'}
+          Redirect={``} />
+      }
     </>
   )
 };
@@ -485,7 +633,7 @@ export default function Configurations() {
       setPageView(StatusView)
     } else if (clicked === 'PurchaseStatus') {
       setPageView(PurchaseStatusView)
-    }
+    };
 
   };
 
