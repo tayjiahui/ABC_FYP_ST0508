@@ -41,6 +41,7 @@ const Calendar = () => {
   const [deleteEventId, setDeleteEventId] = useState(false);
 
   const [Token, setToken] = useState();
+  const [userId, setUserID] = useState('');
 
   const handleSelect = (arg) => {
     setSelectedRange(arg);
@@ -61,11 +62,31 @@ const Calendar = () => {
     getEvents(token);
   }, []);
 
+  useEffect(() => {
+    const storedUserId = localStorage.getItem("ID");
+    if (storedUserId) {
+      setUserID(parseInt(storedUserId, 10))
+    }
+  }, [])
+
+  useEffect(() => {
+    axios.get(`${baseUrl}/api/purchasePlan/viewAccess`, {
+      headers: {
+        user: userId,
+        authorization: 'Bearer ' + Token
+      }
+    })
+    .then(res => {
+      console.log(res.data)
+    })
+  })
+
   const getEvents = async (token) => {
     try {
       const response = await axios.get(`${baseUrl}/api/purchasePlan/`,
         {
           headers: {
+            user: userId,
             authorization: 'Bearer ' + token
           }
         }
