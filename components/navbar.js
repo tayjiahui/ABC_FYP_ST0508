@@ -94,7 +94,7 @@ export default function NavBar() {
                             <Link className={router.pathname == "/TrackOrder" ? "active" : ""} href="/TrackOrder">Track Order</Link>
                         </li>
                         <li>
-                            <Link className={router.pathname == "/TrackPayment" ? "active" : ""} href="/PurchaseOrder">Track Payment</Link>
+                            <Link className={router.pathname == "/PurchaseOrder" ? "active" : ""} href="/PurchaseOrder">Track Payment</Link>
                         </li>
                         <li>
                             <Link className={router.pathname == "/Supplier" ? "active" : ""} href="/Supplier">Supplier</Link>

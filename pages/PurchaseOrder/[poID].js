@@ -117,6 +117,8 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   const [newStatusPop, setNewStatusPop] = useState(false);
   const [statusInput, setStatusInput] = useState([]);
   const [remarks, setRemarks] = useState('');
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [existingReceipt, setExistingReceipt] = useState(false);
   //pdf
   const [selectedFile, setSelectedFile] = useState([]);
   const [PDF, setPDF] = useState([]);
@@ -124,8 +126,14 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   //alert box
   const [createdStatusAlert, setCreatedStatusAlert] = useState(false);
   const [uploadedReceiptAlert, setUploadedReceiptAlert] = useState(false);
+  const [updateStatusAlert, setUpdateStatusAlert] = useState(false);
+  const [updateRemarksAlert, setUpdateRemarksAlert] = useState(false);
+  const [deleteReceiptAlert, setDeleteReceiptAlert] = useState(false);
 
   const [Token, setToken] = useState();
+  const [Role, setRoleID] = useState();
+  const [financeS, setFinanceS] = useState(false);
+  const [supplier, setSupplier] = useState(false);
 
   // get user id
   useEffect(() => {
@@ -136,6 +144,18 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
     //set user token
     const token = localStorage.getItem("token");
     setToken(token);
+
+    // set user role
+    const roleID = parseInt(localStorage.getItem("roleID"), 10);
+    setRoleID(roleID);
+
+    if (roleID === 3) {
+      setFinanceS(true);
+    }
+
+    if (roleID === 4) {
+      setSupplier(true);
+    }
 
   }, [])
 
@@ -155,7 +175,8 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
     })
       .then(res => {
         console.log("succesfully updated remarks.")
-        setUpdateRemarksPop(true);
+        setUpdateRemarksAlert(true);
+        alertTimer();
       })
       .catch(err => {
         console.log(err);
@@ -214,6 +235,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
         .then(() => {
           console.log('receipt uploaded..');
           setUploadedReceiptAlert(true);
+          setSelectedFile(null);
           alertTimer();
           fetchPDFData();
         })
@@ -288,6 +310,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
 
         setCreatedStatusAlert(true);
         alertTimer();
+        fetchStatusData();
 
       })
       .catch((err) => {
@@ -306,10 +329,15 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
     setTimeout(alertClose, 3000);
   }
 
+
+
   function alertClose() {
     setCreatedStatusAlert(false);
     setUploadedReceiptAlert(false);
-    window.location.reload();
+    setUpdateRemarksAlert(false);
+    setUpdateStatusAlert(false);
+    setDeleteReceiptAlert(false);
+    // window.location.reload();
   }
 
   // const handleNewStatus = () => {
@@ -392,15 +420,17 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   };
 
   useEffect(() => {
-    // set user token
-    const token = localStorage.getItem("token");
 
+    fetchStatusData();
+  }, []);
+
+  const fetchStatusData = () => {
     axios.all([
       //fetches all the statuses to populate the dropdown. 
       axios.get(`${baseUrl}/api/paymentTrack/`,
         {
           headers: {
-            authorization: 'Bearer ' + token
+            authorization: 'Bearer ' + Token
           }
         }),
       // get original payment status id
@@ -426,7 +456,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
 
       }))
       .catch(err => console.log(err));
-  }, [selectedPaymentStatus])
+  }
 
   const handleStatusChange2 = (event) => {
     console.log("chnaged", event.target.value);
@@ -473,7 +503,8 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                 console.log(response.data);
               })
 
-            setUpdateStatusPop(true);
+            setUpdateStatusAlert(true);
+            alertTimer();
             setSelectedPaymentStatus(selectedValue);
           })
       })
@@ -495,45 +526,41 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
     }
   };
 
+  //existing receipt 
+  const handleCloseExistingReceipt = () => {
+    setExistingReceipt(false);
+  }
 
-  // useEffect(() => {
-  //   axios.get(`${baseUrl}/api/paymentTrack/supplier/suppliernames/all`)
-  //     .then(res => {
-  //       console.log("supplier names:", res.data)
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     })
-  // })
 
-  // useEffect(() => {
-  //   axios.get(`${baseUrl}/api/paymentTrack/`)
-  //     .then(res => {
-  //       console.log("status names:", res.data)
-  //     })
-  //     .catch(err => {
-  //       console.log(err)
-  //     })
-  // })
+  const handleDeleteConfirmation = () => {
+    setDeleteConfirm(true);
+  }
 
-  // DELETE RECEIPT
-  // const handleReceiptDelete = () => {
-  //   axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/remove`, {
-  //     ptReceipt: null
-  //   },{
-  //     headers: {
-  //       user: id,
-  //       authorization: 'Bearer ' + Token
-  //     }
-  //   })
-  //   .then(res => {
-  //     console.log('Receipt Deleted');
-  //     window.location.reload();
-  //   })
-  //   .catch(err => {
-  //     console.log('Error deleting Receipt', err);
-  //   })
-  // };
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirm(false);
+  }
+
+  //DELETE RECEIPT
+  const handleReceiptDelete = () => {
+
+    axios.put(`${baseUrl}/api/paymentTrack/productDetails/${poID}/remove`, {
+      ptReceipt: null
+    }, {
+      headers: {
+        user: id,
+        authorization: 'Bearer ' + Token
+      }
+    })
+      .then(res => {
+        console.log('Receipt Deleted');
+        setDeleteReceiptAlert(true);
+        alertTimer();
+        fetchPDFData();
+      })
+      .catch(err => {
+        console.log('Error deleting Receipt', err);
+      })
+  };
 
   return (
     <>
@@ -747,11 +774,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                 <div className="col-md-6" >
                   <div className="form-group">
                     <label htmlFor="paymentStatus">Payment Status:</label>
-                    <select className="form-control" id="paymentStatus" value={selectedPaymentStatus} onChange={handleStatusChange2}>
+                    <select className="form-control" id="paymentStatus" value={selectedPaymentStatus} onChange={handleStatusChange2} disabled={!financeS && !supplier}>
                       {paymentStatuses.map((status, index) => (
                         <option key={index} value={status.paymentStatus}>{status.paymentStatus}</option>
                       ))}
-                      <option value="+ Create New Status"> + Create New Status</option>
+                      {financeS && <option value="+ Create New Status"> + Create New Status</option>}
                     </select>
                   </div>
                 </div>
@@ -769,15 +796,16 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
               </div>
             </div>
 
-            {/* 
-            <div className="mt-5">
-              <div className="col-md-6">
-                <button className={`btn ${selectedStatus2.paymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={wipOpen} disabled={selectedStatus2.paymentStatus === 'Pending'}>Upload Receipt</button>
-              </div>
-            </div> */}
 
             <div className="mt-4">
-              <button className={`btn ${selectedPaymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }} onClick={handleOpenModal}>Upload Receipt</button>
+              <button className={`btn ${selectedPaymentStatus === 'Pending' ? 'disabled' : ''} `} style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '15px' }}
+                onClick={() => {
+                  if (PDF) {
+                    setExistingReceipt(true);
+                  } else {
+                    handleOpenModal();
+                  }
+                }} disabled={!financeS}>Upload Receipt</button>
             </div>
 
             {wip && <WIP Show={wip} />}
@@ -796,7 +824,18 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                   <p>Receipt Uploaded : </p>
                   <div className={styles.receiptContainer}>
                     <button className={styles.openReceipt} onClick={handleOpenPDFInNewTab}>View Receipt</button>
-                    {/* <Image src={deleteIcon} alt="Delete Receipt" className={styles.deleteIcon} onClick={handleReceiptDelete}/> */}
+                    {financeS && ( // Conditionally render the button if financeS is true
+                      <button
+                        className="btn btn-link btn-sm"
+                        onClick={handleDeleteConfirmation}
+                        style={{
+                          textDecoration: 'none',
+                          color: 'black',
+                        }}
+                      >
+                        <span aria-label="Delete" style={{ fontSize: '25px', verticalAlign: 'middle' }}>&times;</span>
+                      </button>
+                    )}
                   </div>
                 </>
               ) : (
@@ -818,6 +857,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                     }}
                     value={remarks} //so user can see exising remarks.
                     onChange={handleRemarksChange}
+                    disabled={!financeS && !supplier}
                   />
                 </div>
               </div>
@@ -826,7 +866,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
             <div className="row">
               <div className="col-md-12 ">
                 <div className="text-end">
-                  <button className="btn" style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '10px 50px 10px 50px' }} onClick={handleSave}>
+                  <button className="btn" style={{ backgroundColor: '#486284', borderRadius: '50px', color: 'white', padding: '10px 50px 10px 50px' }} onClick={handleSave} disabled={!financeS && !supplier}>
                     Save Remarks
                   </button>
                 </div>
@@ -840,16 +880,14 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
         {showModal && (
           <div className="modal fade show d-block" style={{ display: 'block' }}>
             <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
+              <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }} >
                 <div className="modal-body">
                   <div className="d-flex flex-column align-items-center">
                     <h5 className="modal-title">Upload A File</h5>
-                    <button type="button" className="closeXbtn" onClick={handleCloseModal} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5' }}>
+                    <button type="button" className="closeXbtn" onClick={handleCloseModal} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', background: 'transparent' }}>
                       <span aria-hidden="true">&times;</span>
                     </button> <br />
                     <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      {/* <p className="mb-3">Drag and drop file here</p>
-                      <p>or</p> */}
                       <input type="file" className="btn btn-custom-primary mt-3" style={{ display: 'none' }} onChange={(e) => { handleFileUpload(e); }} id="fileUpload" />
 
                       <label htmlFor="fileUpload" className="btn btn-custom-primary mt-3" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', cursor: 'pointer' }}>
@@ -876,7 +914,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
         {showModal2 && (
           <div className="modal fade show d-block" style={{ display: 'block' }}>
             <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
+              <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
                 <div className="modal-body">
                   <div className="d-flex flex-column align-items-center mt-2">
                     <h2 className="modal-title">Confirm Upload ?</h2>
@@ -885,7 +923,6 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                     </button> <br />
                   </div>
                 </div>
-                {/* Wrapping the buttons in a div with 'd-flex' and 'text-center' class */}
                 <div className="d-flex justify-content-center text-center mb-5">
                   <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseModal2}>Cancel</button>
                   <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmUpload(); handleCloseModal2(); handleUpload(); }}>Upload</button>
@@ -895,19 +932,15 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
           </div>
         )}
 
-        {fileDisplay && (
-          <div className={styles.displayReceipt}>
-            <button onClick={handleCloseReceipt} className={styles.closeReceipt}>X</button>
 
-            <h2>{selectedFile.name}</h2>
-          </div>
-        )}
 
         {newStatusPop && (
           <div className={styles.newStatusBox}>
             <div className={styles.newStatus}>
-              <h2 className={styles.newStatusText}> Create New Status </h2>
-              <p onClick={handleCloseStatusPop} className={styles.closemeStatus}>X</p>
+              <h3 className={styles.newStatusText}> Create New Status </h3>
+              <button type="button" className="close" onClick={handleCloseStatusPop} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                <span aria-hidden="true">&times;</span>
+              </button> <br />
               <form onSubmit={handleSubmit}>
                 <label htmlFor="statusInput">Enter status name : </label> <br />
                 <input type="text" id="statusInput" value={statusInput} onChange={handleInputChange} /> <br />
@@ -965,12 +998,54 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
           </div>
         )}
 
+        {deleteConfirm && (
+          <div className="modal fade show d-block" style={{ display: 'block' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+                <div className="modal-body">
+                  <div className="d-flex flex-column align-items-center mt-2">
+                    <h2 className="modal-title">Confirm Delete ?</h2>
+                    <button type="button" className="close" onClick={handleCloseDeleteConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                      <span aria-hidden="true">&times;</span>
+                    </button> <br />
+                  </div>
+                </div>
+                <div className="d-flex justify-content-center text-center mb-5">
+                  <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseDeleteConfirmation} >Cancel</button>
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleReceiptDelete(); handleCloseDeleteConfirmation(); }}>Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {existingReceipt && (
+          <div className="modal fade show d-block" style={{ display: 'block' }}>
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+                <div className="modal-body">
+                  <div className="d-flex flex-column align-items-center mt-2">
+                    <p className="modal-title text-center">There is an existing Receipt. <br />Please delete before uploading a new Receipt.</p>
+                    <button type="button" className="close" onClick={handleCloseExistingReceipt} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                      <span aria-hidden="true">&times;</span>
+                    </button> <br />
+                  </div>
+                </div>
+                <div className="d-flex justify-content-center text-center mb-5">
+                  <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleCloseExistingReceipt(); }}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+
         {createdStatusAlert &&
           <AlertBox
             Show={createdStatusAlert}
             Message={`New Payment Status Created!`}
             Type={'success'}
-            Redirect={`/PurchaseOrder/${poID}`} />
+            Redirect={``} />
         }
 
         {uploadedReceiptAlert &&
@@ -979,6 +1054,31 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
             Message={`Receipt Uploaded!`}
             Type={'success'} />
         }
+
+        {updateStatusAlert &&
+          <AlertBox
+            Show={updateStatusAlert}
+            Message={`Status Successfully Updated!`}
+            Type={'success'}
+            Redirect={``} />
+        }
+
+        {updateRemarksAlert &&
+          <AlertBox
+            Show={updateRemarksAlert}
+            Message={`Remarks Successfully Updated!`}
+            Type={'success'}
+            Redirect={``} />
+        }
+
+
+        {deleteReceiptAlert && (
+          <AlertBox
+            Show={deleteReceiptAlert}
+            Message={`Receipt Successfully Deleted!`}
+            Type={`success`}
+            Redirect={``} />
+        )}
 
       </div>
     </>
