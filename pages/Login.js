@@ -16,7 +16,10 @@ export default function Login() {
         }
         else if (session.userDetails.role === 5) {
             router.push('/Admin/Home');
-        } else {
+        } else if (session.userDetails.role === 4){
+            router.push('/TrackOrder');
+        }
+        else {
             router.push('/Home');
         };
     }, [session])

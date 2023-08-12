@@ -71,7 +71,11 @@ export default function Login() {
                 localStorage.setItem("token", data.token);
 
                 // redirect to home page
-                router.push('/Home');
+                if(data.roleID === 4){
+                    router.push('/TrackOrder');
+                } else{
+                    router.push('/Home');
+                };
             })
             .catch((err) => {
                 console.log(err);
