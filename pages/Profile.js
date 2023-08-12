@@ -31,7 +31,7 @@ isLocalhost();
 const baseUrl = URL[0];
 
 export default function Profile() {
-    const { data: session} = useSession();
+    const { data: session } = useSession();
     const router = useRouter();
 
     const [id, setUserID] = useState();
@@ -46,29 +46,33 @@ export default function Profile() {
         // const userID = session?.userDetails.userID;
         setUserID(userID);
 
-        // set user role
-        // const roleID = parseInt(localStorage.getItem("roleID"), 10);
-        // setRoleID(roleID);
+        // set user token
+        const token = localStorage.getItem("token");
 
-        axios.get(`${baseUrl}/api/user/${userID}`)
+        axios.get(`${baseUrl}/api/user/${userID}`,
+            {
+                headers: {
+                    authorization: 'Bearer ' + token
+                }
+            }
+        )
             .then((response) => {
                 // console.log(response.data);
 
                 const userData = response.data[0];
                 // console.log("USER DATA", userData);
 
-                setUsername(userData.name)
+                setUsername(userData.name);
                 setEmail(userData.email);
                 setRoleID(userData.role);
-            })
-    }, [])
+            });
+    }, []);
 
     const logOut = async (e) => {
         e.preventDefault();
 
         localStorage.clear();
         // router.push('/');
-        // await signOut({ callbackUrl: '/' });
         signOut({ callbackUrl: '/' });
     };
 

@@ -28,9 +28,18 @@ const PoAmt = () => {
     const [amt, setAmt] = useState([]);
 
     useEffect(() => {
-        const getData = async() => {
+        // set user token
+        const token = localStorage.getItem("token");
+
+        const getData = async () => {
             try {
-                const res = await axios.get(`${baseUrl}/api/trackOrder/poAmnt`);
+                const res = await axios.get(`${baseUrl}/api/trackOrder/poAmnt`,
+                    {
+                        headers: {
+                            authorization: 'Bearer ' + token
+                        }
+                    }
+                );
 
                 // console.log(res.data);
                 const blank = res.data[0].PO_count
@@ -38,13 +47,13 @@ const PoAmt = () => {
                 setAmt(blank)
             } catch (error) {
                 console.log(error)
-            }
-        }
+            };
+        };
 
-        getData()
+        getData();
     }, [])
 
-    return(
+    return (
         <div>{amt}</div>
     )
 }

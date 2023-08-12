@@ -459,6 +459,7 @@ function PaymentModePageView() {
 };
 
 function StatusPageView() {
+  const [Token, setToken] = useState();
 
   const [paymentStatuses, setPaymentStatuses] = useState([]);
   const [paymentStatusID, setPaymentStatusID] = useState([]);
@@ -474,16 +475,29 @@ function StatusPageView() {
   };
 
   useEffect(() => {
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
     fetchPaymentStatuses();
   }, []);
 
   const handleDelete = (status) => {
-    axios.get(`${baseUrl}/api/paymentTrack/status/${status}`)
+    axios.get(`${baseUrl}/api/paymentTrack/status/${status}`,
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      })
       .then(response => {
         const statusID = response.data[0].PaymentStatusID
         setPaymentStatusID(statusID);
 
-        axios.delete(`${baseUrl}/api/paymentTrack/${statusID}`)
+        axios.delete(`${baseUrl}/api/paymentTrack/${statusID}`,
+          {
+            headers: {
+              authorization: 'Bearer ' + Token
+            }
+          })
           .then(response => {
             console.log('status deleted!')
             fetchPaymentStatuses();
@@ -529,12 +543,19 @@ function StatusPageView() {
 };
 
 function PurchaseStatusPageView() {
+  const [Token, setToken] = useState();
 
   const [purchaseStatuses, setPurchaseStatuses] = useState([]);
   const [purchaseStatusID, setPurchaseStatusID] = useState([]);
 
   const fetchPurchaseStatuses = () => {
-    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`,
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+    )
       .then(response => {
         const purchaseStatusesData = response.data.map(item => item.purchaseStatus);
         setPurchaseStatuses(purchaseStatusesData);
@@ -546,33 +567,47 @@ function PurchaseStatusPageView() {
   };
 
   useEffect(() => {
+    // set user token
+    const token = localStorage.getItem("token");
+    setToken(token);
+
     fetchPurchaseStatuses();
   }, []);
 
-
   const handleDelete = (status) => {
     alert(`${status}`)
-    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/id/${status}`)
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/id/${status}`,
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+    )
       .then(response => {
         const statusID = response.data[0].purchaseStatusID
         setPurchaseStatusID(statusID);
 
-        console.log(response)
+        console.log(response);
 
-        // axios.delete(`${baseUrl}/api/trackOrder/purchaseStatus/${statusID}`)
-        // .then(response => {
-        //     console.log('status deleted!')
-        //     fetchPurchaseStatuses();
-        // })
-        // .catch(err => {
-        //     console.log('status could not be deleted', err)
-        // })
+        axios.delete(`${baseUrl}/api/trackOrder/purchaseStatus/${statusID}`,
+          {
+            headers: {
+              authorization: 'Bearer ' + Token
+            }
+          }
+        )
+          .then(response => {
+            console.log('status deleted!');
+            fetchPurchaseStatuses();
+          })
+          .catch(err => {
+            console.log('status could not be deleted', err);
+          });
       })
       .catch(err => {
         console.log(err);
-      })
-
-  }
+      });
+  };
 
 
   return (

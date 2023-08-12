@@ -75,7 +75,13 @@ function UserRow(props) {
                     }
                 }
             ),
-            axios.get(`${baseUrl}/api/user/${props.UserID}/role`)
+            axios.get(`${baseUrl}/api/user/${props.UserID}/role`,
+                {
+                    headers: {
+                        authorization: 'Bearer ' + token
+                    }
+                }
+            )
         ])
             .then(axios.spread((response1, response2) => {
                 // get role dropdown
@@ -98,11 +104,14 @@ function UserRow(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(newRole);
-
         await axios.post(`${baseUrl}/api/user/role`,
             {
                 role: newRole
+            },
+            {
+                headers: {
+                    authorization: 'Bearer ' + Token
+                }
             }
         )
             .then(async (response) => {
@@ -152,7 +161,7 @@ function UserRow(props) {
                     }
                 }
             )
-                .then(async(response) => {
+                .then(async (response) => {
                     setUpdateRoleALert(true);
                     alertTimer();
 

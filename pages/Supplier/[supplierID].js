@@ -45,20 +45,20 @@ export async function getServerSideProps(context) {
     const host = context.req.headers.host;
     const backBaseURL = [];
 
-    if(host == 'localhost:5000') {
+    if (host == 'localhost:5000') {
         backBaseURL.push('http://localhost:3000');
     }
     else {
         backBaseURL.push('https://abc-cooking-studio-backend.azurewebsites.net');
     }
-    
+
     const { params } = context;
     const { supplierID } = params;
 
     const supplierInfoResponse = await fetch(`${backBaseURL}/api/supplier/${supplierID}`);
     const supplierInfoResults = await supplierInfoResponse.json();
     // console.log("supplier info: " + supplierInfoResults);
-         
+
     return {
         props: {
             host,
@@ -112,31 +112,46 @@ export default function viewSupplier({ supplierDetails }) {
 
     // get dropdown options
     useEffect(() => {
-        axios.all([
-            axios.get(`${baseUrl}/api/supplier/bank/all`,{}),
-            axios.get(`${baseUrl}/api/supplier/category/all`,{})
-        ])
-        .then(axios.spread((response1, response2) => {
-            // bank names options
-            const bankNames = response1.data.map(option1 => ({
-                value: option1.bankID,
-                label: option1.bankName
-            }));
-            // console.log(bankNames);
-            setbankDropdownOptions(bankNames);
+        // set user token
+        const token = localStorage.getItem("token");
 
-            // categories options
-            const categories = response2.data.map(option2 => ({
-                value: option2.categoryID,
-                label: option2.categoryName
-            }));
-            // console.log(categories);
-            setCategoryOptions(categories);
-        }))
-        .catch((err) => {
-            console.error(err);
-            alert(err)
-        });
+        axios.all([
+            axios.get(`${baseUrl}/api/supplier/bank/all`,
+                {
+                    headers: {
+                        authorization: 'Bearer ' + token
+                    }
+                }
+            ),
+            axios.get(`${baseUrl}/api/supplier/category/all`,
+                {
+                    headers: {
+                        authorization: 'Bearer ' + token
+                    }
+                }
+            )
+        ])
+            .then(axios.spread((response1, response2) => {
+                // bank names options
+                const bankNames = response1.data.map(option1 => ({
+                    value: option1.bankID,
+                    label: option1.bankName
+                }));
+                // console.log(bankNames);
+                setbankDropdownOptions(bankNames);
+
+                // categories options
+                const categories = response2.data.map(option2 => ({
+                    value: option2.categoryID,
+                    label: option2.categoryName
+                }));
+                // console.log(categories);
+                setCategoryOptions(categories);
+            }))
+            .catch((err) => {
+                console.error(err);
+                alert(err)
+            });
     }, []);
 
     // current data of the form inputs
@@ -164,7 +179,7 @@ export default function viewSupplier({ supplierDetails }) {
         bankAccName: '',
         contactPersonName: '',
         phoneNum: '',
-        address: '', 
+        address: '',
         bankID: null,
         bankAccountNum: '',
         MOQ: '',
@@ -204,28 +219,28 @@ export default function viewSupplier({ supplierDetails }) {
     }
 
     // handle popup delete button
-    const handleConfirmDelete = async(e) => {
+    const handleConfirmDelete = async (e) => {
         e.preventDefault();
 
-        await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`,{},
-        {
-            headers: {
-                authorization: 'Bearer ' + Token
-            }
-        })
+        await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`,
+            {
+                headers: {
+                    authorization: 'Bearer ' + Token
+                }
+            })
             .then((res1) => {
                 console.log(res1.data);
                 // alert(res1.data);
 
-                axios.put(`${baseUrl}/api/supplier/delete/category/${supplierID}`, {},
-                {
-                    headers: {
-                        authorization: 'Bearer ' + Token
-                    }
-                })
-                .then((res2) => {
-                    console.log(res2.data);
-                })
+                axios.put(`${baseUrl}/api/supplier/delete/category/${supplierID}`,
+                    {
+                        headers: {
+                            authorization: 'Bearer ' + Token
+                        }
+                    })
+                    .then((res2) => {
+                        console.log(res2.data);
+                    })
 
                 setDeletedSuccessAlert(true);
 
@@ -233,7 +248,7 @@ export default function viewSupplier({ supplierDetails }) {
                 alertTimer();
 
                 // timer before redirect
-                setTimeout(() => {router.push('/Supplier')}, 3000);
+                setTimeout(() => { router.push('/Supplier') }, 3000);
 
             })
             .catch((err) => {
@@ -244,7 +259,7 @@ export default function viewSupplier({ supplierDetails }) {
 
                 alertTimer();
             });
-        
+
         setDeleteSupplierPop(false);
 
         // redirect to supplier main page
@@ -265,7 +280,7 @@ export default function viewSupplier({ supplierDetails }) {
     }
 
     // handle update button
-    const handleConfirmUpdate = async(e) => {
+    const handleConfirmUpdate = async (e) => {
         e.preventDefault();
 
         // updated fields
@@ -279,7 +294,7 @@ export default function viewSupplier({ supplierDetails }) {
             phoneNum: updatedFormData.phoneNum || formData.phoneNum,
             address: updatedFormData.address || formData.address,
             bankAccountNum: updatedFormData.bankAccountNum || formData.bankAccountNum,
-            bankID: selectedBank ? selectedBank.value: formData.bankID,
+            bankID: selectedBank ? selectedBank.value : formData.bankID,
             MOQ: updatedFormData.MOQ || formData.MOQ,
             deliveryTimeLine: updatedFormData.deliveryTimeLine || formData.deliveryTimeLine
         };
@@ -290,45 +305,45 @@ export default function viewSupplier({ supplierDetails }) {
             // alert("Please select at least one option for Category");
             setSelectAlert(true);
             alertTimer();
-        } 
+        }
         else {
             // send form data using axios PUT
             await axios.put(`${baseUrl}/api/supplier/${supplierID}`, updatedValues,
-            {
-                headers: {
-                    authorization: 'Bearer ' + Token
-                }
-            })
-            .then((res1) => {
-                console.log(res1.data);
-                // alert(res1.data);
-
-                axios.put(`${baseUrl}/api/supplier/suppliersCategory/${supplierID}`, {
-                    categoryIDs: selectedCategories.map((option) => option.value).join(',')
-                },
                 {
                     headers: {
                         authorization: 'Bearer ' + Token
                     }
                 })
-                .then((res2) => {
-                    console.log(res2.data);
+                .then((res1) => {
+                    console.log(res1.data);
+                    // alert(res1.data);
+
+                    axios.put(`${baseUrl}/api/supplier/suppliersCategory/${supplierID}`, {
+                        categoryIDs: selectedCategories.map((option) => option.value).join(',')
+                    },
+                        {
+                            headers: {
+                                authorization: 'Bearer ' + Token
+                            }
+                        })
+                        .then((res2) => {
+                            console.log(res2.data);
+                        })
+
+                    setUpdatedSuccessAlert(true);
+
+                    // timer to reset to false
+                    alertTimer();
+
+                    // timer before redirect
+                    setTimeout(() => { router.push('/Supplier') }, 3000);
+
                 })
-
-                setUpdatedSuccessAlert(true);
-
-                // timer to reset to false
-                alertTimer();
-
-                // timer before redirect
-                setTimeout(() => {router.push('/Supplier')}, 3000);
-
-            })
-            .catch((err) => {
-                console.log(err);
-                setUpdatedErrorAlert(true);
-                alertTimer();
-            });
+                .catch((err) => {
+                    console.log(err);
+                    setUpdatedErrorAlert(true);
+                    alertTimer();
+                });
         }
     };
 
@@ -346,43 +361,43 @@ export default function viewSupplier({ supplierDetails }) {
                 </div>
 
                 <div className="col-2 mt-2 mb-4">
-                    <Image src={editIcon} onClick={handleAllowEdit} className="d-inline" style={{marginLeft:"30px", width:"40px", height:"40px", cursor: "pointer"}} alt="Edit Button" />
+                    <Image src={editIcon} onClick={handleAllowEdit} className="d-inline" style={{ marginLeft: "30px", width: "40px", height: "40px", cursor: "pointer" }} alt="Edit Button" />
 
-                    <Image src={deleteIcon} onClick={handleOpenPopup} className="d-inline" style={{marginLeft:"40px", width:"45px", height:"45px", cursor: "pointer"}} alt="Delete Button" />
+                    <Image src={deleteIcon} onClick={handleOpenPopup} className="d-inline" style={{ marginLeft: "40px", width: "45px", height: "45px", cursor: "pointer" }} alt="Delete Button" />
 
-                        {deleteSupplierPop && (
-                            <div className={styles.popupContainer}>
-                                <div className={styles.popupBox}>
-                                    <h2 className={styles.confirmDeleteText}> Confirm Delete?</h2>
-                                    <button onClick={handleClosePopup} className={styles.closeButton2}>
-                                        <Image src={xIcon} width={35} height={35} alt="Cancel" />
-                                    </button>
-                                
-                                </div>
-                                <div className={styles.deleteButtons}>
-                                    <button className={styles.deleteButton} onClick={handleConfirmDelete}>Delete</button>
-                                    <button className={styles.cancelButton1} onClick={handleClosePopup} >Cancel</button>
-                                </div>
+                    {deleteSupplierPop && (
+                        <div className={styles.popupContainer}>
+                            <div className={styles.popupBox}>
+                                <h2 className={styles.confirmDeleteText}> Confirm Delete?</h2>
+                                <button onClick={handleClosePopup} className={styles.closeButton2}>
+                                    <Image src={xIcon} width={35} height={35} alt="Cancel" />
+                                </button>
+
                             </div>
-                        )}
+                            <div className={styles.deleteButtons}>
+                                <button className={styles.deleteButton} onClick={handleConfirmDelete}>Delete</button>
+                                <button className={styles.cancelButton1} onClick={handleClosePopup} >Cancel</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
             <div className="container">
                 <div className="row ms-2">
-                    <div className="col-6" style={{fontSize:"large"}}>
-                            
+                    <div className="col-6" style={{ fontSize: "large" }}>
+
                         <b>Supplier Name</b><br></br>
                         {editSupplier === false &&
                             <p>{supplierDetail.supplierName}</p>
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="text" 
-                                name="supplierName" 
-                                value={updatedFormData.supplierName || formData.supplierName} 
-                                onChange={handleInput} 
+                            <input
+                                type="text"
+                                name="supplierName"
+                                value={updatedFormData.supplierName || formData.supplierName}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                             />
                         }
@@ -394,14 +409,14 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="email" 
-                                name="email" 
-                                value={updatedFormData.email || formData.email} 
-                                onChange={handleInput} 
+                            <input
+                                type="email"
+                                name="email"
+                                value={updatedFormData.email || formData.email}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                                 pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
-                            />            
+                            />
                         }
                         <br></br>
 
@@ -411,13 +426,13 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="tel" 
-                                name="officeNum" 
-                                value={updatedFormData.officeNum || formData.officeNum} 
-                                onChange={handleInput} 
+                            <input
+                                type="tel"
+                                name="officeNum"
+                                value={updatedFormData.officeNum || formData.officeNum}
+                                onChange={handleInput}
                                 className={styles.editInputs}
-                                pattern="[3689][0-9]{7}" 
+                                pattern="[3689][0-9]{7}"
                             />
                         }
                         <br></br>
@@ -428,11 +443,11 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="url" 
-                                name="webAddress" 
-                                value={updatedFormData.webAddress || formData.webAddress} 
-                                onChange={handleInput} 
+                            <input
+                                type="url"
+                                name="webAddress"
+                                value={updatedFormData.webAddress || formData.webAddress}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                                 pattern="^https?:\/\/.+$"
                             />
@@ -445,11 +460,11 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="text" 
-                                name="bankAccName" 
-                                value={updatedFormData.bankAccName || formData.bankAccName} 
-                                onChange={handleInput} 
+                            <input
+                                type="text"
+                                name="bankAccName"
+                                value={updatedFormData.bankAccName || formData.bankAccName}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                             />
                         }
@@ -482,11 +497,11 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="text" 
-                                name="contactPersonName" 
-                                value={updatedFormData.contactPersonName || formData.contactPersonName} 
-                                onChange={handleInput} 
+                            <input
+                                type="text"
+                                name="contactPersonName"
+                                value={updatedFormData.contactPersonName || formData.contactPersonName}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                             />
                         }
@@ -503,11 +518,11 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="tel" 
-                                name="phoneNum" 
-                                value={updatedFormData.phoneNum || formData.phoneNum} 
-                                onChange={handleInput} 
+                            <input
+                                type="tel"
+                                name="phoneNum"
+                                value={updatedFormData.phoneNum || formData.phoneNum}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                                 pattern="[3689][0-9]{7}"
                             />
@@ -520,11 +535,11 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="text" 
-                                name="address" 
-                                value={updatedFormData.address || formData.address} 
-                                onChange={handleInput} 
+                            <input
+                                type="text"
+                                name="address"
+                                value={updatedFormData.address || formData.address}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                             />
                         }
@@ -536,11 +551,11 @@ export default function viewSupplier({ supplierDetails }) {
                         }
 
                         {editSupplier === true &&
-                            <input 
-                                type="text" 
-                                name="bankAccountNum" 
-                                value={updatedFormData.bankAccountNum || formData.bankAccountNum} 
-                                onChange={handleInput} 
+                            <input
+                                type="text"
+                                name="bankAccountNum"
+                                value={updatedFormData.bankAccountNum || formData.bankAccountNum}
+                                onChange={handleInput}
                                 className={styles.editInputs}
                                 pattern="[0-9]{8,18}"
                             />
@@ -577,7 +592,7 @@ export default function viewSupplier({ supplierDetails }) {
                                 value={updatedFormData.MOQ || formData.MOQ}
                                 onChange={handleInput}
                                 className={styles.editInputs}
-                                pattern="^[0-9]+$" 
+                                pattern="^[0-9]+$"
                             />
                         }
                         <br></br>
@@ -605,7 +620,7 @@ export default function viewSupplier({ supplierDetails }) {
                             <button type="submit" className={styles.submitButton} onClick={handleConfirmUpdate}>Update</button>
                         </div>
                     }
-            
+
                 </div>
             </div>
 
@@ -614,7 +629,7 @@ export default function viewSupplier({ supplierDetails }) {
                     Show={updatedSuccessAlert}
                     Message={`Supplier Successfully Updated!`}
                     Type={"success"}
-                    Redirect={`/Supplier`} 
+                    Redirect={`/Supplier`}
                 />
             }
 
@@ -631,7 +646,7 @@ export default function viewSupplier({ supplierDetails }) {
                     Show={deletedSuccessAlert}
                     Message={`Supplier Successfully Deleted!`}
                     Type={"success"}
-                    Redirect={`/Supplier`} 
+                    Redirect={`/Supplier`}
                 />
             }
 

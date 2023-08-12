@@ -70,7 +70,6 @@ export async function getServerSideProps(context) {
 
 
   const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
-  // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
   const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
   const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
 
@@ -303,12 +302,21 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   };
 
   useEffect(() => {
+    // set user token
+    const token = localStorage.getItem("token");
+
     // Target Delivery Date formatting
     const newDateFormat = moment(PR.requestDate).format('DD MMM YYYY');
     setTargetDate(newDateFormat);
 
     // get purchase status
-    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`,
+      {
+        headers: {
+          authorization: 'Bearer ' + token
+        }
+      }
+    )
       .then(res => {
         // console.log(res.data)
         setStatus(res.data);
@@ -380,7 +388,12 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
     await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
       purchaseStatusID: selectedValue,
-    })
+    },{
+      headers: {
+        authorization: 'Bearer ' + Token
+      }
+    }
+    )
       .then(async (res) => {
         // console.log(res);
 

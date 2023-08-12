@@ -72,7 +72,13 @@ function OrderRow(props) {
 
     axios.all([
       // gets po status dropdown
-      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`),
+      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`,
+        {
+          headers: {
+            authorization: 'Bearer ' + token
+          }
+        }
+      ),
       // get original status value
       axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${poId}`)
     ])
@@ -143,7 +149,12 @@ function OrderRow(props) {
     else {
       await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
         purchaseStatusID: selectedValue,
-      })
+      },{
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+      )
         .then(async (res) => {
           // console.log(res);
 

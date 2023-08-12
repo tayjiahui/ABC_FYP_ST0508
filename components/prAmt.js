@@ -29,9 +29,18 @@ const PrAmt = () => {
     const [amt, setAmt] = useState([]);
 
     useEffect(() => {
-        const getData = async() => {
+        // set user token
+        const token = localStorage.getItem("token");
+
+        const getData = async () => {
             try {
-                const res = await axios.get(`${baseUrl}/api/trackOrder/prAmnt`);
+                const res = await axios.get(`${baseUrl}/api/trackOrder/prAmnt`,
+                    {
+                        headers: {
+                            authorization: 'Bearer ' + token
+                        }
+                    }
+                );
 
                 // console.log(res.data);
                 const blank = res.data[0].PR_count
@@ -45,7 +54,7 @@ const PrAmt = () => {
         getData()
     }, [])
 
-    return(
+    return (
         <div>{amt}</div>
     )
 }

@@ -51,7 +51,16 @@ export default function Supplier({ suppliers }) {
 
     // fetch category names for filter options
     useEffect(() => {
-        axios.get(`${baseUrl}/api/supplier/category/all`, {})
+        // set user token
+        const token = localStorage.getItem("token");
+
+        axios.get(`${baseUrl}/api/supplier/category/all`,
+            {
+                headers: {
+                    authorization: 'Bearer ' + token
+                }
+            }
+        )
             .then((res) => {
                 setCategory(res.data);
             })
