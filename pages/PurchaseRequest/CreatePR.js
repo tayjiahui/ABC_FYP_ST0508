@@ -172,8 +172,9 @@ export default function CreatePR({ from }) {
           // get Locations
           const locationResult = response2.data;
           const LList = [];
-          
-          setBranchList(locationResult);
+          const LList2 = [];
+
+          // setBranchList(locationResult);
           setAHLocation(locationResult[0].branchID);
 
           locationResult.forEach((item, index) => {
@@ -183,7 +184,15 @@ export default function CreatePR({ from }) {
               </div>
             );
           });
+
+          locationResult.forEach((item, index) => {
+            LList2.push(
+              <option key={index} value={item.branchID}>{item.branchName}</option>
+            );
+          });
+
           locationList(LList);
+          setBranchList(LList2);
 
           // get payment modes
           const PMResult = response3.data;
@@ -220,7 +229,7 @@ export default function CreatePR({ from }) {
         console.log(err);
       });
 
-  }, [from]);
+  }, []);
 
   // add location input box
   const [LocationsList, setLocations] = useState([{ location: "", id: "" }]);
@@ -926,11 +935,7 @@ export default function CreatePR({ from }) {
             <div>
               <h4>Location</h4>
               <select onChange={e => setAHLocation(e.target.value)} style={{ width: '25%', height: '40px', borderRadius: '10px', borderColor: '#93A2B7', borderStyle: 'solid', borderWidth: '2px' }}>
-                {
-                  Branch.map((item, index) => {
-                    return <option key={index} value={item.branchID}>{item.branchName}</option>
-                  })
-                }
+                {Branch}
               </select>
             </div>
           </div>
