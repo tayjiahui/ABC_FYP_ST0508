@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 
 import logo from "../public/client_logo.png";
@@ -39,6 +39,11 @@ export default function NavBar() {
             localStorage.setItem("token", userD.token)
         };
 
+        if (!localStorage.getItem("token")) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
+        };
+
         // set user name
         const username = localStorage.getItem("FName");
         setUserName(username);
@@ -48,8 +53,8 @@ export default function NavBar() {
         if (roleID !== 4) {
             setAllowPRView(true);
         };
-        
-        if(roleID === 1 || roleID === 3) {
+
+        if (roleID === 1 || roleID === 3) {
             setAllowTransactionView(true);
         };
 
@@ -71,15 +76,18 @@ export default function NavBar() {
                                     alt="ABC Cooking Studio Company Logo" />
                             </a>
                         </li>
-                        <li>
-                            <Link className={router.pathname == "/Home" ? "active" : ""} href="/Home">Home</Link>
-                        </li>
-
                         {
                             allowPRView &&
-                            <li>
-                                <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
-                            </li>
+                            <>
+                                <li>
+                                    <Link className={router.pathname == "/Home" ? "active" : ""} href="/Home">Home</Link>
+                                </li>
+                                
+                                <li>
+                                    <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
+                                </li>
+                            </>
+
                         }
 
                         <li>

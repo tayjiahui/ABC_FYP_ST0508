@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 import Image from 'next/image';
 import arrowIcon from '../../public/arrowIcon.svg';
 import plusIcon from '../../public/addLocationIcon.svg';
@@ -70,7 +71,6 @@ export async function getServerSideProps(context) {
 
 
   const poD = await fetch(`${backBaseURL}/api/trackOrder/purchaseOrderDetails/${poID}`);
-  // const productD = await fetch(`${backBaseURL}/api/trackOrder/productDetails/${poID}`);
   const productD = await fetch(`${backBaseURL}/api/purchaseReq/lineItem/${poID}`);
   const PRDetails = await fetch(`${backBaseURL}/api/purchaseReq/PR/${poID}`);
 
@@ -205,7 +205,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       .catch((err) => {
         console.log(err);
         console.log(err.response);
-        alert(err);
       });
   }, [QtyReceivedList, selectedStatus])
 
@@ -252,7 +251,13 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             allowQtyEdit(false);
           })
           .catch((err) => {
-            console.log(err);
+            if (err.response.status === 401 || err.response.status === 403) {
+              localStorage.clear();
+              signOut({ callbackUrl: '/Unauthorised' });
+            }
+            else {
+              console.log(err);
+            };
           });
       }
     });
@@ -303,18 +308,35 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   };
 
   useEffect(() => {
+    // set user token
+    const token = localStorage.getItem("token");
+
     // Target Delivery Date formatting
     const newDateFormat = moment(PR.requestDate).format('DD MMM YYYY');
     setTargetDate(newDateFormat);
 
     // get purchase status
-    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`,
+      {
+        headers: {
+          authorization: 'Bearer ' + token
+        }
+      }
+    )
       .then(res => {
         // console.log(res.data)
         setStatus(res.data);
         setSelectedStatus(res.data[0]); //initial selected status
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
+      });
 
     // Product lines
     const itemLines = [];
@@ -380,7 +402,12 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
     await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
       purchaseStatusID: selectedValue,
-    })
+    }, {
+      headers: {
+        authorization: 'Bearer ' + Token
+      }
+    }
+    )
       .then(async (res) => {
         // console.log(res);
 
@@ -408,7 +435,13 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           })
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 

@@ -33,6 +33,10 @@ export default function Unauthorised() {
     const { data: session } = useSession();
     const router = useRouter();
 
+    useEffect(() => {
+        localStorage.clear();
+    })
+
     return (
         <div className="p-5">
             <div className="p-5 card w-50 border-0">

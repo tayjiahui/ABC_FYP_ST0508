@@ -253,51 +253,9 @@ export default NextAuth({
                     })
                         .then((response) => {
                             console.log("AUTH3 RESPONSE %%%%%%%%%", response.data);
-                            // axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
-                            //     {
-                            //         email: email
-                            //     }
-                            // )
-                            //     .then((res) => {
-                            //         // console.log(`Login Successful!`);
-                            //         // console.log(res.data);
-                            //         console.log(res.data[0]);
-
-                            //         const data = res.data[0];
-                            //         // console.log(res);
-
-                            //         session.userDetails = {
-                            //             name: data.name,
-                            //             email: email,
-                            //             userID: data.userID,
-                            //             role: data.roleID
-                            //         };
-
-                            //         console.log(session, "hkhcbdcsjidhdbvgchjiofkdewjkbdhv^^^^^^^^^^^^^^^^%#########################^^^^^^^^^^^^^^^^")
-
-                            //         // add user data to local storage
-                            //         localStorage.setItem("ID", data.userID);
-                            //         localStorage.setItem("roleID", data.roleID);
-                            //         localStorage.setItem("Name", data.name);
-                            //     })
-                            //     .catch((err) => {
-                            //         console.log(err, "EROROROR");
-                            //         // if (err.code === "ERR_NETWORK") {
-                            //         //     console.log(err);
-                            //         // }
-                            //         // else if (err.response.status === 404) {
-                            //         //     console.log(err.response.data);
-                            //         // }
-                            //     });
+                            
                         })
-                    // .catch((err) => {
-                    //     console.log(err);
-                    //     console.log(err.response);
-                    //     console.log(err.code);
-                    // })
-                    // };
 
-                    // auth3();
                 })
                 .catch((err) => {
                     console.log(err);

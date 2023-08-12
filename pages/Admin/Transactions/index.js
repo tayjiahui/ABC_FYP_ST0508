@@ -4,6 +4,7 @@ import Image from "next/image";
 import moment from 'moment-timezone';
 
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 
 // Style Sheet
 import styles from "../../../styles/auditLog.module.css";
@@ -43,8 +44,8 @@ isLocalhost();
 const baseUrl = URL[0];
 
 function getDates(PresetTime) {
-  const startDate = moment.tz(timezone).startOf(PresetTime).format();
-  const endDate = moment.tz(timezone).endOf(PresetTime).format();
+  const startDate = moment().tz(timezone).startOf(PresetTime).format(`YYYY-MM-DD HH:mm:ss`);
+  const endDate = moment.tz(timezone).endOf(PresetTime).format(`YYYY-MM-DD HH:mm:ss`);
 
   return { Start: startDate, End: endDate };
 };
@@ -83,8 +84,8 @@ function TransactionRow(props) {
 
     if (transaction.purchaseTypeID === 2) {
       setPurchaseStatus('N/A');
-      setPONO(`${reqDate}${poID}`);
-      setBranch('N/A');
+      setPONO(`${BranchPrefix}${reqDate}${poID}`);
+      setBranch(transaction.branchName);
       setSupplier('N/A');
       setPaymentMode('Cash');
     } else {
@@ -222,7 +223,7 @@ export default function Transactions() {
   const [TransactionsList, setTransactionsList] = useState([<div>Loading...</div>]);
 
   // Alert Box
-  const [TRDownloadAlert, setTRDownloadAlert] = useState();
+  const [TRDownloadAlert, setTRDownloadAlert] = useState(false);
 
   useEffect(() => {
     // set user token
@@ -262,10 +263,18 @@ export default function Transactions() {
         setTransactionsList(resultList);
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
 
   }, []);
+
+  console.log(ThisWeek)
 
   // check if date inputs are filled
   useEffect(() => {
@@ -350,7 +359,7 @@ export default function Transactions() {
           </button>
         </div>
       </div>
-      
+
       <div>
         <div className="pt-1">
           <hr />

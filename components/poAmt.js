@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { signOut } from "next-auth/react";
+import { useRouter } from 'next/router';
 import axios from 'axios';
 
 const URL = [];
@@ -25,26 +27,43 @@ isLocalhost();
 const baseUrl = URL[0]
 
 const PoAmt = () => {
+    const router = useRouter();
+
     const [amt, setAmt] = useState([]);
 
     useEffect(() => {
-        const getData = async() => {
+        // set user token
+        const token = localStorage.getItem("token");
+
+        const getData = async () => {
             try {
-                const res = await axios.get(`${baseUrl}/api/trackOrder/poAmnt`);
+                const res = await axios.get(`${baseUrl}/api/trackOrder/poAmnt`,
+                    {
+                        headers: {
+                            authorization: 'Bearer ' + token
+                        }
+                    }
+                );
 
                 // console.log(res.data);
                 const blank = res.data[0].PO_count
                 // console.log(blank)
                 setAmt(blank)
-            } catch (error) {
-                console.log(error)
-            }
-        }
+            } catch (err) {
+                if (err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
+            };
+        };
 
-        getData()
+        getData();
     }, [])
 
-    return(
+    return (
         <div>{amt}</div>
     )
 }

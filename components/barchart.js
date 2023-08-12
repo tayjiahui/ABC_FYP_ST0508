@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { signOut } from "next-auth/react";
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -45,13 +47,24 @@ const baseUrl = URL[0]
 
 
 const BarChart = () => {
+    const router = useRouter();
+
     const [barData, setBarData] = useState({ datasets: [], });
 
     useEffect(() => {
+        // set user token
+        const token = localStorage.getItem("token");
+
         let status = [];
         let number = [];
 
-        axios.get(`${baseUrl}/api/trackOrder/purchaseStatuses`)
+        axios.get(`${baseUrl}/api/trackOrder/purchaseStatuses`,
+            {
+                headers: {
+                    authorization: 'Bearer ' + token
+                }
+            }
+        )
             .then(res => {
                 // console.log(res.data)
                 for (const dataObj of res.data) {
@@ -62,7 +75,7 @@ const BarChart = () => {
                     status.push(statusName);
                     // console.log(status)
                 }
-                setBarData ({
+                setBarData({
                     labels: status,
                     datasets: [
                         {
@@ -75,6 +88,15 @@ const BarChart = () => {
                     ],
                 });
 
+            })
+            .catch((err) => {
+                if (err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
             })
     })
 

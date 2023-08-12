@@ -3,6 +3,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 
 import { useEffect, useState } from 'react';
+import { signOut } from "next-auth/react";
 import Image from 'next/image';
 
 // Style Sheet
@@ -14,6 +15,7 @@ import filterIcon from '../../public/filterIcon.svg';
 import eyeCon from "../../public/eyeCon.svg";
 import closeEyeCon from "../../public/closeEyeCon.svg";
 
+// Components
 import WIP from '../../components/WIP'
 import AlertBox from "../../components/alert";
 
@@ -29,13 +31,11 @@ function isLocalhost() {
     if (hostname == 'localhost') {
       URL.push('http://localhost:3000', 'http://localhost:5000');
       console.log(URL);
-
     }
     else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
       URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
       console.log(URL);
     };
-
     return URL;
   };
 };
@@ -47,6 +47,8 @@ const baseURL = URL[1];
 
 // each PO row
 function OrderRow(props) {
+  const [id, setUserID] = useState();
+  const [Token, setToken] = useState();
 
   const [OGStatus, setOGStatus] = useState();
   const [selectedStatus, setSelectedStatus] = useState();
@@ -55,9 +57,9 @@ function OrderRow(props) {
   const [newStatusPop, setNewStatusPop] = useState(false);
   const [statusInput, setStatusInput] = useState([]);
 
-  const [changedStatusPop, setChangedStatusPop] = useState(false);
+  // Alerts
   const [CreatedAlert, setCreatedAlert] = useState(false);
-  const [Token, setToken] = useState();
+  const [UpdatePStatus, setUpdatePStatus] = useState(false);
 
   // PO ID FROM DATABASE
   const poID = props.poID;
@@ -66,13 +68,23 @@ function OrderRow(props) {
   const poId = props.prID;
 
   useEffect(() => {
+    // set user id
+    const userID = parseInt(localStorage.getItem("ID"), 10);
+    setUserID(userID);
+
     // set user token 
     const token = localStorage.getItem('token');
     setToken(token);
 
     axios.all([
       // gets po status dropdown
-      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`),
+      axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`,
+        {
+          headers: {
+            authorization: 'Bearer ' + token
+          }
+        }
+      ),
       // get original status value
       axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${poId}`)
     ])
@@ -85,13 +97,18 @@ function OrderRow(props) {
         setOGStatus(POS.purchaseStatusID);
       }))
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       })
-  }, [selectedStatus]);
+  }, [CreatedAlert, UpdatePStatus]);
 
   const handleCloseStatusPop = () => {
     setNewStatusPop(false);
-    setChangedStatusPop(false);
   };
 
   function alertTimer() {
@@ -102,17 +119,17 @@ function OrderRow(props) {
   function alertFunc() {
     // list of alerts useStates in your page
     setCreatedAlert(false);
+    setUpdatePStatus(false);
   };
 
   const handleInputChange = (event) => {
     setStatusInput(event.target.value);
   };
 
-  const handleSubmit = (event) => {
-    // alert(`Sucessfully created new status: ${statusInput}`);
-    setCreatedAlert(true)
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
+    await axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
       purchaseStatus: statusInput
     },
       {
@@ -122,15 +139,22 @@ function OrderRow(props) {
       }
     )
       .then(res => {
-        // alert(`sucessfully created new status ${statusInput}`)
-        setNewStat(false)
-        setStatus((prevStatus) => [...prevStatus, res.data]);
-        onSubmit(statusInput)
-        setCreatedAlert(true)
+        setNewStatusPop(false);
+        setSelectedStatus((prevStatus) => [...prevStatus, res.data]);
+        setStatusInput('');
+
+        setCreatedAlert(true);
+        alertTimer();
       })
       .catch((err) => {
-        console.log(err);
-      })
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
+      });
   };
 
   const handleStatusChange = async (event) => {
@@ -143,30 +167,45 @@ function OrderRow(props) {
     else {
       await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
         purchaseStatusID: selectedValue,
-      })
+      }, {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      }
+      )
         .then(async (res) => {
-          // console.log(res);
+          setUpdatePStatus(true);
+          alertTimer();
 
           // create audit log
           await axios.post(`${baseUrl}/api/auditTrail/`,
             {
               timestamp: moment().tz(timezone).format(),
-              userID: props.userID,
+              userID: id,
               actionTypeID: 2,
               itemId: poID,
               newValue: selectedValue,
               oldValue: OGStatus
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
             }
           )
             .then((response) => {
-              // console.log(response.data);
             })
         })
         .catch((err) => {
-          console.log(err);
-        })
-      setChangedStatusPop(true);
-    }
+          if (err.response.status === 401 || err.response.status === 403) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
+          }
+          else {
+            console.log(err);
+          };
+        });
+    };
   };
 
   return (
@@ -224,15 +263,14 @@ function OrderRow(props) {
         </div>
       )}
 
-      {changedStatusPop && (
-        <div className={styles.newStatusBox}>
-          <div className={styles.newStatus}>
-            <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
-            <h5 className='mt-5'> Status has been changed successfully </h5>
-
-          </div>
-        </div>
-      )}
+      {
+        UpdatePStatus &&
+        <AlertBox
+          Show={UpdatePStatus}
+          Message={`Purchase Status Updated!`}
+          Type={'success'}
+          Redirect={``} />
+      }
 
       {
         CreatedAlert &&
@@ -240,7 +278,7 @@ function OrderRow(props) {
           Show={CreatedAlert}
           Message={`Sucessfully created new status!`}
           Type={'success'}
-          Redirect={'/TrackOrder'} />
+          Redirect={``} />
       }
     </div>
 
@@ -396,6 +434,7 @@ function Icon(props) {
 export default function TrackOrder() {
 
   const [id, setUserID] = useState();
+  const [role, setRoleID] = useState();
   const [Token, setToken] = useState();
 
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
@@ -414,6 +453,10 @@ export default function TrackOrder() {
     // set user id taken from localstorage
     const userID = parseInt(localStorage.getItem("ID"), 10);
     setUserID(userID);
+
+    // set user role
+    const roleID = parseInt(localStorage.getItem("roleID"), 10);
+    setRoleID(roleID);
 
     const token = localStorage.getItem("token");
     setToken(token);
@@ -457,11 +500,12 @@ export default function TrackOrder() {
       }))
       .catch((err) => {
         console.log(err);
-        if (err.response === 404) {
-          alert(err.response.data);
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
         }
         else {
-          alert(err.code);
+          console.log(err);
         };
       });
   }, []);
@@ -472,46 +516,52 @@ export default function TrackOrder() {
     const token = localStorage.getItem("token");
     setToken(token);
 
-    axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
-      headers: {
-        authorization: 'Bearer ' + token
-      }
-    })
-      .then((response) => {
-        // console.log(response);
-        // console.log(response.data);
+    // set user role
+    const roleID = parseInt(localStorage.getItem("roleID"), 10);
 
-        const adHocResult = response.data;
+    if (roleID !== 4) {
+      axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
+        headers: {
+          authorization: 'Bearer ' + token
+        }
+      })
+        .then((response) => {
+          // console.log(response);
+          // console.log(response.data);
 
-        // Show List of Ad-hoc Purchases
-        const adHocList = [];
+          const adHocResult = response.data;
 
-        adHocResult.forEach((item, index) => {
-          // Time stamp formatting
-          const reqDate = moment(adHocResult[index].requestDate).format(
-            "D MMM YYYY"
-          );
-          const targetDeliveryDate = moment(
-            adHocResult[index].targetDeliveryDate
-          ).format("D MMM YYYY");
+          // Show List of Ad-hoc Purchases
+          const adHocList = [];
 
-          adHocList.push(
-            <div key={index}>
-              <AdHocRow
-                prID={item.prID}
-                ReqDate={reqDate}
-                Name={item.name}
-                TargetDate={targetDeliveryDate}
-                Status={item.prStatus}
-                StatusID={item.prStatusID}
-                Description={item.remarks}
-              />
-            </div>
-          );
+          adHocResult.forEach((item, index) => {
+            // Time stamp formatting
+            const reqDate = moment(adHocResult[index].requestDate).format(
+              "D MMM YYYY"
+            );
+            const targetDeliveryDate = moment(
+              adHocResult[index].targetDeliveryDate
+            ).format("D MMM YYYY");
+
+            adHocList.push(
+              <div key={index}>
+                <AdHocRow
+                  prID={item.prID}
+                  ReqDate={reqDate}
+                  Name={item.name}
+                  TargetDate={targetDeliveryDate}
+                  Status={item.prStatus}
+                  StatusID={item.prStatusID}
+                  Description={item.remarks}
+                />
+              </div>
+            );
+          });
+
+          setAdHocResults(adHocList);
         });
+    }
 
-        setAdHocResults(adHocList);
-      });
   }, []);
 
   const handleSearch = async (e) => {
@@ -567,27 +617,29 @@ export default function TrackOrder() {
 
       <div className="pb-5">
         <div className={styles.rightFloater}>
-          <div className="px-3 pb-4">
-            <div className={styles.toggle}>
-              <div className="px-3 pt-1">
-                <h5>Ad-Hoc</h5>
-              </div>
+          {
+            role !== 4 &&
+            <div className="px-3 pb-4">
+              <div className={styles.toggle}>
+                <div className="px-3 pt-1">
+                  <h5>Ad-Hoc</h5>
+                </div>
 
-              <label className={styles.switch}>
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    adHocView(e);
-                  }}
-                  checked={showAdHoc}
-                />
-                <span className={styles.slider}></span>
-              </label>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      adHocView(e);
+                    }}
+                    checked={showAdHoc}
+                  />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
             </div>
-          </div>
+          }
 
           <div className={styles.searchContainer}>
-            {/* <form onSubmit={handleSearch}> */}
             <form>
               <div className="d-inline-flex">
                 <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox} />

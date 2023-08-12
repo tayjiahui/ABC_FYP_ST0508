@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import moment from 'moment-timezone';
 import axios from "axios";
@@ -98,15 +99,15 @@ export default function ViewAdHoc({ AdHocDetails }) {
     const poID = AdHocDetails[0].prID;
 
 
-     // get user id
+    // get user id
     useEffect(() => {
-    // set user id taken from localstorage
-    const userID = parseInt(localStorage.getItem("ID"), 10);
-    setUserID(userID);
+        // set user id taken from localstorage
+        const userID = parseInt(localStorage.getItem("ID"), 10);
+        setUserID(userID);
 
-    //set user token
-    const token = localStorage.getItem("token");
-    setToken(token);
+        //set user token
+        const token = localStorage.getItem("token");
+        setToken(token);
 
     }, [])
 
@@ -170,7 +171,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     }
                 }
             )
-                .then(async(response) => {
+                .then(async (response) => {
                     // console.log(response);
 
                     setTPAlert(true);
@@ -187,9 +188,9 @@ export default function ViewAdHoc({ AdHocDetails }) {
                             oldValue: OGAdHocPrice
                         },
                         {
-                          headers: {
-                            authorization: 'Bearer ' + Token
-                          }
+                            headers: {
+                                authorization: 'Bearer ' + Token
+                            }
                         }
                     )
                         .then((response) => {
@@ -197,7 +198,13 @@ export default function ViewAdHoc({ AdHocDetails }) {
                         })
                 })
                 .catch((err) => {
-                    console.log(err);
+                    if (err.response.status === 401 || err.response.status === 403) {
+                        localStorage.clear();
+                        signOut({ callbackUrl: '/Unauthorised' });
+                    }
+                    else {
+                        console.log(err);
+                    };
                 })
         };
     };
@@ -226,11 +233,6 @@ export default function ViewAdHoc({ AdHocDetails }) {
     function timeFunc() {
         // 2 seconds
         setTimeout(closeWIPModal, 2000);
-    };
-
-    const handleOpenWip = () => {
-        setInProg(true);
-        timeFunc();
     };
 
     // close WIP Modal
@@ -306,6 +308,13 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 })
                 .catch((err) => {
                     console.log("Error uploading Invoice", err);
+                    if (err.response.status === 401 || err.response.status === 403) {
+                        localStorage.clear();
+                        signOut({ callbackUrl: '/Unauthorised' });
+                    }
+                    else {
+                        console.log(err);
+                    };
                 })
         };
     };
@@ -357,6 +366,11 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 <div className="mt-4">
                     <h4>Name</h4>
                     <p>{AH.name}</p>
+                </div>
+
+                <div className="mt-4">
+                    <h4>Location</h4>
+                    <p>{AH.branchName}</p>
                 </div>
 
                 <div className="py-4">
@@ -414,7 +428,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 {PDF ? (
                     <>
                         <button className="rounded-4 w-50 ms-4 pt-3 me-1 border-0 shadow text-center col-sm text-white pt-2" style={{ backgroundColor: '#486284' }} onClick={handleOpenPDFInNewTab} >
-                            <h4 className="col-sm text-white pt-2">View Receipt</h4><br/>
+                            <h4 className="col-sm text-white pt-2">View Receipt</h4><br />
                         </button>
                     </>
                 ) : (
@@ -429,7 +443,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
             {showModal && (
                 <div className="modal fade show d-block" style={{ display: 'block' }}>
                     <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content" style={{border: '1px solid black'}}>
+                        <div className="modal-content" style={{ border: '1px solid black' }}>
                             <div className="modal-body">
                                 <div className="d-flex flex-column align-items-center">
                                     <h5 className="modal-title">Upload A File</h5>

@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import moment from 'moment-timezone';
 import axios from "axios";
@@ -162,7 +163,13 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
             })
             .catch((err) => {
-                console.log(err);
+                if (err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
             });
 
     };
@@ -194,6 +201,11 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     <div className="mt-4">
                         <h4>Name</h4>
                         <p>{AH.name}</p>
+                    </div>
+
+                    <div className="mt-4">
+                        <h4>Location</h4>
+                        <p>{AH.branchName}</p>
                     </div>
 
                     <div className="py-4">

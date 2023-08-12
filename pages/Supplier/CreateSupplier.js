@@ -4,6 +4,7 @@ import Select from "react-select";
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 
 // styles & icons
@@ -70,7 +71,7 @@ export default function CreateSupplier() {
     // dropdown options
     const [bankDropdownOptions, setbankDropdownOptions] = useState([]);
     const [categoryOptions, setCategoryOptions] = useState([]);
-    
+
     // selected dropdowns values
     const [selectedBank, setSelectedBank] = useState(null);
     const [selectedCategories, setSelectedCategories] = useState([]);
@@ -115,31 +116,51 @@ export default function CreateSupplier() {
 
     // get dropdown options
     useEffect(() => {
-        axios.all([
-            axios.get(`${baseUrl}/api/supplier/bank/all`,{}),
-            axios.get(`${baseUrl}/api/supplier/category/all`,{})
-        ])
-        .then(axios.spread((response1, response2) => {
-            // bank names options
-            const bankNames = response1.data.map(option1 => ({
-                value: option1.bankID,
-                label: option1.bankName
-            }));
-            // console.log(bankNames);
-            setbankDropdownOptions(bankNames);
+        // set user token
+        const token = localStorage.getItem("token");
 
-            // categories options
-            const categories = response2.data.map(option2 => ({
-                value: option2.categoryID,
-                label: option2.categoryName
-            }));
-            // console.log(categories);
-            setCategoryOptions(categories);
-        }))
-        .catch((err) => {
-            console.error(err);
-            alert(err)
-        });
+        axios.all([
+            axios.get(`${baseUrl}/api/supplier/bank/all`,
+                {
+                    headers: {
+                        authorization: 'Bearer ' + token
+                    }
+                }
+            ),
+            axios.get(`${baseUrl}/api/supplier/category/all`,
+                {
+                    headers: {
+                        authorization: 'Bearer ' + token
+                    }
+                }
+            )
+        ])
+            .then(axios.spread((response1, response2) => {
+                // bank names options
+                const bankNames = response1.data.map(option1 => ({
+                    value: option1.bankID,
+                    label: option1.bankName
+                }));
+                // console.log(bankNames);
+                setbankDropdownOptions(bankNames);
+
+                // categories options
+                const categories = response2.data.map(option2 => ({
+                    value: option2.categoryID,
+                    label: option2.categoryName
+                }));
+                // console.log(categories);
+                setCategoryOptions(categories);
+            }))
+            .catch((err) => {
+                if (err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
+            });
     }, []);
 
     // handle input changes
@@ -150,7 +171,7 @@ export default function CreateSupplier() {
             [name]: value,
         }));
     };
-    
+
     // handle bank name dropdown change
     const handleSelectBank = (selectedBankOpt) => {
         setSelectedBank(selectedBankOpt);
@@ -170,7 +191,7 @@ export default function CreateSupplier() {
     }, []);
 
     // send form data using axios POST
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const errors = {};
@@ -179,7 +200,7 @@ export default function CreateSupplier() {
         // email
         if (!formData.email) { // no input
             errors.email = "Email address is required";
-        } 
+        }
         else if (!emailPattern.test(formData.email)) { // not matched with regex pattern
             errors.email = "Please enter your email address in the format yourname@example.com";
         }
@@ -187,7 +208,7 @@ export default function CreateSupplier() {
         // phone number
         if (!formData.phoneNum) { // no input
             errors.phoneNum = "Phone number is required";
-        } 
+        }
         else if (!phonePattern.test(formData.phoneNum)) { // not matched with regex pattern
             errors.phoneNum = "Please enter a valid phone number";
         }
@@ -195,7 +216,7 @@ export default function CreateSupplier() {
         // office number
         if (!formData.officeNum) {
             errors.officeNum = "Office number is required";
-        } 
+        }
         else if (!phonePattern.test(formData.officeNum)) {
             errors.officeNum = "Please enter a valid office number";
         }
@@ -203,7 +224,7 @@ export default function CreateSupplier() {
         // bank account number
         if (!formData.bankAccountNum) {
             errors.bankAccountNum = "Bank account number is required";
-        } 
+        }
         else if (!bankAccountPattern.test(formData.bankAccountNum)) {
             errors.bankAccountNum = "Please enter a valid bank account number";
         }
@@ -224,7 +245,7 @@ export default function CreateSupplier() {
 
         if (Object.keys(errors).length > 0) {
             setErrors(errors);
-        } 
+        }
         else { // submit form
             // form data
             const submitData = {
@@ -245,49 +266,57 @@ export default function CreateSupplier() {
             console.log(submitData);
 
             await axios.post(`${baseUrl}/api/supplier/`, submitData,
-            {
-                headers: {
-                    authorization: 'Bearer ' + Token
-                }
-            })
-            .then((res) => {
-                // console.log(res.data);
-
-                axios.get(`${baseUrl}/api/supplier/supplierid`,
                 {
                     headers: {
                         authorization: 'Bearer ' + Token
                     }
                 })
                 .then((res) => {
-                    const supplierId = res.data[0].supplierID;
-                    //console.log(supplierId);
+                    // console.log(res.data);
 
-                    axios.post(`${baseUrl}/api/supplier/suppliersCategory`, {
-                        fkSupplier_id: supplierId,
-                        categoryIDs: selectedCategories.map((option) => option.value).join(',')
-                    })
+                    axios.get(`${baseUrl}/api/supplier/supplierid`,
+                        {
+                            headers: {
+                                authorization: 'Bearer ' + Token
+                            }
+                        })
+                        .then((res) => {
+                            const supplierId = res.data[0].supplierID;
+                            //console.log(supplierId);
+
+                            axios.post(`${baseUrl}/api/supplier/suppliersCategory`, {
+                                fkSupplier_id: supplierId,
+                                categoryIDs: selectedCategories.map((option) => option.value).join(',')
+                            }, {
+                                headers: {
+                                    authorization: 'Bearer ' + Token
+                                }
+                            }
+                            )
+                        })
+                    setCreatedSuccessAlert(true);
+
+                    // timer to reset to false
+                    alertTimer();
+
+                    // timer before redirect
+                    setTimeout(() => { router.push('/Supplier') }, 3000);
+
+                    // redirect back to main page
+                    // router.push('/Supplier'); 
                 })
-                setCreatedSuccessAlert(true);
-                
-                // timer to reset to false
-                alertTimer();
-
-                // timer before redirect
-                setTimeout(() => {router.push('/Supplier')}, 3000);
-
-                // redirect back to main page
-                // router.push('/Supplier'); 
-            })
-            .catch((err) => {
-                console.log(err);
-
-                setCreatedErrorAlert(true);
-                // alert(err);
-
-                // timer to reset to false
-                alertTimer();
-            });    
+                .catch((err) => {
+                    if (err.response.status === 401 || err.response.status === 403) {
+                        localStorage.clear();
+                        signOut({ callbackUrl: '/Unauthorised' });
+                    }
+                    else {
+                        setCreatedErrorAlert(true);
+                        // timer to reset to false
+                        alertTimer();
+                        console.log(err);
+                    };
+                });
         }
     };
 
@@ -308,71 +337,71 @@ export default function CreateSupplier() {
                     <div className="row ms-3">
                         <div className="col-6">
                             <b>Supplier Name</b><br></br>
-                            <input 
-                                type="text" 
-                                name="supplierName" 
-                                value={formData.supplierName} 
-                                onChange={handleInput} 
+                            <input
+                                type="text"
+                                name="supplierName"
+                                value={formData.supplierName}
+                                onChange={handleInput}
                                 className={styles.textbox}
                                 ref={firstInput}
-                                required 
+                                required
                             />
                             <br></br>
 
-                            <b>Email</b> {errors.email && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.email}</small></span>}
+                            <b>Email</b> {errors.email && <span className="text-danger" style={{ marginLeft: "2px" }}><small>{errors.email}</small></span>}
                             <br></br>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                value={formData.email} 
-                                onChange={handleInput} 
-                                className={styles.textbox} 
-                                placeholder="example@email.com" 
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                placeholder="example@email.com"
                                 pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
-                                title="Please enter your email address in the format yourname@example.com" 
-                                required 
-                             />
+                                title="Please enter your email address in the format yourname@example.com"
+                                required
+                            />
                             <br></br>
 
-                            <b>Office Number</b> {errors.officeNum && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.officeNum}</small></span>}
+                            <b>Office Number</b> {errors.officeNum && <span className="text-danger" style={{ marginLeft: "2px" }}><small>{errors.officeNum}</small></span>}
                             <br></br>
-                            <input 
-                                type="tel" 
-                                name="officeNum" 
-                                value={formData.officeNum} 
-                                onChange={handleInput} 
+                            <input
+                                type="tel"
+                                name="officeNum"
+                                value={formData.officeNum}
+                                onChange={handleInput}
                                 className={styles.textbox}
-                                pattern="[3689][0-9]{7}" 
-                                title="Please enter a valid phone number" 
-                                required 
+                                pattern="[3689][0-9]{7}"
+                                title="Please enter a valid phone number"
+                                required
                             />
                             <br></br>
 
                             <b>Web Address</b>
-                            <span className="text-secondary"><small> (optional)</small></span> 
-                            {errors.webAddress && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.webAddress}</small></span>}
+                            <span className="text-secondary"><small> (optional)</small></span>
+                            {errors.webAddress && <span className="text-danger" style={{ marginLeft: "2px" }}><small>{errors.webAddress}</small></span>}
                             <br></br>
-                            <input 
-                                type="url" 
-                                name="webAddress" 
-                                value={formData.webAddress} 
-                                onChange={handleInput} 
-                                className={styles.textbox} 
-                                placeholder="https://www.example.com" 
+                            <input
+                                type="url"
+                                name="webAddress"
+                                value={formData.webAddress}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                placeholder="https://www.example.com"
                                 pattern="^https?:\/\/.+$"
                                 title="Please enter a valid web address in the format http://www.example.com"
                             />
                             <br></br>
 
                             <b>Bank Account Name</b><br></br>
-                            <input 
-                                type="text" 
-                                name="bankAccName" 
-                                value={formData.bankAccName} 
-                                onChange={handleInput} 
-                                className={styles.textbox} 
-                                placeholder="Bank account holder's name" 
-                                required 
+                            <input
+                                type="text"
+                                name="bankAccName"
+                                value={formData.bankAccName}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                placeholder="Bank account holder's name"
+                                required
                             />
                             <br></br>
 
@@ -380,7 +409,7 @@ export default function CreateSupplier() {
                             <Select
                                 isMulti
                                 isSearchable
-                                options={categoryOptions} 
+                                options={categoryOptions}
                                 value={selectedCategories}
                                 onChange={handleMultiCategory}
                                 className={styles.multiSelectBox}
@@ -403,43 +432,43 @@ export default function CreateSupplier() {
                         <div className="col-6">
 
 
-                            <b>Phone Number</b> {errors.phoneNum && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.phoneNum}</small></span>}
+                            <b>Phone Number</b> {errors.phoneNum && <span className="text-danger" style={{ marginLeft: "2px" }}><small>{errors.phoneNum}</small></span>}
                             <br></br>
-                            <input 
-                                type="tel" 
-                                name="phoneNum" 
-                                value={formData.phoneNum} 
-                                onChange={handleInput} 
-                                className={styles.textbox} 
-                                pattern="[3689][0-9]{7}" 
-                                title="Please enter a valid phone number" 
-                                required 
+                            <input
+                                type="tel"
+                                name="phoneNum"
+                                value={formData.phoneNum}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                pattern="[3689][0-9]{7}"
+                                title="Please enter a valid phone number"
+                                required
                             />
                             <br></br>
 
                             <b>Address</b><br></br>
-                            <input 
-                                type="text" 
-                                name="address" 
-                                value={formData.address} 
-                                onChange={handleInput} 
-                                className={styles.textbox} 
-                                title="Please enter a valid address in SG" 
-                                required 
+                            <input
+                                type="text"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleInput}
+                                className={styles.textbox}
+                                title="Please enter a valid address in SG"
+                                required
                             />
                             <br></br>
 
-                            <b>Bank Account Number</b> {errors.bankAccountNum && <span className="text-danger" style={{marginLeft: "2px"}}><small>{errors.bankAccountNum}</small></span>}
+                            <b>Bank Account Number</b> {errors.bankAccountNum && <span className="text-danger" style={{ marginLeft: "2px" }}><small>{errors.bankAccountNum}</small></span>}
                             <br></br>
-                            <input 
-                                type="text" 
-                                name="bankAccountNum" 
-                                value={formData.bankAccountNum} 
-                                onChange={handleInput} 
+                            <input
+                                type="text"
+                                name="bankAccountNum"
+                                value={formData.bankAccountNum}
+                                onChange={handleInput}
                                 className={styles.textbox}
-                                pattern="[0-9]{8,18}" 
+                                pattern="[0-9]{8,18}"
                                 title="Please enter a valid bank account number"
-                                required 
+                                required
                             />
                             <br></br>
 
@@ -479,7 +508,7 @@ export default function CreateSupplier() {
                                 value={formData.deliveryTimeLine}
                                 onChange={handleInput}
                                 className={styles.textbox}
-                                
+
                                 pattern="[0-9]+"
                                 title="Please enter a valid number for delivery timeline"
                             />
@@ -491,16 +520,16 @@ export default function CreateSupplier() {
                     <div className="pt-4">
                         <button type="submit" className={styles.submitButton}>Create</button>
                     </div>
-                    
+
                 </form>
             </div>
-            
+
             {createdSuccessAlert &&
                 <AlertBox
                     Show={createdSuccessAlert}
                     Message={`Supplier is Succesfully Created!`}
                     Type={"success"}
-                    Redirect={`/Supplier`} 
+                    Redirect={`/Supplier`}
                 />
             }
 

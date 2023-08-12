@@ -3,8 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSession } from "next-auth/react";
-
+import { signOut, useSession } from "next-auth/react";
 
 import logo from "../public/client_logo.png";
 import profPic from "../public/prof_pic.png";
@@ -16,14 +15,11 @@ export default function AdminNavBar() {
 
     const [userName, setUserName] = useState("");
 
-    console.log({session})
+    console.log({ session })
 
     // insert data into localStorage
     useEffect(() => {
         // ? after removing development login
-        // if(!session){
-        //     router.push('/login');
-        // };
 
         if (status === 'authenticated' && session) {
             const userD = session.userDetails
@@ -31,8 +27,8 @@ export default function AdminNavBar() {
             // console.log(userD);
 
             // removes non-admin users
-            if(userD.role !== 5){
-                router.push('/Unauthorised');
+            if (userD.role !== 5) {
+                signOut({ callbackUrl: '/Unauthorised' });
             };
 
             // add to localStorage
@@ -41,6 +37,11 @@ export default function AdminNavBar() {
             localStorage.setItem("Name", userD.name);
             localStorage.setItem("FName", session.user.name);
             localStorage.setItem("token", userD.token)
+        };
+
+        if (!localStorage.getItem("token") || status === 'unauthenticated') {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
         };
 
         const username = localStorage.getItem("FName");

@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -33,8 +33,7 @@ function isLocalhost() {
         "https://abc-cooking-studio.azurewebsites.net"
       );
       console.log(URL);
-    }
-
+    };
     return URL;
   };
 };
@@ -123,6 +122,10 @@ export default function CreatePR({ from }) {
   const [PaymentModes, pmList] = useState();
   const [Items, itemList] = useState();
 
+  // Adhoc dropdown
+  const [Branch, setBranchList] = useState();
+  const [AHLocation, setAHLocation] = useState();
+
   // Alert Box
   const [CreatedPRAlert, setCreatedPRAlert] = useState(false);
   const [CreatedAdhocAlert, setCreatedAdhocAlert] = useState(false);
@@ -153,11 +156,6 @@ export default function CreatePR({ from }) {
     ])
       .then(
         axios.spread((response1, response2, response3, response4) => {
-          // console.log(response1.data[0]);
-          // console.log(response2.data[0]);
-          // console.log(response3.data[0]);
-          // console.log(response4.data[0]);
-
           // get suppliers
           const supplierResult = response1.data;
           const SList = [];
@@ -174,6 +172,9 @@ export default function CreatePR({ from }) {
           // get Locations
           const locationResult = response2.data;
           const LList = [];
+          
+          setBranchList(locationResult);
+          setAHLocation(locationResult[0].branchID);
 
           locationResult.forEach((item, index) => {
             LList.push(
@@ -217,7 +218,6 @@ export default function CreatePR({ from }) {
       )
       .catch((err) => {
         console.log(err);
-        alert(err);
       });
 
   }, []);
@@ -341,90 +341,88 @@ export default function CreatePR({ from }) {
 
     try {
       const response = await axios.get(`${baseUrl}/api/supplier/supplierPurchaseInfo/${supplierV.id}`, {
-        headers : {
+        headers: {
           authorization: 'Bearer ' + Token
         }
       });
       const supplierInfo = response.data[0];
       const supplierMOQ = parseFloat(supplierInfo.MOQ);
 
-      console.log('fetched moq:', supplierMOQ);
-      console.log("Final Price: ", totalPrice);
-
       if (supplierMOQ === null || totalPrice >= supplierMOQ) {
 
-    await axios.post(`${baseUrl}/api/purchaseReq/`,
-      {
-        purchaseTypeID: 1,
-        targetDeliveryDate: dateReqV,
-        userID: id,
-        supplierID: supplierV.id,
-        paymentModeID: PMV.id,
-        remarks: Remark,
-      },
-      {
-        headers: {
-          authorization: 'Bearer ' + Token
-        }
-      }
-    )
-      .then((response) => {
-        // console.log(response);
-        // console.log(ItemLineList);
-
-        axios.get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`,
+        await axios.post(`${baseUrl}/api/purchaseReq/`,
+          {
+            purchaseTypeID: 1,
+            targetDeliveryDate: dateReqV,
+            userID: id,
+            supplierID: supplierV.id,
+            paymentModeID: PMV.id,
+            remarks: Remark,
+          },
           {
             headers: {
-              user: id,
               authorization: 'Bearer ' + Token
             }
           }
         )
           .then((response) => {
-            // console.log(response);
-            const latestPRID = response.data[0].prID;
-            // console.log(latestPRID);
-
-            LocationsList.forEach((item, index) => {
-              axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`,
-                {
-                  prID: latestPRID,
-                  branchID: item.id,
-                },
-                {
-                  headers: {
-                    authorization: 'Bearer ' + Token
-                  }
+            axios.get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`,
+              {
+                headers: {
+                  user: id,
+                  authorization: 'Bearer ' + Token
                 }
-              );
-            });
+              }
+            )
+              .then((response) => {
+                const latestPRID = response.data[0].prID;
 
-            ItemLineList.forEach((item, index) => {
-              axios.post(`${baseUrl}/api/purchaseReq/lineItem`,
-                {
-                  prID: latestPRID,
-                  itemID: item.id,
-                  quantity: item.ItemQty,
-                  totalUnitPrice: item.TotalUnitPrice,
-                },
-                {
-                  headers: {
-                    authorization: 'Bearer ' + Token
-                  }
-                }
-              );
-            });
-          });
+                LocationsList.forEach((item, index) => {
+                  axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`,
+                    {
+                      prID: latestPRID,
+                      branchID: item.id,
+                    },
+                    {
+                      headers: {
+                        authorization: 'Bearer ' + Token
+                      }
+                    }
+                  );
+                });
 
-        setCreatedPRAlert(true);
-        // timer to reset to false
-        alertTimer();
+                ItemLineList.forEach((item, index) => {
+                  axios.post(`${baseUrl}/api/purchaseReq/lineItem`,
+                    {
+                      prID: latestPRID,
+                      itemID: item.id,
+                      quantity: item.ItemQty,
+                      totalUnitPrice: item.TotalUnitPrice,
+                    },
+                    {
+                      headers: {
+                        authorization: 'Bearer ' + Token
+                      }
+                    }
+                  );
+                });
+              });
+
+            setCreatedPRAlert(true);
+            // timer to reset to false
+            alertTimer();
 
             // set timer before redirect
             setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
           })
           .catch((err) => {
-            console.log(err);
+            if (err.response.status === 401 || err.response.status === 403) {
+              localStorage.clear();
+              signOut({ callbackUrl: '/Unauthorised' });
+            }
+            else {
+              console.log(err);
+            };
           });
 
       } else {
@@ -432,10 +430,15 @@ export default function CreatePR({ from }) {
         setErrorMsg(`${supplierV.value} has a minimum order quanity of $${supplierMOQ},\n please add $${remainingAmount} more to purchase from ${supplierV.value}`)
       }
 
-    } catch (error) {
-      console.log(error);
-    }
-
+    } catch (err) {
+      if (err.response.status === 401 || err.response.status === 403) {
+        localStorage.clear();
+        signOut({ callbackUrl: '/Unauthorised' });
+      }
+      else {
+        console.log(err);
+      };
+    };
   };
 
   // axios to create Ad Hoc
@@ -468,18 +471,30 @@ export default function CreatePR({ from }) {
           .then((response) => {
             // console.log(response);
             const latestPRID = response.data[0].prID;
-            // console.log(latestPRID);
 
-            axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
-              {
-                prID: latestPRID
-              },
-              {
-                headers: {
-                  authorization: 'Bearer ' + Token
+            axios.all([
+              axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`,
+                {
+                  prID: latestPRID,
+                  branchID: AHLocation,
+                },
+                {
+                  headers: {
+                    authorization: 'Bearer ' + Token
+                  }
                 }
-              }
-            );
+              ),
+              axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
+                {
+                  prID: latestPRID
+                },
+                {
+                  headers: {
+                    authorization: 'Bearer ' + Token
+                  }
+                }
+              )
+            ]);
           });
 
         setCreatedAdhocAlert(true);
@@ -490,7 +505,13 @@ export default function CreatePR({ from }) {
         setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 
@@ -901,7 +922,20 @@ export default function CreatePR({ from }) {
 
       {showAdHoc === true && (
         <form onSubmit={createAdHoc}>
-          <div className="px-5 pt-5 pb-2">
+          <div className="px-5 pt-2">
+            <div>
+              <h4>Location</h4>
+              <select onChange={e => setAHLocation(e.target.value)} style={{ width: '25%', height: '40px', borderRadius: '10px', borderColor: '#93A2B7', borderStyle: 'solid', borderWidth: '2px' }}>
+                {
+                  Branch.map((item, index) => {
+                    return <option key={index} value={item.branchID}>{item.branchName}</option>
+                  })
+                }
+              </select>
+            </div>
+          </div>
+
+          <div className="px-5 pt-4 pb-2">
             <div>
               <h4>Description</h4>
               <textarea

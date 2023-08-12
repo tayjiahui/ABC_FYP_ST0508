@@ -1,5 +1,6 @@
 import { useRouter } from "next/router"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
+import { signOut } from "next-auth/react";
 import axios from "axios";
 import Image from "next/image"
 import styles from '../../styles/viewPO.module.css';
@@ -240,6 +241,13 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
         })
         .catch((err) => {
           console.log("error uploading receipt", err);
+          if (err.response.status === 401 || err.response.status === 403) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
+          }
+          else {
+            console.log(err);
+          };
         });
     };
   };
@@ -306,7 +314,13 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
 
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 
@@ -406,14 +420,19 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   };
 
   useEffect(() => {
+
     fetchStatusData();
   }, []);
 
   const fetchStatusData = () => {
     axios.all([
       //fetches all the statuses to populate the dropdown. 
-      axios.get(`${baseUrl}/api/paymentTrack/`),
-
+      axios.get(`${baseUrl}/api/paymentTrack/`,
+        {
+          headers: {
+            authorization: 'Bearer ' + Token
+          }
+        }),
       // get original payment status id
       axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${poID}`)
     ])
@@ -488,13 +507,15 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
             alertTimer();
             setSelectedPaymentStatus(selectedValue);
           })
-          .catch(err => {
-            console.log(err);
-          })
-
       })
       .catch(err => {
-        console.log(err);
+        if (err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       })
 
     if (selectedValue === "+ Create New Status") {
