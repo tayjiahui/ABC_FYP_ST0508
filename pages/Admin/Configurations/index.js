@@ -79,6 +79,7 @@ function GSTPageView() {
         setGSTList(response2.data);
       }))
       .catch((err) => {
+        console.log(err);
         if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
@@ -90,7 +91,6 @@ function GSTPageView() {
   }, [GSTUpdateAlert]);
 
   const ViewAllGST = async () => {
-    console.log("hekem")
     if (showAllGST === false) {
       setShowAllGST(true);
     } else {
@@ -148,6 +148,7 @@ function GSTPageView() {
           })
       })
       .catch((err) => {
+        console.log(err);
         if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
@@ -353,6 +354,7 @@ function PaymentModePageView() {
         setNewPM();
       })
       .catch((err) => {
+        console.log(err);
         if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
@@ -378,6 +380,7 @@ function PaymentModePageView() {
         alertTimer();
       })
       .catch((err) => {
+        console.log(err);
         if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
@@ -486,16 +489,16 @@ function PaymentModePageView() {
 function StatusPageView() {
   const [Token, setToken] = useState();
 
-   const [paymentStatuses, setPaymentStatuses] = useState([]);
-   const [paymentStatusID, setPaymentStatusID] = useState([]);
-   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-   const [statusDelete, setStatusDelete] = useState([]);
+  const [paymentStatuses, setPaymentStatuses] = useState([]);
+  const [paymentStatusID, setPaymentStatusID] = useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [statusDelete, setStatusDelete] = useState([]);
 
-  const fetchPaymentStatuses = () => {
+  const fetchPaymentStatuses = (token) => {
     axios.get(`${baseUrl}/api/paymentTrack/`,
       {
         headers: {
-          authorization: 'Bearer ' + Token
+          authorization: 'Bearer ' + token
         }
       })
       .then(response => {
@@ -518,28 +521,29 @@ function StatusPageView() {
     const token = localStorage.getItem("token");
     setToken(token);
 
-    fetchPaymentStatuses();
-  }, [Token]);
-  
+    fetchPaymentStatuses(token);
+  }, []);
+
   const handleDelete = (status) => {
-     setStatusDelete(status);
-     setShowDeleteConfirmation(true);
+    setStatusDelete(status);
+    setShowDeleteConfirmation(true);
   };
 
   const handleCloseConfirmation = () => {
-     setShowDeleteConfirmation(false);
+    setShowDeleteConfirmation(false);
   };
-  
-  const handleConfirmDelete = (status) => {
-    axios.get(`${baseUrl}/api/paymentTrack/status/${status}`,
+
+  const handleConfirmDelete = () => {
+    axios.get(`${baseUrl}/api/paymentTrack/status/${statusDelete}`,
       {
         headers: {
           authorization: 'Bearer ' + Token
         }
       })
       .then(response => {
-        const statusID = response.data[0].PaymentStatusID
+        const statusID = response.data[0].PaymentStatusID;
         setPaymentStatusID(statusID);
+        console.log(statusID)
 
         axios.delete(`${baseUrl}/api/paymentTrack/${statusID}`,
           {
@@ -549,7 +553,7 @@ function StatusPageView() {
           })
           .then(response => {
             console.log('status deleted!')
-            fetchPaymentStatuses();
+            fetchPaymentStatuses(Token);
           })
           .catch(err => {
             console.log('status could not be deleted', err);
@@ -563,6 +567,7 @@ function StatusPageView() {
           })
       })
       .catch(err => {
+        console.log(err);
         if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
@@ -583,66 +588,65 @@ function StatusPageView() {
         <div className="d-flex">
           <label><b>Manage Statuses</b></label>
         </div>
-                <div className="pb-3 mt-3">
-                    <ul style={{ listStyleType: 'none', padding: 0 }}>
-                        {paymentStatuses.map((status, index) => (
-                            <li key={index} className="d-flex align-items-center">
-                                <span>{status.paymentStatus}</span>
-                                {['Pending', 'Payment Sent', 'Payment Received'].includes(status.paymentStatus) ? null : (
-                                    <button className="btn btn-link btn-sm" onClick={() => handleDelete(status.paymentStatus)} style={{ textDecoration: 'none', color: 'black', lineHeight: '1' }}>
-                                        <span aria-label="Delete" style={{ fontSize: '20px', verticalAlign: 'middle' }}>&times;</span>
-                                    </button>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
+        <div className="pb-3 mt-3">
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
+            {paymentStatuses.map((status, index) => (
+              <li key={index} className="d-flex align-items-center">
+                <span>{status.paymentStatus}</span>
+                {['Pending', 'Payment Sent', 'Payment Received'].includes(status.paymentStatus) ? null : (
+                  <button className="btn btn-link btn-sm" onClick={() => handleDelete(status.paymentStatus)} style={{ textDecoration: 'none', color: 'black', lineHeight: '1' }}>
+                    <span aria-label="Delete" style={{ fontSize: '20px', verticalAlign: 'middle' }}>&times;</span>
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
-            {showDeleteConfirmation && (
-                <div className="modal fade show d-block" style={{ display: 'block' }}>
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
-                            <div className="modal-body">
-                                <div className="d-flex flex-column align-items-center mt-2">
-                                    <h2 className="modal-title">Confirm Delete ?</h2>
-                                    <button type="button" className="close" onClick={handleCloseConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button> <br />
-                                </div>
-                            </div>
-                            <div className="d-flex justify-content-center text-center mb-5">
-                                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseConfirmation} >Cancel</button>
-                                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmDelete(); handleCloseConfirmation(); }}>Delete</button>
-                            </div>
-                        </div>
-                    </div>
+      {showDeleteConfirmation && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <h2 className="modal-title">Confirm Delete ?</h2>
+                  <button type="button" className="close" onClick={handleCloseConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
                 </div>
-            )}
-        </>
-    )
+              </div>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseConfirmation} >Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmDelete(); handleCloseConfirmation(); }}>Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
 };
 
 function PurchaseStatusPageView() {
   const [Token, setToken] = useState();
 
-    const [purchaseStatuses, setPurchaseStatuses] = useState([]);
-    const [purchaseStatusID, setPurchaseStatusID] = useState([]);
-    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-    const [statusDelete, setStatusDelete] = useState([]);
+  const [purchaseStatuses, setPurchaseStatuses] = useState([]);
+  const [purchaseStatusID, setPurchaseStatusID] = useState([]);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [statusDelete, setStatusDelete] = useState([]);
 
-    const fetchPurchaseStatuses = () => {
+  const fetchPurchaseStatuses = (token) => {
     axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`,
       {
         headers: {
-          authorization: 'Bearer ' + Token
+          authorization: 'Bearer ' + token
         }
       }
     )
       .then(response => {
         const purchaseStatusesData = response.data.map(item => item.purchaseStatus);
         setPurchaseStatuses(purchaseStatusesData);
-        console.log(purchaseStatusesData)
       })
       .catch(error => {
         console.error("Error fetching purchase statuses:", error);
@@ -661,21 +665,20 @@ function PurchaseStatusPageView() {
     const token = localStorage.getItem("token");
     setToken(token);
 
-    fetchPurchaseStatuses();
-  }, [Token]);
+    fetchPurchaseStatuses(token);
+  }, []);
 
-    const handleDelete = (status) => {
-        setStatusDelete(status);
-        setShowDeleteConfirmation(true);
-    };
+  const handleDelete = (status) => {
+    setStatusDelete(status);
+    setShowDeleteConfirmation(true);
+  };
 
-    const handleCloseConfirmation = () => {
-        setShowDeleteConfirmation(false);
-    };
+  const handleCloseConfirmation = () => {
+    setShowDeleteConfirmation(false);
+  };
 
-  const handleConfirmDelete = (status) => {
-    alert(`${status}`)
-    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/id/${status}`,
+  const handleConfirmDelete = () => {
+    axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/id/${statusDelete}`,
       {
         headers: {
           authorization: 'Bearer ' + Token
@@ -686,8 +689,6 @@ function PurchaseStatusPageView() {
         const statusID = response.data[0].purchaseStatusID
         setPurchaseStatusID(statusID);
 
-        console.log(response);
-
         axios.delete(`${baseUrl}/api/trackOrder/purchaseStatus/${statusID}`,
           {
             headers: {
@@ -697,20 +698,21 @@ function PurchaseStatusPageView() {
         )
           .then(response => {
             console.log('status deleted!');
-            fetchPurchaseStatuses();
+            fetchPurchaseStatuses(Token);
           })
           .catch(err => {
             console.log('status could not be deleted', err);
-          if (err.response.status === 401 || err.response.status === 403) {
-          localStorage.clear();
-          signOut({ callbackUrl: '/Unauthorised' });
-        }
-        else {
-          console.log(err);
-        };
+            if (err.response.status === 401 || err.response.status === 403) {
+              localStorage.clear();
+              signOut({ callbackUrl: '/Unauthorised' });
+            }
+            else {
+              console.log(err);
+            };
           });
       })
       .catch(err => {
+        console.log(err);
         if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
@@ -732,44 +734,44 @@ function PurchaseStatusPageView() {
           <label><b>Manage Statuses</b></label>
         </div>
 
-                <div className="pb-3 mt-3">
-                    <ul style={{ listStyleType: 'none', padding: 0 }}>
-                        {purchaseStatuses.map((status, index) => (
-                            <li key={index} className="d-flex align-items-center">
-                                <span>{status}</span>
-                                {['Accept Order', 'Preparing Order', 'Preparing Delivery', 'Shipping Item', 'Item Delivered'].includes(status) ? null : (
-                                    <button className="btn btn-link btn-sm" onClick={() => handleDelete(status)} style={{ textDecoration: 'none', color: 'black', lineHeight: '1' }}>
-                                        <span aria-label="Delete" style={{ fontSize: '20px', verticalAlign: 'middle' }}>&times;</span>
-                                    </button>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
+        <div className="pb-3 mt-3">
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
+            {purchaseStatuses.map((status, index) => (
+              <li key={index} className="d-flex align-items-center">
+                <span>{status}</span>
+                {['Accept Order', 'Preparing Order', 'Preparing Delivery', 'Shipping Item', 'Item Delivered'].includes(status) ? null : (
+                  <button className="btn btn-link btn-sm" onClick={() => handleDelete(status)} style={{ textDecoration: 'none', color: 'black', lineHeight: '1' }}>
+                    <span aria-label="Delete" style={{ fontSize: '20px', verticalAlign: 'middle' }}>&times;</span>
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
-            {showDeleteConfirmation && (
-                <div className="modal fade show d-block" style={{ display: 'block' }}>
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
-                            <div className="modal-body">
-                                <div className="d-flex flex-column align-items-center mt-2">
-                                    <h2 className="modal-title">Confirm Delete ?</h2>
-                                    <button type="button" className="close" onClick={handleCloseConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
-                                        <span aria-hidden="true">&times;</span>
-                                    </button> <br />
-                                </div>
-                            </div>
-                            <div className="d-flex justify-content-center text-center mb-5">
-                                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseConfirmation} >Cancel</button>
-                                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmDelete(); handleCloseConfirmation(); }}>Delete</button>
-                            </div>
-                        </div>
-                    </div>
+      {showDeleteConfirmation && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <h2 className="modal-title">Confirm Delete ?</h2>
+                  <button type="button" className="close" onClick={handleCloseConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
                 </div>
-            )}
-        </>
-    )
+              </div>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseConfirmation} >Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmDelete(); handleCloseConfirmation(); }}>Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
 };
 
 export default function Configurations() {
