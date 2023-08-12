@@ -123,7 +123,7 @@ export default NextAuth({
                                         console.log("ISHJSDJBCKJD", user.name);
                                         
                                         // create new user automatically
-                                        await axios.post(`http://localhost:3000/api/user/user`, {
+                                        await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/user`, {
 
                                             roleID: 2,
                                             name: user.name,
@@ -189,7 +189,7 @@ export default NextAuth({
             const sessionEmail = session?.user.email;
             console.log("session email", sessionEmail);
 
-            await axios.post(`http://localhost:3000/api/user/login`,
+            await axios.post(`https://abc-cooking-studio-backend.azurewebsites.net/api/user/login`,
                 {
                     email: sessionEmail
                 }
