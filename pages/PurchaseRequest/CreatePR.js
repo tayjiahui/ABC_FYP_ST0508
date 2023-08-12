@@ -33,8 +33,7 @@ function isLocalhost() {
         "https://abc-cooking-studio.azurewebsites.net"
       );
       console.log(URL);
-    }
-
+    };
     return URL;
   };
 };
