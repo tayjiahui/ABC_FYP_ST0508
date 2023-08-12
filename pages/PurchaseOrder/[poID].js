@@ -378,10 +378,17 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   };
 
   useEffect(() => {
+    // set user token
+    const token = localStorage.getItem("token");
+
     axios.all([
       //fetches all the statuses to populate the dropdown. 
-      axios.get(`${baseUrl}/api/paymentTrack/`),
-
+      axios.get(`${baseUrl}/api/paymentTrack/`,
+        {
+          headers: {
+            authorization: 'Bearer ' + token
+          }
+        }),
       // get original payment status id
       axios.get(`${baseUrl}/api/trackOrder/purchaseOrderDetails/${poID}`)
     ])

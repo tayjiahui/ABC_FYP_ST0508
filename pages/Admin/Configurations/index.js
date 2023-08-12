@@ -465,7 +465,12 @@ function StatusPageView() {
   const [paymentStatusID, setPaymentStatusID] = useState([]);
 
   const fetchPaymentStatuses = () => {
-    axios.get(`${baseUrl}/api/paymentTrack/`)
+    axios.get(`${baseUrl}/api/paymentTrack/`,
+      {
+        headers: {
+          authorization: 'Bearer ' + Token
+        }
+      })
       .then(response => {
         setPaymentStatuses(response.data);
       })
@@ -478,6 +483,7 @@ function StatusPageView() {
     // set user token
     const token = localStorage.getItem("token");
     setToken(token);
+    
     fetchPaymentStatuses();
   }, []);
 
