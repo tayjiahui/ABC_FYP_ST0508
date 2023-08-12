@@ -174,6 +174,11 @@ function UserRow(props) {
                             itemId: props.UserID,
                             newValue: selectedRole,
                             oldValue: OGRole
+                        },
+                        {
+                            headers: {
+                                authorization: 'Bearer ' + Token
+                            }
                         }
                     )
                         .then((response) => {
