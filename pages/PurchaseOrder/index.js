@@ -12,7 +12,6 @@ import filterIcon from "../../public/filterIcon.svg";
 //component
 import WIP from "../../components/WIP";
 
-
 // Base urls
 const URL = [];
 
@@ -99,16 +98,16 @@ export default function TrackPayment({ purchaseOrder }) {
               <Image src={filterIcon} width={25} onClick={wipOpen} />
             </button>
 
-           
+
           </div>
         </div>
       </div>
 
 
-    {wip && <WIP Show={wip} />}
-    
-      
-      
+      {wip && <WIP Show={wip} />}
+
+
+
       <div className="row px-3 py-3">
         <hr className="mb-4"></hr>
         <div className="col">PO No.</div>
@@ -120,7 +119,7 @@ export default function TrackPayment({ purchaseOrder }) {
         <hr className="mt-4"></hr>
       </div>
 
-      
+
 
 
       <div className="overflow-scroll px-2 w-100 h-75 position-absolute">

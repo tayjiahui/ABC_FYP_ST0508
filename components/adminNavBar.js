@@ -39,10 +39,10 @@ export default function AdminNavBar() {
             localStorage.setItem("token", userD.token)
         };
 
-        if (!localStorage.getItem("token") || status === 'unauthenticated') {
-            localStorage.clear();
-            signOut({ callbackUrl: '/Unauthorised' });
-        };
+        // if (!localStorage.getItem("token") || status === 'unauthenticated') {
+        //     localStorage.clear();
+        //     signOut({ callbackUrl: '/Unauthorised' });
+        // };
 
         const username = localStorage.getItem("FName");
         setUserName(username);
