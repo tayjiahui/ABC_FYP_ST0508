@@ -122,6 +122,10 @@ export default function CreatePR({ from }) {
   const [PaymentModes, pmList] = useState();
   const [Items, itemList] = useState();
 
+  // Adhoc dropdown
+  const [Branch, setBranchList] = useState();
+  const [AHLocation, setAHLocation] = useState();
+
   // Alert Box
   const [CreatedPRAlert, setCreatedPRAlert] = useState(false);
   const [CreatedAdhocAlert, setCreatedAdhocAlert] = useState(false);
@@ -152,11 +156,6 @@ export default function CreatePR({ from }) {
     ])
       .then(
         axios.spread((response1, response2, response3, response4) => {
-          // console.log(response1.data[0]);
-          // console.log(response2.data[0]);
-          // console.log(response3.data[0]);
-          // console.log(response4.data[0]);
-
           // get suppliers
           const supplierResult = response1.data;
           const SList = [];
@@ -173,6 +172,9 @@ export default function CreatePR({ from }) {
           // get Locations
           const locationResult = response2.data;
           const LList = [];
+          
+          setBranchList(locationResult);
+          setAHLocation(locationResult[0].branchID);
 
           locationResult.forEach((item, index) => {
             LList.push(
@@ -469,18 +471,30 @@ export default function CreatePR({ from }) {
           .then((response) => {
             // console.log(response);
             const latestPRID = response.data[0].prID;
-            // console.log(latestPRID);
 
-            axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
-              {
-                prID: latestPRID
-              },
-              {
-                headers: {
-                  authorization: 'Bearer ' + Token
+            axios.all([
+              axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`,
+                {
+                  prID: latestPRID,
+                  branchID: AHLocation,
+                },
+                {
+                  headers: {
+                    authorization: 'Bearer ' + Token
+                  }
                 }
-              }
-            );
+              ),
+              axios.post(`${baseUrl}/api/trackOrder/purchaseOrder`,
+                {
+                  prID: latestPRID
+                },
+                {
+                  headers: {
+                    authorization: 'Bearer ' + Token
+                  }
+                }
+              )
+            ]);
           });
 
         setCreatedAdhocAlert(true);
@@ -908,7 +922,20 @@ export default function CreatePR({ from }) {
 
       {showAdHoc === true && (
         <form onSubmit={createAdHoc}>
-          <div className="px-5 pt-5 pb-2">
+          <div className="px-5 pt-2">
+            <div>
+              <h4>Location</h4>
+              <select onChange={e => setAHLocation(e.target.value)} style={{ width: '25%', height: '40px', borderRadius: '10px', borderColor: '#93A2B7', borderStyle: 'solid', borderWidth: '2px' }}>
+                {
+                  Branch.map((item, index) => {
+                    return <option key={index} value={item.branchID}>{item.branchName}</option>
+                  })
+                }
+              </select>
+            </div>
+          </div>
+
+          <div className="px-5 pt-4 pb-2">
             <div>
               <h4>Description</h4>
               <textarea
