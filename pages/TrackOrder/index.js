@@ -434,6 +434,7 @@ function Icon(props) {
 export default function TrackOrder() {
 
   const [id, setUserID] = useState();
+  const [role, setRoleID] = useState();
   const [Token, setToken] = useState();
 
   const [TrackOrderResults, orderList] = useState([(<div>Loading...</div>)]);
@@ -452,6 +453,10 @@ export default function TrackOrder() {
     // set user id taken from localstorage
     const userID = parseInt(localStorage.getItem("ID"), 10);
     setUserID(userID);
+
+    // set user role
+    const roleID = parseInt(localStorage.getItem("roleID"), 10);
+    setRoleID(roleID);
 
     const token = localStorage.getItem("token");
     setToken(token);
@@ -511,46 +516,52 @@ export default function TrackOrder() {
     const token = localStorage.getItem("token");
     setToken(token);
 
-    axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
-      headers: {
-        authorization: 'Bearer ' + token
-      }
-    })
-      .then((response) => {
-        // console.log(response);
-        // console.log(response.data);
+    // set user role
+    const roleID = parseInt(localStorage.getItem("roleID"), 10);
 
-        const adHocResult = response.data;
+    if (roleID !== 4) {
+      axios.get(`${baseUrl}/api/purchaseReq/adhoc/purchases`, {
+        headers: {
+          authorization: 'Bearer ' + token
+        }
+      })
+        .then((response) => {
+          // console.log(response);
+          // console.log(response.data);
 
-        // Show List of Ad-hoc Purchases
-        const adHocList = [];
+          const adHocResult = response.data;
 
-        adHocResult.forEach((item, index) => {
-          // Time stamp formatting
-          const reqDate = moment(adHocResult[index].requestDate).format(
-            "D MMM YYYY"
-          );
-          const targetDeliveryDate = moment(
-            adHocResult[index].targetDeliveryDate
-          ).format("D MMM YYYY");
+          // Show List of Ad-hoc Purchases
+          const adHocList = [];
 
-          adHocList.push(
-            <div key={index}>
-              <AdHocRow
-                prID={item.prID}
-                ReqDate={reqDate}
-                Name={item.name}
-                TargetDate={targetDeliveryDate}
-                Status={item.prStatus}
-                StatusID={item.prStatusID}
-                Description={item.remarks}
-              />
-            </div>
-          );
+          adHocResult.forEach((item, index) => {
+            // Time stamp formatting
+            const reqDate = moment(adHocResult[index].requestDate).format(
+              "D MMM YYYY"
+            );
+            const targetDeliveryDate = moment(
+              adHocResult[index].targetDeliveryDate
+            ).format("D MMM YYYY");
+
+            adHocList.push(
+              <div key={index}>
+                <AdHocRow
+                  prID={item.prID}
+                  ReqDate={reqDate}
+                  Name={item.name}
+                  TargetDate={targetDeliveryDate}
+                  Status={item.prStatus}
+                  StatusID={item.prStatusID}
+                  Description={item.remarks}
+                />
+              </div>
+            );
+          });
+
+          setAdHocResults(adHocList);
         });
+    }
 
-        setAdHocResults(adHocList);
-      });
   }, []);
 
   const handleSearch = async (e) => {
@@ -606,24 +617,27 @@ export default function TrackOrder() {
 
       <div className="pb-5">
         <div className={styles.rightFloater}>
-          <div className="px-3 pb-4">
-            <div className={styles.toggle}>
-              <div className="px-3 pt-1">
-                <h5>Ad-Hoc</h5>
-              </div>
+          {
+            role !== 4 &&
+            <div className="px-3 pb-4">
+              <div className={styles.toggle}>
+                <div className="px-3 pt-1">
+                  <h5>Ad-Hoc</h5>
+                </div>
 
-              <label className={styles.switch}>
-                <input
-                  type="checkbox"
-                  onChange={(e) => {
-                    adHocView(e);
-                  }}
-                  checked={showAdHoc}
-                />
-                <span className={styles.slider}></span>
-              </label>
+                <label className={styles.switch}>
+                  <input
+                    type="checkbox"
+                    onChange={(e) => {
+                      adHocView(e);
+                    }}
+                    checked={showAdHoc}
+                  />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
             </div>
-          </div>
+          }
 
           <div className={styles.searchContainer}>
             <form>

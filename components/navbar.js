@@ -76,15 +76,18 @@ export default function NavBar() {
                                     alt="ABC Cooking Studio Company Logo" />
                             </a>
                         </li>
-                        <li>
-                            <Link className={router.pathname == "/Home" ? "active" : ""} href="/Home">Home</Link>
-                        </li>
-
                         {
                             allowPRView &&
-                            <li>
-                                <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
-                            </li>
+                            <>
+                                <li>
+                                    <Link className={router.pathname == "/Home" ? "active" : ""} href="/Home">Home</Link>
+                                </li>
+                                
+                                <li>
+                                    <Link className={router.pathname == "/PurchaseRequest" ? "active" : ""} href="/PurchaseRequest">Purchase Request</Link>
+                                </li>
+                            </>
+
                         }
 
                         <li>
