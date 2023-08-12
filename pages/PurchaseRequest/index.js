@@ -1167,14 +1167,12 @@ export default function PurchaseRequest() {
               const targetDeliveryDate = moment(item.targetDeliveryDate).format("D MMM YYYY");
 
               const extraData = {
-                Branch: 'N/A',
                 Supplier: 'N/A',
                 TargetD: 'N/A',
                 Descript: 'N/A'
               };
 
               if (PTID === 1) {
-                extraData.Branch = item.branchName;
                 extraData.Supplier = item.supplierName;
                 extraData.TargetD = targetDeliveryDate;
               } else if (PTID === 2) {
@@ -1190,7 +1188,7 @@ export default function PurchaseRequest() {
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
-                    Location={extraData.Branch}
+                    Location={item.branchName}
                     Supplier={extraData.Supplier}
                     TargetDate={extraData.TargetD}
                     Status={item.prStatus}
@@ -1244,14 +1242,12 @@ export default function PurchaseRequest() {
               const targetDeliveryDate = moment(item.targetDeliveryDate).format("D MMM YYYY");
 
               const extraData = {
-                Branch: 'N/A',
                 Supplier: 'N/A',
                 TargetD: 'N/A',
                 Descript: 'N/A'
               };
 
               if (PTID === 1) {
-                extraData.Branch = item.branchName;
                 extraData.Supplier = item.supplierName;
                 extraData.TargetD = targetDeliveryDate;
               } else if (PTID === 2) {
@@ -1267,7 +1263,7 @@ export default function PurchaseRequest() {
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
-                    Location={extraData.Branch}
+                    Location={item.branchName}
                     Supplier={extraData.Supplier}
                     TargetDate={extraData.TargetD}
                     Status={item.prStatus}
@@ -1322,14 +1318,12 @@ export default function PurchaseRequest() {
             const targetDeliveryDate = moment(item.targetDeliveryDate).format("D MMM YYYY");
 
             const extraData = {
-              Branch: 'N/A',
               Supplier: 'N/A',
               TargetD: 'N/A',
               Descript: 'N/A'
             };
 
             if (PTID === 1) {
-              extraData.Branch = item.branchName;
               extraData.Supplier = item.supplierName;
               extraData.TargetD = targetDeliveryDate;
             } else if (PTID === 2) {
@@ -1345,7 +1339,7 @@ export default function PurchaseRequest() {
                   prID={item.prID}
                   ReqDate={reqDate}
                   Name={item.name}
-                  Location={extraData.Branch}
+                  Location={item.branchName}
                   Supplier={extraData.Supplier}
                   TargetDate={extraData.TargetD}
                   Status={item.prStatus}
