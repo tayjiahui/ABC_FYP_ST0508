@@ -417,3 +417,30 @@
     vertical-align: middle;
     padding-right: 20px;
 }
+
+.updateStatusX { 
+    position: absolute;
+    margin-top: 10px;
+    margin-right: 10px;
+    font-size: 24px;
+    color: #000000;
+    opacity: 0.5;
+    border: none;
+    background: transparent;
+}
+
+.openReceipt {
+    border-radius: 50px;
+    padding: 16px 27px 16px 27px;
+    background-color: #486284;
+    color: white;
+    border: none;
+}
+
+.deleteIcon {
+    margin-left: 10px;
+    cursor: pointer;
+    width: 25px; 
+    height: 25px; 
+    opacity: 70%;
+}
