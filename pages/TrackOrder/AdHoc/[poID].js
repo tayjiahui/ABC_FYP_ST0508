@@ -235,11 +235,6 @@ export default function ViewAdHoc({ AdHocDetails }) {
         setTimeout(closeWIPModal, 2000);
     };
 
-    const handleOpenWip = () => {
-        setInProg(true);
-        timeFunc();
-    };
-
     // close WIP Modal
     function closeWIPModal() {
         setInProg(false);
@@ -371,6 +366,11 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 <div className="mt-4">
                     <h4>Name</h4>
                     <p>{AH.name}</p>
+                </div>
+
+                <div className="mt-4">
+                    <h4>Location</h4>
+                    <p>{AH.branchName}</p>
                 </div>
 
                 <div className="py-4">

@@ -203,6 +203,11 @@ export default function ViewAdHoc({ AdHocDetails }) {
                         <p>{AH.name}</p>
                     </div>
 
+                    <div className="mt-4">
+                        <h4>Location</h4>
+                        <p>{AH.branchName}</p>
+                    </div>
+
                     <div className="py-4">
                         <h4>Description</h4>
                         <p>{AH.remarks}</p>
