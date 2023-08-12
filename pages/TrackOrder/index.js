@@ -14,6 +14,7 @@ import filterIcon from '../../public/filterIcon.svg';
 import eyeCon from "../../public/eyeCon.svg";
 import closeEyeCon from "../../public/closeEyeCon.svg";
 
+// Components
 import WIP from '../../components/WIP'
 import AlertBox from "../../components/alert";
 
@@ -29,13 +30,11 @@ function isLocalhost() {
     if (hostname == 'localhost') {
       URL.push('http://localhost:3000', 'http://localhost:5000');
       console.log(URL);
-
     }
     else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
       URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
       console.log(URL);
     };
-
     return URL;
   };
 };
@@ -47,6 +46,8 @@ const baseURL = URL[1];
 
 // each PO row
 function OrderRow(props) {
+  const [id, setUserID] = useState();
+  const [Token, setToken] = useState();
 
   const [OGStatus, setOGStatus] = useState();
   const [selectedStatus, setSelectedStatus] = useState();
@@ -55,9 +56,9 @@ function OrderRow(props) {
   const [newStatusPop, setNewStatusPop] = useState(false);
   const [statusInput, setStatusInput] = useState([]);
 
-  const [changedStatusPop, setChangedStatusPop] = useState(false);
+  // Alerts
   const [CreatedAlert, setCreatedAlert] = useState(false);
-  const [Token, setToken] = useState();
+  const [UpdatePStatus, setUpdatePStatus] = useState(false);
 
   // PO ID FROM DATABASE
   const poID = props.poID;
@@ -66,6 +67,10 @@ function OrderRow(props) {
   const poId = props.prID;
 
   useEffect(() => {
+    // set user id
+    const userID = parseInt(localStorage.getItem("ID"), 10);
+    setUserID(userID);
+
     // set user token 
     const token = localStorage.getItem('token');
     setToken(token);
@@ -93,11 +98,10 @@ function OrderRow(props) {
       .catch((err) => {
         console.log(err);
       })
-  }, [selectedStatus]);
+  }, [CreatedAlert, UpdatePStatus]);
 
   const handleCloseStatusPop = () => {
     setNewStatusPop(false);
-    setChangedStatusPop(false);
   };
 
   function alertTimer() {
@@ -108,17 +112,17 @@ function OrderRow(props) {
   function alertFunc() {
     // list of alerts useStates in your page
     setCreatedAlert(false);
+    setUpdatePStatus(false);
   };
 
   const handleInputChange = (event) => {
     setStatusInput(event.target.value);
   };
 
-  const handleSubmit = (event) => {
-    // alert(`Sucessfully created new status: ${statusInput}`);
-    setCreatedAlert(true)
+  const handleSubmit = async(event) => {
+    event.preventDefault();
 
-    axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
+    await axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {
       purchaseStatus: statusInput
     },
       {
@@ -128,15 +132,16 @@ function OrderRow(props) {
       }
     )
       .then(res => {
-        // alert(`sucessfully created new status ${statusInput}`)
-        setNewStat(false)
-        setStatus((prevStatus) => [...prevStatus, res.data]);
-        onSubmit(statusInput)
-        setCreatedAlert(true)
+        setNewStatusPop(false);
+        setSelectedStatus((prevStatus) => [...prevStatus, res.data]);
+        setStatusInput('');
+
+        setCreatedAlert(true);
+        alertTimer();
       })
       .catch((err) => {
         console.log(err);
-      })
+      });
   };
 
   const handleStatusChange = async (event) => {
@@ -149,35 +154,39 @@ function OrderRow(props) {
     else {
       await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
         purchaseStatusID: selectedValue,
-      },{
+      }, {
         headers: {
           authorization: 'Bearer ' + Token
         }
       }
       )
         .then(async (res) => {
-          // console.log(res);
+          setUpdatePStatus(true);
+          alertTimer();
 
           // create audit log
           await axios.post(`${baseUrl}/api/auditTrail/`,
             {
               timestamp: moment().tz(timezone).format(),
-              userID: props.userID,
+              userID: id,
               actionTypeID: 2,
               itemId: poID,
               newValue: selectedValue,
               oldValue: OGStatus
+            },
+            {
+              headers: {
+                authorization: 'Bearer ' + Token
+              }
             }
           )
             .then((response) => {
-              // console.log(response.data);
             })
         })
         .catch((err) => {
           console.log(err);
-        })
-      setChangedStatusPop(true);
-    }
+        });
+    };
   };
 
   return (
@@ -235,15 +244,14 @@ function OrderRow(props) {
         </div>
       )}
 
-      {changedStatusPop && (
-        <div className={styles.newStatusBox}>
-          <div className={styles.newStatus}>
-            <p onClick={handleCloseStatusPop} className={styles.closemeStatus1}>X</p>
-            <h5 className='mt-5'> Status has been changed successfully </h5>
-
-          </div>
-        </div>
-      )}
+      {
+        UpdatePStatus &&
+        <AlertBox
+          Show={UpdatePStatus}
+          Message={`Purchase Status Updated!`}
+          Type={'success'}
+          Redirect={``} />
+      }
 
       {
         CreatedAlert &&
@@ -251,7 +259,7 @@ function OrderRow(props) {
           Show={CreatedAlert}
           Message={`Sucessfully created new status!`}
           Type={'success'}
-          Redirect={'/TrackOrder'} />
+          Redirect={``} />
       }
     </div>
 
@@ -598,7 +606,6 @@ export default function TrackOrder() {
           </div>
 
           <div className={styles.searchContainer}>
-            {/* <form onSubmit={handleSearch}> */}
             <form>
               <div className="d-inline-flex">
                 <input type="text" placeholder="  Search.." value={searchValue} onChange={(e) => setSearchValue(e.target.value)} name="search" className={styles.searchBox} />
