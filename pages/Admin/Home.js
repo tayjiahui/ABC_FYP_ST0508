@@ -115,7 +115,7 @@ export default function Home() {
 				setTransactionCount(response1.data.length);
 			}))
 			.catch((err) => {
-				if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+				if (err.response.status === 401 || err.response.status === 403) {
 					localStorage.clear();
 					signOut({ callbackUrl: '/Unauthorised' });
 				}
@@ -162,7 +162,7 @@ export default function Home() {
 				setTransactionCount(response.data.length);
 			})
 			.catch((err) => {
-				if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+				if (err.response.status === 401 || err.response.status === 403) {
 					localStorage.clear();
 					signOut({ callbackUrl: '/Unauthorised' });
 				}

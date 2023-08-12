@@ -70,7 +70,7 @@ const Popup = ({ event }) => {
       })
       .catch(err => {
         console.log('error fetching options: ', err);
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -113,7 +113,7 @@ const Popup = ({ event }) => {
           })
           .catch(err => {
             console.log('data insert error!');
-            if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+            if (err.response.status === 401 || err.response.status === 403) {
               localStorage.clear();
               signOut({ callbackUrl: '/Unauthorised' });
             }

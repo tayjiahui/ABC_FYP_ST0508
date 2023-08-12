@@ -105,7 +105,7 @@ const Calendar = () => {
         console.error('Error fetching events:', response.statusText);
       }
     } catch (error) {
-      if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+      if (error.response.status === 401 || error.response.status === 403) {
         localStorage.clear();
         signOut({ callbackUrl: '/Unauthorised' });
       }
@@ -127,7 +127,7 @@ const Calendar = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+      if (error.response.status === 401 || error.response.status === 403) {
         localStorage.clear();
         signOut({ callbackUrl: '/Unauthorised' });
       }

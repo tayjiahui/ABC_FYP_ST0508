@@ -198,7 +198,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
                         })
                 })
                 .catch((err) => {
-                    if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    if (err.response.status === 401 || err.response.status === 403) {
                         localStorage.clear();
                         signOut({ callbackUrl: '/Unauthorised' });
                     }
@@ -308,7 +308,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 })
                 .catch((err) => {
                     console.log("Error uploading Invoice", err);
-                    if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    if (err.response.status === 401 || err.response.status === 403) {
                         localStorage.clear();
                         signOut({ callbackUrl: '/Unauthorised' });
                     }

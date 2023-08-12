@@ -251,7 +251,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             allowQtyEdit(false);
           })
           .catch((err) => {
-            if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+            if (err.response.status === 401 || err.response.status === 403) {
               localStorage.clear();
               signOut({ callbackUrl: '/Unauthorised' });
             }
@@ -329,7 +329,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         setSelectedStatus(res.data[0]); //initial selected status
       })
       .catch(err => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -435,7 +435,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           })
       })
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }

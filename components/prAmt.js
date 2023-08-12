@@ -48,7 +48,7 @@ const PrAmt = () => {
                 const blank = res.data[0].PR_count
                 setAmt(blank)
             } catch (err) {
-                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                if (err.response.status === 401 || err.response.status === 403) {
                     localStorage.clear();
                     signOut({ callbackUrl: '/Unauthorised' });
                 }

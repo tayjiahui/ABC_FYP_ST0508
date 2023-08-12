@@ -97,7 +97,7 @@ function OrderRow(props) {
         setOGStatus(POS.purchaseStatusID);
       }))
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -147,7 +147,7 @@ function OrderRow(props) {
         alertTimer();
       })
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -197,7 +197,7 @@ function OrderRow(props) {
             })
         })
         .catch((err) => {
-          if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          if (err.response.status === 401 || err.response.status === 403) {
             localStorage.clear();
             signOut({ callbackUrl: '/Unauthorised' });
           }
@@ -495,7 +495,7 @@ export default function TrackOrder() {
       }))
       .catch((err) => {
         console.log(err);
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }

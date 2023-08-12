@@ -79,7 +79,7 @@ function GSTPageView() {
         setGSTList(response2.data);
       }))
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -148,7 +148,7 @@ function GSTPageView() {
           })
       })
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -353,7 +353,7 @@ function PaymentModePageView() {
         setNewPM();
       })
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -378,7 +378,7 @@ function PaymentModePageView() {
         alertTimer();
       })
       .catch((err) => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -501,7 +501,7 @@ function StatusPageView() {
       })
       .catch(error => {
         console.error("Error fetching payment statuses:", error);
-        if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+        if (error.response.status === 401 || error.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -542,7 +542,7 @@ function StatusPageView() {
           })
           .catch(err => {
             console.log('status could not be deleted', err);
-            if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+            if (err.response.status === 401 || err.response.status === 403) {
               localStorage.clear();
               signOut({ callbackUrl: '/Unauthorised' });
             }
@@ -552,7 +552,7 @@ function StatusPageView() {
           })
       })
       .catch(err => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -614,7 +614,7 @@ function PurchaseStatusPageView() {
       })
       .catch(error => {
         console.error("Error fetching purchase statuses:", error);
-        if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+        if (error.response.status === 401 || error.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }
@@ -663,7 +663,7 @@ function PurchaseStatusPageView() {
           });
       })
       .catch(err => {
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        if (err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
         }

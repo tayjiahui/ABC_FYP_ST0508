@@ -182,7 +182,7 @@ export default function AuditLogs() {
                 setAuditLogsList(response.data);
             })
             .catch((err) => {
-                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                if (err.response.status === 401 || err.response.status === 403) {
                     localStorage.clear();
                     signOut({ callbackUrl: '/Unauthorised' });
                 }

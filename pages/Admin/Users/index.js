@@ -70,18 +70,18 @@ function UserRow(props) {
 
         axios.all([
             axios.get(`${baseUrl}/api/user/role/all`,
-                {
-                    headers: {
-                        authorization: 'Bearer ' + token
-                    }
-                }
+                // {
+                //     headers: {
+                //         authorization: 'Bearer ' + token
+                //     }
+                // }
             ),
             axios.get(`${baseUrl}/api/user/${props.UserID}/role`,
-                {
-                    headers: {
-                        authorization: 'Bearer ' + token
-                    }
-                }
+                // {
+                //     headers: {
+                //         authorization: 'Bearer ' + token
+                //     }
+                // }
             )
         ])
             .then(axios.spread((response1, response2) => {
@@ -93,13 +93,14 @@ function UserRow(props) {
                 setOGRole(USER.roleID);
             }))
             .catch((err) => {
-                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
-                    localStorage.clear();
-                    signOut({ callbackUrl: '/Unauthorised' });
-                }
-                else {
-                    console.log(err);
-                };
+                console.log(err);
+                // if (err.response.status === 401 || err.response.status === 403) {
+                //     localStorage.clear();
+                //     signOut({ callbackUrl: '/Unauthorised' });
+                // }
+                // else {
+                //     console.log(err);
+                // };
             });
     }, [RolesList, selectedRole]);
 
@@ -144,13 +145,14 @@ function UserRow(props) {
                 alertTimer();
             })
             .catch((err) => {
-                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
-                    localStorage.clear();
-                    signOut({ callbackUrl: '/Unauthorised' });
-                }
-                else {
-                    console.log(err);
-                };
+                console.log(err);
+                // if (err.response.status === 401 || err.response.status === 403) {
+                //     localStorage.clear();
+                //     signOut({ callbackUrl: '/Unauthorised' });
+                // }
+                // else {
+                //     console.log(err);
+                // };
             })
     };
 
@@ -199,7 +201,8 @@ function UserRow(props) {
                         })
                 })
                 .catch((err) => {
-                    if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    console.log(err);
+                    if (err.response.status === 401 || err.response.status === 403) {
                         localStorage.clear();
                         signOut({ callbackUrl: '/Unauthorised' });
                     }
@@ -319,13 +322,14 @@ export default function Users() {
                 setUsersList(response.data);
             })
             .catch((err) => {
-                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
-                    localStorage.clear();
-                    signOut({ callbackUrl: '/Unauthorised' });
-                }
-                else {
-                    console.log(err);
-                };
+                console.log(err);
+                // if (err.response.status === 401 || err.response.status === 403) {
+                //     localStorage.clear();
+                //     signOut({ callbackUrl: '/Unauthorised' });
+                // }
+                // else {
+                //     console.log(err);
+                // };
             });
     }, []);
 
@@ -351,6 +355,7 @@ export default function Users() {
             <div className="overflow-scroll w-100 h-75 position-absolute">
                 {
                     UsersList.map((item, index) => {
+                        console.log(item)
                         return <div>
                             <UserRow
                                 UserID={item.userID}
