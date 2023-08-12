@@ -61,8 +61,6 @@ export default function Login() {
             }
         )
             .then((res) => {
-                console.log(res.data)
-
                 const data = res.data;
 
                 // add user data to local storage
@@ -71,8 +69,6 @@ export default function Login() {
                 localStorage.setItem("role", data.role);
                 localStorage.setItem("FName", data.username);
                 localStorage.setItem("token", data.token);
-
-                console.log(loginEmail);
 
                 // redirect to home page
                 router.push('/Home');
@@ -87,10 +83,10 @@ export default function Login() {
                     // ! Take note: Catching users here may lead to users creating random email accounts
                     alert(err.response.data);
                 }
-                else{
+                else {
                     alert(err);
-                }
-            })
+                };
+            });
     };
 
     return (

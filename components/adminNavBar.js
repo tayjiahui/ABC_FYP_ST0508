@@ -15,7 +15,7 @@ export default function AdminNavBar() {
 
     const [userName, setUserName] = useState("");
 
-    console.log({session})
+    console.log({ session })
 
     // insert data into localStorage
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function AdminNavBar() {
             // console.log(userD);
 
             // removes non-admin users
-            if(userD.role !== 5){
+            if (userD.role !== 5) {
                 signOut({ callbackUrl: '/Unauthorised' });
             };
 
@@ -38,8 +38,8 @@ export default function AdminNavBar() {
             localStorage.setItem("FName", session.user.name);
             localStorage.setItem("token", userD.token)
         };
-        
-        if(!localStorage.getItem("token") || status === 'unauthenticated'){
+
+        if (!localStorage.getItem("token") || status === 'unauthenticated') {
             localStorage.clear();
             signOut({ callbackUrl: '/Unauthorised' });
         };

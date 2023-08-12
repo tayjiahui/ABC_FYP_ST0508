@@ -77,9 +77,9 @@ const Calendar = () => {
         authorization: 'Bearer ' + Token
       }
     })
-    .then(res => {
-      console.log(res.data)
-    })
+      .then(res => {
+        console.log(res.data)
+      })
   })
 
   const getEvents = async (token) => {

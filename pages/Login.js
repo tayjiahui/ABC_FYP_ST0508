@@ -11,10 +11,10 @@ export default function Login() {
     console.log({ session, status, update });
 
     useEffect(() => {
-        if(!session){
+        if (!session) {
             router.push('/Login');
         }
-        else if(session.userDetails.role === 5){
+        else if (session.userDetails.role === 5) {
             router.push('/Admin/Home');
         } else {
             router.push('/Home');

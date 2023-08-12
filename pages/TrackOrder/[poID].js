@@ -402,7 +402,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
     await axios.put(`${baseUrl}/api/trackOrder/purchaseOrderStatus/${poID}`, {
       purchaseStatusID: selectedValue,
-    },{
+    }, {
       headers: {
         authorization: 'Bearer ' + Token
       }

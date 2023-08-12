@@ -92,11 +92,11 @@ export default function TrackPayment({ purchaseOrder }) {
               onChange={handleSearchInputChange}
             />
             <button type="submit" className={styles.searchButton}>
-              <Image src={searchBtn} width={25}/>
+              <Image src={searchBtn} width={25} />
             </button>
 
             <button type="button" className={styles.searchButton}>
-              <Image src={filterIcon} width={25} onClick={wipOpen}/>
+              <Image src={filterIcon} width={25} onClick={wipOpen} />
             </button>
 
             {wip && <WIP Show={wip} />}

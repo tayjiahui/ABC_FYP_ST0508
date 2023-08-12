@@ -26,7 +26,7 @@ export default function App({
         if (noNavbar.includes(appProps.router.pathname)) {
             return <Component {...pageProps} />;
         };
-        
+
         // admin page navbar
         if (appProps.router.pathname.includes('/Admin')) {
             return (

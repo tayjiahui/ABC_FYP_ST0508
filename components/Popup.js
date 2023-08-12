@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { signOut} from "next-auth/react";
+import { signOut } from "next-auth/react";
 import axios from 'axios';
 import styles from '../styles/calendar.module.css'
 
@@ -73,10 +73,10 @@ const Popup = ({ event }) => {
         if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
           localStorage.clear();
           signOut({ callbackUrl: '/Unauthorised' });
-      }
-      else {
+        }
+        else {
           console.log(err);
-      };
+        };
       })
   })
 
@@ -89,40 +89,40 @@ const Popup = ({ event }) => {
     setShowFirstPopup(false);
     setShowSecondPopup(true); // Show the second pop-up after submission
 
-    console.log('selected view access: ',viewAccess)
+    console.log('selected view access: ', viewAccess)
 
     axios.get(`${baseUrl}/api/purchasePlan/access/${viewAccess}`, {
       headers: {
         authorization: 'Bearer ' + Token,
       },
     })
-    .then(res => {
-      console.log('View Access ID: ',res.data[0].viewAccessID);
-      const viewAccessID = res.data[0].viewAccessID
-      
-      axios.post(`${baseUrl}/api/purchasePlan/purchasePlan`, {
-        userID: userId,
-        title: titleName,
-        start_datetime: startDate,
-        end_datetime: endDate,
-        description: description,
-        viewAccessID: viewAccessID
-      })
       .then(res => {
-        console.log('data inserted!');
+        console.log('View Access ID: ', res.data[0].viewAccessID);
+        const viewAccessID = res.data[0].viewAccessID
+
+        axios.post(`${baseUrl}/api/purchasePlan/purchasePlan`, {
+          userID: userId,
+          title: titleName,
+          start_datetime: startDate,
+          end_datetime: endDate,
+          description: description,
+          viewAccessID: viewAccessID
+        })
+          .then(res => {
+            console.log('data inserted!');
+          })
+          .catch(err => {
+            console.log('data insert error!');
+            if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+              localStorage.clear();
+              signOut({ callbackUrl: '/Unauthorised' });
+            }
+            else {
+              console.log(err);
+            };
+          })
+
       })
-      .catch(err => {
-        console.log('data insert error!');
-        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
-          localStorage.clear();
-          signOut({ callbackUrl: '/Unauthorised' });
-      }
-      else {
-          console.log(err);
-      };
-      })
-  
-    })
 
     setTimeout(function () {
       window.location.reload();

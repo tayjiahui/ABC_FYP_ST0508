@@ -96,10 +96,10 @@ function UserRow(props) {
                 if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
                     localStorage.clear();
                     signOut({ callbackUrl: '/Unauthorised' });
-                  }
-                  else {
+                }
+                else {
                     console.log(err);
-                  };
+                };
             });
     }, [RolesList, selectedRole]);
 
@@ -147,10 +147,10 @@ function UserRow(props) {
                 if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
                     localStorage.clear();
                     signOut({ callbackUrl: '/Unauthorised' });
-                  }
-                  else {
+                }
+                else {
                     console.log(err);
-                  };
+                };
             })
     };
 
@@ -202,10 +202,10 @@ function UserRow(props) {
                     if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
                         localStorage.clear();
                         signOut({ callbackUrl: '/Unauthorised' });
-                      }
-                      else {
+                    }
+                    else {
                         console.log(err);
-                      };
+                    };
                 })
         }
     };
@@ -322,10 +322,10 @@ export default function Users() {
                 if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
                     localStorage.clear();
                     signOut({ callbackUrl: '/Unauthorised' });
-                  }
-                  else {
+                }
+                else {
                     console.log(err);
-                  };
+                };
             });
     }, []);
 

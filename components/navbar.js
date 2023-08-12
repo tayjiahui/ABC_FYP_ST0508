@@ -39,7 +39,7 @@ export default function NavBar() {
             localStorage.setItem("token", userD.token)
         };
 
-        if(!localStorage.getItem("token")){
+        if (!localStorage.getItem("token")) {
             localStorage.clear();
             signOut({ callbackUrl: '/Unauthorised' });
         };
@@ -53,8 +53,8 @@ export default function NavBar() {
         if (roleID !== 4) {
             setAllowPRView(true);
         };
-        
-        if(roleID === 1 || roleID === 3) {
+
+        if (roleID === 1 || roleID === 3) {
             setAllowTransactionView(true);
         };
 

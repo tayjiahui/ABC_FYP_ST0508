@@ -126,7 +126,7 @@ function OrderRow(props) {
     setStatusInput(event.target.value);
   };
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     await axios.post(`${baseUrl}/api/trackOrder/purchaseStatus`, {

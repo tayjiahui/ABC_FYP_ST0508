@@ -43,13 +43,13 @@ export default function YourComponent() {
                     Type={`success`}
                     Redirect={`/PurchaseRequest`} />
             }
-            
+
             <div className="h-100 m-5 p-5"></div>
             <div className="h-100 m-5 p-5"></div>
             <div className="h-100 m-5 p-5"></div>
             <div className="h-100 m-5 p-5"></div>
             <div className="h-100 m-5 p-5"></div>
-            
+
         </div>
     );
 }
