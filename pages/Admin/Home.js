@@ -118,6 +118,7 @@ export default function Home() {
 				if (err.response.status === 401 || err.response.status === 403) {
 					localStorage.clear();
 					signOut({ callbackUrl: '/Unauthorised' });
+				} else if(err.response.status === 404){
 				}
 				else {
 					console.log(err);
@@ -165,6 +166,7 @@ export default function Home() {
 				if (err.response.status === 401 || err.response.status === 403) {
 					localStorage.clear();
 					signOut({ callbackUrl: '/Unauthorised' });
+				} else if (err.response.status === 404){
 				}
 				else {
 					console.log(err);

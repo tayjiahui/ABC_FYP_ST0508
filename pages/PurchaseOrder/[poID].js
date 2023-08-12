@@ -252,14 +252,12 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
     };
   };
 
-
   const supplierDetails = supplierDetail[0];
   const productDetails = productDetail;
   const remarksDetails = remarkDetail[0];
   const requestDetails = remarkDetail[0].requestDate;
   const deliveryDetails = deliveryDetail;
   //product details 
-
 
   //calculating subtotal 
   let subtotal = 0;
@@ -294,6 +292,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   const handleSubmit = (event) => {
     event.preventDefault();
     // alert(statusInput);
+    console.log(Token);
 
     axios.post(`${baseUrl}/api/paymentTrack/`, {
       paymentStatus: statusInput
@@ -304,13 +303,13 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
     })
       .then(res => {
         // alert(`sucessfully created new status ${statusInput}`)
-        setNewStatusPop(false)
+        setNewStatusPop(false);
         setStatus((prevStatus) => [...prevStatus, res.data]);
-        // onSubmit(statusInput)
+        setStatusInput();
 
         setCreatedStatusAlert(true);
         alertTimer();
-        fetchStatusData();
+        fetchStatusData(Token);
 
       })
       .catch((err) => {
@@ -327,9 +326,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   //timer for the alert components
   function alertTimer() {
     setTimeout(alertClose, 3000);
-  }
-
-
+  };
 
   function alertClose() {
     setCreatedStatusAlert(false);
@@ -420,17 +417,20 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
   };
 
   useEffect(() => {
+    //set user token
+    const token = localStorage.getItem("token");
 
-    fetchStatusData();
+    fetchStatusData(token);
   }, []);
 
-  const fetchStatusData = () => {
+  const fetchStatusData = (token) => {
+    console.log(token);
     axios.all([
       //fetches all the statuses to populate the dropdown. 
       axios.get(`${baseUrl}/api/paymentTrack/`,
         {
           headers: {
-            authorization: 'Bearer ' + Token
+            authorization: 'Bearer ' + token
           }
         }),
       // get original payment status id
@@ -464,65 +464,68 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
     setSelectedStatus2(event.target.value);
     const selectedValue = event.target.value;
 
-    //fetching id from status  
-    axios.get(`${baseUrl}/api/paymentTrack/status/${selectedValue}`)
-      .then(res => {
-        // returns new status id
-        console.log("value", res.data[0].PaymentStatusID);
-        const ID = (res.data[0].PaymentStatusID)
-
-        //updating payment status in db
-        axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
-          paymentStatusID: ID
-        }, {
-          headers: {
-            user: id,
-            authorization: 'Bearer ' + Token
-          }
-        })
-          .then(async res => {
-            console.log('payment status updated sucessfully');
-
-            // create audit log
-            await axios.post(`${baseUrl}/api/auditTrail/`,
-              {
-                timestamp: moment().tz(timezone).format(),
-                userID: id,
-                actionTypeID: 3,
-                itemId: POID,
-                newValue: ID,
-                oldValue: ogPaymentStatus
-              },
-              {
-                headers: {
-                  authorization: 'Bearer ' + Token
-                }
-              }
-            )
-              .then((response) => {
-                console.log(response.data);
-              })
-
-            setUpdateStatusAlert(true);
-            alertTimer();
-            setSelectedPaymentStatus(selectedValue);
-          })
-      })
-      .catch(err => {
-        if (err.response.status === 401 || err.response.status === 403) {
-          localStorage.clear();
-          signOut({ callbackUrl: '/Unauthorised' });
-        }
-        else {
-          console.log(err);
-        };
-      })
-
-    if (selectedValue === "+ Create New Status") {
+    if (selectedValue === " + Create New Status") {
       setNewStatusPop(true);
     }
     else {
-      console.log('other options')
+      //fetching id from status  
+      axios.get(`${baseUrl}/api/paymentTrack/status/${selectedValue}`,
+        {
+          headers: {
+            authorization: 'Bearer ' + Token
+          }
+        })
+        .then(res => {
+          // returns new status id
+          console.log("value", res.data[0].PaymentStatusID);
+          const ID = (res.data[0].PaymentStatusID)
+
+          //updating payment status in db
+          axios.put(`${baseUrl}/api/purchaseOrder/${poID}`, {
+            paymentStatusID: ID
+          }, {
+            headers: {
+              user: id,
+              authorization: 'Bearer ' + Token
+            }
+          })
+            .then(async res => {
+              console.log('payment status updated sucessfully');
+
+              // create audit log
+              await axios.post(`${baseUrl}/api/auditTrail/`,
+                {
+                  timestamp: moment().tz(timezone).format(),
+                  userID: id,
+                  actionTypeID: 3,
+                  itemId: POID,
+                  newValue: ID,
+                  oldValue: ogPaymentStatus
+                },
+                {
+                  headers: {
+                    authorization: 'Bearer ' + Token
+                  }
+                }
+              )
+                .then((response) => {
+                  console.log(response.data);
+                })
+
+              setUpdateStatusAlert(true);
+              alertTimer();
+              setSelectedPaymentStatus(selectedValue);
+            })
+        })
+        .catch(err => {
+          if (err.response.status === 401 || err.response.status === 403) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
+          }
+          else {
+            console.log(err);
+          };
+        })
     }
   };
 
@@ -780,9 +783,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                       {paymentStatuses.map((status, index) => (
                         <option key={index} value={status.paymentStatus}>{status.paymentStatus}</option>
                       ))}
+                      
                       {financeS && (
-                        <option value="+ Create New Status"> + Create New Status</option>
+                        <option value=" + Create New Status"> + Create New Status</option>
                       )}
+
                     </select>
                   </div>
                 </div>

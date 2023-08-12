@@ -220,7 +220,7 @@ export default function CreatePR({ from }) {
         console.log(err);
       });
 
-  }, []);
+  }, [from]);
 
   // add location input box
   const [LocationsList, setLocations] = useState([{ location: "", id: "" }]);
