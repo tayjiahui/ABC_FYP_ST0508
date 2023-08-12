@@ -6,7 +6,7 @@ import Popup from '../../components/Popup';
 import styles from '../../styles/calendar.module.css';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import AlertBox from "../../components/alert";
 // Base urls
 const URL = [];
 
@@ -39,6 +39,8 @@ const Calendar = () => {
   const [events, setEvents] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deleteEventId, setDeleteEventId] = useState(false);
+  const [deleteEventAlert, setDeleteEventAlert] = useState(false);
+  const [createEventAlert, setCreateEventAlert] = useState(false);
 
   const [Token, setToken] = useState();
   const [userId, setUserID] = useState('');
@@ -53,6 +55,14 @@ const Calendar = () => {
     // setSelectedRange(null);
   };
 
+  function alertTimer() {
+    setTimeout(alertClose, 3000);
+  }
+
+  function alertClose() {
+    setDeleteEventAlert(false);
+  }
+
   useEffect(() => {
 
     // set user token 
@@ -66,8 +76,10 @@ const Calendar = () => {
     const storedUserId = localStorage.getItem("ID");
     if (storedUserId) {
       setUserID(parseInt(storedUserId, 10))
+      getEvents(Token);
     }
-  }, [])
+    console.log(userId);
+  }, [Token])
 
   useEffect(() => {
     axios.get(`${baseUrl}/api/purchasePlan/viewAccess`, {
@@ -83,22 +95,27 @@ const Calendar = () => {
 
   const getEvents = async (token) => {
     try {
-      const response = await axios.get(`${baseUrl}/api/purchasePlan/`,
-        {
-          headers: {
-            user: userId,
-            authorization: 'Bearer ' + token
-          }
-        }
-      );
+      const response = await axios.get(`${baseUrl}/api/purchasePlan/`, {
+        headers: {
+          user: userId,
+          authorization: 'Bearer ' + token,
+        },
+      });
       if (response.status === 200) {
-        const formattedEvents = response.data.map((event) => ({
-          id: event.planID,
-          title: event.title,
-          start: event.start_datetime,
-          end: event.end_datetime,
-          description: event.description
-        }));
+        const formattedEvents = response.data
+          .filter((event) => {
+            if (event.viewAccessID === 1) {
+              return event.userID === userId;
+            }
+            return true; // public event
+          })
+          .map((event) => ({
+            id: event.planID,
+            title: event.title,
+            start: event.start_datetime,
+            end: event.end_datetime,
+            description: event.description,
+          }));
         setEvents(formattedEvents);
       } else {
         console.error('Error fetching events:', response.statusText);
@@ -114,7 +131,7 @@ const Calendar = () => {
       if (response.status === 200) {
         console.log('Event deleted successfully!');
         // getEvents(); // Fetch events again after deletion to update the calendar
-        window.location.reload();
+
       } else {
         console.error('Error deleting event:', response.statusText);
       }
@@ -135,6 +152,8 @@ const Calendar = () => {
   const handleDeleteConfirmation = (confirmDelete, planID) => {
     if (confirmDelete) {
       deleteEvent(planID);
+      setDeleteEventAlert(true);
+      alertTimer();
       window.location.reload();
     }
     setShowDeleteConfirmation(false);
@@ -174,6 +193,18 @@ const Calendar = () => {
           </div>
         </div>
       )}
+
+
+      {deleteEventAlert && (
+        <AlertBox
+        Show={deleteEventAlert}
+        Message={`Event Successfully Deleted`}
+        Type={`success`}
+        Redirect={`/PurchasePlanning/Calendar`}/>
+      )}
+
+
+
     </div>
   );
 };

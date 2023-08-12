@@ -92,32 +92,42 @@ export default function TrackPayment({ purchaseOrder }) {
               onChange={handleSearchInputChange}
             />
             <button type="submit" className={styles.searchButton}>
-              <Image src={searchBtn} width={25}/>
+              <Image src={searchBtn} width={25} />
             </button>
 
             <button type="button" className={styles.searchButton}>
-              <Image src={filterIcon} width={25} onClick={wipOpen}/>
+              <Image src={filterIcon} width={25} onClick={wipOpen} />
             </button>
 
-            {wip && <WIP Show={wip} />}
+           
           </div>
         </div>
       </div>
 
-      <div className="row px-2 py-4 border-top border-bottom mb-3">
+
+    {wip && <WIP Show={wip} />}
+    
+      
+      
+      <div className="row px-3 py-3">
+        <hr className="mb-4"></hr>
         <div className="col">PO No.</div>
         <div className="col">Created</div>
         <div className="col">Price</div>
         <div className="col">Mode of Payment</div>
         <div className="col">Supplier</div>
         <div className="col">Status</div>
+        <hr className="mt-4"></hr>
       </div>
+
+      
+
 
       <div className="overflow-scroll px-2 w-100 h-75 position-absolute">
         {filteredPurchaseOrders.map((po, index) => (
           <div key={index} className="pt-1">
             <div className={styles.poListsMain}>
-              <a href={baseURL + '/PurchaseOrder/' + po.prID}>
+              <Link href={`/PurchaseOrder/${po.prID}`}>
                 <button className={styles.prButton}>
                   <div className={`row px-1 py-3 text-start ${styles['hover-box-shadow']}`} style={{ backgroundColor: '#C0D8F7', borderRadius: '10px', width: '100%', height: 'auto' }}>
                     <div className="col">#{po.prID}</div>
@@ -128,10 +138,9 @@ export default function TrackPayment({ purchaseOrder }) {
                     <div className="col">{po.Status}</div>
                   </div>
                 </button>
-              </a>
+              </Link>
             </div>
           </div>
-
         ))}
       </div>
     </div>
