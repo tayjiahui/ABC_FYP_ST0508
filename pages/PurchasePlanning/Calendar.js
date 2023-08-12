@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { signOut } from "next-auth/react";
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -104,7 +105,13 @@ const Calendar = () => {
         console.error('Error fetching events:', response.statusText);
       }
     } catch (error) {
-      console.error('Error:', error);
+      if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+        localStorage.clear();
+        signOut({ callbackUrl: '/Unauthorised' });
+      }
+      else {
+        console.log(error);
+      };
     }
   };
 
@@ -120,6 +127,13 @@ const Calendar = () => {
       }
     } catch (error) {
       console.error('Error:', error);
+      if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+        localStorage.clear();
+        signOut({ callbackUrl: '/Unauthorised' });
+      }
+      else {
+        console.log(error);
+      };
     }
   };
 

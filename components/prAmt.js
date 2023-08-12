@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { signOut} from "next-auth/react";
+import { useRouter } from 'next/router';
 import axios from 'axios';
 
 const URL = [];
@@ -26,6 +28,8 @@ isLocalhost();
 const baseUrl = URL[0]
 
 const PrAmt = () => {
+    const router = useRouter();
+
     const [amt, setAmt] = useState([]);
 
     useEffect(() => {
@@ -41,17 +45,19 @@ const PrAmt = () => {
                         }
                     }
                 );
-
-                // console.log(res.data);
                 const blank = res.data[0].PR_count
-                // console.log(blank)
                 setAmt(blank)
-            } catch (error) {
-                console.log(error)
-            }
-        }
-
-        getData()
+            } catch (err) {
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
+            };
+        };
+        getData();
     }, [])
 
     return (

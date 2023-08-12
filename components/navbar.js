@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 
 import logo from "../public/client_logo.png";
@@ -37,6 +37,11 @@ export default function NavBar() {
             localStorage.setItem("Name", userD.name);
             localStorage.setItem("FName", session.user.name);
             localStorage.setItem("token", userD.token)
+        };
+
+        if(!localStorage.getItem("token")){
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
         };
 
         // set user name

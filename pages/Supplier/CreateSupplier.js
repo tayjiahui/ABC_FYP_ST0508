@@ -4,6 +4,7 @@ import Select from "react-select";
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 
 // styles & icons
@@ -152,8 +153,13 @@ export default function CreateSupplier() {
                 setCategoryOptions(categories);
             }))
             .catch((err) => {
-                console.error(err);
-                alert(err)
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
             });
     }, []);
 
@@ -300,13 +306,16 @@ export default function CreateSupplier() {
                     // router.push('/Supplier'); 
                 })
                 .catch((err) => {
-                    console.log(err);
-
-                    setCreatedErrorAlert(true);
-                    // alert(err);
-
-                    // timer to reset to false
-                    alertTimer();
+                    if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                        localStorage.clear();
+                        signOut({ callbackUrl: '/Unauthorised' });
+                    }
+                    else {
+                        setCreatedErrorAlert(true);
+                        // timer to reset to false
+                        alertTimer();
+                        console.log(err);
+                    };
                 });
         }
     };

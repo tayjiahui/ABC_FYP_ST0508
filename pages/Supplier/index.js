@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { signOut } from "next-auth/react";
 
 // styles & icons
 import styles from '../../styles/supplier.module.css';
@@ -65,7 +66,13 @@ export default function Supplier({ suppliers }) {
                 setCategory(res.data);
             })
             .catch((err) => {
-                console.error(err);
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                  }
+                  else {
+                    console.log(err);
+                  };
             })
     }, []);
 

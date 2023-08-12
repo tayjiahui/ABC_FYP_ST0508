@@ -4,6 +4,7 @@ import Image from "next/image";
 import moment from 'moment-timezone';
 
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 
 // Style Sheet
 import styles from "../../../styles/adminConfiguration.module.css";
@@ -78,7 +79,13 @@ function GSTPageView() {
         setGSTList(response2.data);
       }))
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   }, [GSTUpdateAlert]);
 
@@ -141,7 +148,13 @@ function GSTPageView() {
           })
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 
@@ -340,7 +353,13 @@ function PaymentModePageView() {
         setNewPM();
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 
@@ -359,7 +378,13 @@ function PaymentModePageView() {
         alertTimer();
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 
@@ -476,6 +501,13 @@ function StatusPageView() {
       })
       .catch(error => {
         console.error("Error fetching payment statuses:", error);
+        if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(error);
+        };
       });
   };
 
@@ -483,9 +515,9 @@ function StatusPageView() {
     // set user token
     const token = localStorage.getItem("token");
     setToken(token);
-    
+
     fetchPaymentStatuses();
-  }, []);
+  }, [Token]);
 
   const handleDelete = (status) => {
     axios.get(`${baseUrl}/api/paymentTrack/status/${status}`,
@@ -509,11 +541,24 @@ function StatusPageView() {
             fetchPaymentStatuses();
           })
           .catch(err => {
-            console.log('status could not be deleted', err)
+            console.log('status could not be deleted', err);
+            if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+              localStorage.clear();
+              signOut({ callbackUrl: '/Unauthorised' });
+            }
+            else {
+              console.log(err);
+            }
           })
       })
       .catch(err => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        }
       })
   }
 
@@ -569,6 +614,13 @@ function PurchaseStatusPageView() {
       })
       .catch(error => {
         console.error("Error fetching purchase statuses:", error);
+        if (error.response.status === 400 || error.response.status === 401 || error.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(error);
+        }
       });
   };
 
@@ -578,7 +630,7 @@ function PurchaseStatusPageView() {
     setToken(token);
 
     fetchPurchaseStatuses();
-  }, []);
+  }, [Token]);
 
   const handleDelete = (status) => {
     alert(`${status}`)
@@ -611,7 +663,13 @@ function PurchaseStatusPageView() {
           });
       })
       .catch(err => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 

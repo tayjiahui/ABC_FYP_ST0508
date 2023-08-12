@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Select from "react-select";
 
@@ -149,8 +150,13 @@ export default function viewSupplier({ supplierDetails }) {
                 setCategoryOptions(categories);
             }))
             .catch((err) => {
-                console.error(err);
-                alert(err)
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
             });
     }, []);
 
@@ -252,12 +258,17 @@ export default function viewSupplier({ supplierDetails }) {
 
             })
             .catch((err) => {
-                console.log(err);
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    setDeletedErrorAlert(true);
+                    // alert(err);
 
-                setDeletedErrorAlert(true);
-                // alert(err);
-
-                alertTimer();
+                    alertTimer();
+                    console.log(err);
+                };
             });
 
         setDeleteSupplierPop(false);
@@ -340,9 +351,15 @@ export default function viewSupplier({ supplierDetails }) {
 
                 })
                 .catch((err) => {
-                    console.log(err);
-                    setUpdatedErrorAlert(true);
-                    alertTimer();
+                    if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                        localStorage.clear();
+                        signOut({ callbackUrl: '/Unauthorised' });
+                    }
+                    else {
+                        setUpdatedErrorAlert(true);
+                        alertTimer();
+                        console.log(err);
+                    };
                 });
         }
     };

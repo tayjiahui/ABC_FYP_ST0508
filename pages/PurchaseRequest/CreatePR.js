@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -216,7 +216,6 @@ export default function CreatePR({ from }) {
       )
       .catch((err) => {
         console.log(err);
-        alert(err);
       });
 
   }, []);
@@ -340,90 +339,88 @@ export default function CreatePR({ from }) {
 
     try {
       const response = await axios.get(`${baseUrl}/api/supplier/supplierPurchaseInfo/${supplierV.id}`, {
-        headers : {
+        headers: {
           authorization: 'Bearer ' + Token
         }
       });
       const supplierInfo = response.data[0];
       const supplierMOQ = parseFloat(supplierInfo.MOQ);
 
-      console.log('fetched moq:', supplierMOQ);
-      console.log("Final Price: ", totalPrice);
-
       if (supplierMOQ === null || totalPrice >= supplierMOQ) {
 
-    await axios.post(`${baseUrl}/api/purchaseReq/`,
-      {
-        purchaseTypeID: 1,
-        targetDeliveryDate: dateReqV,
-        userID: id,
-        supplierID: supplierV.id,
-        paymentModeID: PMV.id,
-        remarks: Remark,
-      },
-      {
-        headers: {
-          authorization: 'Bearer ' + Token
-        }
-      }
-    )
-      .then((response) => {
-        // console.log(response);
-        // console.log(ItemLineList);
-
-        axios.get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`,
+        await axios.post(`${baseUrl}/api/purchaseReq/`,
+          {
+            purchaseTypeID: 1,
+            targetDeliveryDate: dateReqV,
+            userID: id,
+            supplierID: supplierV.id,
+            paymentModeID: PMV.id,
+            remarks: Remark,
+          },
           {
             headers: {
-              user: id,
               authorization: 'Bearer ' + Token
             }
           }
         )
           .then((response) => {
-            // console.log(response);
-            const latestPRID = response.data[0].prID;
-            // console.log(latestPRID);
-
-            LocationsList.forEach((item, index) => {
-              axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`,
-                {
-                  prID: latestPRID,
-                  branchID: item.id,
-                },
-                {
-                  headers: {
-                    authorization: 'Bearer ' + Token
-                  }
+            axios.get(`${baseUrl}/api/purchaseReq/latestPRID/${id}`,
+              {
+                headers: {
+                  user: id,
+                  authorization: 'Bearer ' + Token
                 }
-              );
-            });
+              }
+            )
+              .then((response) => {
+                const latestPRID = response.data[0].prID;
 
-            ItemLineList.forEach((item, index) => {
-              axios.post(`${baseUrl}/api/purchaseReq/lineItem`,
-                {
-                  prID: latestPRID,
-                  itemID: item.id,
-                  quantity: item.ItemQty,
-                  totalUnitPrice: item.TotalUnitPrice,
-                },
-                {
-                  headers: {
-                    authorization: 'Bearer ' + Token
-                  }
-                }
-              );
-            });
-          });
+                LocationsList.forEach((item, index) => {
+                  axios.post(`${baseUrl}/api/purchaseReq/deliveryLocation`,
+                    {
+                      prID: latestPRID,
+                      branchID: item.id,
+                    },
+                    {
+                      headers: {
+                        authorization: 'Bearer ' + Token
+                      }
+                    }
+                  );
+                });
 
-        setCreatedPRAlert(true);
-        // timer to reset to false
-        alertTimer();
+                ItemLineList.forEach((item, index) => {
+                  axios.post(`${baseUrl}/api/purchaseReq/lineItem`,
+                    {
+                      prID: latestPRID,
+                      itemID: item.id,
+                      quantity: item.ItemQty,
+                      totalUnitPrice: item.TotalUnitPrice,
+                    },
+                    {
+                      headers: {
+                        authorization: 'Bearer ' + Token
+                      }
+                    }
+                  );
+                });
+              });
+
+            setCreatedPRAlert(true);
+            // timer to reset to false
+            alertTimer();
 
             // set timer before redirect
             setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
           })
           .catch((err) => {
-            console.log(err);
+            if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+              localStorage.clear();
+              signOut({ callbackUrl: '/Unauthorised' });
+            }
+            else {
+              console.log(err);
+            };
           });
 
       } else {
@@ -431,10 +428,15 @@ export default function CreatePR({ from }) {
         setErrorMsg(`${supplierV.value} has a minimum order quanity of $${supplierMOQ},\n please add $${remainingAmount} more to purchase from ${supplierV.value}`)
       }
 
-    } catch (error) {
-      console.log(error);
-    }
-
+    } catch (err) {
+      if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+        localStorage.clear();
+        signOut({ callbackUrl: '/Unauthorised' });
+      }
+      else {
+        console.log(err);
+      };
+    };
   };
 
   // axios to create Ad Hoc
@@ -489,7 +491,13 @@ export default function CreatePR({ from }) {
         setTimeout(() => { router.push("/PurchaseRequest") }, 3000);
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import moment from 'moment-timezone';
 
 import { useEffect, useState } from 'react';
+import { signOut } from "next-auth/react";
 import Image from 'next/image';
 
 // Style Sheet
@@ -96,7 +97,13 @@ function OrderRow(props) {
         setOGStatus(POS.purchaseStatusID);
       }))
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       })
   }, [CreatedAlert, UpdatePStatus]);
 
@@ -140,7 +147,13 @@ function OrderRow(props) {
         alertTimer();
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 
@@ -184,7 +197,13 @@ function OrderRow(props) {
             })
         })
         .catch((err) => {
-          console.log(err);
+          if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
+          }
+          else {
+            console.log(err);
+          };
         });
     };
   };
@@ -476,11 +495,12 @@ export default function TrackOrder() {
       }))
       .catch((err) => {
         console.log(err);
-        if (err.response === 404) {
-          alert(err.response.data);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
         }
         else {
-          alert(err.code);
+          console.log(err);
         };
       });
   }, []);

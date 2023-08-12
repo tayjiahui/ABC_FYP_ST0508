@@ -4,6 +4,7 @@ import moment from 'moment-timezone';
 
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 import Image from "next/image";
 
 // Component
@@ -31,16 +32,16 @@ function isLocalhost() {
     const hostname = window.location.hostname;
     console.log("hostname   " + hostname);
     if (hostname == "localhost") {
-      URL.push(
-        "http://localhost:3000", 
-        "http://localhost:5000"
-      );
+      URL.push("http://localhost:3000", "http://localhost:5000");
+      console.log(URL);
     } else if (hostname == "abc-cooking-studio.azurewebsites.net") {
       URL.push(
         "https://abc-cooking-studio-backend.azurewebsites.net",
         "https://abc-cooking-studio.azurewebsites.net"
       );
+      console.log(URL);
     }
+
     return URL;
   }
 };
@@ -98,16 +99,14 @@ function PRRow(props) {
   const circle = circleTest(statusID);
 
   useEffect(() => {
-    console.log("i am running")
     if (props.RoleID === 3) {
       setROLE(1);
     };
 
     if (props.PTypeID === 2) {
-      console.log("i am in")
       setIsAdHoc(true);
     };
-  }, [props]);
+  }, []);
 
   const viewProductLines = async (e) => {
     e.preventDefault();
@@ -124,9 +123,6 @@ function PRRow(props) {
         })
         .catch((err) => {
           console.log(err);
-          if (err.code === "ERR_NETWORK") {
-            alert(err.message);
-          }
         });
     };
   };
@@ -1088,6 +1084,8 @@ function AdHocRow(props) {
 };
 
 export default function PurchaseRequest() {
+  const router = useRouter();
+
   const [id, setUserID] = useState();
   const [role, setRoleID] = useState();
   const [Token, setToken] = useState();
@@ -1208,13 +1206,12 @@ export default function PurchaseRequest() {
           })
         )
         .catch((err) => {
-          console.log(err);
-          if (err.code === "ERR_NETWORK") {
-            alert(err.message);
-          } else if (err.response.status === 404) {
-            alert(err.response.data);
-          } else {
-            alert(err.code);
+          if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
+          }
+          else {
+            console.log(err);
           };
         });
     }
@@ -1286,10 +1283,13 @@ export default function PurchaseRequest() {
           })
         )
         .catch((err) => {
-          console.log(err);
-          if (err.code === "ERR_NETWORK") {
-            alert(err.message);
+          if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
           }
+          else {
+            console.log(err);
+          };
         });
     };
   }, []);
@@ -1359,12 +1359,13 @@ export default function PurchaseRequest() {
           setlist1(resultsList);
         })
         .catch((err) => {
-          console.log(err);
-          if (err.code === "ERR_NETWORK") {
-            alert(err.message);
-          } else {
-            alert(err.response.data);
+          if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
           }
+          else {
+            console.log(err);
+          };
         });
     }
     else {
@@ -1415,6 +1416,8 @@ export default function PurchaseRequest() {
   const handlePRSearch = async (e) => {
     e.preventDefault();
 
+    // setSearchValue(e.target.value);
+
     // purchaser
     if (role === 2) {
       if (showAdHoc === false) {
@@ -1464,8 +1467,6 @@ export default function PurchaseRequest() {
                 <div key={index}>
                   <PRRow
                     RoleID={role}
-                    PTypeID={item.purchaseTypeID}
-                    PType={item.purchaseType}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
@@ -1538,8 +1539,6 @@ export default function PurchaseRequest() {
                 <div key={index}>
                   <AdHocRow
                     RoleID={role}
-                    PTypeID={item.purchaseTypeID}
-                    PType={item.purchaseType}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
@@ -1563,7 +1562,7 @@ export default function PurchaseRequest() {
               );
             } else {
               alert(err.response.data);
-            }
+            };
           });
       }
     }
@@ -1683,8 +1682,6 @@ export default function PurchaseRequest() {
                 <div key={index}>
                   <AdHocRow
                     RoleID={role}
-                    PTypeID={item.purchaseTypeID}
-                    PType={item.purchaseType}
                     prID={item.prID}
                     ReqDate={reqDate}
                     Name={item.name}
@@ -1720,10 +1717,11 @@ export default function PurchaseRequest() {
     e.preventDefault();
 
     setSearchValue(e.target.value);
+    console.log(e.target.value)
 
     if (e.target.value === '') {
       setlist1(ogPRlist);
-    };
+    }
 
     // handlePRSearch(e);
   };

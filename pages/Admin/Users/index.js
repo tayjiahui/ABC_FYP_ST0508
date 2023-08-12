@@ -4,6 +4,7 @@ import Image from "next/image";
 import moment from 'moment-timezone';
 
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 
 // Style Sheet
 import styles from "../../../styles/adminUsers.module.css";
@@ -92,7 +93,13 @@ function UserRow(props) {
                 setOGRole(USER.roleID);
             }))
             .catch((err) => {
-                console.log(err);
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                  }
+                  else {
+                    console.log(err);
+                  };
             });
     }, [RolesList, selectedRole]);
 
@@ -137,7 +144,13 @@ function UserRow(props) {
                 alertTimer();
             })
             .catch((err) => {
-                console.log(err);
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                  }
+                  else {
+                    console.log(err);
+                  };
             })
     };
 
@@ -186,7 +199,13 @@ function UserRow(props) {
                         })
                 })
                 .catch((err) => {
-                    console.log(err);
+                    if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                        localStorage.clear();
+                        signOut({ callbackUrl: '/Unauthorised' });
+                      }
+                      else {
+                        console.log(err);
+                      };
                 })
         }
     };
@@ -300,7 +319,13 @@ export default function Users() {
                 setUsersList(response.data);
             })
             .catch((err) => {
-                console.log(err);
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                  }
+                  else {
+                    console.log(err);
+                  };
             });
     }, []);
 

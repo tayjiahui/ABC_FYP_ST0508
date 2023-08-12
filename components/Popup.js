@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { signOut} from "next-auth/react";
 import axios from 'axios';
 import styles from '../styles/calendar.module.css'
 
@@ -69,6 +70,13 @@ const Popup = ({ event }) => {
       })
       .catch(err => {
         console.log('error fetching options: ', err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+      }
+      else {
+          console.log(err);
+      };
       })
   })
 
@@ -104,7 +112,14 @@ const Popup = ({ event }) => {
         console.log('data inserted!');
       })
       .catch(err => {
-        console.log('data insert error!')
+        console.log('data insert error!');
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+      }
+      else {
+          console.log(err);
+      };
       })
   
     })
@@ -112,28 +127,6 @@ const Popup = ({ event }) => {
     setTimeout(function () {
       window.location.reload();
     }, 2000);
-
-    // const formData = {
-    //   userID: userId,
-    //   title: titleName,
-    //   start_datetime: startDate,
-    //   end_datetime: endDate,
-    //   description: description,
-    //   viewAccessID: viewAccessID
-    // };
-
-    // try {
-    //   const response = await axios.post(`${baseUrl}/api/purchasePlan/purchasePlan`, formData);
-
-    //   if (response.status === 200) {
-    //     console.log('Data inserted successfully!');
-    //   } else {
-    //     console.error('Error inserting data!');
-    //   }
-    // } catch (error) {
-    //   console.error('Error:', error);
-    // }
-
   };
 
   return (

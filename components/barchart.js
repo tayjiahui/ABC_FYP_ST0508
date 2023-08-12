@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { signOut } from "next-auth/react";
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -45,6 +47,8 @@ const baseUrl = URL[0]
 
 
 const BarChart = () => {
+    const router = useRouter();
+
     const [barData, setBarData] = useState({ datasets: [], });
 
     useEffect(() => {
@@ -84,6 +88,15 @@ const BarChart = () => {
                     ],
                 });
 
+            })
+            .catch((err) => {
+                if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
             })
     })
 

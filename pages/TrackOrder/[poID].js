@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 import Image from 'next/image';
 import arrowIcon from '../../public/arrowIcon.svg';
 import plusIcon from '../../public/addLocationIcon.svg';
@@ -204,7 +205,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       .catch((err) => {
         console.log(err);
         console.log(err.response);
-        alert(err);
       });
   }, [QtyReceivedList, selectedStatus])
 
@@ -251,7 +251,13 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
             allowQtyEdit(false);
           })
           .catch((err) => {
-            console.log(err);
+            if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+              localStorage.clear();
+              signOut({ callbackUrl: '/Unauthorised' });
+            }
+            else {
+              console.log(err);
+            };
           });
       }
     });
@@ -322,7 +328,15 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         setStatus(res.data);
         setSelectedStatus(res.data[0]); //initial selected status
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
+      });
 
     // Product lines
     const itemLines = [];
@@ -421,7 +435,13 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           })
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+          localStorage.clear();
+          signOut({ callbackUrl: '/Unauthorised' });
+        }
+        else {
+          console.log(err);
+        };
       });
   };
 

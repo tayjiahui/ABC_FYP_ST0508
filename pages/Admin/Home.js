@@ -6,6 +6,7 @@ import moment from 'moment-timezone';
 
 import { useRouter } from 'next/router';
 import { useEffect, useState } from "react";
+import { signOut } from "next-auth/react";
 
 // Styles
 import styles from "../../styles/adminHome.module.css"
@@ -114,7 +115,13 @@ export default function Home() {
 				setTransactionCount(response1.data.length);
 			}))
 			.catch((err) => {
-				console.log(err);
+				if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
 			});
 	}, []);
 
@@ -155,8 +162,14 @@ export default function Home() {
 				setTransactionCount(response.data.length);
 			})
 			.catch((err) => {
-				console.log(err);
-			})
+				if (err.response.status === 400 || err.response.status === 401 || err.response.status === 403) {
+                    localStorage.clear();
+                    signOut({ callbackUrl: '/Unauthorised' });
+                }
+                else {
+                    console.log(err);
+                };
+			});
 	};
 
 	const handleTRDownloadAlert = () => {
