@@ -44,8 +44,8 @@ isLocalhost();
 const baseUrl = URL[0];
 
 function getDates(PresetTime) {
-  const startDate = moment.tz(timezone).startOf(PresetTime).format();
-  const endDate = moment.tz(timezone).endOf(PresetTime).format();
+  const startDate = moment().tz(timezone).startOf(PresetTime).format(`YYYY-MM-DD HH:mm:ss`);
+  const endDate = moment.tz(timezone).endOf(PresetTime).format(`YYYY-MM-DD HH:mm:ss`);
 
   return { Start: startDate, End: endDate };
 };
@@ -273,6 +273,8 @@ export default function Transactions() {
       });
 
   }, []);
+
+  console.log(ThisWeek)
 
   // check if date inputs are filled
   useEffect(() => {
