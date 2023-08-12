@@ -764,10 +764,12 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
 
               <br />
 
-              <div className="containersupplier mt-5 col-11">
-                <h4>Remarks</h4> <br />
-                <p>{remarkDetail[0].remarks}</p>
-              </div>
+              {remarkDetail[0].remarks !== "" && (
+                <div className="containersupplier mt-5 col-11">
+                  <h4>Remarks</h4> <br />
+                  <p>{remarkDetail[0].remarks}</p>
+                </div>
+              )}
 
             </div>
 
@@ -781,7 +783,11 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                       {paymentStatuses.map((status, index) => (
                         <option key={index} value={status.paymentStatus}>{status.paymentStatus}</option>
                       ))}
-                      {financeS && <option value=" + Create New Status"> + Create New Status</option>}
+                      
+                      {financeS && (
+                        <option value=" + Create New Status"> + Create New Status</option>
+                      )}
+
                     </select>
                   </div>
                 </div>
