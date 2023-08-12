@@ -107,6 +107,9 @@ function StatusPageView() {
 
     const [paymentStatuses, setPaymentStatuses] = useState([]);
     const [paymentStatusID, setPaymentStatusID] = useState([]);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [statusDelete, setStatusDelete] = useState([]);
+
 
     const fetchPaymentStatuses = () => {
         axios.get(`${baseUrl}/api/paymentTrack/`)
@@ -123,7 +126,17 @@ function StatusPageView() {
     }, []);
 
     const handleDelete = (status) => {
-        axios.get(`${baseUrl}/api/paymentTrack/status/${status}`)
+        setStatusDelete(status);
+        setShowDeleteConfirmation(true);
+    }
+
+    const handleCloseConfirmation = () => {
+        setShowDeleteConfirmation(false);
+    }
+
+    const handleConfirmDelete = (status) => {
+
+        axios.get(`${baseUrl}/api/paymentTrack/status/${statusDelete}`)
             .then(response => {
                 const statusID = response.data[0].PaymentStatusID
                 setPaymentStatusID(statusID);
@@ -169,6 +182,29 @@ function StatusPageView() {
                     </ul>
                 </div>
             </div>
+
+            {showDeleteConfirmation && (
+                <div className="modal fade show d-block" style={{ display: 'block' }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+                            <div className="modal-body">
+                                <div className="d-flex flex-column align-items-center mt-2">
+                                    <h2 className="modal-title">Confirm Delete ?</h2>
+                                    <button type="button" className="close" onClick={handleCloseConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> <br />
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-center text-center mb-5">
+                                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseConfirmation} >Cancel</button>
+                                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmDelete(); handleCloseConfirmation(); }}>Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
         </>
     )
 };
@@ -177,6 +213,8 @@ function PurchaseStatusPageView() {
 
     const [purchaseStatuses, setPurchaseStatuses] = useState([]);
     const [purchaseStatusID, setPurchaseStatusID] = useState([]);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [statusDelete, setStatusDelete] = useState([]);
 
     const fetchPurchaseStatuses = () => {
         axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`)
@@ -194,28 +232,36 @@ function PurchaseStatusPageView() {
         fetchPurchaseStatuses();
     }, []);
 
-
     const handleDelete = (status) => {
-        alert(`${status}`)
-        axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/id/${status}`)
-        .then(response => {
-            const statusID = response.data[0].purchaseStatusID
-            setPurchaseStatusID(statusID);
+        setStatusDelete(status);
+        setShowDeleteConfirmation(true);
+    }
 
-            console.log(response)
+    const handleCloseConfirmation = () => {
+        setShowDeleteConfirmation(false);
+    }
 
-            // axios.delete(`${baseUrl}/api/trackOrder/purchaseStatus/${statusID}`)
-            // .then(response => {
-            //     console.log('status deleted!')
-            //     fetchPurchaseStatuses();
-            // })
-            // .catch(err => {
-            //     console.log('status could not be deleted', err)
-            // })
-        })
-        .catch(err => {
-            console.log(err);
-        })
+    const handleConfirmDelete = (status) => {
+
+        axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/id/${statusDelete}`)
+            .then(response => {
+                const statusID = response.data[0].purchaseStatusID
+                setPurchaseStatusID(statusID);
+
+                console.log(response)
+
+                axios.delete(`${baseUrl}/api/trackOrder/purchaseStatus/${statusID}`)
+                    .then(response => {
+                        console.log('status deleted!')
+                        fetchPurchaseStatuses();
+                    })
+                    .catch(err => {
+                        console.log('status could not be deleted', err)
+                    })
+            })
+            .catch(err => {
+                console.log(err);
+            })
 
     }
 
@@ -246,6 +292,27 @@ function PurchaseStatusPageView() {
                     </ul>
                 </div>
             </div>
+
+            {showDeleteConfirmation && (
+                <div className="modal fade show d-block" style={{ display: 'block' }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+                            <div className="modal-body">
+                                <div className="d-flex flex-column align-items-center mt-2">
+                                    <h2 className="modal-title">Confirm Delete ?</h2>
+                                    <button type="button" className="close" onClick={handleCloseConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> <br />
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-center text-center mb-5">
+                                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseConfirmation} >Cancel</button>
+                                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleConfirmDelete(); handleCloseConfirmation(); }}>Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 };
