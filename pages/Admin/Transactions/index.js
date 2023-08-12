@@ -84,8 +84,8 @@ function TransactionRow(props) {
 
     if (transaction.purchaseTypeID === 2) {
       setPurchaseStatus('N/A');
-      setPONO(`${reqDate}${poID}`);
-      setBranch('N/A');
+      setPONO(`${BranchPrefix}${reqDate}${poID}`);
+      setBranch(transaction.branchName);
       setSupplier('N/A');
       setPaymentMode('Cash');
     } else {
