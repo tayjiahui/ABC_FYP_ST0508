@@ -95,7 +95,7 @@ export default function TrackPayment({ purchaseOrder }) {
             </button>
 
             <button type="button" className={styles.searchButton}>
-              <Image src={filterIcon} width={25} onClick={wipOpen} />
+              <Image src={filterIcon} width={25}/>
             </button>
 
 
