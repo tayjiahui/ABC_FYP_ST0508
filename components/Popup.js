@@ -29,8 +29,6 @@ isLocalhost();
 const baseUrl = URL[0];
 const baseURL = URL[1];
 
-
-
 const Popup = ({ event }) => {
   const [userId, setUserID] = useState('');
   const [titleName, setTitle] = useState('');
@@ -45,7 +43,6 @@ const Popup = ({ event }) => {
   const [viewAccessOptions, setViewAccessOptions] = useState([]);
 
   useEffect(() => {
-
     // set user token 
     const token = localStorage.getItem("token");
     setToken(token);
@@ -59,10 +56,11 @@ const Popup = ({ event }) => {
   }, [])
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     //fetch view access options 
     axios.get(`${baseUrl}/api/purchasePlan/viewAccess`, {
       headers: {
-        authorization: 'Bearer ' + Token,
+        authorization: 'Bearer ' + token,
       },
     })
       .then(res => {
@@ -78,9 +76,7 @@ const Popup = ({ event }) => {
           console.log(err);
         };
       })
-  })
-
-
+  },[]);
 
   const handleSubmit = async (event) => {
 

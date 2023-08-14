@@ -47,6 +47,7 @@ const Calendar = () => {
   const [userId, setUserID] = useState('');
 
   const handleSelect = (arg) => {
+    console.log("skuhusdhuqkd")
     setSelectedRange(arg);
     setShowPopup(true);
   };
@@ -65,7 +66,6 @@ const Calendar = () => {
   }
 
   useEffect(() => {
-
     // set user token 
     const token = localStorage.getItem('token');
     setToken(token);
@@ -74,25 +74,27 @@ const Calendar = () => {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     const storedUserId = localStorage.getItem("ID");
     if (storedUserId) {
       setUserID(parseInt(storedUserId, 10))
-      getEvents(Token);
-    }
-    console.log(userId);
-  }, [Token])
+      getEvents(token);
+    };
+  }, [])
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+
     axios.get(`${baseUrl}/api/purchasePlan/viewAccess`, {
       headers: {
         user: userId,
-        authorization: 'Bearer ' + Token
+        authorization: 'Bearer ' + token
       }
     })
       .then(res => {
         console.log(res.data)
-      })
-  })
+      });
+  }, []);
 
   const getEvents = async (token) => {
     try {
@@ -122,13 +124,14 @@ const Calendar = () => {
         console.error('Error fetching events:', response.statusText);
       }
     } catch (error) {
-      if (error.response.status === 401 || error.response.status === 403) {
-        localStorage.clear();
-        signOut({ callbackUrl: '/Unauthorised' });
-      }
-      else {
-        console.log(error);
-      };
+      console.log(error)
+      // if (error.response.status === 401 || error.response.status === 403) {
+      //   localStorage.clear();
+      //   signOut({ callbackUrl: '/Unauthorised' });
+      // }
+      // else {
+      //   console.log(error);
+      // };
     }
   };
 
@@ -144,13 +147,13 @@ const Calendar = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      if (error.response.status === 401 || error.response.status === 403) {
-        localStorage.clear();
-        signOut({ callbackUrl: '/Unauthorised' });
-      }
-      else {
-        console.log(error);
-      };
+      // if (error.response.status === 401 || error.response.status === 403) {
+      //   localStorage.clear();
+      //   signOut({ callbackUrl: '/Unauthorised' });
+      // }
+      // else {
+      //   console.log(error);
+      // };
     }
   };
 
