@@ -90,10 +90,14 @@ export default function ViewAdHoc({ AdHocDetails }) {
     const [showModal, setShowModal] = useState(false);
     const [showModal2, setShowModal2] = useState(false);
     const [PDF, setPDF] = useState([]);
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [existingReceipt, setExistingReceipt] = useState(false);
+
 
     // Alerts
     const [updateTPAlert, setTPAlert] = useState(false);
     const [uploadedReceiptAlert, setUploadedReceiptAlert] = useState(false);
+    const [deleteReceiptAlert, setDeleteReceiptAlert] = useState(false);
 
     const AH = AdHocDetails[0];
     const poID = AdHocDetails[0].prID;
@@ -226,6 +230,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
         // list of alerts useStates in your page
         setTPAlert(false);
         setUploadedReceiptAlert(false);
+        setDeleteReceiptAlert(false);
     };
 
     // WIP Modal
@@ -244,6 +249,51 @@ export default function ViewAdHoc({ AdHocDetails }) {
     useEffect(() => {
         fetchPDFData();
     }, []);
+
+    const handleReceiptClick = () => {
+        if (PDF) {
+            setExistingReceipt(true);
+        } else {
+            handleOpenModal();
+        }
+    };
+
+
+    //existing receipt 
+    const handleCloseExistingReceipt = () => {
+        setExistingReceipt(false);
+    }
+
+    //delete confirmation 
+    const handleDeleteConfirmation = () => {
+        setDeleteConfirm(true);
+    }
+
+    const handleCloseDeleteConfirmation = () => {
+        setDeleteConfirm(false);
+    }
+
+    //delete receipt 
+    const handleReceiptDelete = () => {
+
+        axios.put(`${baseUrl}/api/trackOrder/documents/${poID}/removeInvoice`, {
+            invoice: null
+        }, {
+            headers: {
+                user: id,
+                authorization: 'Bearer ' + Token
+            }
+        })
+            .then(res => {
+                console.log('Invoice Deleted');
+                setDeleteReceiptAlert(true);
+                alertTimer();
+                fetchPDFData();
+            })
+            .catch(err => {
+                console.log('Error deleting Receipt', err);
+            })
+    };
 
     const fetchPDFData = () => {
         axios
@@ -417,9 +467,8 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 </div>
 
                 <div className="ps-3 pt-3 pb-2">
-                    <button onClick={handleOpenModal} className="rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
+                    <button onClick={handleReceiptClick} className="rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
                         <h4 className="col-sm text-white pt-2">Upload Receipt</h4><br></br>
-                        {showInProg && <WIP Show={showInProg} />}
                     </button>
                 </div>
             </div>
@@ -427,8 +476,11 @@ export default function ViewAdHoc({ AdHocDetails }) {
             <div className="ps-3 pt-3 pb-5">
                 {PDF ? (
                     <>
-                        <button className="rounded-4 w-50 ms-4 pt-3 me-1 border-0 shadow text-center col-sm text-white pt-2" style={{ backgroundColor: '#486284' }} onClick={handleOpenPDFInNewTab} >
+                        <button className="rounded-4 w-50 ms-4 pt-3 me-1 border-0 shadow text-center col-sm text-white pt-2" style={{ backgroundColor: '#486284' }} onClick={handleOpenPDFInNewTab}>
                             <h4 className="col-sm text-white pt-2">View Receipt</h4><br />
+                        </button>
+                        <button className="btn btn-link btn-sm" onClick={handleDeleteConfirmation} style={{ textDecoration: 'none', color: 'black', }}>
+                            <span aria-label="Delete" style={{ fontSize: '40px', verticalAlign: 'middle' }}>&times;</span>
                         </button>
                     </>
                 ) : (
@@ -495,6 +547,47 @@ export default function ViewAdHoc({ AdHocDetails }) {
                 </div>
             )}
 
+            {deleteConfirm && (
+                <div className="modal fade show d-block" style={{ display: 'block' }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+                            <div className="modal-body">
+                                <div className="d-flex flex-column align-items-center mt-2">
+                                    <h2 className="modal-title">Confirm Delete ?</h2>
+                                    <button type="button" className="close" onClick={handleCloseDeleteConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> <br />
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-center text-center mb-5">
+                                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseDeleteConfirmation} >Cancel</button>
+                                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleReceiptDelete(); handleCloseDeleteConfirmation(); }}>Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {existingReceipt && (
+                <div className="modal fade show d-block" style={{ display: 'block' }}>
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+                            <div className="modal-body">
+                                <div className="d-flex flex-column align-items-center mt-2">
+                                    <p className="modal-title text-center">There is an existing Receipt. <br />Please delete before uploading a new Receipt.</p>
+                                    <button type="button" className="close" onClick={handleCloseExistingReceipt} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                                        <span aria-hidden="true">&times;</span>
+                                    </button> <br />
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-center text-center mb-5">
+                                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleCloseExistingReceipt(); }}>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             {/* {Alerts} */}
             {
@@ -512,6 +605,14 @@ export default function ViewAdHoc({ AdHocDetails }) {
                     Message={`Receipt Uploaded!`}
                     Type={'success'} />
             }
+
+            {deleteReceiptAlert && (
+                <AlertBox
+                    Show={deleteReceiptAlert}
+                    Message={`Receipt Successfully Deleted!`}
+                    Type={`success`}
+                    Redirect={``} />
+            )}
 
         </div>
     );
