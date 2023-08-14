@@ -47,7 +47,6 @@ const Calendar = () => {
   const [userId, setUserID] = useState('');
 
   const handleSelect = (arg) => {
-    console.log("skuhusdhuqkd")
     setSelectedRange(arg);
     setShowPopup(true);
   };
@@ -66,21 +65,13 @@ const Calendar = () => {
   }
 
   useEffect(() => {
-    // set user token 
     const token = localStorage.getItem('token');
     setToken(token);
 
-    getEvents(token);
+    const storedUserId = parseInt(localStorage.getItem("ID"), 10);
+    setUserID(storedUserId)
+    getEvents(token, storedUserId);
   }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem("ID");
-    if (storedUserId) {
-      setUserID(parseInt(storedUserId, 10))
-      getEvents(token);
-    };
-  }, [])
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -96,7 +87,7 @@ const Calendar = () => {
       });
   }, []);
 
-  const getEvents = async (token) => {
+  const getEvents = async (token, userID) => {
     try {
       const response = await axios.get(`${baseUrl}/api/purchasePlan/`, {
         headers: {
@@ -104,13 +95,25 @@ const Calendar = () => {
           authorization: 'Bearer ' + token,
         },
       });
+      console.log(response.status);
       if (response.status === 200) {
+        console.log("klnf", response.data);
         const formattedEvents = response.data
-          .filter((event) => {
+          .filter((event, index, arr) => {
+            console.log(event)
+            console.log(index)
             if (event.viewAccessID === 1) {
-              return event.userID === userId;
+              console.log("dlfjlwjw", event.userID);
+              console.log(userID);
+              if (event.userID !== userID) {
+                return false;
+              } else {
+                return true;
+              }
+              // return event.userID === userId;
+            } else {
+              return true; // public event
             }
-            return true; // public event
           })
           .map((event) => ({
             id: event.planID,
@@ -172,7 +175,7 @@ const Calendar = () => {
       setDeleteEventAlert(true);
       alertTimer();
       window.location.reload();
-    }
+    };
     setShowDeleteConfirmation(false);
   };
 
@@ -214,10 +217,10 @@ const Calendar = () => {
 
       {deleteEventAlert && (
         <AlertBox
-        Show={deleteEventAlert}
-        Message={`Event Successfully Deleted`}
-        Type={`success`}
-        Redirect={`/PurchasePlanning/Calendar`}/>
+          Show={deleteEventAlert}
+          Message={`Event Successfully Deleted`}
+          Type={`success`}
+          Redirect={`/PurchasePlanning/Calendar`} />
       )}
 
 
