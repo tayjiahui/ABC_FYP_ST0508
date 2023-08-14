@@ -833,7 +833,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                   <p>Receipt Uploaded : </p>
                   <div className={styles.receiptContainer}>
                     <button className={styles.openReceipt} onClick={handleOpenPDFInNewTab}>View Receipt</button>
-                    {financeS && ( // Conditionally render the button if financeS is true
+                    {financeS && ( 
                       <button
                         className="btn btn-link btn-sm"
                         onClick={handleDeleteConfirmation}
