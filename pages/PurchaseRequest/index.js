@@ -1229,7 +1229,8 @@ export default function PurchaseRequest() {
         .then(
           axios.spread((response1) => {
             // sorts data before showing
-            const allResult = response1.data.sort(dynamicSort('prID')).sort(dynamicSort('prStatusID'));
+            // const allResult = response1.data.sort(dynamicSort('prID')).sort(dynamicSort('prStatusID'));
+            const allResult = response1.data.sort((a, b) => b.prID - a.prID);
 
             const resultList = [];
 
