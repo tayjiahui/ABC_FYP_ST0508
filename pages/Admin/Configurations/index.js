@@ -493,6 +493,7 @@ function StatusPageView() {
   const [paymentStatusID, setPaymentStatusID] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [statusDelete, setStatusDelete] = useState([]);
+  const [deleteStatusAlert, setDeleteStatusAlert] = useState(false);
 
   const fetchPaymentStatuses = (token) => {
     axios.get(`${baseUrl}/api/paymentTrack/`,
@@ -533,6 +534,14 @@ function StatusPageView() {
     setShowDeleteConfirmation(false);
   };
 
+  function alertTimer() {
+    setTimeout(alertClose, 3000);
+  }
+
+  function alertClose() {
+    setDeleteStatusAlert(false);
+  }
+
   const handleConfirmDelete = () => {
     axios.get(`${baseUrl}/api/paymentTrack/status/${statusDelete}`,
       {
@@ -553,6 +562,8 @@ function StatusPageView() {
           })
           .then(response => {
             console.log('status deleted!')
+            setDeleteStatusAlert(true);
+            alertTimer();
             fetchPaymentStatuses(Token);
           })
           .catch(err => {
@@ -624,6 +635,14 @@ function StatusPageView() {
           </div>
         </div>
       )}
+
+      {deleteStatusAlert && (
+        <AlertBox
+          Show={deleteStatusAlert}
+          Message={`Status Successfully Deleted!`}
+          Type={`success`}
+          Redirect={``} />
+      )}
     </>
   )
 };
@@ -635,6 +654,7 @@ function PurchaseStatusPageView() {
   const [purchaseStatusID, setPurchaseStatusID] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [statusDelete, setStatusDelete] = useState([]);
+  const [deleteStatusAlert, setDeleteStatusAlert] = useState(false);
 
   const fetchPurchaseStatuses = (token) => {
     axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/all`,
@@ -677,6 +697,14 @@ function PurchaseStatusPageView() {
     setShowDeleteConfirmation(false);
   };
 
+  function alertTimer() {
+    setTimeout(alertClose, 3000);
+  }
+
+  function alertClose() {
+    setDeleteStatusAlert(false);
+  }
+
   const handleConfirmDelete = () => {
     axios.get(`${baseUrl}/api/trackOrder/purchaseStatus/id/${statusDelete}`,
       {
@@ -698,6 +726,8 @@ function PurchaseStatusPageView() {
         )
           .then(response => {
             console.log('status deleted!');
+            setDeleteStatusAlert(true);
+            alertTimer();
             fetchPurchaseStatuses(Token);
           })
           .catch(err => {
@@ -769,6 +799,14 @@ function PurchaseStatusPageView() {
             </div>
           </div>
         </div>
+      )}
+
+      {deleteStatusAlert && (
+        <AlertBox
+          Show={deleteStatusAlert}
+          Message={`Status Successfully Deleted!`}
+          Type={`success`}
+          Redirect={``} />
       )}
     </>
   )
