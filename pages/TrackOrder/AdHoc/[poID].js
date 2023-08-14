@@ -495,7 +495,7 @@ export default function ViewAdHoc({ AdHocDetails }) {
             {showModal && (
                 <div className="modal fade show d-block" style={{ display: 'block' }}>
                     <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content" style={{ border: '1px solid black' }}>
+                        <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px"  }}>
                             <div className="modal-body">
                                 <div className="d-flex flex-column align-items-center">
                                     <h5 className="modal-title">Upload A File</h5>
