@@ -154,11 +154,20 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const [selectedFile, setSelectedFile] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
+  const [PDF, setPDF] = useState([]);
+  const [uploadedInvoiceAlert, setUploadedInvoiceAlert] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deleteInvoiceAlert, setDeleteInvoiceAlert] = useState(false);
+
 
   //DO
   const [selectedFileDO, setSelectedFileDO] = useState([]);
   const [showModalDO, setShowModalDO] = useState(false);
   const [showModal2DO, setShowModal2DO] = useState(false);
+  const [PDFDO, setPDFDO] = useState([]);
+  const [uploadedDOAlert, setUploadedDOAlert] = useState(false);
+  const [deleteDOConfirm, setDeleteDOConfirm] = useState(false);
+  const [deleteDOAlert, setDeleteDOAlert] = useState(false);
 
   // Alerts
   const [EditQtyAlert, setEditQtyAlert] = useState(false);
@@ -445,6 +454,147 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       });
   };
 
+  useEffect(() => {
+    fetchPDFDOData();
+    fetchPDFData()
+  }, []);
+
+  //delete DO
+  const handleDeleteDOConfirmation = () => {
+    setDeleteDOConfirm(true);
+  }
+
+  const handleCloseDeleteDOConfirmation = () => {
+    setDeleteDOConfirm(false);
+  }
+
+  const handleDODelete = () => {
+    axios.put(`${baseUrl}/api/trackOrder/documents/${prID}/removeDO`, {
+      deliveryOrder: null
+    }, {
+      headers: {
+        user: id,
+        authorization: 'Bearer ' + Token
+      }
+    })
+      .then(res => {
+        console.log('DO Deleted');
+        setDeleteDOAlert(true);
+        alertTimer();
+        fetchPDFDOData();
+      })
+      .catch(err => {
+        console.log('Error deleting DO', err);
+      })
+  }
+
+
+  //delete invoice 
+  const handleInvoiceDelete = () => {
+
+    axios.put(`${baseUrl}/api/trackOrder/documents/${prID}/removeInvoice`, {
+      invoice: null
+    }, {
+      headers: {
+        user: id,
+        authorization: 'Bearer ' + Token
+      }
+    })
+      .then(res => {
+        console.log('Invoice Deleted');
+        setDeleteInvoiceAlert(true);
+        alertTimer();
+        fetchPDFData();
+      })
+      .catch(err => {
+        console.log('Error deleting Invoice', err);
+      })
+  };
+
+  const handleDeleteConfirmation = () => {
+    setDeleteConfirm(true);
+  }
+
+  const handleCloseDeleteConfirmation = () => {
+    setDeleteConfirm(false);
+  }
+
+  const handleOpenPDFInNewTab = () => {
+    if (PDF) {
+      const byteCharacters = atob(PDF);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const pdfBlob = new Blob([byteArray], { type: 'application/pdf' });
+
+      const pdfUrl = window.URL.createObjectURL(pdfBlob);
+      const newTab = window.open();
+      newTab.document.write('<iframe src="' + pdfUrl + '" width="100%" height="100%"></iframe>');
+      newTab.document.close();
+    }
+  }
+
+  const handleOpenPDFDOInNewTab = () => {
+    if (PDFDO) {
+      const byteCharacters = atob(PDFDO);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const pdfBlob = new Blob([byteArray], { type: 'application/pdf' });
+
+      const pdfUrl = window.URL.createObjectURL(pdfBlob);
+      const newTab = window.open();
+      newTab.document.write('<iframe src="' + pdfUrl + '" width="100%" height="100%"></iframe>');
+      newTab.document.close();
+    }
+  }
+
+
+
+  const fetchPDFData = () => {
+    axios
+      .get(`${baseUrl}/api/trackOrder/documents/${prID}/invoice`, {
+        responseType: 'arraybuffer',
+      })
+      .then((res) => {
+        const base64Data = btoa(
+          new Uint8Array(res.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+        setPDF(base64Data);
+      })
+      .catch((err) => {
+        console.log('Error fetching PDF:', err);
+        setPDF(null);
+      });
+  };
+
+  const fetchPDFDOData = () => {
+    axios
+      .get(`${baseUrl}/api/trackOrder/documents/${prID}/deliveryOrder`, {
+        responseType: 'arraybuffer',
+      })
+      .then((res) => {
+        const base64Data = btoa(
+          new Uint8Array(res.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+        setPDFDO(base64Data);
+      })
+      .catch((err) => {
+        console.log('Error fetching PDF:', err);
+        setPDFDO(null);
+      });
+  };
+
   //invoice
   const handleFileUpload = async (e) => {
     const file = e.target.files[0]
@@ -456,13 +606,17 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       const formData = new FormData();
       formData.append('file', selectedFile);
 
-      axios.put(`${baseUrl}/api/trackOrder/documents/${poID}/invoice`, formData, {
+      axios.put(`${baseUrl}/api/trackOrder/documents/${prID}/invoice`, formData, {
         headers: {
           'Content-Type': "multipart/form-data"
         }
       })
         .then(() => {
           console.log('Invoice uploaded successfully!!');
+          setUploadedInvoiceAlert(true);
+          setSelectedFile(null);
+          alertTimer();
+          fetchPDFData();
         })
         .catch((err) => {
           console.log("Error uploading Invoice", err);
@@ -481,13 +635,17 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       const formData = new FormData();
       formData.append('file', selectedFileDO);
 
-      axios.put(`${baseUrl}/api/trackOrder/documents/${poID}/deliveryOrder`, formData, {
+      axios.put(`${baseUrl}/api/trackOrder/documents/${prID}/deliveryOrder`, formData, {
         headers: {
           'Content-Type': "multipart/form-data"
         }
       })
         .then(() => {
           console.log('Delivery Order uploaded successfully');
+          setUploadedDOAlert(true);
+          setSelectedFileDO(null);
+          alertTimer()
+          fetchPDFDOData();
         })
         .catch((err) => {
           console.log('Error uploading Delivery Order', err)
@@ -549,6 +707,10 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
     // list of alerts useStates in your page
     setEditQtyAlert(false);
     setUpdatePStatus(false);
+    setUploadedInvoiceAlert(false);
+    setUploadedDOAlert(false);
+    setDeleteInvoiceAlert(false);
+    setDeleteDOAlert(false);
   };
 
   return (
@@ -729,16 +891,38 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         <h3 className="col-sm ms-5">Upload Invoice & Delivery Orders</h3>
         <hr className="col-11 ms-5"></hr>
 
-        <div className="col-sm d-flex">
-          <button onClick={handleOpenModal} className="col-sm rounded-4 mt-3 w-50 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
-            <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br></br>
-            {showInProg && <WIP Show={showInProg} />}
-          </button>
+        <div className="col-sm d-flex flex-wrap">
+          <div className="col-sm d-flex flex-column">
+            <button onClick={handleOpenModal} className="col-sm rounded-4 mt-3 w-55 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284', width: '90%' }}>
+              <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br />
+            </button>
+            <button onClick={handleOpenModalDO} className="col-sm rounded-4 mt-3 w-55 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284', width: '90%' }}>
+              <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br />
+            </button>
+          </div>
 
-          <button onClick={handleOpenModalDO} className="col-sm rounded-4 mt-3 w-50 ms-1 me-5 pt-3 border-0 shadow text-center" style={{ backgroundColor: '#486284' }}>
-            <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br></br>
-            {showInProg && <WIP Show={showInProg} />}
-          </button>
+          <div className="col-sm d-flex flex-column">
+            {PDF && (
+              <div className="d-flex">
+                <button className="col-sm rounded-4 mt-3 w-40 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }} onClick={handleOpenPDFInNewTab}>
+                  <h4 className="col-sm text-white pt-2">View Invoice</h4><br />
+                </button>
+                <button className="btn btn-link btn-sm " style={{ textDecoration: 'none', color: 'black', width: '15%' }} onClick={handleDeleteConfirmation}>
+                  <span aria-label="Delete" style={{ fontSize: '25px', verticalAlign: 'middle' }}>&times;</span>
+                </button>
+              </div>
+            )}
+            {PDFDO && (
+              <div className="d-flex">
+                <button className="col-sm rounded-4 mt-3 w-40 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284' }} onClick={handleOpenPDFDOInNewTab}>
+                  <h4 className="col-sm text-white pt-2">View Delivery Order</h4><br />
+                </button>
+                <button className="btn btn-link btn-sm " style={{ textDecoration: 'none', color: 'black', width: '15%' }} onClick={handleDeleteDOConfirmation}>
+                  <span aria-label="Delete" style={{ fontSize: '25px', verticalAlign: 'middle' }}>&times;</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {changeStatusPop && (
@@ -765,11 +949,11 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       {showModal && (
         <div className="modal fade show d-block" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
               <div className="modal-body">
                 <div className="d-flex flex-column align-items-center">
                   <h5 className="modal-title">Upload A File</h5>
-                  <button type="button" className="closeXbtn" onClick={handleCloseModal} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5' }}>
+                  <button type="button" className="closeXbtn" onClick={handleCloseModal} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', background: 'transparent' }}>
                     <span aria-hidden="true">&times;</span>
                   </button> <br />
                   <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -825,11 +1009,11 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       {showModalDO && (
         <div className="modal fade show d-block" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }} >
               <div className="modal-body">
                 <div className="d-flex flex-column align-items-center">
                   <h5 className="modal-title">Upload A File</h5>
-                  <button type="button" className="closeXbtn" onClick={handleCloseModalDO} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5' }}>
+                  <button type="button" className="closeXbtn" onClick={handleCloseModalDO} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', background: 'transparent' }}>
                     <span aria-hidden="true">&times;</span>
                   </button> <br />
                   <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -881,6 +1065,48 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         </div>
       )}
 
+      {deleteConfirm && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <h2 className="modal-title">Confirm Delete ?</h2>
+                  <button type="button" className="close" onClick={handleCloseDeleteConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                </div>
+              </div>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseDeleteConfirmation} >Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => {handleInvoiceDelete(); handleCloseDeleteConfirmation(); }}>Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteDOConfirm && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+            <div className="modal-body">
+              <div className="d-flex flex-column align-items-center mt-2">
+                <h2 className="modal-title">Confirm Delete ?</h2>
+                <button type="button" className="close" onClick={handleCloseDeleteDOConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                  <span aria-hidden="true">&times;</span>
+                </button> <br />
+              </div>
+            </div>
+            <div className="d-flex justify-content-center text-center mb-5">
+              <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseDeleteDOConfirmation} >Cancel</button>
+              <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => {handleDODelete(); handleCloseDeleteDOConfirmation(); }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      )}
+
       {/* Alerts */}
       {
         EditQtyAlert &&
@@ -899,6 +1125,34 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           Type={'success'}
           Redirect={``} />
       }
+
+      {uploadedInvoiceAlert &&
+        <AlertBox
+          Show={uploadedInvoiceAlert}
+          Message={`Invoice Succesfully Uploaded!`}
+          Type={'success'} />
+      }
+
+      {uploadedDOAlert &&
+        <AlertBox
+          Show={uploadedDOAlert}
+          Message={`Delivery Order Succesfully Uploaded!`}
+          Type={'success'}
+        />}
+
+      {deleteInvoiceAlert && 
+      <AlertBox
+      Show={deleteInvoiceAlert}
+      Message={`Invoice Successfully Deleted!`}
+      Type={`success`}
+      Redirect={``} />}
+
+      {deleteDOAlert && 
+      <AlertBox
+      Show={deleteInvoiceAlert}
+      Message={`Delivery Order Successfully Deleted!`}
+      Type={`success`}
+      Redirect={``} />}
 
     </div>
   );
