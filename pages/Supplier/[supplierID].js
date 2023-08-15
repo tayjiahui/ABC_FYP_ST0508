@@ -77,12 +77,6 @@ export default function viewSupplier({ supplierDetails }) {
 
     const [Token, setToken] = useState();
 
-    useEffect(() => {
-        // set user token
-        const token = localStorage.getItem("token");
-        setToken(token);
-    }, []);
-
     // alert box
     const [updatedSuccessAlert, setUpdatedSuccessAlert] = useState(false);
     const [updatedErrorAlert, setUpdatedErrorAlert] = useState(false);
@@ -115,6 +109,7 @@ export default function viewSupplier({ supplierDetails }) {
     useEffect(() => {
         // set user token
         const token = localStorage.getItem("token");
+        setToken(token);
 
         axios.all([
             axios.get(`${baseUrl}/api/supplier/bank/all`,
@@ -228,17 +223,18 @@ export default function viewSupplier({ supplierDetails }) {
     const handleConfirmDelete = async (e) => {
         e.preventDefault();
 
-        await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`,
+        await axios.put(`${baseUrl}/api/supplier/delete/${supplierID}`, {},
             {
                 headers: {
-                    authorization: 'Bearer ' + Token
+                    authorization: 'Bearer ' +  Token
                 }
-            })
+            }
+        )
             .then((res1) => {
                 console.log(res1.data);
                 // alert(res1.data);
 
-                axios.put(`${baseUrl}/api/supplier/delete/category/${supplierID}`,
+                axios.put(`${baseUrl}/api/supplier/delete/category/${supplierID}`,{},
                     {
                         headers: {
                             authorization: 'Bearer ' + Token
@@ -258,17 +254,18 @@ export default function viewSupplier({ supplierDetails }) {
 
             })
             .catch((err) => {
-                if (err.response.status === 401 || err.response.status === 403) {
-                    localStorage.clear();
-                    signOut({ callbackUrl: '/Unauthorised' });
-                }
-                else {
-                    setDeletedErrorAlert(true);
-                    // alert(err);
+                console.log(err)
+                // if (err.response.status === 401 || err.response.status === 403) {
+                //     localStorage.clear();
+                //     signOut({ callbackUrl: '/Unauthorised' });
+                // }
+                // else {
+                //     setDeletedErrorAlert(true);
+                //     // alert(err);
 
-                    alertTimer();
-                    console.log(err);
-                };
+                //     alertTimer();
+                //     console.log(err);
+                // };
             });
 
         setDeleteSupplierPop(false);
