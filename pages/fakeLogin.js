@@ -121,6 +121,7 @@ export default function Login() {
                             <div className="ps-4 pt-4">
                                 <p><b className="pe-3">Purchaser's Account:</b>johnWatt@purchaser.com</p>
                                 <p><b className="pe-4">Approver's Account:</b>jannyTan@approver.com</p>
+                                <p><b className="pe-4">Finance's Account:</b>janiceChia@finance.com</p>
                             </div>
                         }
                     </div>
