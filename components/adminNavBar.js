@@ -15,16 +15,12 @@ export default function AdminNavBar() {
 
     const [userName, setUserName] = useState("");
 
-    console.log({ session })
-
     // insert data into localStorage
     useEffect(() => {
         // ? after removing development login
 
         if (status === 'authenticated' && session) {
-            const userD = session.userDetails
-            // TODO validate if userD is Null
-            // console.log(userD);
+            const userD = session.userDetails;
 
             // removes non-admin users
             if (userD.role !== 5) {
@@ -39,15 +35,14 @@ export default function AdminNavBar() {
             localStorage.setItem("token", userD.token)
         };
 
-        // if (!localStorage.getItem("token") || status === 'unauthenticated') {
-        //     localStorage.clear();
-        //     signOut({ callbackUrl: '/Unauthorised' });
-        // };
+        if (!localStorage.getItem("token") || status === 'unauthenticated') {
+            localStorage.clear();
+            signOut({ callbackUrl: '/Unauthorised' });
+        };
 
         const username = localStorage.getItem("FName");
         setUserName(username);
 
-        // !status may be undefined not caught
     }, [status, session]);
 
     return (
