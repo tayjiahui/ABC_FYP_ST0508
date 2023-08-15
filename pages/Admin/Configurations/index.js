@@ -114,7 +114,8 @@ function GSTPageView() {
   const UpdateGST = async (e) => {
     e.preventDefault();
 
-    const dateYesterday = moment().tz(timezone).subtract(1, 'day').format();
+    // const dateYesterday = moment().tz(timezone).subtract(1, 'day').format();
+    const dateYesterday = moment().tz(timezone).format();
 
     axios.put(`${baseUrl}/api/purchaseReq/gst/EndDate`,
       {
