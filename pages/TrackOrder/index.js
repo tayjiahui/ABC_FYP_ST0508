@@ -267,7 +267,7 @@ function OrderRow(props) {
         UpdatePStatus &&
         <AlertBox
           Show={UpdatePStatus}
-          Message={`Purchase Status Updated!`}
+          Message={`Purchase Status Successfully Updated!`}
           Type={'success'}
           Redirect={``} />
       }
@@ -276,7 +276,7 @@ function OrderRow(props) {
         CreatedAlert &&
         <AlertBox
           Show={CreatedAlert}
-          Message={`Sucessfully created new status!`}
+          Message={`New Purchase Status Successfully Created!`}
           Type={'success'}
           Redirect={``} />
       }
