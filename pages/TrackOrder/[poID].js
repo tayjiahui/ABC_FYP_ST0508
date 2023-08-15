@@ -158,6 +158,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const [uploadedInvoiceAlert, setUploadedInvoiceAlert] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deleteInvoiceAlert, setDeleteInvoiceAlert] = useState(false);
+  const [existingInvoice, setExistingInvoice] = useState(false);
 
 
   //DO
@@ -168,6 +169,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
   const [uploadedDOAlert, setUploadedDOAlert] = useState(false);
   const [deleteDOConfirm, setDeleteDOConfirm] = useState(false);
   const [deleteDOAlert, setDeleteDOAlert] = useState(false);
+  const [existingDO, setExistingDO] = useState(false);
 
   // Alerts
   const [EditQtyAlert, setEditQtyAlert] = useState(false);
@@ -453,6 +455,23 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         };
       });
   };
+
+  const handleExistingInvoice = () => {
+    setExistingInvoice(true);
+  };
+
+  const handleCloseExistingInvoice = () => {
+    setExistingInvoice(false);
+  }
+
+
+  const handleExistingDO = () => {
+    setExistingDO(true);
+  };
+
+  const handleCloseExistingDO = () => {
+    setExistingDO(false);
+  }
 
   useEffect(() => {
     fetchPDFDOData();
@@ -893,10 +912,11 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
         <div className="col-sm d-flex flex-wrap">
           <div className="col-sm d-flex flex-column">
-            <button onClick={handleOpenModal} className="col-sm rounded-4 mt-3 w-55 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284', width: '90%' }}>
-              <h4 className="col-sm text-white pt-2">Upload Invoice</h4><br />
+            <button onClick={PDF ? handleExistingInvoice : handleOpenModal} className="col-sm rounded-4 mt-3 w-55 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284', width: '90%' }}>
+              <h4 className="col-sm text-white pt-2"> Upload Invoice </h4> <br />
             </button>
-            <button onClick={handleOpenModalDO} className="col-sm rounded-4 mt-3 w-55 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284', width: '90%' }}>
+
+            <button onClick={PDFDO ? handleExistingDO : handleOpenModalDO} className="col-sm rounded-4 mt-3 w-55 ms-4 pt-3 me-1 border-0 shadow text-center" style={{ backgroundColor: '#486284', width: '90%' }}>
               <h4 className="col-sm text-white pt-2">Upload Delivery Order</h4><br />
             </button>
           </div>
@@ -1079,7 +1099,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
               </div>
               <div className="d-flex justify-content-center text-center mb-5">
                 <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseDeleteConfirmation} >Cancel</button>
-                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => {handleInvoiceDelete(); handleCloseDeleteConfirmation(); }}>Delete</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleInvoiceDelete(); handleCloseDeleteConfirmation(); }}>Delete</button>
               </div>
             </div>
           </div>
@@ -1088,23 +1108,63 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
       {deleteDOConfirm && (
         <div className="modal fade show d-block" style={{ display: 'block' }}>
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
-            <div className="modal-body">
-              <div className="d-flex flex-column align-items-center mt-2">
-                <h2 className="modal-title">Confirm Delete ?</h2>
-                <button type="button" className="close" onClick={handleCloseDeleteDOConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
-                  <span aria-hidden="true">&times;</span>
-                </button> <br />
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <h2 className="modal-title">Confirm Delete ?</h2>
+                  <button type="button" className="close" onClick={handleCloseDeleteDOConfirmation} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                </div>
               </div>
-            </div>
-            <div className="d-flex justify-content-center text-center mb-5">
-              <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseDeleteDOConfirmation} >Cancel</button>
-              <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => {handleDODelete(); handleCloseDeleteDOConfirmation(); }}>Delete</button>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-secondary" style={{ backgroundColor: '#93A0B1', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px', marginRight: '15px' }} onClick={handleCloseDeleteDOConfirmation} >Cancel</button>
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleDODelete(); handleCloseDeleteDOConfirmation(); }}>Delete</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {existingInvoice && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <p className="modal-title text-center">There is an existing Invoice. <br />Please delete before uploading a new Invoice.</p>
+                  <button type="button" className="close" onClick={handleCloseExistingInvoice} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                </div>
+              </div>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleCloseExistingInvoice(); }}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {existingDO && (
+        <div className="modal fade show d-block" style={{ display: 'block' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
+              <div className="modal-body">
+                <div className="d-flex flex-column align-items-center mt-2">
+                  <p className="modal-title text-center">There is an existing Delivery Order. <br />Please delete before uploading a new Delivery Order.</p>
+                  <button type="button" className="close" onClick={handleCloseExistingDO} style={{ position: 'absolute', top: '10px', right: '10px', fontSize: '24px', color: '#000000', opacity: '0.5', border: 'none', backgroundColor: 'transparent' }}>
+                    <span aria-hidden="true">&times;</span>
+                  </button> <br />
+                </div>
+              </div>
+              <div className="d-flex justify-content-center text-center mb-5">
+                <button type="button" className="btn btn-custom-primary" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '20px', padding: '10px 30px' }} onClick={() => { handleCloseExistingDO(); }}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Alerts */}
@@ -1140,19 +1200,19 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
           Type={'success'}
         />}
 
-      {deleteInvoiceAlert && 
-      <AlertBox
-      Show={deleteInvoiceAlert}
-      Message={`Invoice Successfully Deleted!`}
-      Type={`success`}
-      Redirect={``} />}
+      {deleteInvoiceAlert &&
+        <AlertBox
+          Show={deleteInvoiceAlert}
+          Message={`Invoice Successfully Deleted!`}
+          Type={`success`}
+          Redirect={``} />}
 
-      {deleteDOAlert && 
-      <AlertBox
-      Show={deleteInvoiceAlert}
-      Message={`Delivery Order Successfully Deleted!`}
-      Type={`success`}
-      Redirect={``} />}
+      {deleteDOAlert &&
+        <AlertBox
+          Show={deleteInvoiceAlert}
+          Message={`Delivery Order Successfully Deleted!`}
+          Type={`success`}
+          Redirect={``} />}
 
     </div>
   );
