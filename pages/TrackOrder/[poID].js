@@ -627,6 +627,8 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
       axios.put(`${baseUrl}/api/trackOrder/documents/${prID}/invoice`, formData, {
         headers: {
+          user: id,
+          authorization: 'Bearer ' + Token,
           'Content-Type': "multipart/form-data"
         }
       })
@@ -656,6 +658,8 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
       axios.put(`${baseUrl}/api/trackOrder/documents/${prID}/deliveryOrder`, formData, {
         headers: {
+          user: id,
+          authorization: 'Bearer ' + Token,
           'Content-Type': "multipart/form-data"
         }
       })
@@ -1004,7 +1008,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       {showModal2 && (
         <div className="modal fade show d-block" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
               <div className="modal-body">
                 <div className="d-flex flex-column align-items-center mt-2">
                   <h2 className="modal-title">Confirm Upload ?</h2>
@@ -1066,7 +1070,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       {showModal2DO && (
         <div className="modal fade show d-block" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
+            <div className="modal-content" style={{ border: '1px solid black', borderRadius: "20px" }}>
               <div className="modal-body">
                 <div className="d-flex flex-column align-items-center mt-2">
                   <h2 className="modal-title">Confirm Upload ?</h2>
@@ -1181,7 +1185,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
         UpdatePStatus &&
         <AlertBox
           Show={UpdatePStatus}
-          Message={`Purchase Status Updated!`}
+          Message={`Purchase Status Successfully Updated!`}
           Type={'success'}
           Redirect={``} />
       }
@@ -1209,7 +1213,7 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
       {deleteDOAlert &&
         <AlertBox
-          Show={deleteInvoiceAlert}
+          Show={deleteDOAlert}
           Message={`Delivery Order Successfully Deleted!`}
           Type={`success`}
           Redirect={``} />}
