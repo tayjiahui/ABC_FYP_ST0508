@@ -55,7 +55,6 @@ export async function getServerSideProps(context) {
 
 
   const paymentTrackResponse = await fetch(`${backBaseURL}/api/paymentTrack/supplier/pr/${poID}`);
-
   const response1 = await paymentTrackResponse.json();
   const supplierID = response1[0].supplierID;
 
@@ -1046,7 +1045,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
         {createdStatusAlert &&
           <AlertBox
             Show={createdStatusAlert}
-            Message={`New Payment Status Created!`}
+            Message={`New Payment Status Successfully Created!`}
             Type={'success'}
             Redirect={``} />
         }
@@ -1061,7 +1060,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
         {updateStatusAlert &&
           <AlertBox
             Show={updateStatusAlert}
-            Message={`Status Successfully Updated!`}
+            Message={`Payment Status Successfully Updated!`}
             Type={'success'}
             Redirect={``} />
         }
