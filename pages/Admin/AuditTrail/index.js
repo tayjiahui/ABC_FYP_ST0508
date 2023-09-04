@@ -9,9 +9,6 @@ import { signOut } from "next-auth/react";
 // Style Sheet
 import styles from "../../../styles/auditLog.module.css";
 
-// components
-import AlertBox from "../../../components/alert";
-
 // Images 
 import leftArrowIcon from "../../../public/leftArrow.svg"
 
@@ -43,9 +40,6 @@ function AuditRow(props) {
     const [ALTime, setALTime] = useState();
 
     const [showAction, setShowAction] = useState(false);
-
-    // const [OldValue, setOldValue] = useState();
-    // const [newValue, setNewValue] = useState();
 
     const auditLog = props.AuditLogData;
 

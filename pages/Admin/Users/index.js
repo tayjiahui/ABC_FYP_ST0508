@@ -218,7 +218,6 @@ function UserRow(props) {
 
   return (
     <div>
-      {/* <a> */}
       <div className={styles.prButton}>
         <div className={styles.prRow}>
           <div className="py-2 row text-start">
@@ -234,7 +233,6 @@ function UserRow(props) {
               {props.Email}
             </div>
             <div className="col-sm-3 text-center">
-              {/* {props.Role} */}
               <select className="rounded text-center w-76 h-100" value={selectedRole} onChange={handleRoleChange}>
                 <option key={1} value={props.RoleID} selected="selected">{props.Role}</option>
                 {
@@ -250,7 +248,6 @@ function UserRow(props) {
           </div>
         </div>
       </div>
-      {/* </a> */}
 
       {CreateNewRolePop &&
         <div className={styles.newStatusBox}>

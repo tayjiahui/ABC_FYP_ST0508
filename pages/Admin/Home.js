@@ -18,9 +18,7 @@ import AlertBox from "../../components/alert";
 import peopleIcon from "../../public/peoplesIcon.svg";
 import reportIcon from "../../public/reportIcon.svg";
 import AuditIcon from "../../public/auditLogIcon.svg";
-import ConfigureIcon from "../../public/configureIcon.svg";
 import DownloadIcon from "../../public/DownloadIcon.svg";
-import hashIcon from "../../public/hashIcon.svg";
 
 const timezone = 'Asia/Singapore';
 
@@ -28,16 +26,16 @@ const timezone = 'Asia/Singapore';
 const URL = [];
 
 function isLocalhost() {
-    if (typeof window !== 'undefined') {
-        const hostname = window.location.hostname;
-        if (hostname == 'localhost') {
-            URL.push('http://localhost:3000', 'http://localhost:5000');
-        }
-        else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-            URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-        };
-        return URL;
-    };
+	if (typeof window !== 'undefined') {
+		const hostname = window.location.hostname;
+		if (hostname == 'localhost') {
+			URL.push('http://localhost:3000', 'http://localhost:5000');
+		}
+		else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+			URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+		};
+		return URL;
+	};
 };
 
 isLocalhost();
@@ -113,7 +111,7 @@ export default function Home() {
 				if (err.response.status === 401 || err.response.status === 403) {
 					localStorage.clear();
 					signOut({ callbackUrl: '/Unauthorised' });
-				} else if(err.response.status === 404){
+				} else if (err.response.status === 404) {
 				}
 				else {
 					console.log(err);
@@ -161,7 +159,7 @@ export default function Home() {
 				if (err.response.status === 401 || err.response.status === 403) {
 					localStorage.clear();
 					signOut({ callbackUrl: '/Unauthorised' });
-				} else if (err.response.status === 404){
+				} else if (err.response.status === 404) {
 				}
 				else {
 					console.log(err);

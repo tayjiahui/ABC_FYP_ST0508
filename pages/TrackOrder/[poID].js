@@ -4,11 +4,9 @@ import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import Image from 'next/image';
 import arrowIcon from '../../public/arrowIcon.svg';
-import plusIcon from '../../public/addLocationIcon.svg';
 import styles from '../../styles/trackOrderById.module.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment-timezone';
-import WIP from '../../components/WIP';
 import AlertBox from "../../components/alert";
 
 const timezone = 'Asia/Singapore';
@@ -76,7 +74,7 @@ export async function getServerSideProps(context) {
   const data2 = await productD.json();
   const data3 = await PRDetails.json();
 
-  console.log(data1);
+  // console.log(data1);
   // console.log(data2);
 
   const poid = data1[0].poID;
@@ -172,7 +170,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
 
   // PR Details  
   const PR = purOrderD[0];
-  const deliveryDetails = deliveryDetail;
 
   useEffect(() => {
     // set user id taken from localstorage
@@ -290,22 +287,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
     }
 
     //setQtyReceivedList(data);
-  };
-
-  // timer
-  function timeFunc() {
-    // 2 seconds
-    setTimeout(closeWIPModal, 2000);
-  };
-
-  const handleOpenWip = () => {
-    setInProg(true);
-    timeFunc();
-  };
-
-  // close WIP Modal
-  function closeWIPModal() {
-    setInProg(false);
   };
 
   const handleCloseStatusPop = () => {
@@ -566,8 +547,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
       newTab.document.close();
     }
   }
-
-
 
   const fetchPDFData = () => {
     axios
@@ -1036,8 +1015,6 @@ export default function Main({ purOrderD, productDeets, gstDetails, QtyReceived,
                     <span aria-hidden="true">&times;</span>
                   </button> <br />
                   <div style={{ width: '80%', border: '1px dashed black', padding: '20px', borderRadius: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    {/* <p className="mb-3">Drag and drop file here</p>
-                      <p>or</p> */}
                     <input type="file" className="btn btn-custom-primary mt-3" style={{ display: 'none' }} onChange={(e) => { handleFileUploadDO(e); }} id="fileUpload" />
 
                     <label htmlFor="fileUpload" className="btn btn-custom-primary mt-3" style={{ backgroundColor: '#486284', color: '#FFFFFF', borderRadius: '30px', padding: '7px 30px', cursor: 'pointer' }}>

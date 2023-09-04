@@ -558,7 +558,6 @@ export default function TrackOrder() {
           setAdHocResults(adHocList);
         });
     }
-
   }, []);
 
   const handleSearch = async (e) => {
@@ -658,7 +657,6 @@ export default function TrackOrder() {
         {
           showAdHoc === false &&
           <ul className="col-sm-9 list-group list-group-horizontal text-center">
-            {/* <li className="list-group-item col-sm-1 border-0">PO No.</li> */}
             <li className="list-group-item col-sm-2 border-0 ms-1">PO No.</li>
             <li className="list-group-item col-sm-3 border-0 ms-2">Created</li>
             <li className="list-group-item col-sm-3 border-0">Name</li>
@@ -673,7 +671,6 @@ export default function TrackOrder() {
             <li className="list-group-item col-sm border-0">PR No.</li>
             <li className="list-group-item col-sm border-0">Date</li>
             <li className="list-group-item col-sm border-0">Name</li>
-            {/* <li className="list-group-item col-sm border-0">Target Date</li> */}
             <li className="list-group-item col-sm border-0">Status</li>
             <li className="list-group-item col-sm border-0"></li>
           </ul>

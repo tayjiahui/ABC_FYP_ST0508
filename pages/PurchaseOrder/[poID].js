@@ -5,7 +5,6 @@ import axios from "axios";
 import Image from "next/image"
 import styles from '../../styles/viewPO.module.css';
 import arrowIcon from '../../public/arrowIcon.svg';
-import deleteIcon from '../../public/trashBinIcon.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import moment from 'moment-timezone';
 
@@ -20,26 +19,24 @@ const URL = [];
 
 function isLocalhost() {
   if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      if (hostname == 'localhost') {
-          URL.push('http://localhost:3000', 'http://localhost:5000');
-      }
-      else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
-          URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
-      };
-      return URL;
+    const hostname = window.location.hostname;
+    if (hostname == 'localhost') {
+      URL.push('http://localhost:3000', 'http://localhost:5000');
+    }
+    else if (hostname == 'abc-cooking-studio.azurewebsites.net') {
+      URL.push('https://abc-cooking-studio-backend.azurewebsites.net', 'https://abc-cooking-studio.azurewebsites.net');
+    };
+    return URL;
   };
 };
 
 isLocalhost();
 
 const baseUrl = URL[0];
-const frontendBaseUrl = URL[1]
 
 export async function getServerSideProps(context) {
 
   const host = context.req.headers.host;
-  // console.log(host);
 
   const backBaseURL = [];
 
@@ -776,7 +773,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                       {paymentStatuses.map((status, index) => (
                         <option key={index} value={status.paymentStatus}>{status.paymentStatus}</option>
                       ))}
-                      
+
                       {financeS && (
                         <option value=" + Create New Status"> + Create New Status</option>
                       )}
@@ -826,7 +823,7 @@ export default function ViewPO({ supplierDetail, productDetail, remarkDetail, de
                   <p>Receipt Uploaded : </p>
                   <div className={styles.receiptContainer}>
                     <button className={styles.openReceipt} onClick={handleOpenPDFInNewTab}>View Receipt</button>
-                    {financeS && ( 
+                    {financeS && (
                       <button
                         className="btn btn-link btn-sm"
                         onClick={handleDeleteConfirmation}
