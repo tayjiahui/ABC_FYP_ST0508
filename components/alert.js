@@ -26,7 +26,6 @@ export default function AlertBox(props) {
     setShowSusAlexbox(false);
   };
 
-
   const handleClose = () => {
     setShowSusAlexbox(false);
 

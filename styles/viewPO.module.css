@@ -3,7 +3,6 @@
     align-items: center;
 }
 
-
 .poHeader h1 {
     margin: 0;
     display: flex;
@@ -70,7 +69,6 @@
     margin-right: 300px;
     margin-top: 20px;
 }
-
 
 .firstRData {
     display: flex;
@@ -142,7 +140,6 @@
     white-space: pre-wrap;
 }
 
-
 /* remarks  */
 .remarkSection {
     padding-left: 130px;
@@ -173,7 +170,6 @@
     border-width: 1px;
     cursor: pointer;
 }
-
 
 /* modal */
 
@@ -257,7 +253,6 @@
     background-color: #486284;
 }
 
-
 /* confirm box */
 .modalcontainer2 {
     width: 450px;
@@ -280,7 +275,6 @@
     flex-direction: column;
     align-items: center;
 }
-
 
 .closeme2 {
     background-color: transparent;
@@ -329,7 +323,6 @@
     
 }
 
-
 /* create status pop */
 .newStatusBox {
     width: 450px;
@@ -344,7 +337,6 @@
     display: block;
     border: 1px solid black;
 }
-
 
 .newStatus {
     display: flex;
@@ -375,7 +367,6 @@
     justify-content: center;
 
 }
-
 
 .closemeStatus {
     background-color: transparent;

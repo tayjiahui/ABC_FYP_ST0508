@@ -23,10 +23,6 @@
     padding-bottom: 5px;
 }
 
-/* .statusCircle{
-    padding-left: 15px;
-} */
-
 /* View PR */
 /* PR Details */
 .prDetails,
@@ -46,7 +42,6 @@
 }
 
 /* Product Details */
-
 .productDetails {
     padding-top: 100px;
     padding-right: 90px;

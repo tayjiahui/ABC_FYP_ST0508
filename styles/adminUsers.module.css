@@ -89,22 +89,6 @@
     padding-bottom: 5px;
 }
 
-/* .prButton:hover{
-    border: none;
-    background-color: transparent;
-} */
-
-/* orginal */
-/* .prRow,.ahRow {
-    background-color: #C0D8F7;
-    font-size: 16px;
-    height: auto;
-    border-radius: 18px;
-    text-align: center;
-    object-fit: scale-down;
-    transition: transform .5s;
-} */
-
 .prRow,
 .ahRow {
     background-color: #C0D8F7;
@@ -115,20 +99,6 @@
     object-fit: scale-down;
     transition: transform .5s;
 }
-
-/* .prRow:hover,.ahRow:hover {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-} */
-
-/* original Version */
-/* .prTextRow {
-    padding-top: 25px;
-    padding-bottom: 20px;
-    vertical-align: middle;
-    display: flex;
-    flex-wrap: wrap;
-    text-align: left;
-} */
 
 .prTextRow {
     padding-top: 5px;

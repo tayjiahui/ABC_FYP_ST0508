@@ -8,7 +8,6 @@ import { signOut, useSession } from "next-auth/react";
 import logo from "../public/client_logo.png";
 import profPic from "../public/prof_pic.png";
 
-
 export default function AdminNavBar() {
     const { data: session, status } = useSession();
     const router = useRouter();

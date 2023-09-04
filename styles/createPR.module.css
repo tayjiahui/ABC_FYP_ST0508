@@ -18,11 +18,6 @@
 }
 
 /* PR Details */
-/* .formInputs{
-    height: 50px;
-    border-color: aqua;
-} */
-
 .prDetails,
 .productDetails {
     padding: 30px 0 30px 90px;
@@ -135,10 +130,6 @@
 }
 
 /* Remarks */
-/* .remarksTestArea{
-    
-} */
-
 .textArea {
     width: 100%;
     height: 200px;

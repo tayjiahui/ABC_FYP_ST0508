@@ -39,11 +39,8 @@ const PoAmt = () => {
                         }
                     }
                 );
-
-                // console.log(res.data);
-                const blank = res.data[0].PO_count
-                // console.log(blank)
-                setAmt(blank)
+                const blank = res.data[0].PO_count;
+                setAmt(blank);
             } catch (err) {
                 if (err.response.status === 401 || err.response.status === 403) {
                     localStorage.clear();

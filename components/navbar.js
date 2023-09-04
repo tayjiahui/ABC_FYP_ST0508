@@ -5,10 +5,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { signOut, useSession } from "next-auth/react";
 
-
 import logo from "../public/client_logo.png";
 import profPic from "../public/prof_pic.png";
-
 
 export default function NavBar() {
     const { data: session, status } = useSession();
@@ -18,7 +16,7 @@ export default function NavBar() {
     const [allowPRView, setAllowPRView] = useState(false);
     const [allowTransactionView, setAllowTransactionView] = useState(false);
 
-    console.log({ session })
+    // console.log({ session });
 
     // insert data into localStorage
     useEffect(() => {
@@ -28,9 +26,8 @@ export default function NavBar() {
         // };
 
         if (status === 'authenticated' && session) {
-            const userD = session.userDetails
-            // TODO validate if userD is Null
-
+            const userD = session.userDetails;
+            
             // add to localStorage
             localStorage.setItem("ID", userD.userID);
             localStorage.setItem("roleID", userD.role);
@@ -57,8 +54,6 @@ export default function NavBar() {
         if (roleID === 1 || roleID === 3) {
             setAllowTransactionView(true);
         };
-
-        // !status may be undefined not caught
     }, [status, session]);
 
     return (
@@ -113,7 +108,6 @@ export default function NavBar() {
                             </a>
                         </li>
                         <li className='py-3'>
-                            {/* <h3 id="username">{session.user.name}</h3> */}
                             <h5 id="username">{userName}</h5>
                         </li>
                     </ul>

@@ -22,7 +22,6 @@ function isLocalhost() {
 isLocalhost();
 
 const baseUrl = URL[0];
-const baseURL = URL[1];
 
 const Popup = ({ event }) => {
   const [userId, setUserID] = useState('');
@@ -31,7 +30,6 @@ const Popup = ({ event }) => {
   const [endDate, setEndDate] = useState('');
   const [description, setDescription] = useState('');
   const [viewAccess, setViewAccess] = useState('');
-  // const [viewAccessID, setViewAccessID] = useState([]);
   const [showFirstPopup, setShowFirstPopup] = useState(true);
   const [showSecondPopup, setShowSecondPopup] = useState(false);
   const [Token, setToken] = useState();
@@ -185,8 +183,6 @@ const Popup = ({ event }) => {
           <h5 className={styles.secondPopUp}> Purchase plan submitted successfully! </h5>
         </div>
       )}
-
-      {/* <style jsx>{}</style> */}
     </div>
   );
 };
